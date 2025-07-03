@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-address-form',
+  standalone: true,
   imports: [],
-  templateUrl: './address-form.html',
-  styleUrl: './address-form.scss'
+  templateUrl: './address-form.component.html',
+  styleUrl: './address-form.component.scss'
 })
 export class AddressForm {
 

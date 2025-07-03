@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-product-list',
+  standalone: true,
   imports: [],
-  templateUrl: './product-list.html',
-  styleUrl: './product-list.scss'
+  templateUrl: './product-list.component.html',
+  styleUrl: './product-list.component.scss'
 })
-export class ProductList {
+export class ProductListComponent {
 
 }

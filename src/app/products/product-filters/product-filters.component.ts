@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-product-filters',
+  standalone: true,
   imports: [],
-  templateUrl: './product-filters.html',
-  styleUrl: './product-filters.scss'
+  templateUrl: './product-filters.component.html',
+  styleUrl: './product-filters.component.scss'
 })
-export class ProductFilters {
+export class ProductFiltersComponent {
 
 }
