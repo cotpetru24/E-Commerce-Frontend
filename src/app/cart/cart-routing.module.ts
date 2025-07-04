@@ -5,8 +5,9 @@ import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 import { CartViewComponent } from './cart-view/cart-view.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'view', pathMatch: 'full' },
   { path: 'summary', component: CartSummaryComponent },
-  {path: 'view', component: CartViewComponent },
+  { path: 'view', component: CartViewComponent },
 ];
 
 @NgModule({

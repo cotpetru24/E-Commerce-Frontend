@@ -1,16 +1,27 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AddProductComponet } from './add-product/add-product.component';
-import { EditProductComponent } from './edit-product/edit-product.component';
-import { ProductManagementComponent } from './product-management/product-management.component';
-
-
-
 const routes: Routes = [
-  { path: '', component: ProductManagementComponent },
-  {path: 'add-product', component: AddProductComponet },
-  {path: 'edit-product/:id', component: EditProductComponent }, // assuming product has ID
+  { 
+    path: '', 
+    loadComponent: () => import('./admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) 
+  },
+  { 
+    path: 'dashboard', 
+    loadComponent: () => import('./admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) 
+  },
+  { 
+    path: 'products', 
+    loadComponent: () => import('./product-management/product-management.component').then(m => m.ProductManagementComponent) 
+  },
+  { 
+    path: 'add-product', 
+    loadComponent: () => import('./add-product/add-product.component').then(m => m.AddProductComponet) 
+  },
+  { 
+    path: 'edit-product/:id', 
+    loadComponent: () => import('./edit-product/edit-product.component').then(m => m.EditProductComponent) 
+  },
 ];
 
 @NgModule({

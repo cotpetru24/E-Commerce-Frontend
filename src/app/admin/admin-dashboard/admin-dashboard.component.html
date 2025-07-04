@@ -1,0 +1,453 @@
+<div class="admin-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <p>Manage your e-commerce store from one central location</p>
+  </div>
+
+  <!-- Main Content -->
+  <mat-tab-group (selectedTabChange)="onTabChange($event)" class="dashboard-tabs">
+    
+    <!-- Dashboard Overview Tab -->
+    <mat-tab label="Dashboard">
+      <div class="dashboard-overview">
+        <!-- Statistics Cards -->
+        <div class="stats-grid" *ngIf="!isLoadingStats && dashboardStats">
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-icon orders">
+                <mat-icon>shopping_cart</mat-icon>
+              </div>
+              <div class="stat-content">
+                <h3>{{ dashboardStats.totalOrders }}</h3>
+                <p>Total Orders</p>
+                <span class="stat-change positive">+{{ dashboardStats.newOrders }} today</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-icon revenue">
+                <mat-icon>attach_money</mat-icon>
+              </div>
+              <div class="stat-content">
+                <h3>{{ formatCurrency(dashboardStats.totalRevenue) }}</h3>
+                <p>Total Revenue</p>
+                <span class="stat-change positive">+{{ formatCurrency(dashboardStats.todayRevenue) }} today</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-icon users">
+                <mat-icon>people</mat-icon>
+              </div>
+              <div class="stat-content">
+                <h3>{{ dashboardStats.totalUsers }}</h3>
+                <p>Total Users</p>
+                <span class="stat-change positive">+{{ dashboardStats.newUsers }} today</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-icon products">
+                <mat-icon>inventory</mat-icon>
+              </div>
+              <div class="stat-content">
+                <h3>{{ dashboardStats.totalProducts }}</h3>
+                <p>Total Products</p>
+                <span class="stat-change" [class.warning]="dashboardStats.lowStockProducts > 0">
+                  {{ dashboardStats.lowStockProducts }} low stock
+                </span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="isLoadingStats">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <p>Loading dashboard statistics...</p>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="recent-activity" *ngIf="dashboardStats">
+          <h2>Recent Activity</h2>
+          
+          <div class="activity-list">
+            <div class="activity-item" *ngFor="let activity of dashboardStats.recentActivity">
+              <div class="activity-icon">
+                <mat-icon>{{ activity.icon }}</mat-icon>
+              </div>
+              <div class="activity-content">
+                <p>{{ activity.message }}</p>
+                <span class="activity-time">{{ activity.time }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Product Management Tab -->
+    <mat-tab label="Products">
+      <div class="product-management">
+        <!-- Product Controls -->
+        <div class="controls-section">
+          <div class="search-filters">
+            <mat-form-field appearance="outline">
+              <mat-label>Search Products</mat-label>
+              <input matInput 
+                     [(ngModel)]="productSearchTerm" 
+                     (input)="onProductSearchChange()"
+                     placeholder="Search by name or brand...">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Category</mat-label>
+              <mat-select [(ngModel)]="selectedProductCategory" (selectionChange)="onProductFilterChange()">
+                <mat-option value="">All Categories</mat-option>
+                <mat-option value="running">Running</mat-option>
+                <mat-option value="casual">Casual</mat-option>
+                <mat-option value="formal">Formal</mat-option>
+                <mat-option value="sports">Sports</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Brand</mat-label>
+              <mat-select [(ngModel)]="selectedProductBrand" (selectionChange)="onProductFilterChange()">
+                <mat-option value="">All Brands</mat-option>
+                <mat-option value="Nike">Nike</mat-option>
+                <mat-option value="Adidas">Adidas</mat-option>
+                <mat-option value="Puma">Puma</mat-option>
+                <mat-option value="Reebok">Reebok</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <button mat-raised-button color="primary" routerLink="/admin/products/add">
+            <mat-icon>add</mat-icon>
+            Add Product
+          </button>
+        </div>
+
+        <!-- Products Table -->
+        <div class="table-container">
+          <table mat-table [dataSource]="filteredProducts" class="products-table">
+            
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let product">{{ product.id }}</td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let product">
+                <div class="product-info">
+                  <img [src]="product.image" [alt]="product.name" class="product-thumbnail">
+                  <span>{{ product.name }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Brand Column -->
+            <ng-container matColumnDef="brand">
+              <th mat-header-cell *matHeaderCellDef>Brand</th>
+              <td mat-cell *matCellDef="let product">{{ product.brand }}</td>
+            </ng-container>
+
+            <!-- Category Column -->
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Category</th>
+              <td mat-cell *matCellDef="let product">
+                <mat-chip>{{ product.category }}</mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Price Column -->
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>Price</th>
+              <td mat-cell *matCellDef="let product">{{ formatCurrency(product.price) }}</td>
+            </ng-container>
+
+            <!-- Stock Column -->
+            <ng-container matColumnDef="stock">
+              <th mat-header-cell *matHeaderCellDef>Stock</th>
+              <td mat-cell *matCellDef="let product">
+                <div class="stock-control">
+                  <span [class.low-stock]="product.stock < 10">{{ product.stock }}</span>
+                  <button mat-icon-button (click)="updateProductStock(product, product.stock + 1)" matTooltip="Increase stock">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="updateProductStock(product, getMaxValue(0, product.stock - 1))" matTooltip="Decrease stock">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let product">
+                <button mat-icon-button [matMenuTriggerFor]="productMenu" matTooltip="More actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #productMenu="matMenu">
+                  <button mat-menu-item (click)="editProduct(product)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Edit</span>
+                  </button>
+                  <button mat-menu-item (click)="deleteProduct(product)" class="danger">
+                    <mat-icon>delete</mat-icon>
+                    <span>Delete</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedProductColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedProductColumns;"></tr>
+          </table>
+
+          <!-- Loading State -->
+          <div class="loading-state" *ngIf="isLoadingProducts">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <p>Loading products...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="!isLoadingProducts && filteredProducts.length === 0">
+            <mat-icon>inventory_2</mat-icon>
+            <h3>No products found</h3>
+            <p>Try adjusting your search or filters</p>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- User Management Tab -->
+    <mat-tab label="Users">
+      <div class="user-management">
+        <!-- User Controls -->
+        <div class="controls-section">
+          <div class="search-filters">
+            <mat-form-field appearance="outline">
+              <mat-label>Search Users</mat-label>
+              <input matInput 
+                     [(ngModel)]="userSearchTerm" 
+                     (input)="onUserSearchChange()"
+                     placeholder="Search by email or name...">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="table-container">
+          <table mat-table [dataSource]="filteredUsers" class="users-table">
+            
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let user">{{ user.id }}</td>
+            </ng-container>
+
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+            </ng-container>
+
+            <!-- First Name Column -->
+            <ng-container matColumnDef="firstName">
+              <th mat-header-cell *matHeaderCellDef>First Name</th>
+              <td mat-cell *matCellDef="let user">{{ user.firstName }}</td>
+            </ng-container>
+
+            <!-- Last Name Column -->
+            <ng-container matColumnDef="lastName">
+              <th mat-header-cell *matHeaderCellDef>Last Name</th>
+              <td mat-cell *matCellDef="let user">{{ user.lastName }}</td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let user">
+                <mat-chip [color]="getUserStatusColor(user)" selected>
+                  {{ getUserStatusText(user) }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Created At Column -->
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef>Created</th>
+              <td mat-cell *matCellDef="let user">{{ formatDate(user.createdAt) }}</td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let user">
+                <button mat-icon-button [matMenuTriggerFor]="userMenu" matTooltip="More actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #userMenu="matMenu">
+                  <button mat-menu-item (click)="editUser(user)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Edit</span>
+                  </button>
+                  <button mat-menu-item (click)="toggleUserStatus(user)">
+                    <mat-icon>{{ user.isBlocked ? 'lock_open' : 'lock' }}</mat-icon>
+                    <span>{{ user.isBlocked ? 'Unblock' : 'Block' }}</span>
+                  </button>
+                  <button mat-menu-item (click)="deleteUser(user)" class="danger">
+                    <mat-icon>delete</mat-icon>
+                    <span>Delete</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedUserColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedUserColumns;"></tr>
+          </table>
+
+          <!-- Loading State -->
+          <div class="loading-state" *ngIf="isLoadingUsers">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <p>Loading users...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="!isLoadingUsers && filteredUsers.length === 0">
+            <mat-icon>people</mat-icon>
+            <h3>No users found</h3>
+            <p>Try adjusting your search</p>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Order Management Tab -->
+    <mat-tab label="Orders">
+      <div class="order-management">
+        <!-- Order Controls -->
+        <div class="controls-section">
+          <div class="search-filters">
+            <mat-form-field appearance="outline">
+              <mat-label>Order Status</mat-label>
+              <mat-select [(ngModel)]="selectedOrderStatus" (selectionChange)="onOrderFilterChange()">
+                <mat-option value="">All Statuses</mat-option>
+                <mat-option value="pending">Pending</mat-option>
+                <mat-option value="processing">Processing</mat-option>
+                <mat-option value="shipped">Shipped</mat-option>
+                <mat-option value="delivered">Delivered</mat-option>
+                <mat-option value="cancelled">Cancelled</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="table-container">
+          <table mat-table [dataSource]="filteredOrders" class="orders-table">
+            
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>Order ID</th>
+              <td mat-cell *matCellDef="let order">#{{ order.id }}</td>
+            </ng-container>
+
+            <!-- User Email Column -->
+            <ng-container matColumnDef="userEmail">
+              <th mat-header-cell *matHeaderCellDef>Customer</th>
+              <td mat-cell *matCellDef="let order">{{ order.userEmail }}</td>
+            </ng-container>
+
+            <!-- Total Column -->
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef>Total</th>
+              <td mat-cell *matCellDef="let order">{{ formatCurrency(order.total) }}</td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let order">
+                <mat-chip [color]="getStatusColor(order.status)" selected>
+                  {{ order.status | titlecase }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Created At Column -->
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef>Created</th>
+              <td mat-cell *matCellDef="let order">{{ formatDate(order.createdAt) }}</td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let order">
+                <button mat-icon-button [matMenuTriggerFor]="orderMenu" matTooltip="More actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #orderMenu="matMenu">
+                  <button mat-menu-item (click)="viewOrder(order)">
+                    <mat-icon>visibility</mat-icon>
+                    <span>View Details</span>
+                  </button>
+                  <button mat-menu-item (click)="updateOrderStatus(order, 'processing')" *ngIf="order.status === 'pending'">
+                    <mat-icon>play_arrow</mat-icon>
+                    <span>Start Processing</span>
+                  </button>
+                  <button mat-menu-item (click)="updateOrderStatus(order, 'shipped')" *ngIf="order.status === 'processing'">
+                    <mat-icon>local_shipping</mat-icon>
+                    <span>Mark Shipped</span>
+                  </button>
+                  <button mat-menu-item (click)="updateOrderStatus(order, 'delivered')" *ngIf="order.status === 'shipped'">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>Mark Delivered</span>
+                  </button>
+                  <button mat-menu-item (click)="cancelOrder(order)" *ngIf="order.status !== 'cancelled' && order.status !== 'delivered'" class="danger">
+                    <mat-icon>cancel</mat-icon>
+                    <span>Cancel Order</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedOrderColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedOrderColumns;"></tr>
+          </table>
+
+          <!-- Loading State -->
+          <div class="loading-state" *ngIf="isLoadingOrders">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <p>Loading orders...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="!isLoadingOrders && filteredOrders.length === 0">
+            <mat-icon>receipt</mat-icon>
+            <h3>No orders found</h3>
+            <p>Try adjusting your filters</p>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div> 

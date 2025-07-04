@@ -1,1 +1,141 @@
-<p>footer works!</p>
+<footer class="footer">
+  <div class="footer-content">
+    <div class="container">
+      <!-- Main Footer Sections -->
+      <div class="footer-sections">
+        <!-- Company Info -->
+        <div class="footer-section">
+          <div class="footer-brand">
+            <mat-icon class="brand-icon">sports_soccer</mat-icon>
+            <h3>ShoeStore</h3>
+          </div>
+          <p class="company-description">
+            Your premier destination for stylish and comfortable footwear. We offer the latest trends in shoes for men, women, and children with exceptional quality and service.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">
+              <mat-icon>facebook</mat-icon>
+            </a>
+            <a href="#" class="social-link" aria-label="Twitter">
+              <mat-icon>twitter</mat-icon>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <mat-icon>camera_alt</mat-icon>
+            </a>
+            <a href="#" class="social-link" aria-label="YouTube">
+              <mat-icon>play_circle</mat-icon>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a routerLink="/">Home</a></li>
+            <li><a routerLink="/products">All Products</a></li>
+            <li><a routerLink="/products/men">Men's Shoes</a></li>
+            <li><a routerLink="/products/women">Women's Shoes</a></li>
+            <li><a routerLink="/products/children">Children's Shoes</a></li>
+            <li><a routerLink="/cart/view">Shopping Cart</a></li>
+          </ul>
+        </div>
+
+        <!-- Customer Service -->
+        <div class="footer-section">
+          <h4>Customer Service</h4>
+          <ul class="footer-links">
+            <li><a href="#" (click)="openContactModal()">Contact Us</a></li>
+            <li><a href="#" (click)="openHelpModal()">Help & FAQ</a></li>
+            <li><a href="#" (click)="openShippingModal()">Shipping Info</a></li>
+            <li><a href="#" (click)="openReturnsModal()">Returns & Exchanges</a></li>
+            <li><a href="#" (click)="openSizeGuideModal()">Size Guide</a></li>
+            <li><a href="#" (click)="openTrackOrderModal()">Track Order</a></li>
+          </ul>
+        </div>
+
+        <!-- Company -->
+        <div class="footer-section">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="#" (click)="openAboutModal()">About Us</a></li>
+            <li><a href="#" (click)="openCareersModal()">Careers</a></li>
+            <li><a href="#" (click)="openPressModal()">Press</a></li>
+            <li><a href="#" (click)="openPartnersModal()">Partners</a></li>
+            <li><a href="#" (click)="openSustainabilityModal()">Sustainability</a></li>
+            <li><a href="#" (click)="openPrivacyModal()">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="footer-section newsletter-section">
+          <h4>Stay Updated</h4>
+          <p>Subscribe to our newsletter for the latest styles, exclusive offers, and fashion tips.</p>
+          <div class="newsletter-form">
+            <mat-form-field appearance="outline" class="newsletter-input">
+              <mat-label>Enter your email</mat-label>
+              <input matInput type="email" [(ngModel)]="newsletterEmail" placeholder="your@email.com">
+              <mat-icon matSuffix>email</mat-icon>
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="subscribeNewsletter()" [disabled]="!newsletterEmail">
+              Subscribe
+            </button>
+          </div>
+          <div class="newsletter-benefits">
+            <div class="benefit-item">
+              <mat-icon>local_offer</mat-icon>
+              <span>Exclusive Offers</span>
+            </div>
+            <div class="benefit-item">
+              <mat-icon>new_releases</mat-icon>
+              <span>New Arrivals</span>
+            </div>
+            <div class="benefit-item">
+              <mat-icon>style</mat-icon>
+              <span>Style Tips</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <div class="payment-methods">
+            <span class="payment-label">We Accept:</span>
+            <div class="payment-icons">
+              <mat-icon class="payment-icon">credit_card</mat-icon>
+              <mat-icon class="payment-icon">account_balance</mat-icon>
+              <mat-icon class="payment-icon">payment</mat-icon>
+              <mat-icon class="payment-icon">account_balance_wallet</mat-icon>
+            </div>
+          </div>
+          
+          <div class="footer-legal">
+            <a href="#" (click)="openTermsModal()">Terms of Service</a>
+            <span class="separator">|</span>
+            <a href="#" (click)="openPrivacyModal()">Privacy Policy</a>
+            <span class="separator">|</span>
+            <a href="#" (click)="openCookiesModal()">Cookie Policy</a>
+          </div>
+          
+          <div class="copyright">
+            <p>&copy; 2024 ShoeStore. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back to Top Button -->
+  <button 
+    mat-fab 
+    color="primary" 
+    class="back-to-top" 
+    (click)="scrollToTop()"
+    [class.visible]="showBackToTop"
+    aria-label="Back to top"
+  >
+    <mat-icon>keyboard_arrow_up</mat-icon>
+  </button>
+</footer>

@@ -7,7 +7,7 @@
       <a mat-list-item routerLink="/products/men" (click)="closeDrowerIfMobile()">Men</a>
       <a mat-list-item routerLink="/products/women" (click)="closeDrowerIfMobile()">Women</a>
       <a mat-list-item routerLink="/products/children" (click)="closeDrowerIfMobile()">Children</a>
-      <a mat-list-item routerLink="/cart/summary" (click)="closeDrowerIfMobile()">Cart</a>
+      <a mat-list-item routerLink="/cart/view" (click)="closeDrowerIfMobile()">Cart</a>
       <a mat-list-item routerLink="/auth/login" (click)="closeDrowerIfMobile()">Login</a>
       <a mat-list-item routerLink="/admin" (click)="closeDrowerIfMobile()">Admin</a>
     </mat-nav-list>
@@ -43,7 +43,7 @@
           </div>
         </div>
         
-        <a mat-button routerLink="/cart/summary" routerLinkActive="active">
+        <a mat-button routerLink="/cart/view" routerLinkActive="active">
           <mat-icon>shopping_cart</mat-icon>
           Cart
           <span class="cart-badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>

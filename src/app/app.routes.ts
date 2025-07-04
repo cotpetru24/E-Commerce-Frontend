@@ -32,6 +32,5 @@ export const routes: Routes = [
   },
 
   // Always put these at the end:
-  { path: '', redirectTo: 'products', pathMatch: 'full' },
-  { path: '**', redirectTo: 'products' },
+  { path: '**', redirectTo: '' },
 ];

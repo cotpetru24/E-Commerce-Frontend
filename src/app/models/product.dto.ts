@@ -1,12 +1,18 @@
 interface ProductDto {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
+  originalPrice?: number;
+  image: string;
   stock: number;
-  category: 'men' | 'women' | 'children';
+  category: 'men' | 'women' | 'children' | 'unisex';
   brand: string;
+  rating?: number;
+  reviewCount?: number;
+  sizes?: string[];
+  isNew?: boolean;
+  discount?: number;
 }
 
 export type { ProductDto };

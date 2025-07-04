@@ -1,1 +1,194 @@
-<p>product-details works!</p>
+<div class="product-details-container">
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a routerLink="/">Home</a>
+      <mat-icon>chevron_right</mat-icon>
+      <a routerLink="/products">Products</a>
+      <mat-icon>chevron_right</mat-icon>
+      <a routerLink="/products" [queryParams]="{category: product?.category}">{{ product?.category | titlecase }}</a>
+      <mat-icon>chevron_right</mat-icon>
+      <span class="current">{{ product?.name }}</span>
+    </nav>
+
+    <!-- Product Details -->
+    <div class="product-details" *ngIf="product">
+      <!-- Product Images -->
+      <div class="product-images">
+        <div class="main-image">
+          <img [src]="selectedImage || product.image" [alt]="product.name" />
+          <div class="image-overlay">
+            <button mat-icon-button color="primary" class="zoom-btn" (click)="openImageModal()">
+              <mat-icon>zoom_in</mat-icon>
+            </button>
+          </div>
+        </div>
+        
+        <div class="image-thumbnails" *ngIf="productImages.length > 1">
+          <div 
+            class="thumbnail" 
+            *ngFor="let image of productImages" 
+            [class.active]="selectedImage === image"
+            (click)="selectImage(image)"
+          >
+            <img [src]="image" [alt]="product.name" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        <div class="product-header">
+          <div class="product-badges">
+            <span class="category-badge" [class]="product.category">{{ product.category }}</span>
+            <span class="brand-badge">{{ product.brand }}</span>
+          </div>
+          <h1 class="product-name">{{ product.name }}</h1>
+          <div class="product-rating">
+            <div class="stars">
+              <mat-icon *ngFor="let star of [1,2,3,4,5]" [class.filled]="star <= rating">
+                {{ star <= rating ? 'star' : 'star_border' }}
+              </mat-icon>
+            </div>
+            <span class="rating-text">{{ rating }}/5 ({{ reviewCount }} reviews)</span>
+          </div>
+        </div>
+
+        <div class="product-price-section">
+          <div class="price-info">
+            <span class="current-price">£{{ product.price }}</span>
+            <span class="original-price" *ngIf="product.originalPrice">£{{ product.originalPrice }}</span>
+            <span class="discount-badge" *ngIf="product.originalPrice">
+              -{{ getDiscountPercentage() }}%
+            </span>
+          </div>
+          <div class="stock-info">
+            <span class="stock-status" [class.in-stock]="product.stock > 0" [class.out-of-stock]="product.stock === 0">
+              <mat-icon>{{ product.stock > 0 ? 'check_circle' : 'cancel' }}</mat-icon>
+              {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
+            </span>
+            <span class="stock-count" *ngIf="product.stock > 0">
+              {{ product.stock }} items available
+            </span>
+          </div>
+        </div>
+
+        <div class="product-description">
+          <h3>Description</h3>
+          <p>{{ product.description }}</p>
+        </div>
+
+        <!-- Product Features -->
+        <div class="product-features" *ngIf="productFeatures.length > 0">
+          <h3>Features</h3>
+          <ul class="features-list">
+            <li *ngFor="let feature of productFeatures">
+              <mat-icon>check</mat-icon>
+              {{ feature }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Size Selection -->
+        <div class="size-selection" *ngIf="availableSizes.length > 0">
+          <h3>Select Size</h3>
+          <div class="size-options">
+            <button 
+              mat-stroked-button 
+              *ngFor="let size of availableSizes" 
+              [class.selected]="selectedSize === size"
+              [class.disabled]="!isSizeAvailable(size)"
+              (click)="selectSize(size)"
+            >
+              {{ size }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Quantity Selection -->
+        <div class="quantity-selection">
+          <h3>Quantity</h3>
+          <div class="quantity-controls">
+            <button mat-icon-button (click)="decreaseQuantity()" [disabled]="quantity <= 1">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="quantity-display">{{ quantity }}</span>
+            <button mat-icon-button (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            class="add-to-cart-btn"
+            [disabled]="product.stock === 0 || !selectedSize"
+            (click)="addToCart()"
+          >
+            <mat-icon>add_shopping_cart</mat-icon>
+            Add to Cart
+          </button>
+          
+          <button 
+            mat-stroked-button 
+            class="buy-now-btn"
+            [disabled]="product.stock === 0 || !selectedSize"
+            (click)="buyNow()"
+          >
+            <mat-icon>flash_on</mat-icon>
+            Buy Now
+          </button>
+          
+          <button mat-icon-button class="wishlist-btn" (click)="toggleWishlist()">
+            <mat-icon [class.filled]="isInWishlist">{{ isInWishlist ? 'favorite' : 'favorite_border' }}</mat-icon>
+          </button>
+        </div>
+
+        <!-- Product Meta -->
+        <div class="product-meta">
+          <div class="meta-item">
+            <mat-icon>local_shipping</mat-icon>
+            <span>Free shipping on orders over £50</span>
+          </div>
+          <div class="meta-item">
+            <mat-icon>swap_horiz</mat-icon>
+            <span>30-day return policy</span>
+          </div>
+          <div class="meta-item">
+            <mat-icon>security</mat-icon>
+            <span>Secure payment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="!product">
+      <mat-spinner></mat-spinner>
+      <p>Loading product details...</p>
+    </div>
+
+    <!-- Related Products -->
+    <section class="related-products" *ngIf="relatedProducts.length > 0">
+      <h2>Related Products</h2>
+      <div class="related-products-grid">
+        <mat-card class="related-product-card" *ngFor="let relatedProduct of relatedProducts">
+          <img mat-card-image [src]="relatedProduct.image" [alt]="relatedProduct.name" />
+          <mat-card-content>
+            <h3>{{ relatedProduct.name }}</h3>
+            <p class="brand">{{ relatedProduct.brand }}</p>
+            <p class="price">£{{ relatedProduct.price }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button color="primary" [routerLink]="['/products', relatedProduct.id]">
+              View Details
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </section>
+  </div>
+</div>
