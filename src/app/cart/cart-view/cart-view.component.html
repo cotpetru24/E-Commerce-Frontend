@@ -17,7 +17,7 @@
             <div class="item-info">
               <h3 class="item-name">{{ item.product.name }}</h3>
               <p class="item-brand">{{ item.product.brand }}</p>
-              <p class="item-category">{{ item.product.category | titlecase }}</p>
+              <p class="item-category">{{ item.product.gender | titlecase }}</p>
               <p class="item-size" *ngIf="item.size">Size: {{ item.size }}</p>
             </div>
             

@@ -8,9 +8,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
+import { Gender } from '../../models/gender.enum';
 
 @Component({
-  selector: 'app-product-details',
+  selector: 'product-details',
   standalone: true,
   imports: [
     CommonModule,
@@ -19,10 +20,10 @@ import { CartService } from '../../services/cart.service';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   templateUrl: './product-details.component.html',
-  styleUrl: './product-details.component.scss'
+  styleUrl: './product-details.component.scss',
 })
 export class ProductDetailsComponent implements OnInit {
   product: ProductDto | null = null;
@@ -45,7 +46,7 @@ export class ProductDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       const productId = params['id'];
       this.loadProduct(productId);
     });
@@ -58,67 +59,74 @@ export class ProductDetailsComponent implements OnInit {
       {
         id: 1,
         name: "Men's Retro Sneaker",
-        description: "This comfortable men's sneaker features a retro design with a modern touch. Perfect for casual wear, these shoes combine style and comfort with a durable construction that will last through daily use. The breathable upper material keeps your feet cool while the cushioned sole provides excellent support for all-day comfort.",
+        description:
+          "This comfortable men's sneaker features a retro design with a modern touch. Perfect for casual wear, these shoes combine style and comfort with a durable construction that will last through daily use. The breathable upper material keeps your feet cool while the cushioned sole provides excellent support for all-day comfort.",
         price: 64.99,
         image: 'products/retro-sneaker.png',
         stock: 10,
-        category: 'men',
-        brand: 'Nike'
+        gender: Gender.Men,
+        brand: 'Nike',
       },
       {
         id: 2,
         name: "Men's Running Shoe",
-        description: 'Lightweight and cushioned. The perfect running shoe for your daily tune.',
+        description:
+          'Lightweight and cushioned. The perfect running shoe for your daily tune.',
         price: 89.39,
         image: 'products/running-shoe.png',
         stock: 7,
-        category: 'men',
-        brand: 'Adidas'
+        gender: Gender.Men,
+        brand: 'Adidas',
       },
       {
         id: 3,
         name: "Men's Casual Sneaker",
-        description: "A versatile men's casual sneaker with a minimal and stylish design.",
+        description:
+          "A versatile men's casual sneaker with a minimal and stylish design.",
         price: 74.39,
         image: 'products/casual-sneaker.png',
         stock: 5,
-        category: 'men',
-        brand: 'Puma'
+        gender: Gender.Men,
+        brand: 'Puma',
       },
       {
         id: 4,
         name: "Women's Elegant Heel",
-        description: "Elegant and comfortable heel perfect for formal occasions.",
+        description:
+          'Elegant and comfortable heel perfect for formal occasions.',
         price: 99.99,
         image: 'products/retro-sneaker2.png',
         stock: 8,
-        category: 'women',
-        brand: 'Steve Madden'
+        gender: Gender.Women,
+        brand: 'Steve Madden',
       },
       {
         id: 5,
         name: "Children's Play Shoe",
-        description: "Durable and comfortable shoes perfect for active children.",
+        description:
+          'Durable and comfortable shoes perfect for active children.',
         price: 45.99,
         image: 'products/casual-sneaker.png',
         stock: 12,
-        category: 'children',
-        brand: 'Skechers'
+        gender: Gender.Children,
+        brand: 'Skechers',
       },
       {
         id: 6,
         name: "Women's Athletic Shoe",
-        description: "High-performance athletic shoes for women who love to stay active.",
+        description:
+          'High-performance athletic shoes for women who love to stay active.',
         price: 79.99,
         image: 'products/running-shoe.png',
         stock: 6,
-        category: 'women',
-        brand: 'Under Armour'
-      }
+        gender: Gender.Women,
+        brand: 'Under Armour',
+      },
     ];
 
-    this.product = allProducts.find(p => p.id === parseInt(productId)) || null;
-    
+    this.product =
+      allProducts.find((p) => p.id === parseInt(productId)) || null;
+
     if (this.product) {
       this.initializeProductData();
       this.loadRelatedProducts();
@@ -133,7 +141,7 @@ export class ProductDetailsComponent implements OnInit {
       this.product.image,
       'products/retro-sneaker2.png',
       'products/running-shoe.png',
-      'products/casual-sneaker.png'
+      'products/casual-sneaker.png',
     ];
     this.selectedImage = this.productImages[0];
 
@@ -143,7 +151,7 @@ export class ProductDetailsComponent implements OnInit {
       'Cushioned midsole for comfort',
       'Durable rubber outsole',
       'Lightweight construction',
-      'Available in multiple colors'
+      'Available in multiple colors',
     ];
 
     // Set max quantity based on stock
@@ -162,19 +170,19 @@ export class ProductDetailsComponent implements OnInit {
         price: 89.39,
         image: 'products/running-shoe.png',
         stock: 7,
-        category: 'men',
-        brand: 'Adidas'
+        gender: Gender.Men,
+        brand: 'Adidas',
       },
       {
         id: 3,
         name: "Men's Casual Sneaker",
-        description: "A versatile casual sneaker.",
+        description: 'A versatile casual sneaker.',
         price: 74.39,
         image: 'products/casual-sneaker.png',
         stock: 5,
-        category: 'men',
-        brand: 'Puma'
-      }
+        gender: Gender.Men,
+        brand: 'Puma',
+      },
     ];
   }
 
@@ -210,24 +218,31 @@ export class ProductDetailsComponent implements OnInit {
 
   addToCart() {
     if (!this.product || !this.selectedSize) {
-      this.snackBar.open('Please select a size before adding to cart', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom'
-      });
+      this.snackBar.open(
+        'Please select a size before adding to cart',
+        'Close',
+        {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+        }
+      );
       return;
     }
-    
+
     this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
-    
-    this.snackBar.open(`${this.product.name} added to cart!`, 'View Cart', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
-    }).onAction().subscribe(() => {
-      // Navigate to cart
-      console.log('Navigate to cart');
-    });
+
+    this.snackBar
+      .open(`${this.product.name} added to cart!`, 'View Cart', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      })
+      .onAction()
+      .subscribe(() => {
+        // Navigate to cart
+        console.log('Navigate to cart');
+      });
   }
 
   buyNow() {
@@ -235,37 +250,43 @@ export class ProductDetailsComponent implements OnInit {
       this.snackBar.open('Please select a size before purchasing', 'Close', {
         duration: 3000,
         horizontalPosition: 'center',
-        verticalPosition: 'bottom'
+        verticalPosition: 'bottom',
       });
       return;
     }
-    
+
     // Add to cart and proceed to checkout
     this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
-    
+
     this.snackBar.open('Proceeding to checkout...', 'Close', {
       duration: 2000,
       horizontalPosition: 'center',
-      verticalPosition: 'bottom'
+      verticalPosition: 'bottom',
     });
-    
+
     // Navigate to checkout
     console.log('Navigate to checkout');
   }
 
   toggleWishlist() {
     this.isInWishlist = !this.isInWishlist;
-    const message = this.isInWishlist ? 'Added to wishlist' : 'Removed from wishlist';
-    
+    const message = this.isInWishlist
+      ? 'Added to wishlist'
+      : 'Removed from wishlist';
+
     this.snackBar.open(message, 'Close', {
       duration: 2000,
       horizontalPosition: 'center',
-      verticalPosition: 'bottom'
+      verticalPosition: 'bottom',
     });
   }
 
   getDiscountPercentage(): number {
     if (!this.product || !this.product.originalPrice) return 0;
-    return Math.round(((this.product.originalPrice - this.product.price) / this.product.originalPrice) * 100);
+    return Math.round(
+      ((this.product.originalPrice - this.product.price) /
+        this.product.originalPrice) *
+        100
+    );
   }
 }

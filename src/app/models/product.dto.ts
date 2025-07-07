@@ -1,3 +1,5 @@
+import { Gender } from "./gender.enum";
+
 interface ProductDto {
   id: number;
   name: string;
@@ -6,7 +8,7 @@ interface ProductDto {
   originalPrice?: number;
   image: string;
   stock: number;
-  category: 'men' | 'women' | 'children' | 'unisex';
+  gender: Gender
   brand: string;
   rating?: number;
   reviewCount?: number;

@@ -28,12 +28,13 @@
 
         <!-- Category Filter -->
         <div class="filter-section">
-          <h4>Category</h4>
-          <mat-radio-group [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+          <h4>Gender</h4>
+          <mat-radio-group [(ngModel)]="selectedGender" (change)="onFilterChange()">
             <mat-radio-button value="">All Categories</mat-radio-button>
-            <mat-radio-button value="men">Men</mat-radio-button>
-            <mat-radio-button value="women">Women</mat-radio-button>
-            <mat-radio-button value="children">Children</mat-radio-button>
+            <mat-radio-button [value]="Gender.Men">{{Gender.Men | titlecase}}</mat-radio-button>
+            <mat-radio-button [value]="Gender.Women">{{Gender.Women | titlecase}}</mat-radio-button>
+            <mat-radio-button [value]="Gender.Children">{{Gender.Children | titlecase}}</mat-radio-button>
+            <mat-radio-button [value]="Gender.Unisex">{{Gender.Unisex | titlecase}}</mat-radio-button>
           </mat-radio-group>
         </div>
 
@@ -88,7 +89,7 @@
         <div class="results-header">
           <div class="results-info">
             <span>{{ filteredProducts.length }} products found</span>
-            <span *ngIf="selectedCategory || selectedBrand || searchTerm" class="active-filters">
+            <span *ngIf="selectedGender || selectedBrand || searchTerm" class="active-filters">
               (filtered)
             </span>
           </div>
@@ -116,7 +117,7 @@
                 </button>
               </div>
               <div class="product-badges">
-                <span class="category-badge" [class]="product.category">{{ product.category }}</span>
+                <span class="category-badge" [class]="product.gender">{{ product.gender }}</span>
                 <span class="stock-badge" [class.in-stock]="product.stock > 0" [class.out-of-stock]="product.stock === 0">
                   {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
                 </span>

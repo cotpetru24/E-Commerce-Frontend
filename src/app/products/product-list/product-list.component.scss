@@ -230,7 +230,7 @@ mat-radio-button {
   gap: 0.5rem;
 }
 
-.category-badge {
+.gender-badge {
   background: #1976d2;
   color: white;
   padding: 4px 8px;
@@ -240,15 +240,15 @@ mat-radio-button {
   text-transform: capitalize;
 }
 
-.category-badge.men {
+.gender-badge.men {
   background: #2196f3;
 }
 
-.category-badge.women {
+.gender-badge.women {
   background: #e91e63;
 }
 
-.category-badge.children {
+.gender-badge.children {
   background: #ff9800;
 }
 

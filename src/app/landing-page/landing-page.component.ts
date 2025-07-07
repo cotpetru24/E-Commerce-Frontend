@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductDto } from '../models/product.dto';
 import { CartService } from '../services/cart.service';
+import { Gender } from '../models/gender.enum';
 
 // ============================================================================
 // HTTP REQUEST EXAMPLES - ANGULAR HTTP CLIENT
@@ -466,7 +467,7 @@ export class LandingPageComponent implements OnInit {
       id: 1,
       name: 'Running Pro Elite',
       brand: 'Nike',
-      category: 'men',
+      gender: Gender.Men,
       price: 129.99,
       originalPrice: 159.99,
       discount: 19,
@@ -482,7 +483,7 @@ export class LandingPageComponent implements OnInit {
       id: 2,
       name: 'Casual Comfort Plus',
       brand: 'Adidas',
-      category: 'women',
+      gender: Gender.Women,
       price: 89.99,
       image: 'assets/products/casual-sneaker.png',
       description: 'Comfortable casual sneakers perfect for everyday wear',
@@ -496,7 +497,7 @@ export class LandingPageComponent implements OnInit {
       id: 3,
       name: 'Retro Classic',
       brand: 'Converse',
-      category: 'unisex',
+      gender: Gender.Unisex,
       price: 69.99,
       originalPrice: 79.99,
       discount: 13,
@@ -512,7 +513,7 @@ export class LandingPageComponent implements OnInit {
       id: 4,
       name: 'Performance Max',
       brand: 'Under Armour',
-      category: 'men',
+      gender: Gender.Men,
       price: 149.99,
       image: 'assets/products/retro-sneaker2.png',
       description: 'Maximum performance athletic shoes for serious athletes',
@@ -571,8 +572,13 @@ export class LandingPageComponent implements OnInit {
     }
   }
 
+
+
+
+  // ============================================================================
+  // Once the Product details section is implemented, redirect to the product details page
+  // ============================================================================
   viewProduct(product: ProductDto) {
-    // In a real app, this would navigate to product details
     this.snackBar.open(`Viewing ${product.name}`, 'Close', { duration: 2000 });
   }
 

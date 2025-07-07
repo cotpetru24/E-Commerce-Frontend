@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import { CartService } from '../../services/cart.service';
 
 @Component({
-  selector: 'navbar',
+  selector: 'app-navbar',
   standalone: true,
   imports: [
     CommonModule,

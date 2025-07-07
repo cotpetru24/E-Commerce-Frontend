@@ -12,6 +12,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
+import { Gender } from '../../models/gender.enum';
 
 @Component({
   selector: 'app-product-list',
@@ -27,101 +28,107 @@ import { CartService } from '../../services/cart.service';
     MatInputModule,
     MatSelectModule,
     MatRadioModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   templateUrl: './product-list.component.html',
-  styleUrl: './product-list.component.scss'
+  styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent implements OnInit {
+  Gender = Gender;
+
   allProducts: ProductDto[] = [
     {
       id: 1,
       name: "Men's Retro Sneaker",
-      description: "This comfortable men's sneaker features a retro design with a modern touch.",
+      description:
+        "This comfortable men's sneaker features a retro design with a modern touch.",
       price: 64.99,
       image: 'products/retro-sneaker.png',
       stock: 10,
-      category: 'men',
-      brand: 'Nike'
+      gender: Gender.Men,
+      brand: 'Nike',
     },
     {
       id: 2,
       name: "Men's Running Shoe",
-      description: 'Lightweight and cushioned. The perfect running shoe for your daily tune.',
+      description:
+        'Lightweight and cushioned. The perfect running shoe for your daily tune.',
       price: 89.39,
       image: 'products/running-shoe.png',
       stock: 7,
-      category: 'men',
-      brand: 'Adidas'
+      gender: Gender.Men,
+      brand: 'Adidas',
     },
     {
       id: 3,
       name: "Men's Casual Sneaker",
-      description: "A versatile men's casual sneaker with a minimal and stylish design.",
+      description:
+        "A versatile men's casual sneaker with a minimal and stylish design.",
       price: 74.39,
       image: 'products/casual-sneaker.png',
       stock: 5,
-      category: 'men',
-      brand: 'Puma'
+      gender: Gender.Men,
+      brand: 'Puma',
     },
     {
       id: 4,
       name: "Women's Elegant Heel",
-      description: "Elegant and comfortable heel perfect for formal occasions.",
+      description: 'Elegant and comfortable heel perfect for formal occasions.',
       price: 99.99,
       image: 'products/retro-sneaker2.png',
       stock: 8,
-      category: 'women',
-      brand: 'Steve Madden'
+      gender: Gender.Women,
+      brand: 'Steve Madden',
     },
     {
       id: 5,
       name: "Children's Play Shoe",
-      description: "Durable and comfortable shoes perfect for active children.",
+      description: 'Durable and comfortable shoes perfect for active children.',
       price: 45.99,
       image: 'products/casual-sneaker.png',
       stock: 12,
-      category: 'children',
-      brand: 'Skechers'
+      gender: Gender.Children,
+      brand: 'Skechers',
     },
     {
       id: 6,
       name: "Women's Athletic Shoe",
-      description: "High-performance athletic shoes for women who love to stay active.",
+      description:
+        'High-performance athletic shoes for women who love to stay active.',
       price: 79.99,
       image: 'products/running-shoe.png',
       stock: 6,
-      category: 'women',
-      brand: 'Under Armour'
+      gender: Gender.Women,
+      brand: 'Under Armour',
     },
     {
       id: 7,
       name: "Women's Casual Sneaker",
-      description: "Comfortable and stylish casual sneakers for everyday wear.",
+      description: 'Comfortable and stylish casual sneakers for everyday wear.',
       price: 69.99,
       image: 'products/casual-sneaker.png',
       stock: 15,
-      category: 'women',
-      brand: 'Converse'
+      gender: Gender.Women,
+      brand: 'Converse',
     },
     {
       id: 8,
       name: "Children's School Shoe",
-      description: "Durable school shoes that can handle active children.",
+      description: 'Durable school shoes that can handle active children.',
       price: 39.99,
       image: 'products/retro-sneaker.png',
       stock: 20,
-      category: 'children',
-      brand: 'Clarks'
-    }
+      gender: Gender.Children,
+      brand: 'Clarks',
+    },
   ];
 
   filteredProducts: ProductDto[] = [];
   availableBrands: string[] = [];
-  
+
   // Filter properties
   searchTerm: string = '';
-  selectedCategory: string = '';
+  selectedGender: Gender | '' = '';
   selectedBrand: string = '';
   minPrice: number | null = null;
   maxPrice: number | null = null;
@@ -135,11 +142,12 @@ export class ProductListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Get category from route params
-    this.route.params.subscribe(params => {
-      const category = params['category'];
-      if (category) {
-        this.selectedCategory = category;
+    //fix the route to use gender isntead of category
+    // Get gender from route params
+    this.route.params.subscribe((params) => {
+      const gender = params['gender'];
+      if (gender) {
+        this.selectedGender = gender;
       }
     });
 
@@ -153,20 +161,23 @@ export class ProductListComponent implements OnInit {
   }
 
   extractBrands() {
-    const brands = new Set(this.allProducts.map(product => product.brand));
+    const brands = new Set(this.allProducts.map((product) => product.brand));
     this.availableBrands = Array.from(brands).sort();
   }
 
   getPageTitle(): string {
-    if (this.selectedCategory) {
-      return `${this.selectedCategory.charAt(0).toUpperCase() + this.selectedCategory.slice(1)}'s Shoes`;
+    if (this.selectedGender) {
+      return `${
+        this.selectedGender.charAt(0).toUpperCase() +
+        this.selectedGender.slice(1)
+      }'s Shoes`;
     }
     return 'All Products';
   }
 
   getPageSubtitle(): string {
-    if (this.selectedCategory) {
-      return `Discover our collection of ${this.selectedCategory}'s footwear`;
+    if (this.selectedGender) {
+      return `Discover our collection of ${this.selectedGender}'s footwear`;
     }
     return 'Browse our complete collection of stylish and comfortable shoes';
   }
@@ -189,7 +200,7 @@ export class ProductListComponent implements OnInit {
 
   clearFilters() {
     this.searchTerm = '';
-    this.selectedCategory = '';
+    this.selectedGender = '';
     this.selectedBrand = '';
     this.minPrice = null;
     this.maxPrice = null;
@@ -203,29 +214,34 @@ export class ProductListComponent implements OnInit {
     // Search filter
     if (this.searchTerm) {
       const search = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(search) ||
-        product.brand.toLowerCase().includes(search) ||
-        product.description.toLowerCase().includes(search)
+      filtered = filtered.filter(
+        (product) =>
+          product.name.toLowerCase().includes(search) ||
+          product.brand.toLowerCase().includes(search) ||
+          product.description.toLowerCase().includes(search)
       );
     }
 
-    // Category filter
-    if (this.selectedCategory) {
-      filtered = filtered.filter(product => product.category === this.selectedCategory);
+    // Gender filter
+    if (this.selectedGender) {
+      filtered = filtered.filter(
+        (product) => product.gender === this.selectedGender
+      );
     }
 
     // Brand filter
     if (this.selectedBrand) {
-      filtered = filtered.filter(product => product.brand === this.selectedBrand);
+      filtered = filtered.filter(
+        (product) => product.brand === this.selectedBrand
+      );
     }
 
     // Price range filter
     if (this.minPrice !== null) {
-      filtered = filtered.filter(product => product.price >= this.minPrice!);
+      filtered = filtered.filter((product) => product.price >= this.minPrice!);
     }
     if (this.maxPrice !== null) {
-      filtered = filtered.filter(product => product.price <= this.maxPrice!);
+      filtered = filtered.filter((product) => product.price <= this.maxPrice!);
     }
 
     // Sort
@@ -257,16 +273,19 @@ export class ProductListComponent implements OnInit {
   }
 
   addToCart(product: ProductDto) {
-    // For product list, we'll add with default size and quantity
+    // For product list, add with default size and quantity
     this.cartService.addToCart(product, 1);
-    
-    this.snackBar.open(`${product.name} added to cart!`, 'View Cart', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
-    }).onAction().subscribe(() => {
-      // Navigate to cart
-      console.log('Navigate to cart');
-    });
+
+    this.snackBar
+      .open(`${product.name} added to cart!`, 'View Cart', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      })
+      .onAction()
+      .subscribe(() => {
+        // Navigate to cart
+        console.log('Navigate to cart');
+      });
   }
 }

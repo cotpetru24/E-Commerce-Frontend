@@ -31,6 +31,5 @@ export const routes: Routes = [
       import('./admin/admin.module').then((m) => m.AdminModule),
   },
 
-  // Always put these at the end:
   { path: '**', redirectTo: '' },
 ];
