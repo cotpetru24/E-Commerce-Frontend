@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './checkout-review.component.html',
   styleUrl: './checkout-review.component.scss'
 })
-export class CheckoutReview {
+export class CheckoutReviewComponent {
 
 }

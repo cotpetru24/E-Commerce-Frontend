@@ -6,7 +6,7 @@
       <mat-icon>chevron_right</mat-icon>
       <a routerLink="/products">Products</a>
       <mat-icon>chevron_right</mat-icon>
-      <a routerLink="/products" [queryParams]="{gender: product?.gender}">{{ product?.gender | titlecase }}</a>
+      <a routerLink="/products" [queryParams]="{gender: product?.targetAudience}">{{ product?.targetAudience | titlecase }}</a>
       <mat-icon>chevron_right</mat-icon>
       <span class="current">{{ product?.name }}</span>
     </nav>
@@ -40,7 +40,7 @@
       <div class="product-info">
         <div class="product-header">
           <div class="product-badges">
-            <span class="category-badge" [class]="product.gender">{{ product.gender }}</span>
+            <span class="category-badge" [class]="product.targetAudience">{{ product.targetAudience }}</span>
             <span class="brand-badge">{{ product.brand }}</span>
           </div>
           <h1 class="product-name">{{ product.name }}</h1>

@@ -12,7 +12,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
-import { Gender } from '../../models/gender.enum';
+import { TargetAudience } from '../../models/gender.enum';
 
 @Component({
   selector: 'app-product-list',
@@ -34,7 +34,7 @@ import { Gender } from '../../models/gender.enum';
   styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent implements OnInit {
-  Gender = Gender;
+  Gender = TargetAudience;
 
   allProducts: ProductDto[] = [
     {
@@ -45,7 +45,7 @@ export class ProductListComponent implements OnInit {
       price: 64.99,
       image: 'products/retro-sneaker.png',
       stock: 10,
-      gender: Gender.Men,
+      targetAudience: TargetAudience.Men,
       brand: 'Nike',
     },
     {
@@ -56,7 +56,7 @@ export class ProductListComponent implements OnInit {
       price: 89.39,
       image: 'products/running-shoe.png',
       stock: 7,
-      gender: Gender.Men,
+      targetAudience: TargetAudience.Men,
       brand: 'Adidas',
     },
     {
@@ -67,7 +67,7 @@ export class ProductListComponent implements OnInit {
       price: 74.39,
       image: 'products/casual-sneaker.png',
       stock: 5,
-      gender: Gender.Men,
+      targetAudience: TargetAudience.Men,
       brand: 'Puma',
     },
     {
@@ -77,7 +77,7 @@ export class ProductListComponent implements OnInit {
       price: 99.99,
       image: 'products/retro-sneaker2.png',
       stock: 8,
-      gender: Gender.Women,
+      targetAudience: TargetAudience.Women,
       brand: 'Steve Madden',
     },
     {
@@ -87,7 +87,7 @@ export class ProductListComponent implements OnInit {
       price: 45.99,
       image: 'products/casual-sneaker.png',
       stock: 12,
-      gender: Gender.Children,
+      targetAudience: TargetAudience.Children,
       brand: 'Skechers',
     },
     {
@@ -98,7 +98,7 @@ export class ProductListComponent implements OnInit {
       price: 79.99,
       image: 'products/running-shoe.png',
       stock: 6,
-      gender: Gender.Women,
+      targetAudience: TargetAudience.Women,
       brand: 'Under Armour',
     },
     {
@@ -108,7 +108,7 @@ export class ProductListComponent implements OnInit {
       price: 69.99,
       image: 'products/casual-sneaker.png',
       stock: 15,
-      gender: Gender.Women,
+      targetAudience: TargetAudience.Women,
       brand: 'Converse',
     },
     {
@@ -118,7 +118,7 @@ export class ProductListComponent implements OnInit {
       price: 39.99,
       image: 'products/retro-sneaker.png',
       stock: 20,
-      gender: Gender.Children,
+      targetAudience: TargetAudience.Children,
       brand: 'Clarks',
     },
   ];
@@ -128,7 +128,7 @@ export class ProductListComponent implements OnInit {
 
   // Filter properties
   searchTerm: string = '';
-  selectedGender: Gender | '' = '';
+  selectedGender: TargetAudience | '' = '';
   selectedBrand: string = '';
   minPrice: number | null = null;
   maxPrice: number | null = null;
@@ -225,7 +225,7 @@ export class ProductListComponent implements OnInit {
     // Gender filter
     if (this.selectedGender) {
       filtered = filtered.filter(
-        (product) => product.gender === this.selectedGender
+        (product) => product.targetAudience === this.selectedGender
       );
     }
 

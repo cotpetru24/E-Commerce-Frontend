@@ -184,7 +184,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         product.brand.toLowerCase().includes(this.productSearchTerm.toLowerCase());
       
       const matchesCategory = !this.selectedProductCategory || 
-        product.gender === this.selectedProductCategory;
+        product.targetAudience === this.selectedProductCategory;
       
       const matchesBrand = !this.selectedProductBrand || 
         product.brand === this.selectedProductBrand;

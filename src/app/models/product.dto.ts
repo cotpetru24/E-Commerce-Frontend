@@ -1,4 +1,4 @@
-import { Gender } from "./gender.enum";
+import { TargetAudience } from "./gender.enum";
 
 interface ProductDto {
   id: number;
@@ -8,7 +8,7 @@ interface ProductDto {
   originalPrice?: number;
   image: string;
   stock: number;
-  gender: Gender
+  targetAudience: TargetAudience
   brand: string;
   rating?: number;
   reviewCount?: number;

@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductDto } from '../models/product.dto';
 import { CartService } from '../services/cart.service';
-import { Gender } from '../models/gender.enum';
+import { TargetAudience } from '../models/gender.enum';
 
 // ============================================================================
 // HTTP REQUEST EXAMPLES - ANGULAR HTTP CLIENT
@@ -467,7 +467,7 @@ export class LandingPageComponent implements OnInit {
       id: 1,
       name: 'Running Pro Elite',
       brand: 'Nike',
-      gender: Gender.Men,
+      targetAudience: TargetAudience.Men,
       price: 129.99,
       originalPrice: 159.99,
       discount: 19,
@@ -483,7 +483,7 @@ export class LandingPageComponent implements OnInit {
       id: 2,
       name: 'Casual Comfort Plus',
       brand: 'Adidas',
-      gender: Gender.Women,
+      targetAudience: TargetAudience.Women,
       price: 89.99,
       image: 'assets/products/casual-sneaker.png',
       description: 'Comfortable casual sneakers perfect for everyday wear',
@@ -497,7 +497,7 @@ export class LandingPageComponent implements OnInit {
       id: 3,
       name: 'Retro Classic',
       brand: 'Converse',
-      gender: Gender.Unisex,
+      targetAudience: TargetAudience.Unisex,
       price: 69.99,
       originalPrice: 79.99,
       discount: 13,
@@ -513,7 +513,7 @@ export class LandingPageComponent implements OnInit {
       id: 4,
       name: 'Performance Max',
       brand: 'Under Armour',
-      gender: Gender.Men,
+      targetAudience: TargetAudience.Men,
       price: 149.99,
       image: 'assets/products/retro-sneaker2.png',
       description: 'Maximum performance athletic shoes for serious athletes',

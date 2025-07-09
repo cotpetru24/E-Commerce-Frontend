@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AddressForm } from './address-form/address-form.component';
-import { PaymentMethod } from './payment-method/payment-method.component';
-import { CheckoutReview } from './checkout-review/checkout-review.component';
+import { AddressFormComponent } from './address-form/address-form.component';
+import { PaymentMethodComponent } from './payment-method/payment-method.component';
+import { CheckoutReviewComponent } from './checkout-review/checkout-review.component';
 
 const routes: Routes = [
-  { path: 'addressForm', component: AddressForm },
-  { path: 'checkout-review', component: CheckoutReview },
-    { path: 'payment-method', component: PaymentMethod },
+  { path: 'addressForm', component: AddressFormComponent },
+  { path: 'checkout-review', component: CheckoutReviewComponent },
+    { path: 'payment-method', component: PaymentMethodComponent },
 
 ];
 

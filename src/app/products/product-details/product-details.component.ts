@@ -8,7 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
-import { Gender } from '../../models/gender.enum';
+import { TargetAudience } from '../../models/gender.enum';
 
 @Component({
   selector: 'product-details',
@@ -64,7 +64,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 64.99,
         image: 'products/retro-sneaker.png',
         stock: 10,
-        gender: Gender.Men,
+        targetAudience: TargetAudience.Men,
         brand: 'Nike',
       },
       {
@@ -75,7 +75,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 89.39,
         image: 'products/running-shoe.png',
         stock: 7,
-        gender: Gender.Men,
+        targetAudience: TargetAudience.Men,
         brand: 'Adidas',
       },
       {
@@ -86,7 +86,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 74.39,
         image: 'products/casual-sneaker.png',
         stock: 5,
-        gender: Gender.Men,
+        targetAudience: TargetAudience.Men,
         brand: 'Puma',
       },
       {
@@ -97,7 +97,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 99.99,
         image: 'products/retro-sneaker2.png',
         stock: 8,
-        gender: Gender.Women,
+        targetAudience: TargetAudience.Women,
         brand: 'Steve Madden',
       },
       {
@@ -108,7 +108,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 45.99,
         image: 'products/casual-sneaker.png',
         stock: 12,
-        gender: Gender.Children,
+        targetAudience: TargetAudience.Children,
         brand: 'Skechers',
       },
       {
@@ -119,7 +119,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 79.99,
         image: 'products/running-shoe.png',
         stock: 6,
-        gender: Gender.Women,
+        targetAudience: TargetAudience.Women,
         brand: 'Under Armour',
       },
     ];
@@ -170,7 +170,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 89.39,
         image: 'products/running-shoe.png',
         stock: 7,
-        gender: Gender.Men,
+        targetAudience: TargetAudience.Men,
         brand: 'Adidas',
       },
       {
@@ -180,7 +180,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 74.39,
         image: 'products/casual-sneaker.png',
         stock: 5,
-        gender: Gender.Men,
+        targetAudience: TargetAudience.Men,
         brand: 'Puma',
       },
     ];

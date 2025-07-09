@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -26,7 +26,8 @@ export class CartViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private cartService: CartService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private  router: Router
   ) {
     this.cartSubscription = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
@@ -105,7 +106,8 @@ export class CartViewComponent implements OnInit, OnDestroy {
     }
     
     console.log('Proceeding to checkout...');
-    // Navigate to checkout
+    this.router.navigate(['/checkout/addressForm']);
+
   }
 
   clearCart(): void {

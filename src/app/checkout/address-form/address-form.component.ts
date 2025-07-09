@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './address-form.component.html',
   styleUrl: './address-form.component.scss'
 })
-export class AddressForm {
+export class AddressFormComponent {
 
 }

@@ -117,7 +117,7 @@
                 </button>
               </div>
               <div class="product-badges">
-                <span class="category-badge" [class]="product.gender">{{ product.gender }}</span>
+                <span class="category-badge" [class]="product.targetAudience">{{ product.targetAudience }}</span>
                 <span class="stock-badge" [class.in-stock]="product.stock > 0" [class.out-of-stock]="product.stock === 0">
                   {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
                 </span>
