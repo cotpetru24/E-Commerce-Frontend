@@ -3,6 +3,7 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry, map, tap } from 'rxjs/operators';
 import { ProductDto } from '../../models/product.dto';
+import { BaseApiService } from './base-api.service';
 
 // ============================================================================
 // PRODUCT API SERVICE
@@ -11,13 +12,15 @@ import { ProductDto } from '../../models/product.dto';
 // Best practice: One service per domain/feature
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class ProductApiService {
+export class ProductApiService extends BaseApiService {
   // Base URL for product endpoints
-  private readonly baseUrl = '/api/products';
-  
-  constructor(private http: HttpClient) {}
+  protected readonly baseUrl = '/api/products';
+
+  constructor(protected override http: HttpClient) {
+    super(http);
+  }
 
   // ============================================================================
   // GET REQUESTS - FETCHING DATA
@@ -35,30 +38,27 @@ export class ProductApiService {
     page?: number;
     limit?: number;
   }): Observable<ProductDto[]> {
-    let httpParams = new HttpParams();
-    
-    if (params) {
-      Object.keys(params).forEach(key => {
-        const value = params[key as keyof typeof params];
-        if (value !== undefined && value !== null) {
-          httpParams = httpParams.set(key, value.toString());
-        }
-      });
-    }
+    let httpParams = params ? this.createParams(params) : undefined;
 
-    return this.http.get<ProductDto[]>(this.baseUrl, { params: httpParams }).pipe(
-      retry(3),
-      catchError(this.handleError)
-    );
+    this.logRequest('GET', this.buildUrl(''), httpParams);
+
+    return this.get<ProductDto[]>(this.buildUrl(''), {
+      params: httpParams,
+    });
   }
 
   /**
    * Get a single product by ID
    */
   getProductById(id: number): Observable<ProductDto> {
-    return this.http.get<ProductDto>(`${this.baseUrl}/${id}`).pipe(
-      retry(3),
-      catchError(this.handleError)
+
+    const url = this.buildUrl(`/${id}`);
+
+    this.logRequest('GET', url);
+
+    return this.get<ProductDto>(url)
+    .pipe(
+      tap((response) => this.logResponse('GET', url, response))
     );
   }
 
@@ -66,65 +66,57 @@ export class ProductApiService {
    * Get products by category
    */
   getProductsByCategory(category: string): Observable<ProductDto[]> {
-    return this.http.get<ProductDto[]>(`${this.baseUrl}/category/${category}`).pipe(
-      retry(3),
-      catchError(this.handleError)
-    );
+    return this.get<ProductDto[]>(this.buildUrl(`/category/${category}`))
   }
 
   /**
    * Get products by brand
    */
   getProductsByBrand(brand: string): Observable<ProductDto[]> {
-    return this.http.get<ProductDto[]>(`${this.baseUrl}/brand/${brand}`).pipe(
-      retry(3),
-      catchError(this.handleError)
-    );
+
+    return this.get<ProductDto[]>(this.buildUrl(`/brand/${brand}`))
   }
 
   /**
    * Search products by name or description
    */
   searchProducts(query: string): Observable<ProductDto[]> {
-    return this.http.get<ProductDto[]>(`${this.baseUrl}/search`, {
-      params: { q: query }
-    }).pipe(
-      retry(3),
-      catchError(this.handleError)
-    );
+    const params = this.createParams({ q: query });
+
+    return this.get<ProductDto[]>(this.buildUrl(`/search`), {params})
   }
+
+
 
   /**
    * Get featured products
    */
   getFeaturedProducts(): Observable<ProductDto[]> {
-    return this.http.get<ProductDto[]>(`${this.baseUrl}/featured`).pipe(
-      retry(3),
-      catchError(this.handleError)
-    );
+    return this.get<ProductDto[]>( this.buildUrl(`/featured`))
   }
+
 
   /**
    * Get related products
    */
   getRelatedProducts(productId: number): Observable<ProductDto[]> {
-    return this.http.get<ProductDto[]>(`${this.baseUrl}/${productId}/related`).pipe(
-      retry(3),
-      catchError(this.handleError)
-    );
+    return this.get<ProductDto[]>(this.buildUrl(`${productId}/related`))
   }
 
   // ============================================================================
   // POST REQUESTS - CREATING DATA
   // ============================================================================
 
+
   /**
    * Create a new product (Admin only)
    */
   createProduct(product: Omit<ProductDto, 'id'>): Observable<ProductDto> {
-    return this.http.post<ProductDto>(this.baseUrl, product).pipe(
-      tap(newProduct => console.log('Product created:', newProduct)),
-      catchError(this.handleError)
+
+    //check on server if jwt contains role = admin
+
+    return this.post<ProductDto>(this.buildUrl(''), product).pipe(
+      tap((newProduct) => console.log('Product created:', newProduct))
     );
   }
 
@@ -132,9 +124,7 @@ export class ProductApiService {
    * Add product to wishlist
    */
   addToWishlist(productId: number): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/${productId}/wishlist`, {}).pipe(
-      catchError(this.handleError)
-    );
+    return this.post<void>(this.buildUrl(`${productId}/wishlist`), {})
   }
 
   // ============================================================================
@@ -144,10 +134,15 @@ export class ProductApiService {
   /**
    * Update a product (Admin only)
    */
-  updateProduct(id: number, product: Partial<ProductDto>): Observable<ProductDto> {
-    return this.http.put<ProductDto>(`${this.baseUrl}/${id}`, product).pipe(
-      tap(updatedProduct => console.log('Product updated:', updatedProduct)),
-      catchError(this.handleError)
+  updateProduct(
+    id: number,
+    product: Partial<ProductDto>
+  ): Observable<ProductDto> {
+
+    //check on server if jwt contains role = admin
+
+    return this.put<ProductDto>(this.buildUrl(`${id}`), product).pipe(
+      tap((updatedProduct) => console.log('Product updated:', updatedProduct)),
     );
   }
 
@@ -155,18 +150,20 @@ export class ProductApiService {
    * Update product stock
    */
   updateProductStock(id: number, stock: number): Observable<ProductDto> {
-    return this.http.patch<ProductDto>(`${this.baseUrl}/${id}/stock`, { stock }).pipe(
-      catchError(this.handleError)
-    );
+
+    //check on server if jwt contains role = admin
+
+    return this.patch<ProductDto>(this.buildUrl(`${id}/stock`), { stock })
   }
 
   /**
    * Update product price
    */
   updateProductPrice(id: number, price: number): Observable<ProductDto> {
-    return this.http.patch<ProductDto>(`${this.baseUrl}/${id}/price`, { price }).pipe(
-      catchError(this.handleError)
-    );
+
+    //check on server if jwt contains role = admin
+
+    return this.patch<ProductDto>(this.buildUrl(`${id}/price`), { price })
   }
 
   // ============================================================================
@@ -177,19 +174,22 @@ export class ProductApiService {
    * Delete a product (Admin only)
    */
   deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
-      tap(() => console.log('Product deleted:', id)),
-      catchError(this.handleError)
-    );
+
+    //check on server if jwt contains role = admin
+
+    return this.delete<void>((`${id}`)).pipe(
+      tap(() => console.log('Product deleted:', id)));
   }
 
   /**
    * Remove product from wishlist
    */
   removeFromWishlist(productId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${productId}/wishlist`).pipe(
-      catchError(this.handleError)
-    );
+
+    //not sure if it needs to be delete => need to set up the db first
+
+    return this.delete<void>(`${this.baseUrl}/${productId}/wishlist`)
+      .pipe(catchError(this.handleError));
   }
 
   // ============================================================================
@@ -200,50 +200,28 @@ export class ProductApiService {
    * Get available categories
    */
   getCategories(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/categories`).pipe(
-      catchError(this.handleError)
-    );
+    return this.get<string[]>(this.buildUrl(`/categories`))
   }
 
   /**
    * Get available brands
    */
   getBrands(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/brands`).pipe(
-      catchError(this.handleError)
-    );
+    return this.get<string[]>((`/brands`))
   }
 
   /**
    * Get product statistics
    */
   getProductStats(): Observable<{
+
+    //change this to productStatsDto
+
     totalProducts: number;
     categories: number;
     brands: number;
     lowStock: number;
   }> {
-    return this.http.get<any>(`${this.baseUrl}/stats`).pipe(
-      catchError(this.handleError)
-    );
+    return this.get<any>(this.buildUrl(`/stats`))
   }
-
-  // ============================================================================
-  // ERROR HANDLING
-  // ============================================================================
-
-  private handleError(error: any): Observable<never> {
-    let errorMessage = 'An error occurred';
-    
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Client Error: ${error.error.message}`;
-    } else {
-      // Server-side error
-      errorMessage = `Server Error: ${error.status} - ${error.message}`;
-    }
-    
-    console.error('Product API Error:', errorMessage);
-    return throwError(() => new Error(errorMessage));
-  }
-} 
+}

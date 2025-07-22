@@ -25,15 +25,12 @@ export abstract class BaseApiService {
   /**
    * GET request with common error handling
    */
-  protected get<T>(url: string, options?: {
+  protected get<T>(url: string, options: {
     params?: HttpParams;
     headers?: HttpHeaders;
-    retryCount?: number;
-  }): Observable<T> {
-    const retryCount = options?.retryCount ?? 3;
-    
+  }={}): Observable<T> {
+    // need to add the logic for the related products
     return this.http.get<T>(url, options).pipe(
-      retry(retryCount),
       catchError(this.handleError)
     );
   }
@@ -41,14 +38,13 @@ export abstract class BaseApiService {
   /**
    * POST request with common error handling
    */
-  protected post<T>(url: string, body: any, options?: {
-    headers?: HttpHeaders;
-    retryCount?: number;
-  }): Observable<T> {
-    const retryCount = options?.retryCount ?? 1; // POST requests typically shouldn't be retried
+  protected post<T, B= any>(url: string, body: B, options: {
+    headers?: HttpHeaders 
+  }={}): Observable<T> {
+
+    const headers = options.headers ??this.getAuthHeaders();
     
-    return this.http.post<T>(url, body, options).pipe(
-      retry(retryCount),
+    return this.http.post<T>(url, body, {...options, headers}).pipe(
       catchError(this.handleError)
     );
   }
@@ -56,14 +52,12 @@ export abstract class BaseApiService {
   /**
    * PUT request with common error handling
    */
-  protected put<T>(url: string, body: any, options?: {
+  protected put<T, B=any>(url: string, body: B, options: {
     headers?: HttpHeaders;
-    retryCount?: number;
-  }): Observable<T> {
-    const retryCount = options?.retryCount ?? 1;
+  }={}): Observable<T> {
+    const headers = options?.headers ?? this.getAuthHeaders();
     
-    return this.http.put<T>(url, body, options).pipe(
-      retry(retryCount),
+    return this.http.put<T>(url, body, {...options, headers}).pipe(
       catchError(this.handleError)
     );
   }
@@ -73,12 +67,10 @@ export abstract class BaseApiService {
    */
   protected patch<T>(url: string, body: any, options?: {
     headers?: HttpHeaders;
-    retryCount?: number;
   }): Observable<T> {
-    const retryCount = options?.retryCount ?? 1;
+    const headers = options?.headers ?? this.getAuthHeaders();
     
-    return this.http.patch<T>(url, body, options).pipe(
-      retry(retryCount),
+    return this.http.patch<T>(url, body, {...options, headers}).pipe(
       catchError(this.handleError)
     );
   }
@@ -88,12 +80,10 @@ export abstract class BaseApiService {
    */
   protected delete<T>(url: string, options?: {
     headers?: HttpHeaders;
-    retryCount?: number;
   }): Observable<T> {
-    const retryCount = options?.retryCount ?? 1;
+    const headers = options?.headers ?? this.getAuthHeaders();
     
-    return this.http.delete<T>(url, options).pipe(
-      retry(retryCount),
+    return this.http.delete<T>(url, {...options, headers}).pipe(
       catchError(this.handleError)
     );
   }
