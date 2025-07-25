@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry, tap } from 'rxjs/operators';
+import { BaseApiService } from './base-api.service';
 
 // ============================================================================
 // USER API SERVICE
@@ -50,7 +51,9 @@ export interface AuthResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class UserApiService {
+
+// modify the methods to exted base api service
+export class UserApiService extends BaseApiService {
   private readonly baseUrl = '/api/users';
   private readonly authUrl = '/api/auth';
   
@@ -90,6 +93,9 @@ export class UserApiService {
   /**
    * User logout
    */
+
+
+  //no need to send a request just clear the tokens from local storage
   logout(): Observable<void> {
     return this.http.post<void>(`${this.authUrl}/logout`, {}).pipe(
       tap(() => {
@@ -100,6 +106,7 @@ export class UserApiService {
       catchError(this.handleError)
     );
   }
+
 
   /**
    * Refresh access token

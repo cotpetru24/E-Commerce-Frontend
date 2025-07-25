@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry, tap } from 'rxjs/operators';
 import { ProductDto } from '../../models/product.dto';
+import { BaseApiService } from './base-api.service';
 
 // ============================================================================
 // ADMIN API SERVICE
@@ -48,7 +49,9 @@ export interface OrderItem {
 @Injectable({
   providedIn: 'root'
 })
-export class AdminApiService {
+
+//modify the methods to use the base api service class
+export class AdminApiService extends BaseApiService {
   private readonly baseUrl = '/api/admin';
   
   constructor(private http: HttpClient) {}
@@ -166,6 +169,7 @@ export class AdminApiService {
     );
   }
 
+
   // ============================================================================
   // ORDER MANAGEMENT
   // ============================================================================
@@ -197,6 +201,7 @@ export class AdminApiService {
       catchError(this.handleError)
     );
   }
+
 
   /**
    * Update order status
