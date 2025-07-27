@@ -54,7 +54,9 @@ export interface OrderItem {
 export class AdminApiService extends BaseApiService {
   private readonly baseUrl = '/api/admin';
   
-  constructor(private http: HttpClient) {}
+  constructor(protected override http: HttpClient) {
+    super(http)
+  }
 
   // ============================================================================
   // DASHBOARD & STATISTICS
@@ -399,20 +401,4 @@ export class AdminApiService extends BaseApiService {
     );
   }
 
-  // ============================================================================
-  // ERROR HANDLING
-  // ============================================================================
-
-  private handleError(error: any): Observable<never> {
-    let errorMessage = 'An error occurred';
-    
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Client Error: ${error.error.message}`;
-    } else {
-      errorMessage = `Server Error: ${error.status} - ${error.message}`;
-    }
-    
-    console.error('Admin API Error:', errorMessage);
-    return throwError(() => new Error(errorMessage));
-  }
 } 

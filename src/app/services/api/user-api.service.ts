@@ -57,7 +57,9 @@ export class UserApiService extends BaseApiService {
   private readonly baseUrl = '/api/users';
   private readonly authUrl = '/api/auth';
   
-  constructor(private http: HttpClient) {}
+  constructor(protected override http: HttpClient) {
+    super(http)
+  }
 
   // ============================================================================
   // AUTHENTICATION ENDPOINTS
@@ -302,22 +304,5 @@ export class UserApiService extends BaseApiService {
     return this.http.delete<void>(`${this.baseUrl}/me/reviews/${reviewId}`).pipe(
       catchError(this.handleError)
     );
-  }
-
-  // ============================================================================
-  // ERROR HANDLING
-  // ============================================================================
-
-  private handleError(error: any): Observable<never> {
-    let errorMessage = 'An error occurred';
-    
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Client Error: ${error.error.message}`;
-    } else {
-      errorMessage = `Server Error: ${error.status} - ${error.message}`;
-    }
-    
-    console.error('User API Error:', errorMessage);
-    return throwError(() => new Error(errorMessage));
   }
 } 

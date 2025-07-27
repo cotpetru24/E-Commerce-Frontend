@@ -122,6 +122,50 @@ export class ProductDetailsComponent implements OnInit {
         targetAudience: TargetAudience.Women,
         brand: 'Under Armour',
       },
+            {
+        id: 7,
+        name: "Women's Athletic Shoe",
+        description:
+          'High-performance athletic shoes for women who love to stay active.',
+        price: 79.99,
+        image: 'products/running-shoe.png',
+        stock: 6,
+        targetAudience: TargetAudience.Women,
+        brand: 'Under Armour',
+      },
+            {
+        id: 8,
+        name: "Women's Athletic Shoe",
+        description:
+          'High-performance athletic shoes for women who love to stay active.',
+        price: 79.99,
+        image: 'products/running-shoe.png',
+        stock: 6,
+        targetAudience: TargetAudience.Women,
+        brand: 'Under Armour',
+      },
+            {
+        id: 9,
+        name: "Women's Athletic Shoe",
+        description:
+          'High-performance athletic shoes for women who love to stay active.',
+        price: 79.99,
+        image: 'products/running-shoe.png',
+        stock: 6,
+        targetAudience: TargetAudience.Women,
+        brand: 'Under Armour',
+      },
+            {
+        id: 10,
+        name: "Women's Athletic Shoe",
+        description:
+          'High-performance athletic shoes for women who love to stay active.',
+        price: 79.99,
+        image: 'products/running-shoe.png',
+        stock: 6,
+        targetAudience: TargetAudience.Women,
+        brand: 'Under Armour',
+      },
     ];
 
     this.product =
