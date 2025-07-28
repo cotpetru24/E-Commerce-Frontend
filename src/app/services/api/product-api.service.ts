@@ -38,7 +38,7 @@ export class ProductApiService extends BaseApiService {
     page?: number;
     limit?: number;
   }): Observable<ProductDto[]> {
-    let httpParams = params ? this.createParams(params) : undefined;
+    let httpParams = this.createParams(params || {});
 
     this.logRequest('GET', this.buildUrl(''), httpParams);
 
