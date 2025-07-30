@@ -6,16 +6,22 @@ import { ProductCardComponent } from './product-card/product-card.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { ProductFiltersComponent } from './product-filters/product-filters.component';
 
-
 const routes: Routes = [
-  { path: '', component: ProductListComponent }, // default /products
+  {
+    path: '',
+    children: [
+      { path: '', component: ProductListComponent },
+      { path: ':gender', component: ProductListComponent }, // default /products
+      // default /products
+    ],
+  },
   { path: 'card', component: ProductCardComponent },
   { path: 'details/:id', component: ProductDetailsComponent }, // assuming product has ID
-  { path: 'filters', component: ProductFiltersComponent }
+  { path: 'filters', component: ProductFiltersComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ProductsRoutingModule { }
+export class ProductsRoutingModule {}

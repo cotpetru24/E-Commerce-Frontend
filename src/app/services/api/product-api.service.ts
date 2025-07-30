@@ -16,7 +16,7 @@ import { BaseApiService } from './base-api.service';
 })
 export class ProductApiService extends BaseApiService {
   // Base URL for product endpoints
-  protected readonly baseUrl = '/api/products';
+  protected readonly baseUrl = '/api/product';
 
   constructor(protected override http: HttpClient) {
     super(http);
@@ -40,9 +40,9 @@ export class ProductApiService extends BaseApiService {
   }): Observable<ProductDto[]> {
     let httpParams = this.createParams(params || {});
 
-    this.logRequest('GET', this.buildUrl(''), httpParams);
+    this.logRequest('GET', this.buildUrl('/api/product'), httpParams);
 
-    return this.get<ProductDto[]>(this.buildUrl(''), {
+    return this.get<ProductDto[]>(this.buildUrl('/api/product'), {
       params: httpParams,
     });
   }

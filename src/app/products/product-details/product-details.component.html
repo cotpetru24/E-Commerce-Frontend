@@ -31,7 +31,7 @@
             [class.active]="selectedImage === image"
             (click)="selectImage(image)"
           >
-            <img [src]="image" [alt]="product.name" />
+            <img [src]="image" [alt]="product.name" title="Product image" />
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@
       <h2>Related Products</h2>
       <div class="related-products-grid">
         <mat-card class="related-product-card" *ngFor="let relatedProduct of relatedProducts">
-          <img mat-card-image [src]="relatedProduct.image" [alt]="relatedProduct.name" />
+          <img mat-card-image [src]="relatedProduct.image" [alt]="relatedProduct.name" title="Product image"/>
           <mat-card-content>
             <h3>{{ relatedProduct.name }}</h3>
             <p class="brand">{{ relatedProduct.brand }}</p>

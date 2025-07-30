@@ -21,7 +21,8 @@
           <h4>Search</h4>
           <mat-form-field appearance="outline" class="search-field">
             <mat-label>Search products...</mat-label>
-            <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Enter product name or brand">
+            <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()"
+              placeholder="Enter product name or brand">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
         </div>
@@ -105,9 +106,10 @@
 
         <!-- Products Grid/List -->
         <div class="products-container" [class.list-view]="viewMode === 'list'">
-          <mat-card class="product-card" *ngFor="let product of filteredProducts" [class.list-card]="viewMode === 'list'">
+          <mat-card class="product-card" *ngFor="let product of filteredProducts"
+            [class.list-card]="viewMode === 'list'">
             <div class="product-image">
-              <img src="product.image" alt="product.name" />
+              <img [src]="product.image" [alt]="product.name" title="Product image" />
               <div class="product-overlay">
                 <button mat-icon-button color="primary" class="quick-view-btn" (click)="quickView(product)">
                   <mat-icon>visibility</mat-icon>
@@ -118,7 +120,8 @@
               </div>
               <div class="product-badges">
                 <span class="category-badge" [class]="product.targetAudience">{{ product.targetAudience }}</span>
-                <span class="stock-badge" [class.in-stock]="product.stock > 0" [class.out-of-stock]="product.stock === 0">
+                <span class="stock-badge" [class.in-stock]="product.stock > 0"
+                  [class.out-of-stock]="product.stock === 0">
                   {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
                 </span>
               </div>

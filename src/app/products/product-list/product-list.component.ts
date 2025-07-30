@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { TargetAudience } from '../../models/gender.enum';
+import { ProductApiService } from '../../services/api';
 
 @Component({
   selector: 'app-product-list',
@@ -43,7 +44,7 @@ export class ProductListComponent implements OnInit {
       description:
         "This comfortable men's sneaker features a retro design with a modern touch.",
       price: 64.99,
-      image: 'products/retro-sneaker.png',
+      image: '../products/retro-sneaker.png',
       stock: 10,
       targetAudience: TargetAudience.Men,
       brand: 'Nike',
@@ -138,7 +139,8 @@ export class ProductListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private cartService: CartService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private productApi:ProductApiService
   ) {}
 
   ngOnInit() {
@@ -151,10 +153,34 @@ export class ProductListComponent implements OnInit {
       }
     });
 
+    this.fetchProducts()
+
+
+
+
     this.initializeProducts();
     this.extractBrands();
     this.applyFilters();
   }
+
+fetchProducts() {
+  const params = this.selectedGender ? { category: this.selectedGender } : {};
+
+  this.productApi.getProducts(params).subscribe({
+    next: (products) => {
+      this.allProducts = products;
+      this.filteredProducts = [...products];
+      this.extractBrands();
+      this.applyFilters();
+    },
+    error: (err) => {
+      console.error('Failed to load products:', err);
+      this.snackBar.open('Error loading products', 'Close', { duration: 3000 });
+    }
+  });
+}
+
+
 
   initializeProducts() {
     this.filteredProducts = [...this.allProducts];
