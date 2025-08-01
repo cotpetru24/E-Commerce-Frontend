@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+// import { MatCardModule } from '@angular/material/card';
+// import { MatButtonModule } from '@angular/material/button';
+// import { MatIconModule } from '@angular/material/icon';
+// import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+// import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { TargetAudience } from '../../models/gender.enum';
+import { Toast} from 'bootstrap';
 
 @Component({
   selector: 'product-details',
@@ -16,16 +17,18 @@ import { TargetAudience } from '../../models/gender.enum';
   imports: [
     CommonModule,
     RouterModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule,
+    // MatCardModule,
+    // MatButtonModule,
+    // MatIconModule,
+    // MatProgressSpinnerModule,
+    // MatSnackBarModule,
   ],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.scss',
 })
 export class ProductDetailsComponent implements OnInit {
+  @ViewChild('errorToast') errorToastRef!: ElementRef;
+
   product: ProductDto | null = null;
   selectedImage: string = '';
   productImages: string[] = [];
@@ -39,10 +42,10 @@ export class ProductDetailsComponent implements OnInit {
   availableSizes: string[] = ['7', '8', '9', '10', '11', '12'];
   relatedProducts: ProductDto[] = [];
 
+  
   constructor(
     private route: ActivatedRoute,
     private cartService: CartService,
-    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -230,6 +233,41 @@ export class ProductDetailsComponent implements OnInit {
     ];
   }
 
+
+  showToast(message: string, type: 'success' | 'error' | 'warning' = 'success'): void {
+    // Create toast element dynamically
+    const toastHtml = `
+      <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body">
+            ${message}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    `;
+    
+    // Create container if it doesn't exist
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toast-container';
+      toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+      document.body.appendChild(toastContainer);
+    }
+    
+    // Add toast to container
+    toastContainer.innerHTML = toastHtml;
+    const toastElement = toastContainer.querySelector('.toast') as HTMLElement;
+    
+    // Initialize and show toast
+    const toast = new Toast(toastElement, {
+      autohide: true,
+      delay: 3000
+    });
+    toast.show();
+  }
+
   selectImage(image: string) {
     this.selectedImage = image;
   }
@@ -260,53 +298,34 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
-  addToCart() {
+  addToCart(): void {
     if (!this.product || !this.selectedSize) {
-      this.snackBar.open(
-        'Please select a size before adding to cart',
-        'Close',
-        {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-        }
-      );
+      this.showToast('Please select a size before adding to cart', 'warning');
       return;
     }
 
     this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
-
-    this.snackBar
-      .open(`${this.product.name} added to cart!`, 'View Cart', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      })
-      .onAction()
-      .subscribe(() => {
-        // Navigate to cart
-        console.log('Navigate to cart');
-      });
+    this.showToast(`${this.product.name} added to cart!`, 'success');
   }
 
-  buyNow() {
-    if (!this.product || !this.selectedSize) {
-      this.snackBar.open('Please select a size before purchasing', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
-      return;
-    }
+buyNow() {
+  // if (!this.product || !this.selectedSize) {
+  //   const toast = new Toast(this.errorToastRef.nativeElement, {
+  //     delay: 3000,
+  //     autohide: true,
+  //   });
+  //   toast.show();
+  //   return;
+  // }
 
-    // Add to cart and proceed to checkout
-    this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
+  //   // Add to cart and proceed to checkout
+  //   this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
 
-    this.snackBar.open('Proceeding to checkout...', 'Close', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-    });
+  //   this.toast.open('Proceeding to checkout...', 'Close', {
+  //     duration: 2000,
+  //     horizontalPosition: 'center',
+  //     verticalPosition: 'bottom',
+  //   });
 
     // Navigate to checkout
     console.log('Navigate to checkout');
@@ -314,15 +333,15 @@ export class ProductDetailsComponent implements OnInit {
 
   toggleWishlist() {
     this.isInWishlist = !this.isInWishlist;
-    const message = this.isInWishlist
-      ? 'Added to wishlist'
-      : 'Removed from wishlist';
+    // const message = this.isInWishlist
+    //   ? 'Added to wishlist'
+    //   : 'Removed from wishlist';
 
-    this.snackBar.open(message, 'Close', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-    });
+    // // this.toast.open(message, 'Close', {
+    // //   duration: 2000,
+    // //   horizontalPosition: 'center',
+    // //   verticalPosition: 'bottom',
+    // // });
   }
 
   getDiscountPercentage(): number {
