@@ -52,21 +52,21 @@
         <div class="hero-visual">
           <div class="hero-shoe-showcase">
             <div class="shoe-card shoe-1">
-              <img src="products/running-shoe.png" alt="Running Shoe">
+              <img src="/assets/products/running-shoe.png" alt="Running Shoe">
               <div class="shoe-info">
                 <h4>Running Pro</h4>
                 <p>Ultimate comfort</p>
               </div>
             </div>
             <div class="shoe-card shoe-2">
-              <img src="products/casual-sneaker.png" alt="Casual Sneaker">
+              <img src="/assets/products/casual-sneaker.png" alt="Casual Sneaker">
               <div class="shoe-info">
                 <h4>Casual Classic</h4>
                 <p>Everyday style</p>
               </div>
             </div>
             <div class="shoe-card shoe-3">
-              <img src="products/retro-sneaker.png" alt="Retro Sneaker">
+              <img src="/assets/products/retro-sneaker.png" alt="Retro Sneaker">
               <div class="shoe-info">
                 <h4>Retro Vibes</h4>
                 <p>Vintage charm</p>
@@ -89,7 +89,7 @@
       <div class="categories-grid">
         <div class="category-card" [routerLink]="['/products', 'men']">
           <div class="category-image">
-            <img src="products/running-shoe.png" alt="Men's Shoes">
+            <img src="/assets/products/running-shoe.png" alt="Men's Shoes">
             <div class="category-overlay">
               <mat-icon>male</mat-icon>
             </div>
@@ -103,7 +103,7 @@
 
         <div class="category-card" [routerLink]="['/products', 'women']">
           <div class="category-image">
-            <img src="products/casual-sneaker.png" alt="Women's Shoes">
+            <img src="/assets/products/casual-sneaker.png" alt="Women's Shoes">
             <div class="category-overlay">
               <mat-icon>female</mat-icon>
             </div>
@@ -117,7 +117,7 @@
 
         <div class="category-card" routerLink="/products/children">
           <div class="category-image">
-            <img src="products/retro-sneaker.png" alt="Children's Shoes">
+            <img src="/assets/products/retro-sneaker.png" alt="Children's Shoes">
             <div class="category-overlay">
               <mat-icon>child_care</mat-icon>
             </div>
@@ -143,7 +143,7 @@
       <div class="featured-grid">
         <div class="featured-product" *ngFor="let product of featuredProducts">
           <div class="product-image">
-            <img src="product.image" alt="product.name">
+            <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="product.name">
             <div class="product-overlay">
               <button mat-icon-button class="quick-view" (click)="viewProduct(product)">
                 <mat-icon>visibility</mat-icon>
@@ -157,7 +157,7 @@
           </div>
           <div class="product-info">
             <h4>{{product.name}}</h4>
-            <p class="product-category">{{product.targetAudience}} • {{product.brand}}</p>
+            <p class="product-category">{{product.audience}} • {{product.brandName}}</p>
             <div class="product-price">
               <span class="current-price">${{product.price}}</span>
               <span class="original-price" *ngIf="product.originalPrice">${{product.originalPrice}}</span>
@@ -300,7 +300,7 @@
 
         <div class="trends-visual">
           <div class="trends-image">
-            <img src="products/retro-sneaker2.png" alt="Latest Trends">
+            <img src="/assets/products/casual-sneaker.png" alt="Latest Trends">
             <div class="trends-overlay">
               <div class="trend-badge">New</div>
             </div>

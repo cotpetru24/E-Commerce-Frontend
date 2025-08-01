@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ProductDto } from '../../models/product.dto';
+import { ProductDto, ProductDtoSchema } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { TargetAudience } from '../../models/gender.enum';
 import { ProductApiService } from '../../services/api';
@@ -37,92 +37,94 @@ import { ProductApiService } from '../../services/api';
 export class ProductListComponent implements OnInit {
   Gender = TargetAudience;
 
-  allProducts: ProductDto[] = [
-    {
-      id: 1,
-      name: "Men's Retro Sneaker",
-      description:
-        "This comfortable men's sneaker features a retro design with a modern touch.",
-      price: 64.99,
-      image: '../products/retro-sneaker.png',
-      stock: 10,
-      targetAudience: TargetAudience.Men,
-      brand: 'Nike',
-    },
-    {
-      id: 2,
-      name: "Men's Running Shoe",
-      description:
-        'Lightweight and cushioned. The perfect running shoe for your daily tune.',
-      price: 89.39,
-      image: 'products/running-shoe.png',
-      stock: 7,
-      targetAudience: TargetAudience.Men,
-      brand: 'Adidas',
-    },
-    {
-      id: 3,
-      name: "Men's Casual Sneaker",
-      description:
-        "A versatile men's casual sneaker with a minimal and stylish design.",
-      price: 74.39,
-      image: 'products/casual-sneaker.png',
-      stock: 5,
-      targetAudience: TargetAudience.Men,
-      brand: 'Puma',
-    },
-    {
-      id: 4,
-      name: "Women's Elegant Heel",
-      description: 'Elegant and comfortable heel perfect for formal occasions.',
-      price: 99.99,
-      image: 'products/retro-sneaker2.png',
-      stock: 8,
-      targetAudience: TargetAudience.Women,
-      brand: 'Steve Madden',
-    },
-    {
-      id: 5,
-      name: "Children's Play Shoe",
-      description: 'Durable and comfortable shoes perfect for active children.',
-      price: 45.99,
-      image: 'products/casual-sneaker.png',
-      stock: 12,
-      targetAudience: TargetAudience.Children,
-      brand: 'Skechers',
-    },
-    {
-      id: 6,
-      name: "Women's Athletic Shoe",
-      description:
-        'High-performance athletic shoes for women who love to stay active.',
-      price: 79.99,
-      image: 'products/running-shoe.png',
-      stock: 6,
-      targetAudience: TargetAudience.Women,
-      brand: 'Under Armour',
-    },
-    {
-      id: 7,
-      name: "Women's Casual Sneaker",
-      description: 'Comfortable and stylish casual sneakers for everyday wear.',
-      price: 69.99,
-      image: 'products/casual-sneaker.png',
-      stock: 15,
-      targetAudience: TargetAudience.Women,
-      brand: 'Converse',
-    },
-    {
-      id: 8,
-      name: "Children's School Shoe",
-      description: 'Durable school shoes that can handle active children.',
-      price: 39.99,
-      image: 'products/retro-sneaker.png',
-      stock: 20,
-      targetAudience: TargetAudience.Children,
-      brand: 'Clarks',
-    },
-  ];
+  public allProducts: ProductDto[] = [];
+
+  // allProducts: ProductDto[] = [
+  //   {
+  //     id: 1,
+  //     name: "Men's Retro Sneaker",
+  //     description:
+  //       "This comfortable men's sneaker features a retro design with a modern touch.",
+  //     price: 64.99,
+  //     image: '../products/retro-sneaker.png',
+  //     stock: 10,
+  //     targetAudience: TargetAudience.Men,
+  //     brand: 'Nike',
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Men's Running Shoe",
+  //     description:
+  //       'Lightweight and cushioned. The perfect running shoe for your daily tune.',
+  //     price: 89.39,
+  //     image: 'products/running-shoe.png',
+  //     stock: 7,
+  //     targetAudience: TargetAudience.Men,
+  //     brand: 'Adidas',
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Men's Casual Sneaker",
+  //     description:
+  //       "A versatile men's casual sneaker with a minimal and stylish design.",
+  //     price: 74.39,
+  //     image: 'products/casual-sneaker.png',
+  //     stock: 5,
+  //     targetAudience: TargetAudience.Men,
+  //     brand: 'Puma',
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Women's Elegant Heel",
+  //     description: 'Elegant and comfortable heel perfect for formal occasions.',
+  //     price: 99.99,
+  //     image: 'products/retro-sneaker2.png',
+  //     stock: 8,
+  //     targetAudience: TargetAudience.Women,
+  //     brand: 'Steve Madden',
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "Children's Play Shoe",
+  //     description: 'Durable and comfortable shoes perfect for active children.',
+  //     price: 45.99,
+  //     image: 'products/casual-sneaker.png',
+  //     stock: 12,
+  //     targetAudience: TargetAudience.Children,
+  //     brand: 'Skechers',
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "Women's Athletic Shoe",
+  //     description:
+  //       'High-performance athletic shoes for women who love to stay active.',
+  //     price: 79.99,
+  //     image: 'products/running-shoe.png',
+  //     stock: 6,
+  //     targetAudience: TargetAudience.Women,
+  //     brand: 'Under Armour',
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "Women's Casual Sneaker",
+  //     description: 'Comfortable and stylish casual sneakers for everyday wear.',
+  //     price: 69.99,
+  //     image: 'products/casual-sneaker.png',
+  //     stock: 15,
+  //     targetAudience: TargetAudience.Women,
+  //     brand: 'Converse',
+  //   },
+  //   {
+  //     id: 8,
+  //     name: "Children's School Shoe",
+  //     description: 'Durable school shoes that can handle active children.',
+  //     price: 39.99,
+  //     image: 'products/retro-sneaker.png',
+  //     stock: 20,
+  //     targetAudience: TargetAudience.Children,
+  //     brand: 'Clarks',
+  //   },
+  // ];
 
   filteredProducts: ProductDto[] = [];
   availableBrands: string[] = [];
@@ -140,7 +142,7 @@ export class ProductListComponent implements OnInit {
     private route: ActivatedRoute,
     private cartService: CartService,
     private snackBar: MatSnackBar,
-    private productApi:ProductApiService
+    private productApi: ProductApiService
   ) {}
 
   ngOnInit() {
@@ -153,41 +155,48 @@ export class ProductListComponent implements OnInit {
       }
     });
 
-    this.fetchProducts()
-
-
-
+    this.fetchProducts();
 
     this.initializeProducts();
     this.extractBrands();
     this.applyFilters();
   }
 
-fetchProducts() {
-  const params = this.selectedGender ? { category: this.selectedGender } : {};
+  fetchProducts() {
+    const params = this.selectedGender ? { category: this.selectedGender } : {};
 
-  this.productApi.getProducts(params).subscribe({
-    next: (products) => {
-      this.allProducts = products;
-      this.filteredProducts = [...products];
-      this.extractBrands();
-      this.applyFilters();
-    },
-    error: (err) => {
-      console.error('Failed to load products:', err);
-      this.snackBar.open('Error loading products', 'Close', { duration: 3000 });
-    }
-  });
-}
+    this.productApi.getProducts(params).subscribe({
+      next: (products) => {
+        try {
+          this.allProducts = products.map((item) =>
+            ProductDtoSchema.parse(item)
+          );
+        } catch (err) {
+          console.error('Validation failed', err);
+          this.snackBar.open('Product data is invalid', 'Close', {
+            duration: 3000,
+          });
+        }
 
-
+        this.filteredProducts = [...products];
+        this.extractBrands();
+        this.applyFilters();
+      },
+      error: (err) => {
+        console.error('Failed to load products:', err);
+        this.snackBar.open('Error loading products', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
 
   initializeProducts() {
     this.filteredProducts = [...this.allProducts];
   }
 
   extractBrands() {
-    const brands = new Set(this.allProducts.map((product) => product.brand));
+    const brands = new Set(this.allProducts.map((product) => product.brandName));
     this.availableBrands = Array.from(brands).sort();
   }
 
@@ -243,7 +252,7 @@ fetchProducts() {
       filtered = filtered.filter(
         (product) =>
           product.name.toLowerCase().includes(search) ||
-          product.brand.toLowerCase().includes(search) ||
+          product.brandName.toLowerCase().includes(search) ||
           product.description.toLowerCase().includes(search)
       );
     }
@@ -251,14 +260,14 @@ fetchProducts() {
     // Gender filter
     if (this.selectedGender) {
       filtered = filtered.filter(
-        (product) => product.targetAudience === this.selectedGender
+        (product) => product.audience === this.selectedGender
       );
     }
 
     // Brand filter
     if (this.selectedBrand) {
       filtered = filtered.filter(
-        (product) => product.brand === this.selectedBrand
+        (product) => product.brandName === this.selectedBrand
       );
     }
 
@@ -287,7 +296,7 @@ fetchProducts() {
       case 'price-desc':
         return products.sort((a, b) => b.price - a.price);
       case 'brand':
-        return products.sort((a, b) => a.brand.localeCompare(b.brand));
+        return products.sort((a, b) => a.brandName.localeCompare(b.brandName));
       default:
         return products;
     }

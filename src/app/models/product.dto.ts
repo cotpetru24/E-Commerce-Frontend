@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { TargetAudience } from "./gender.enum";
 
 interface ProductDto {
@@ -5,16 +6,38 @@ interface ProductDto {
   name: string;
   description: string;
   price: number;
-  originalPrice?: number;
-  image: string;
+  originalPrice?: number | undefined;
+  imagePath: string;
   stock: number;
-  targetAudience: TargetAudience
-  brand: string;
-  rating?: number;
-  reviewCount?: number;
-  sizes?: string[];
-  isNew?: boolean;
+  audience: TargetAudience
+  brandName: string;
+  rating?: number | undefined;
+  reviewCount?: number | undefined;
+  sizes?: string[] | undefined;
+  isNew?: boolean | undefined;
   discount?: number;
 }
 
-export type { ProductDto };
+const ProductDtoSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  description: z.string(),
+  price: z.number(),
+  originalPrice: z.number().optional(),
+  imagePath: z.string(),
+  stock: z.number(),
+  audience: z.nativeEnum(TargetAudience),
+  brandName: z.string(),
+  rating: z.number().optional(),
+  reviewCount: z.number().optional(),
+  sizes: z.array(z.string()).optional(),
+  isNew: z.boolean().optional(),
+  discountPercentage: z.number().optional(),
+});
+
+
+type ProductDtoValidated = z.infer<typeof ProductDtoSchema>
+
+export type { ProductDto, ProductDtoValidated };
+
+export{ProductDtoSchema}

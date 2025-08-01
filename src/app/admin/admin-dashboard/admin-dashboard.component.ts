@@ -22,8 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
 import { ProductDto } from '../../models/product.dto';
 import { AdminApiService, AdminStats, Order } from '../../services/api/admin-api.service';
-import { ProductApiService } from '../../services/api/product-api.service';
-import { UserApiService, User } from '../../services/api/user-api.service';
+import { User } from '../../services/api/user-api.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -115,8 +114,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private adminApi: AdminApiService,
-    private productApi: ProductApiService,
-    private userApi: UserApiService,
+    // private productApi: ProductApiService,
+    // private userApi: UserApiService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -181,13 +180,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.filteredProducts = this.products.filter(product => {
       const matchesSearch = !this.productSearchTerm || 
         product.name.toLowerCase().includes(this.productSearchTerm.toLowerCase()) ||
-        product.brand.toLowerCase().includes(this.productSearchTerm.toLowerCase());
+        product.brandName.toLowerCase().includes(this.productSearchTerm.toLowerCase());
       
       const matchesCategory = !this.selectedProductCategory || 
-        product.targetAudience === this.selectedProductCategory;
+        product.audience === this.selectedProductCategory;
       
       const matchesBrand = !this.selectedProductBrand || 
-        product.brand === this.selectedProductBrand;
+        product.brandName === this.selectedProductBrand;
       
       return matchesSearch && matchesCategory && matchesBrand;
     });

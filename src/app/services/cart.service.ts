@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ProductDto } from '../models/product.dto';
 
 export interface CartItem {
@@ -72,7 +72,7 @@ export class CartService {
       const newItem: CartItem = {
         product,
         quantity: Math.min(quantity, product.stock),
-        size
+        ...(size !== undefined && { size })
       };
       
       const updatedCart = [...currentCart, newItem];

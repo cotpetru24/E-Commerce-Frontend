@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, retry, tap } from 'rxjs/operators';
 import { ProductDto } from '../../models/product.dto';
 import { BaseApiService } from './base-api.service';

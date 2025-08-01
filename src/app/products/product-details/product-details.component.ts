@@ -62,10 +62,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           "This comfortable men's sneaker features a retro design with a modern touch. Perfect for casual wear, these shoes combine style and comfort with a durable construction that will last through daily use. The breathable upper material keeps your feet cool while the cushioned sole provides excellent support for all-day comfort.",
         price: 64.99,
-        image: 'products/retro-sneaker.png',
+        imagePath: 'products/retro-sneaker.png',
         stock: 10,
-        targetAudience: TargetAudience.Men,
-        brand: 'Nike',
+        audience: TargetAudience.Men,
+        brandName: 'Nike',
       },
       {
         id: 2,
@@ -73,10 +73,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           'Lightweight and cushioned. The perfect running shoe for your daily tune.',
         price: 89.39,
-        image: 'products/running-shoe.png',
+        imagePath: 'products/running-shoe.png',
         stock: 7,
-        targetAudience: TargetAudience.Men,
-        brand: 'Adidas',
+        audience: TargetAudience.Men,
+        brandName: 'Adidas',
       },
       {
         id: 3,
@@ -84,10 +84,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           "A versatile men's casual sneaker with a minimal and stylish design.",
         price: 74.39,
-        image: 'products/casual-sneaker.png',
+        imagePath: 'products/casual-sneaker.png',
         stock: 5,
-        targetAudience: TargetAudience.Men,
-        brand: 'Puma',
+        audience: TargetAudience.Men,
+        brandName: 'Puma',
       },
       {
         id: 4,
@@ -95,10 +95,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           'Elegant and comfortable heel perfect for formal occasions.',
         price: 99.99,
-        image: 'products/retro-sneaker2.png',
+        imagePath: 'products/retro-sneaker2.png',
         stock: 8,
-        targetAudience: TargetAudience.Women,
-        brand: 'Steve Madden',
+        audience: TargetAudience.Women,
+        brandName: 'Steve Madden',
       },
       {
         id: 5,
@@ -106,10 +106,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           'Durable and comfortable shoes perfect for active children.',
         price: 45.99,
-        image: 'products/casual-sneaker.png',
+        imagePath: 'products/casual-sneaker.png',
         stock: 12,
-        targetAudience: TargetAudience.Children,
-        brand: 'Skechers',
+        audience: TargetAudience.Children,
+        brandName: 'Skechers',
       },
       {
         id: 6,
@@ -117,10 +117,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           'High-performance athletic shoes for women who love to stay active.',
         price: 79.99,
-        image: 'products/running-shoe.png',
+        imagePath: 'products/running-shoe.png',
         stock: 6,
-        targetAudience: TargetAudience.Women,
-        brand: 'Under Armour',
+        audience: TargetAudience.Women,
+        brandName: 'Under Armour',
       },
             {
         id: 7,
@@ -128,10 +128,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           'High-performance athletic shoes for women who love to stay active.',
         price: 79.99,
-        image: 'products/running-shoe.png',
+        imagePath: 'products/running-shoe.png',
         stock: 6,
-        targetAudience: TargetAudience.Women,
-        brand: 'Under Armour',
+        audience: TargetAudience.Women,
+        brandName: 'Under Armour',
       },
             {
         id: 8,
@@ -139,10 +139,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           'High-performance athletic shoes for women who love to stay active.',
         price: 79.99,
-        image: 'products/running-shoe.png',
+        imagePath: 'products/running-shoe.png',
         stock: 6,
-        targetAudience: TargetAudience.Women,
-        brand: 'Under Armour',
+        audience: TargetAudience.Women,
+        brandName: 'Under Armour',
       },
             {
         id: 9,
@@ -150,10 +150,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           'High-performance athletic shoes for women who love to stay active.',
         price: 79.99,
-        image: 'products/running-shoe.png',
+        imagePath: 'products/running-shoe.png',
         stock: 6,
-        targetAudience: TargetAudience.Women,
-        brand: 'Under Armour',
+        audience: TargetAudience.Women,
+        brandName: 'Under Armour',
       },
             {
         id: 10,
@@ -161,10 +161,10 @@ export class ProductDetailsComponent implements OnInit {
         description:
           'High-performance athletic shoes for women who love to stay active.',
         price: 79.99,
-        image: 'products/running-shoe.png',
+        imagePath: 'products/running-shoe.png',
         stock: 6,
-        targetAudience: TargetAudience.Women,
-        brand: 'Under Armour',
+        audience: TargetAudience.Women,
+        brandName: 'Under Armour',
       },
     ];
 
@@ -182,7 +182,7 @@ export class ProductDetailsComponent implements OnInit {
 
     // Set up product images
     this.productImages = [
-      this.product.image,
+      this.product.imagePath,
       'products/retro-sneaker2.png',
       'products/running-shoe.png',
       'products/casual-sneaker.png',
@@ -212,20 +212,20 @@ export class ProductDetailsComponent implements OnInit {
         name: "Men's Running Shoe",
         description: 'Lightweight and cushioned running shoe.',
         price: 89.39,
-        image: 'products/running-shoe.png',
+        imagePath: 'products/running-shoe.png',
         stock: 7,
-        targetAudience: TargetAudience.Men,
-        brand: 'Adidas',
+        audience: TargetAudience.Men,
+        brandName: 'Adidas',
       },
       {
         id: 3,
         name: "Men's Casual Sneaker",
         description: 'A versatile casual sneaker.',
         price: 74.39,
-        image: 'products/casual-sneaker.png',
+        imagePath: 'products/casual-sneaker.png',
         stock: 5,
-        targetAudience: TargetAudience.Men,
-        brand: 'Puma',
+        audience: TargetAudience.Men,
+        brandName: 'Puma',
       },
     ];
   }
@@ -244,7 +244,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   isSizeAvailable(size: string): boolean {
-    // Simulate size availability
+    size=size.toLowerCase();
     return Math.random() > 0.3; // 70% chance of being available
   }
 

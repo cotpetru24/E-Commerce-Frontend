@@ -109,7 +109,7 @@
           <mat-card class="product-card" *ngFor="let product of filteredProducts"
             [class.list-card]="viewMode === 'list'">
             <div class="product-image">
-              <img [src]="product.image" [alt]="product.name" title="Product image" />
+              <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
               <div class="product-overlay">
                 <button mat-icon-button color="primary" class="quick-view-btn" (click)="quickView(product)">
                   <mat-icon>visibility</mat-icon>
@@ -119,7 +119,7 @@
                 </button>
               </div>
               <div class="product-badges">
-                <span class="category-badge" [class]="product.targetAudience">{{ product.targetAudience }}</span>
+                <span class="category-badge" [class]="product.audience">{{ product.audience }}</span>
                 <span class="stock-badge" [class.in-stock]="product.stock > 0"
                   [class.out-of-stock]="product.stock === 0">
                   {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
@@ -130,7 +130,7 @@
             <mat-card-content>
               <div class="product-info">
                 <h3 class="product-name">{{ product.name }}</h3>
-                <p class="product-brand">{{ product.brand }}</p>
+                <p class="product-brand">{{ product.brandName }}</p>
                 <p class="product-description">{{ product.description }}</p>
                 <div class="product-price">
                   <span class="price">£{{ product.price }}</span>

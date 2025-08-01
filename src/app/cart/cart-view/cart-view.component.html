@@ -10,14 +10,14 @@
       <div class="cart-items">
         <div class="cart-item" *ngFor="let item of cartItems; trackBy: trackByItem">
           <div class="item-image">
-            <img [src]="item.product.image" [alt]="item.product.name" />
+            <img [src]="item.product.imagePath" [alt]="item.product.name"  title="item.product.name"/>
           </div>
           
           <div class="item-details">
             <div class="item-info">
               <h3 class="item-name">{{ item.product.name }}</h3>
-              <p class="item-brand">{{ item.product.brand }}</p>
-              <p class="item-category">{{ item.product.targetAudience | titlecase }}</p>
+              <p class="item-brand">{{ item.product.brandName }}</p>
+              <p class="item-category">{{ item.product.audience | titlecase }}</p>
               <p class="item-size" *ngIf="item.size">Size: {{ item.size }}</p>
             </div>
             

@@ -6,7 +6,7 @@
       <mat-icon>chevron_right</mat-icon>
       <a routerLink="/products">Products</a>
       <mat-icon>chevron_right</mat-icon>
-      <a routerLink="/products" [queryParams]="{gender: product?.targetAudience}">{{ product?.targetAudience | titlecase }}</a>
+      <a routerLink="/products" [queryParams]="{gender: product?.audience}">{{ product?.audience | titlecase }}</a>
       <mat-icon>chevron_right</mat-icon>
       <span class="current">{{ product?.name }}</span>
     </nav>
@@ -40,8 +40,8 @@
       <div class="product-info">
         <div class="product-header">
           <div class="product-badges">
-            <span class="category-badge" [class]="product.targetAudience">{{ product.targetAudience }}</span>
-            <span class="brand-badge">{{ product.brand }}</span>
+            <span class="category-badge" [class]="product.audience">{{ product.audience }}</span>
+            <span class="brand-badge">{{ product.brandName }}</span>
           </div>
           <h1 class="product-name">{{ product.name }}</h1>
           <div class="product-rating">
@@ -176,10 +176,10 @@
       <h2>Related Products</h2>
       <div class="related-products-grid">
         <mat-card class="related-product-card" *ngFor="let relatedProduct of relatedProducts">
-          <img mat-card-image [src]="relatedProduct.image" [alt]="relatedProduct.name" title="Product image"/>
+          <img mat-card-image [src]="relatedProduct.imagePath" [alt]="relatedProduct.name" title="Product image"/>
           <mat-card-content>
             <h3>{{ relatedProduct.name }}</h3>
-            <p class="brand">{{ relatedProduct.brand }}</p>
+            <p class="brand">{{ relatedProduct.brandName }}</p>
             <p class="price">£{{ relatedProduct.price }}</p>
           </mat-card-content>
           <mat-card-actions>
