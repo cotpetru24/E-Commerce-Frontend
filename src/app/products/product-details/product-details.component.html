@@ -3,11 +3,11 @@
     <!-- Breadcrumb -->
     <nav class="breadcrumb">
       <a routerLink="/">Home</a>
-      <mat-icon>chevron_right</mat-icon>
+      <i class="bi bi-chevron-right"></i>
       <a routerLink="/products">Products</a>
-      <mat-icon>chevron_right</mat-icon>
+      <i class="bi bi-chevron-right"></i>
       <a routerLink="/products" [queryParams]="{gender: product?.audience}">{{ product?.audience | titlecase }}</a>
-      <mat-icon>chevron_right</mat-icon>
+      <i class="bi bi-chevron-right"></i>
       <span class="current">{{ product?.name }}</span>
     </nav>
 
@@ -18,19 +18,15 @@
         <div class="main-image">
           <img src="selectedImage || product.image" alt="product.name" />
           <div class="image-overlay">
-            <button mat-icon-button color="primary" class="zoom-btn" (click)="openImageModal()">
-              <mat-icon>zoom_in</mat-icon>
+            <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()">
+              <i class="bi bi-zoom-in"></i>
             </button>
           </div>
         </div>
-        
+
         <div class="image-thumbnails" *ngIf="productImages.length > 1">
-          <div 
-            class="thumbnail" 
-            *ngFor="let image of productImages" 
-            [class.active]="selectedImage === image"
-            (click)="selectImage(image)"
-          >
+          <div class="thumbnail" *ngFor="let image of productImages" [class.active]="selectedImage === image"
+            (click)="selectImage(image)">
             <img [src]="image" [alt]="product.name" title="Product image" />
           </div>
         </div>
@@ -46,9 +42,9 @@
           <h1 class="product-name">{{ product.name }}</h1>
           <div class="product-rating">
             <div class="stars">
-              <mat-icon *ngFor="let star of [1,2,3,4,5]" [class.filled]="star <= rating">
-                {{ star <= rating ? 'star' : 'star_border' }}
-              </mat-icon>
+              <i *ngFor="let star of [1, 2, 3, 4, 5]" [ngClass]="star <= rating ? 'bi bi-star-fill' : 'bi bi-star'"
+                class="me-1">
+              </i>
             </div>
             <span class="rating-text">{{ rating }}/5 ({{ reviewCount }} reviews)</span>
           </div>
@@ -64,7 +60,7 @@
           </div>
           <div class="stock-info">
             <span class="stock-status" [class.in-stock]="product.stock > 0" [class.out-of-stock]="product.stock === 0">
-              <mat-icon>{{ product.stock > 0 ? 'check_circle' : 'cancel' }}</mat-icon>
+              <i [ngClass]=" product.stock > 0 ? 'bi bi-check-circle' : 'bi bi-x-circle' "></i>
               {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
             </span>
             <span class="stock-count" *ngIf="product.stock > 0">
@@ -72,6 +68,8 @@
             </span>
           </div>
         </div>
+
+
 
         <div class="product-description">
           <h3>Description</h3>
@@ -83,7 +81,7 @@
           <h3>Features</h3>
           <ul class="features-list">
             <li *ngFor="let feature of productFeatures">
-              <mat-icon>check</mat-icon>
+              <i class="bi bi-check"></i>
               {{ feature }}
             </li>
           </ul>
@@ -93,13 +91,8 @@
         <div class="size-selection" *ngIf="availableSizes.length > 0">
           <h3>Select Size</h3>
           <div class="size-options">
-            <button 
-              mat-stroked-button 
-              *ngFor="let size of availableSizes" 
-              [class.selected]="selectedSize === size"
-              [class.disabled]="!isSizeAvailable(size)"
-              (click)="selectSize(size)"
-            >
+            <button class="btn btn-outline-primary" *ngFor="let size of availableSizes" [class.selected]="selectedSize === size"
+              [class.disabled]="!isSizeAvailable(size)" (click)="selectSize(size)">
               {{ size }}
             </button>
           </div>
@@ -109,56 +102,48 @@
         <div class="quantity-selection">
           <h3>Quantity</h3>
           <div class="quantity-controls">
-            <button mat-icon-button (click)="decreaseQuantity()" [disabled]="quantity <= 1">
-              <mat-icon>remove</mat-icon>
+            <button class="btn btn-outline-secondary" (click)="decreaseQuantity()" [disabled]="quantity <= 1" title="Decrease quantity">
+              <i class="bi bi-dash"></i>
             </button>
             <span class="quantity-display">{{ quantity }}</span>
-            <button mat-icon-button (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">
-              <mat-icon>add</mat-icon>
+            <button class="btn btn-outline-secondary" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity"
+              title="Increase quantity">
+              <i class="bi bi-plus"></i>
             </button>
           </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-          <button 
-            mat-raised-button 
-            color="primary" 
-            class="add-to-cart-btn"
-            [disabled]="product.stock === 0 || !selectedSize"
-            (click)="addToCart()"
-          >
-            <mat-icon>add_shopping_cart</mat-icon>
+          <button class="btn btn-primary add-to-cart-btn"
+            [disabled]="product.stock === 0 || !selectedSize" (click)="addToCart()">
+            <i class="bi bi-cart-plus"></i>
             Add to Cart
           </button>
-          
-          <button 
-            mat-stroked-button 
-            class="buy-now-btn"
-            [disabled]="product.stock === 0 || !selectedSize"
-            (click)="buyNow()"
-          >
-            <mat-icon>flash_on</mat-icon>
+
+          <button class="btn btn-outline-primary buy-now-btn" [disabled]="product.stock === 0 || !selectedSize"
+            (click)="buyNow()">
+            <i class="bi bi-lightning"></i>
             Buy Now
           </button>
-          
-          <button mat-icon-button class="wishlist-btn" (click)="toggleWishlist()">
-            <mat-icon [class.filled]="isInWishlist">{{ isInWishlist ? 'favorite' : 'favorite_border' }}</mat-icon>
+
+          <button class="btn btn-outline-danger wishlist-btn" (click)="toggleWishlist()">
+            <i [class]="isInWishlist ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
           </button>
         </div>
 
         <!-- Product Meta -->
         <div class="product-meta">
           <div class="meta-item">
-            <mat-icon>local_shipping</mat-icon>
+            <i class="bi bi-truck"></i>
             <span>Free shipping on orders over £50</span>
           </div>
           <div class="meta-item">
-            <mat-icon>swap_horiz</mat-icon>
+            <i class="bi bi-arrow-repeat"></i>
             <span>30-day return policy</span>
           </div>
           <div class="meta-item">
-            <mat-icon>security</mat-icon>
+            <i class="bi bi-shield-check"></i>
             <span>Secure payment</span>
           </div>
         </div>
@@ -167,38 +152,39 @@
 
     <!-- Loading State -->
     <div class="loading-state" *ngIf="!product">
-      <mat-spinner></mat-spinner>
-      <p>Loading product details...</p>
+      <app-spinner></app-spinner>
     </div>
 
     <!-- Related Products -->
     <section class="related-products" *ngIf="relatedProducts.length > 0">
       <h2>Related Products</h2>
       <div class="related-products-grid">
-        <mat-card class="related-product-card" *ngFor="let relatedProduct of relatedProducts">
-          <img mat-card-image [src]="relatedProduct.imagePath" [alt]="relatedProduct.name" title="Product image"/>
-          <mat-card-content>
-            <h3>{{ relatedProduct.name }}</h3>
+        <div class="card related-product-card" *ngFor="let relatedProduct of relatedProducts">
+          <img class="card-img-top" [src]="relatedProduct.imagePath" [alt]="relatedProduct.name" title="Product image" />
+          <div class="card-body">
+            <h3 class="card-title">{{ relatedProduct.name }}</h3>
             <p class="brand">{{ relatedProduct.brandName }}</p>
             <p class="price">£{{ relatedProduct.price }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-button color="primary" [routerLink]="['/products/details', relatedProduct.id]">
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary" [routerLink]="['/products/details', relatedProduct.id]">
               View Details
             </button>
-          </mat-card-actions>
-        </mat-card>
+          </div>
+        </div>
       </div>
     </section>
   </div>
 </div>
 
 <!-- In your component HTML -->
-<div #errorToast class="toast position-fixed bottom-0 start-50 translate-middle-x text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+<div #errorToast class="toast position-fixed bottom-0 start-50 translate-middle-x text-bg-danger" role="alert"
+  aria-live="assertive" aria-atomic="true">
   <div class="d-flex">
     <div class="toast-body">
       Please select a size before purchasing
     </div>
-    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+      aria-label="Close"></button>
   </div>
 </div>

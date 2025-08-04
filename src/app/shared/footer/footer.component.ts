@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-footer',
@@ -19,7 +20,7 @@ export class FooterComponent implements OnInit {
   newsletterEmail: string = '';
   showBackToTop: boolean = false;
 
-  constructor() {}
+  constructor(private toastService: ToastService) {}
 
   ngOnInit(): void {}
 
@@ -31,25 +32,12 @@ export class FooterComponent implements OnInit {
   subscribeNewsletter() {
     if (this.newsletterEmail && this.isValidEmail(this.newsletterEmail)) {
       // In a real app, this would call a service to subscribe
-    //   this.snackBar.open(
-    //     'Thank you for subscribing to our newsletter!',
-    //     'Close',
-    //     {
-    //       duration: 3000,
-    //       horizontalPosition: 'center',
-    //       verticalPosition: 'bottom',
-    //     }
-    //   );
-    //   this.newsletterEmail = '';
-    // } else {
-    //   this.snackBar.open('Please enter a valid email address', 'Close', {
-    //     duration: 3000,
-    //     horizontalPosition: 'center',
-    //     verticalPosition: 'bottom',
-    //   });
-    // }
+      this.toastService.success('Thank you for subscribing to our newsletter!');
+      this.newsletterEmail = '';
+    } else {
+      this.toastService.error('Please enter a valid email address');
+    }
   }
-}
 
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,87 +49,59 @@ export class FooterComponent implements OnInit {
   }
 
   // Modal handlers - in a real app, these would open actual modals
-  // openContactModal() {
-  //   this.snackBar.open('Contact modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openContactModal() {
+    this.toastService.info('Contact modal would open here');
+  }
 
-  // openHelpModal() {
-  //   this.snackBar.open('Help & FAQ modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openHelpModal() {
+    this.toastService.info('Help & FAQ modal would open here');
+  }
 
-  // openShippingModal() {
-  //   this.snackBar.open('Shipping information modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openShippingModal() {
+    this.toastService.info('Shipping information modal would open here');
+  }
 
-  // openReturnsModal() {
-  //   this.snackBar.open('Returns & exchanges modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openReturnsModal() {
+    this.toastService.info('Returns & exchanges modal would open here');
+  }
 
-  // openSizeGuideModal() {
-  //   this.snackBar.open('Size guide modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openSizeGuideModal() {
+    this.toastService.info('Size guide modal would open here');
+  }
 
-  // openTrackOrderModal() {
-  //   this.snackBar.open('Track order modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openTrackOrderModal() {
+    this.toastService.info('Track order modal would open here');
+  }
 
-  // openAboutModal() {
-  //   this.snackBar.open('About us modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openAboutModal() {
+    this.toastService.info('About us modal would open here');
+  }
 
-  // openCareersModal() {
-  //   this.snackBar.open('Careers modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openCareersModal() {
+    this.toastService.info('Careers modal would open here');
+  }
 
-  // openPressModal() {
-  //   this.snackBar.open('Press modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openPressModal() {
+    this.toastService.info('Press modal would open here');
+  }
 
-  // openPartnersModal() {
-  //   this.snackBar.open('Partners modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openPartnersModal() {
+    this.toastService.info('Partners modal would open here');
+  }
 
-  // openSustainabilityModal() {
-  //   this.snackBar.open('Sustainability modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openSustainabilityModal() {
+    this.toastService.info('Sustainability modal would open here');
+  }
 
-  // openPrivacyModal() {
-  //   this.snackBar.open('Privacy policy modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openPrivacyModal() {
+    this.toastService.info('Privacy policy modal would open here');
+  }
 
-  // openTermsModal() {
-  //   this.snackBar.open('Terms of service modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openTermsModal() {
+    this.toastService.info('Terms of service modal would open here');
+  }
 
-  // openCookiesModal() {
-  //   this.snackBar.open('Cookie policy modal would open here', 'Close', {
-  //     duration: 2000,
-  //   });
-  // }
+  openCookiesModal() {
+    this.toastService.info('Cookie policy modal would open here');
+  }
 }

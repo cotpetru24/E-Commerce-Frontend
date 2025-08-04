@@ -1,1 +1,142 @@
-<p>Login page</p>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h4 class="mb-0">
+            <i class="bi bi-person-circle me-2"></i>
+            Login
+          </h4>
+        </div>
+        <div class="card-body p-4">
+          <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+            <div class="mb-3">
+              <label for="email" class="form-label">
+                <i class="bi bi-envelope me-2"></i>Email Address
+              </label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                name="email"
+                [(ngModel)]="loginData.email"
+                required
+                email
+                placeholder="Enter your email"
+                [ngClass]="{'is-invalid': loginForm.submitted && !loginData.email}"
+              >
+              <div class="invalid-feedback" *ngIf="loginForm.submitted && !loginData.email">
+                Please enter a valid email address.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">
+                <i class="bi bi-lock me-2"></i>Password
+              </label>
+              <div class="input-group">
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  class="form-control" 
+                  id="password" 
+                  name="password"
+                  [(ngModel)]="loginData.password"
+                  required
+                  placeholder="Enter your password"
+                  [ngClass]="{'is-invalid': loginForm.submitted && !loginData.password}"
+                >
+                <button 
+                  class="btn btn-outline-secondary" 
+                  type="button"
+                  (click)="togglePassword()"
+                >
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback" *ngIf="loginForm.submitted && !loginData.password">
+                Please enter your password.
+              </div>
+            </div>
+
+            <div class="mb-3 form-check">
+              <input 
+                type="checkbox" 
+                class="form-check-input" 
+                id="rememberMe"
+                [(ngModel)]="loginData.rememberMe"
+                name="rememberMe"
+              >
+              <label class="form-check-label" for="rememberMe">
+                Remember me
+              </label>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg"
+                [disabled]="isLoading"
+              >
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                <i class="bi bi-box-arrow-in-right me-2" *ngIf="!isLoading"></i>
+                {{ isLoading ? 'Signing in...' : 'Sign In' }}
+              </button>
+            </div>
+
+            <!-- SSO Section -->
+            <div class="mt-4">
+              <div class="text-center mb-3">
+                <span class="text-muted">or continue with</span>
+              </div>
+              
+              <div class="d-grid gap-2">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-danger"
+                  (click)="signInWithGoogle()"
+                  [disabled]="isGoogleLoading"
+                >
+                  <span *ngIf="isGoogleLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <i class="bi bi-google me-2" *ngIf="!isGoogleLoading"></i>
+                  {{ isGoogleLoading ? 'Signing in...' : 'Continue with Google' }}
+                </button>
+                
+                <button 
+                  type="button" 
+                  class="btn btn-outline-dark"
+                  (click)="signInWithGitHub()"
+                  [disabled]="isGitHubLoading"
+                >
+                  <span *ngIf="isGitHubLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <i class="bi bi-github me-2" *ngIf="!isGitHubLoading"></i>
+                  {{ isGitHubLoading ? 'Signing in...' : 'Continue with GitHub' }}
+                </button>
+                
+                <button 
+                  type="button" 
+                  class="btn btn-outline-primary"
+                  (click)="signInWithFacebook()"
+                  [disabled]="isFacebookLoading"
+                >
+                  <span *ngIf="isFacebookLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <i class="bi bi-facebook me-2" *ngIf="!isFacebookLoading"></i>
+                  {{ isFacebookLoading ? 'Signing in...' : 'Continue with Facebook' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="text-center mt-3">
+              <a href="#" class="text-decoration-none">Forgot Password?</a>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer text-center">
+          <p class="mb-0">
+            Don't have an account? 
+            <a routerLink="/auth/register" class="text-decoration-none">Sign up here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

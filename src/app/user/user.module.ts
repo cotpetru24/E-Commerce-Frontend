@@ -1,0 +1,10 @@
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { UserAccountComponent } from './user-account/user-account.component';
+import { UserOrdersComponent } from './user-orders/user-orders.component';
+
+@NgModule({
+  declarations: [],
+  imports: [CommonModule, UserAccountComponent, UserOrdersComponent],
+})
+export class USerModule {}

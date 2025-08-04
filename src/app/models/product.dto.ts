@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TargetAudience } from "./gender.enum";
+import { Audience } from "./gender.enum";
 
 interface ProductDto {
   id: number;
@@ -9,13 +9,14 @@ interface ProductDto {
   originalPrice?: number | undefined;
   imagePath: string;
   stock: number;
-  audience: TargetAudience
+  audience: Audience
   brandName: string;
   rating?: number | undefined;
   reviewCount?: number | undefined;
   sizes?: string[] | undefined;
   isNew?: boolean | undefined;
   discount?: number;
+  selected?: boolean;
 }
 
 const ProductDtoSchema = z.object({
@@ -26,7 +27,7 @@ const ProductDtoSchema = z.object({
   originalPrice: z.number().optional(),
   imagePath: z.string(),
   stock: z.number(),
-  audience: z.nativeEnum(TargetAudience),
+  audience: z.nativeEnum(Audience),
   brandName: z.string(),
   rating: z.number().optional(),
   reviewCount: z.number().optional(),

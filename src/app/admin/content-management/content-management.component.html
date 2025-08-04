@@ -1,0 +1,536 @@
+<div class="container mt-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a routerLink="/admin" class="text-decoration-none">
+          <i class="bi bi-house me-1"></i>Admin Dashboard
+        </a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        <i class="bi bi-file-text me-1"></i>Content Management
+      </li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <div class="col-lg-3">
+      <!-- Navigation Sidebar -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-list me-2"></i>Content Sections
+          </h6>
+        </div>
+        <div class="list-group list-group-flush">
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'branding'}"
+             (click)="setActiveSection('branding')">
+            <i class="bi bi-palette me-2"></i>Branding & Logo
+          </a>
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'colors'}"
+             (click)="setActiveSection('colors')">
+            <i class="bi bi-palette2 me-2"></i>Color Scheme
+          </a>
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'hero'}"
+             (click)="setActiveSection('hero')">
+            <i class="bi bi-stars me-2"></i>Hero Section
+          </a>
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'categories'}"
+             (click)="setActiveSection('categories')">
+            <i class="bi bi-grid me-2"></i>Categories
+          </a>
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'features'}"
+             (click)="setActiveSection('features')">
+            <i class="bi bi-star me-2"></i>Features
+          </a>
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'testimonials'}"
+             (click)="setActiveSection('testimonials')">
+            <i class="bi bi-chat-quote me-2"></i>Testimonials
+          </a>
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'brands'}"
+             (click)="setActiveSection('brands')">
+            <i class="bi bi-award me-2"></i>Brands
+          </a>
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'newsletter'}"
+             (click)="setActiveSection('newsletter')">
+            <i class="bi bi-envelope me-2"></i>Newsletter
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <!-- Branding & Logo Editor -->
+      <div class="card shadow-sm" *ngIf="activeSection === 'branding'">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-palette me-2"></i>Branding & Logo
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <h6 class="mb-3">Website Logo</h6>
+              <div class="border rounded p-3 text-center mb-3">
+                <div class="mb-3" *ngIf="!brandingContent.logoUrl">
+                  <i class="bi bi-image display-4 text-muted"></i>
+                </div>
+                <img *ngIf="brandingContent.logoUrl" 
+                     [src]="brandingContent.logoUrl" 
+                     alt="Website Logo" 
+                     class="img-fluid mb-3" 
+                     style="max-height: 100px;">
+                <p class="text-muted mb-2">Upload your website logo</p>
+                <button class="btn btn-outline-primary btn-sm" (click)="logoInput.click()">
+                  <i class="bi bi-upload me-2"></i>Choose Logo
+                </button>
+                <input #logoInput type="file" 
+                       class="d-none" 
+                       accept="image/*" 
+                       (change)="onLogoUpload($event)">
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" 
+                       type="checkbox" 
+                       id="useLogo" 
+                       [(ngModel)]="brandingContent.useLogo">
+                <label class="form-check-label" for="useLogo">
+                  Display logo in header
+                </label>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+              <h6 class="mb-3">Favicon</h6>
+              <div class="border rounded p-3 text-center mb-3">
+                <div class="mb-3" *ngIf="!brandingContent.faviconUrl">
+                  <i class="bi bi-image display-4 text-muted"></i>
+                </div>
+                <img *ngIf="brandingContent.faviconUrl" 
+                     [src]="brandingContent.faviconUrl" 
+                     alt="Favicon" 
+                     class="img-fluid mb-3" 
+                     style="max-height: 32px;">
+                <p class="text-muted mb-2">Upload favicon (32x32px recommended)</p>
+                <button class="btn btn-outline-primary btn-sm" (click)="faviconInput.click()">
+                  <i class="bi bi-upload me-2"></i>Choose Favicon
+                </button>
+                <input #faviconInput type="file" 
+                       class="d-none" 
+                       accept="image/*" 
+                       (change)="onFaviconUpload($event)">
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Website Name</label>
+              <input type="text" class="form-control" 
+                     [(ngModel)]="brandingContent.websiteName"
+                     placeholder="Enter website name">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Tagline</label>
+              <input type="text" class="form-control" 
+                     [(ngModel)]="brandingContent.tagline"
+                     placeholder="Enter tagline">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Color Scheme Editor -->
+      <div class="card shadow-sm" *ngIf="activeSection === 'colors'">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">
+            <i class="bi bi-palette2 me-2"></i>Color Scheme
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <h6 class="mb-3">Navbar Colors</h6>
+              <div class="mb-3">
+                <label class="form-label">Background Color</label>
+                <div class="input-group">
+                  <input type="color" 
+                         class="form-control form-control-color" 
+                         [(ngModel)]="colorScheme.navbarBackground"
+                         title="Choose navbar background color">
+                  <input type="text" 
+                         class="form-control" 
+                         [(ngModel)]="colorScheme.navbarBackground"
+                         placeholder="#ffffff">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Text Color</label>
+                <div class="input-group">
+                  <input type="color" 
+                         class="form-control form-control-color" 
+                         [(ngModel)]="colorScheme.navbarText"
+                         title="Choose navbar text color">
+                  <input type="text" 
+                         class="form-control" 
+                         [(ngModel)]="colorScheme.navbarText"
+                         placeholder="#000000">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Link Color</label>
+                <div class="input-group">
+                  <input type="color" 
+                         class="form-control form-control-color" 
+                         [(ngModel)]="colorScheme.navbarLink"
+                         title="Choose navbar link color">
+                  <input type="text" 
+                         class="form-control" 
+                         [(ngModel)]="colorScheme.navbarLink"
+                         placeholder="#007bff">
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+              <h6 class="mb-3">Footer Colors</h6>
+              <div class="mb-3">
+                <label class="form-label">Background Color</label>
+                <div class="input-group">
+                  <input type="color" 
+                         class="form-control form-control-color" 
+                         [(ngModel)]="colorScheme.footerBackground"
+                         title="Choose footer background color">
+                  <input type="text" 
+                         class="form-control" 
+                         [(ngModel)]="colorScheme.footerBackground"
+                         placeholder="#343a40">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Text Color</label>
+                <div class="input-group">
+                  <input type="color" 
+                         class="form-control form-control-color" 
+                         [(ngModel)]="colorScheme.footerText"
+                         title="Choose footer text color">
+                  <input type="text" 
+                         class="form-control" 
+                         [(ngModel)]="colorScheme.footerText"
+                         placeholder="#ffffff">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Link Color</label>
+                <div class="input-group">
+                  <input type="color" 
+                         class="form-control form-control-color" 
+                         [(ngModel)]="colorScheme.footerLink"
+                         title="Choose footer link color">
+                  <input type="text" 
+                         class="form-control" 
+                         [(ngModel)]="colorScheme.footerLink"
+                         placeholder="#17a2b8">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-12">
+              <h6 class="mb-3">Preview</h6>
+              <div class="border rounded p-3">
+                <div class="mb-3" 
+                     [style.background-color]="colorScheme.navbarBackground"
+                     [style.color]="colorScheme.navbarText"
+                     style="padding: 10px; border-radius: 4px;">
+                  <strong>Navbar Preview</strong>
+                  <a href="#" 
+                     [style.color]="colorScheme.navbarLink" 
+                     style="margin-left: 15px; text-decoration: none;">Home</a>
+                  <a href="#" 
+                     [style.color]="colorScheme.navbarLink" 
+                     style="margin-left: 15px; text-decoration: none;">Products</a>
+                </div>
+                <div [style.background-color]="colorScheme.footerBackground"
+                     [style.color]="colorScheme.footerText"
+                     style="padding: 10px; border-radius: 4px;">
+                  <strong>Footer Preview</strong>
+                  <a href="#" 
+                     [style.color]="colorScheme.footerLink" 
+                     style="margin-left: 15px; text-decoration: none;">About</a>
+                  <a href="#" 
+                     [style.color]="colorScheme.footerLink" 
+                     style="margin-left: 15px; text-decoration: none;">Contact</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary" (click)="applyColorScheme()">
+                  <i class="bi bi-check-circle me-2"></i>Apply Color Scheme
+                </button>
+                <button class="btn btn-outline-secondary" (click)="exportBrandingAssets()">
+                  <i class="bi bi-download me-2"></i>Export Assets
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Section Editor -->
+      <div class="card shadow-sm" *ngIf="activeSection === 'hero'">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-stars me-2"></i>Hero Section
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Main Title</label>
+              <input type="text" class="form-control" 
+                     [(ngModel)]="heroContent.mainTitle"
+                     placeholder="Enter main title">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Subtitle</label>
+              <input type="text" class="form-control" 
+                     [(ngModel)]="heroContent.subtitle"
+                     placeholder="Enter subtitle">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="3" 
+                      [(ngModel)]="heroContent.description"
+                      placeholder="Enter description"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Primary Button Text</label>
+              <input type="text" class="form-control" 
+                     [(ngModel)]="heroContent.primaryButtonText">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Secondary Button Text</label>
+              <input type="text" class="form-control" 
+                     [(ngModel)]="heroContent.secondaryButtonText">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Background Image</label>
+              <input type="file" class="form-control" 
+                     (change)="onImageUpload($event, 'hero')"
+                     accept="image/*">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories Editor -->
+      <div class="card shadow-sm" *ngIf="activeSection === 'categories'">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-grid me-2"></i>Categories
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3" *ngFor="let category of categoriesContent; let i = index">
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mb-0">Category {{ i + 1 }}</h6>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="category.title">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" rows="2" 
+                              [(ngModel)]="category.description"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Image</label>
+                    <input type="file" class="form-control" 
+                           (change)="onImageUpload($event, 'category', i)"
+                           accept="image/*">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Item Count</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="category.itemCount">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Editor -->
+      <div class="card shadow-sm" *ngIf="activeSection === 'features'">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-star me-2"></i>Features
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3" *ngFor="let feature of featuresContent; let i = index">
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mb-0">Feature {{ i + 1 }}</h6>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label">Icon Class</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="feature.icon"
+                           placeholder="bi-truck">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="feature.title">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" rows="2" 
+                              [(ngModel)]="feature.description"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonials Editor -->
+      <div class="card shadow-sm" *ngIf="activeSection === 'testimonials'">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">
+            <i class="bi bi-chat-quote me-2"></i>Testimonials
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3" *ngFor="let testimonial of testimonialsContent; let i = index">
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mb-0">Testimonial {{ i + 1 }}</h6>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label">Customer Name</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="testimonial.name">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="testimonial.location">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <select class="form-select" [(ngModel)]="testimonial.rating">
+                      <option value="5">5 Stars</option>
+                      <option value="4">4 Stars</option>
+                      <option value="3">3 Stars</option>
+                      <option value="2">2 Stars</option>
+                      <option value="1">1 Star</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Review Text</label>
+                    <textarea class="form-control" rows="3" 
+                              [(ngModel)]="testimonial.text"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Avatar</label>
+                    <input type="file" class="form-control" 
+                           (change)="onImageUpload($event, 'testimonial', i)"
+                           accept="image/*">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brands Editor -->
+      <div class="card shadow-sm" *ngIf="activeSection === 'brands'">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-award me-2"></i>Brands
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4 mb-3" *ngFor="let brand of brandsContent; let i = index">
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mb-0">Brand {{ i + 1 }}</h6>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label">Brand Name</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="brand.name">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Icon Class</label>
+                    <input type="text" class="form-control" 
+                           [(ngModel)]="brand.icon"
+                           placeholder="bi-nike">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Newsletter Editor -->
+      <div class="card shadow-sm" *ngIf="activeSection === 'newsletter'">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-envelope me-2"></i>Newsletter
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-control" 
+                   [(ngModel)]="newsletterContent.title">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="3" 
+                      [(ngModel)]="newsletterContent.description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Button Text</label>
+            <input type="text" class="form-control" 
+                   [(ngModel)]="newsletterContent.buttonText">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
 import { Subscription } from 'rxjs';
 import { CartService, CartItem } from '../../services/cart.service';
 
@@ -13,12 +11,9 @@ import { CartService, CartItem } from '../../services/cart.service';
   imports: [
     CommonModule,
     RouterModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSnackBarModule
   ],
   templateUrl: './cart-view.component.html',
-  styleUrls: ['./cart-view.component.scss']
+  styleUrls: ['./cart-view.component.scss'],
 })
 export class CartViewComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
@@ -26,10 +21,9 @@ export class CartViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private cartService: CartService,
-    private snackBar: MatSnackBar,
-    private  router: Router
+    private router: Router
   ) {
-    this.cartSubscription = this.cartService.cartItems$.subscribe(items => {
+    this.cartSubscription = this.cartService.cartItems$.subscribe((items) => {
       this.cartItems = items;
     });
   }
@@ -60,15 +54,18 @@ export class CartViewComponent implements OnInit, OnDestroy {
 
   removeItem(item: CartItem): void {
     this.cartService.removeFromCart(item.product.id, item.size);
-    
-    this.snackBar.open(`${item.product.name} removed from cart`, 'Undo', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
-    }).onAction().subscribe(() => {
-      // Add back to cart
-      this.cartService.addToCart(item.product, item.quantity, item.size);
-    });
+
+    // this.snackBar
+    //   .open(`${item.product.name} removed from cart`, 'Undo', {
+    //     duration: 3000,
+    //     horizontalPosition: 'center',
+    //     verticalPosition: 'bottom',
+    //   })
+    //   .onAction()
+    //   .subscribe(() => {
+    //     // Add back to cart
+    //     this.cartService.addToCart(item.product, item.quantity, item.size);
+    //   });
   }
 
   getItemTotal(item: CartItem): number {
@@ -96,26 +93,25 @@ export class CartViewComponent implements OnInit, OnDestroy {
   }
 
   proceedToCheckout(): void {
-    if (this.cartItems.length === 0) {
-      this.snackBar.open('Your cart is empty', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom'
-      });
-      return;
-    }
-    
+    // if (this.cartItems.length === 0) {
+    //   this.snackBar.open('Your cart is empty', 'Close', {
+    //     duration: 3000,
+    //     horizontalPosition: 'center',
+    //     verticalPosition: 'bottom',
+    //   });
+    //   return;
+    // }
+
     console.log('Proceeding to checkout...');
     this.router.navigate(['/checkout/addressForm']);
-
   }
 
   clearCart(): void {
     this.cartService.clearCart();
-    this.snackBar.open('Cart cleared', 'Close', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
-    });
+    // this.snackBar.open('Cart cleared', 'Close', {
+    //   duration: 2000,
+    //   horizontalPosition: 'center',
+    //   verticalPosition: 'bottom',
+    // });
   }
 }

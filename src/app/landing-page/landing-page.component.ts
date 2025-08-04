@@ -2,15 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductDto } from '../models/product.dto';
 import { CartService } from '../services/cart.service';
-import { TargetAudience } from '../models/gender.enum';
+import { ToastService } from '../services/toast.service';
+import { Audience } from '../models/gender.enum';
 
 // ============================================================================
 // HTTP REQUEST EXAMPLES - ANGULAR HTTP CLIENT
@@ -186,11 +181,6 @@ export class ApiService {
     CommonModule,
     RouterModule,
     FormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule
   ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss'
@@ -467,7 +457,7 @@ export class LandingPageComponent implements OnInit {
       id: 1,
       name: 'Running Pro Elite',
       brandName: 'Nike',
-      audience: TargetAudience.Men,
+      audience: Audience.Men,
       price: 129.99,
       originalPrice: 159.99,
       discount: 19,
@@ -483,7 +473,7 @@ export class LandingPageComponent implements OnInit {
       id: 2,
       name: 'Casual Comfort Plus',
       brandName: 'Adidas',
-      audience: TargetAudience.Women,
+      audience: Audience.Women,
       price: 89.99,
       imagePath: 'products/casual-sneaker.png',
       description: 'Comfortable casual sneakers perfect for everyday wear',
@@ -497,7 +487,7 @@ export class LandingPageComponent implements OnInit {
       id: 3,
       name: 'Retro Classic',
       brandName: 'Converse',
-      audience: TargetAudience.Unisex,
+      audience: Audience.Unisex,
       price: 69.99,
       originalPrice: 79.99,
       discount: 13,
@@ -513,7 +503,7 @@ export class LandingPageComponent implements OnInit {
       id: 4,
       name: 'Performance Max',
       brandName: 'Under Armour',
-      audience: TargetAudience.Men,
+      audience: Audience.Men,
       price: 149.99,
       imagePath: 'products/retro-sneaker2.png',
       description: 'Maximum performance athletic shoes for serious athletes',
@@ -560,7 +550,7 @@ export class LandingPageComponent implements OnInit {
 
   constructor(
     private cartService: CartService,
-    private snackBar: MatSnackBar
+    private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {}
@@ -579,16 +569,12 @@ export class LandingPageComponent implements OnInit {
   // Once the Product details section is implemented, redirect to the product details page
   // ============================================================================
   viewProduct(product: ProductDto) {
-    this.snackBar.open(`Viewing ${product.name}`, 'Close', { duration: 2000 });
+    this.toastService.info(`Viewing ${product.name}`);
   }
 
   addToCart(product: ProductDto) {
     this.cartService.addToCart(product, 1);
-    this.snackBar.open(`${product.name} added to cart!`, 'Close', { 
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
-    });
+    this.toastService.success(`${product.name} added to cart!`);
   }
 
   getStars(rating: number): number[] {
@@ -601,18 +587,10 @@ export class LandingPageComponent implements OnInit {
 
   subscribeNewsletter() {
     if (this.newsletterEmail && this.isValidEmail(this.newsletterEmail)) {
-      this.snackBar.open('Thank you for subscribing to our newsletter!', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom'
-      });
+      this.toastService.success('Thank you for subscribing to our newsletter!');
       this.newsletterEmail = '';
     } else {
-      this.snackBar.open('Please enter a valid email address', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom'
-      });
+      this.toastService.error('Please enter a valid email address');
     }
   }
 

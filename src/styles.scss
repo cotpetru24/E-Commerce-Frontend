@@ -1,3 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
-html, body { height: 100%; overflow: hidden;}
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+
+html, body { height: 100%; }
 body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }

@@ -1,0 +1,53 @@
+
+🔍 Search & Navigation
+bi-search – Search
+
+bi-house – Home
+
+bi-arrow-left, bi-arrow-right – Navigation
+
+bi-chevron-down – Dropdown
+
+⚙️ Actions & UI
+bi-plus, bi-dash, bi-x – Add, Remove, Close
+
+bi-pencil – Edit
+
+bi-trash – Delete
+
+bi-check – Confirm/Success
+
+bi-x-circle – Cancel/Error
+
+bi-gear – Settings
+
+💬 Feedback & Alerts
+bi-info-circle – Info
+
+bi-exclamation-circle – Warning
+
+bi-question-circle – Help
+
+bi-emoji-smile, bi-emoji-frown – Feedback/Status
+
+📁 Files & Data
+bi-file-earmark – File
+
+bi-upload, bi-download – Upload/Download
+
+bi-folder, bi-folder2-open – Folders
+
+👤 User & Account
+bi-person, bi-person-circle – User
+
+bi-lock, bi-unlock – Lock/Access
+
+bi-box-arrow-in-right, bi-box-arrow-right – Login/Logout
+
+🧭 Layout & UI Elements
+bi-list, bi-grid, bi-card-text – List/Grid Views
+
+bi-filter – Filter
+
+bi-sort-alpha-down – Sort
+

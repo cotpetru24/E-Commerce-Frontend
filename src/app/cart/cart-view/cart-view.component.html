@@ -1,116 +1,145 @@
-<div class="cart-container">
-  <div class="container">
-    <div class="cart-header">
-      <h1>Shopping Cart</h1>
-      <p *ngIf="cartItems.length > 0">{{ cartItems.length }} item(s) in your cart</p>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h2 mb-1">
+            <i class="bi bi-cart me-2"></i>Shopping Cart
+          </h1>
+          <p class="text-muted mb-0" *ngIf="cartItems.length > 0">
+            {{ cartItems.length }} item(s) in your cart
+          </p>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="cart-content" *ngIf="cartItems.length > 0">
-      <!-- Cart Items -->
-      <div class="cart-items">
-        <div class="cart-item" *ngFor="let item of cartItems; trackBy: trackByItem">
-          <div class="item-image">
-            <img [src]="item.product.imagePath" [alt]="item.product.name"  title="item.product.name"/>
-          </div>
-          
-          <div class="item-details">
-            <div class="item-info">
-              <h3 class="item-name">{{ item.product.name }}</h3>
-              <p class="item-brand">{{ item.product.brandName }}</p>
-              <p class="item-category">{{ item.product.audience | titlecase }}</p>
-              <p class="item-size" *ngIf="item.size">Size: {{ item.size }}</p>
-            </div>
-            
-            <div class="item-price">
-              <span class="price">£{{ item.product.price }}</span>
-            </div>
-            
-            <div class="item-quantity">
-              <div class="quantity-controls">
-                <button mat-icon-button (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1">
-                  <mat-icon>remove</mat-icon>
-                </button>
-                <span class="quantity">{{ item.quantity }}</span>
-                <button mat-icon-button (click)="increaseQuantity(item)" [disabled]="item.quantity >= item.product.stock">
-                  <mat-icon>add</mat-icon>
-                </button>
+  <div class="row" *ngIf="cartItems.length > 0">
+    <!-- Cart Items -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="bi bi-bag me-2"></i>Cart Items
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            <div class="list-group-item" *ngFor="let item of cartItems; trackBy: trackByItem">
+              <div class="row align-items-center">
+                <div class="col-md-2">
+                  <img [src]="item.product.imagePath" [alt]="item.product.name" 
+                       class="img-fluid rounded" style="max-height: 80px;">
+                </div>
+                
+                <div class="col-md-4">
+                  <h6 class="mb-1">{{ item.product.name }}</h6>
+                  <p class="text-muted mb-1 small">{{ item.product.brandName }}</p>
+                  <p class="text-muted mb-0 small">{{ item.product.audience | titlecase }}</p>
+                  <span class="badge bg-secondary" *ngIf="item.size">Size: {{ item.size }}</span>
+                </div>
+
+                <div class="col-md-2 text-center">
+                  <span class="h6 text-primary">£{{ item.product.price }}</span>
+                </div>
+
+                <div class="col-md-2">
+                  <div class="input-group input-group-sm">
+                    <button class="btn btn-outline-secondary" type="button" 
+                            (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1">
+                      <i class="bi bi-dash"></i>
+                    </button>
+                    <input type="text" class="form-control text-center" 
+                           [value]="item.quantity" readonly>
+                    <button class="btn btn-outline-secondary" type="button" 
+                            (click)="increaseQuantity(item)" 
+                            [disabled]="item.quantity >= item.product.stock">
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col-md-1 text-center">
+                  <span class="h6 text-success">£{{ getItemTotal(item) }}</span>
+                </div>
+
+                <div class="col-md-1 text-center">
+                  <button class="btn btn-outline-danger btn-sm" 
+                          (click)="removeItem(item)" title="Remove item">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
               </div>
-            </div>
-            
-            <div class="item-total">
-              <span class="total-price">£{{ getItemTotal(item) }}</span>
-            </div>
-            
-            <div class="item-actions">
-              <button mat-icon-button color="warn" (click)="removeItem(item)">
-                <mat-icon>delete</mat-icon>
-              </button>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Cart Summary -->
-      <div class="cart-summary">
-        <div class="summary-card">
-          <h2>Order Summary</h2>
-          
-          <div class="summary-row">
+    <!-- Cart Summary -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-calculator me-2"></i>Order Summary
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-2">
             <span>Subtotal ({{ getTotalItems() }} items)</span>
             <span>£{{ getSubtotal() | number:'1.2-2' }}</span>
           </div>
-          
-          <div class="summary-row">
+
+          <div class="d-flex justify-content-between mb-2">
             <span>Shipping</span>
             <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
           </div>
-          
-          <div class="summary-row discount" *ngIf="getDiscount() > 0">
+
+          <div class="d-flex justify-content-between mb-2 text-success" *ngIf="getDiscount() > 0">
             <span>Discount</span>
             <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
           </div>
-          
-          <div class="summary-row total">
-            <span>Total</span>
-            <span>£{{ getTotal() | number:'1.2-2' }}</span>
+
+          <hr>
+
+          <div class="d-flex justify-content-between mb-3">
+            <span class="h5 mb-0">Total</span>
+            <span class="h5 mb-0 text-primary">£{{ getTotal() | number:'1.2-2' }}</span>
           </div>
-          
-          <div class="shipping-info" *ngIf="getSubtotal() < 50">
-            <mat-icon>info</mat-icon>
-            <span>Add £{{ 50 - getSubtotal() | number:'1.2-2' }} more for free shipping</span>
+
+          <div class="alert alert-info" *ngIf="getSubtotal() < 50">
+            <i class="bi bi-info-circle me-2"></i>
+            Add £{{ 50 - getSubtotal() | number:'1.2-2' }} more for free shipping
           </div>
-          
-          <button 
-            mat-raised-button 
-            color="primary" 
-            class="checkout-btn"
-            (click)="proceedToCheckout()"
-          >
-            <mat-icon>shopping_cart_checkout</mat-icon>
-            Proceed to Checkout
-          </button>
-          
-          <button 
-            mat-stroked-button 
-            class="continue-shopping-btn"
-            routerLink="/products"
-          >
-            <mat-icon>arrow_back</mat-icon>
-            Continue Shopping
-          </button>
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary btn-lg" (click)="proceedToCheckout()">
+              <i class="bi bi-cart-check me-2"></i>
+              Proceed to Checkout
+            </button>
+            
+            <button class="btn btn-outline-secondary" routerLink="/products">
+              <i class="bi bi-arrow-left me-2"></i>
+              Continue Shopping
+            </button>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Empty Cart -->
-    <div class="empty-cart" *ngIf="cartItems.length === 0">
-      <mat-icon class="empty-cart-icon">shopping_cart</mat-icon>
-      <h2>Your cart is empty</h2>
-      <p>Looks like you haven't added any items to your cart yet.</p>
-      <button mat-raised-button color="primary" routerLink="/products">
-        <mat-icon>add_shopping_cart</mat-icon>
-        Start Shopping
-      </button>
+  <!-- Empty Cart -->
+  <div class="row" *ngIf="cartItems.length === 0">
+    <div class="col-12">
+      <div class="text-center py-5">
+        <i class="bi bi-cart-x display-1 text-muted mb-4"></i>
+        <h2 class="mb-3">Your cart is empty</h2>
+        <p class="text-muted mb-4">Looks like you haven't added any items to your cart yet.</p>
+        <button class="btn btn-primary btn-lg" routerLink="/products">
+          <i class="bi bi-cart-plus me-2"></i>
+          Start Shopping
+        </button>
+      </div>
     </div>
   </div>
 </div>

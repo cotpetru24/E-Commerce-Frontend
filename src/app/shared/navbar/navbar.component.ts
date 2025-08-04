@@ -1,40 +1,39 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { Subscription } from 'rxjs';
 import { CartService } from '../../services/cart.service';
+import { ToastService } from '../../services/toast.service';
+import { AuthApiService } from '../../services/auth-api.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-
-  ],
+  imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isSmallScreen = false;
   showShopDropdown = false;
+  showAccountDropdown = false;
   cartItemCount = 0;
-  // @ViewChild(MatSidenav) drawer?: MatSidenav;
-  
   private cartSubscription!: Subscription;
 
   constructor(
-    // private breakpointObserver: BreakpointObserver,
-    private cartService: CartService
+    private cartService: CartService,
+    private toastService: ToastService,
+    private authApiService: AuthApiService
   ) {
-    // this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
-    //   this.isSmallScreen = result.matches;
-    // });
+    // Check screen size on initialization
+    this.checkScreenSize();
+    // Listen for window resize events
+    window.addEventListener('resize', () => this.checkScreenSize());
   }
 
   ngOnInit() {
-    this.cartSubscription = this.cartService.cartItems$.subscribe(items => {
+    this.cartSubscription = this.cartService.cartItems$.subscribe((items) => {
       this.cartItemCount = this.cartService.getCartItemCount();
     });
   }
@@ -43,15 +42,38 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.cartSubscription) {
       this.cartSubscription.unsubscribe();
     }
+    window.removeEventListener('resize', () => this.checkScreenSize());
   }
 
-  // toggleDrawer(){
-  //   this.drawer?.toggle();
-  // }
+  checkScreenSize() {
+    this.isSmallScreen = window.innerWidth < 992; // Bootstrap lg breakpoint
+  }
 
-  // closeDrowerIfMobile() {
-  //   if (this.isSmallScreen) {
-  //     this.drawer?.close();
-  //   }
-  // }
+  toggleMobileMenu() {
+    // Bootstrap handles the toggle automatically via data-bs-toggle
+  }
+
+  closeMobileMenu() {
+    // Close the offcanvas menu
+    const offcanvas = document.getElementById('mobileMenu');
+    if (offcanvas) {
+      const bsOffcanvas = new (window as any).bootstrap.Offcanvas(offcanvas);
+      bsOffcanvas.hide();
+    }
+  }
+  logout() {
+    try {
+      this.authApiService.logout();
+    } catch (err) {
+      this.toastService.error('Failed to logout');
+    }
+  }
+
+  isAdmin():boolean{
+    return this.authApiService.isAdmin();
+  }
+
+  isLoggedIn():boolean{
+    return  this.authApiService.isLoggedIn();
+  }
 }

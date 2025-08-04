@@ -1,131 +1,132 @@
-<footer class="footer">
-  <div class="footer-content">
-    <div class="container">
-      <!-- Main Footer Sections -->
-      <div class="footer-sections">
-        <!-- Company Info -->
-        <div class="footer-section">
-          <div class="footer-brand">
-            <!-- <mat-icon class="brand-icon">sports_soccer</mat-icon> -->
-            <h3>ShoeStore</h3>
-          </div>
-          <p class="company-description">
-            Your premier destination for stylish and comfortable footwear. We offer the latest trends in shoes for men, women, and children with exceptional quality and service.
-          </p>
-          <div class="social-links">
-            <a href="#" class="social-link" aria-label="Facebook">
-              <!-- <mat-icon>facebook</mat-icon> -->
-               Facebook
-            </a>
-            <a href="#" class="social-link" aria-label="Twitter">
-              <!-- <mat-icon>twitter</mat-icon> -->
-               Twitter
-            </a>
-            <a href="#" class="social-link" aria-label="Instagram">
-              <!-- <mat-icon>camera_alt</mat-icon> -->
-               Instagram
-            </a>
-            <a href="#" class="social-link" aria-label="YouTube">
-              youtube
-              <!-- <mat-icon>play_circle</mat-icon> -->
-            </a>
-          </div>
+<footer class="bg-dark text-light py-5">
+  <div class="container">
+    <!-- Main Footer Sections -->
+    <div class="row">
+      <!-- Company Info -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="footer-brand mb-3">
+          <i class="bi bi-bag-heart fs-2 text-primary"></i>
+          <h3 class="d-inline ms-2">ShoeStore</h3>
         </div>
-
-        <!-- Quick Links -->
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <ul class="footer-links">
-            <li><a routerLink="/">Home</a></li>
-            <li><a routerLink="/products">All Products</a></li>
-            <li><a routerLink="/products/men">Men's Shoes</a></li>
-            <li><a routerLink="/products/women">Women's Shoes</a></li>
-            <li><a routerLink="/products/children">Children's Shoes</a></li>
-            <li><a routerLink="/cart/view">Shopping Cart</a></li>
-          </ul>
+        <p class="company-description">
+          Your premier destination for stylish and comfortable footwear. We offer the latest trends in shoes for men, women, and children with exceptional quality and service.
+        </p>
+        <div class="social-links">
+          <a href="#" class="btn btn-outline-light btn-sm me-2" aria-label="Facebook">
+            <i class="bi bi-facebook"></i> Facebook
+          </a>
+          <a href="#" class="btn btn-outline-light btn-sm me-2" aria-label="Twitter">
+            <i class="bi bi-twitter"></i> Twitter
+          </a>
+          <a href="#" class="btn btn-outline-light btn-sm me-2" aria-label="Instagram">
+            <i class="bi bi-instagram"></i> Instagram
+          </a>
+          <a href="#" class="btn btn-outline-light btn-sm" aria-label="YouTube">
+            <i class="bi bi-youtube"></i> YouTube
+          </a>
         </div>
+      </div>
 
-        <!-- Customer Service -->
-        <div class="footer-section">
-          <h4>Customer Service</h4>
-          <ul class="footer-links">
-            <!-- <li><a href="#" (click)="openContactModal()">Contact Us</a></li>
-            <li><a href="#" (click)="openHelpModal()">Help & FAQ</a></li>
-            <li><a href="#" (click)="openShippingModal()">Shipping Info</a></li>
-            <li><a href="#" (click)="openReturnsModal()">Returns & Exchanges</a></li>
-            <li><a href="#" (click)="openSizeGuideModal()">Size Guide</a></li>
-            <li><a href="#" (click)="openTrackOrderModal()">Track Order</a></li> -->
-          </ul>
-        </div>
+      <!-- Quick Links -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h4>Quick Links</h4>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a routerLink="/" class="text-light text-decoration-none">Home</a></li>
+          <li class="mb-2"><a routerLink="/products" class="text-light text-decoration-none">All Products</a></li>
+          <li class="mb-2"><a routerLink="/products/men" class="text-light text-decoration-none">Men's Shoes</a></li>
+          <li class="mb-2"><a routerLink="/products/women" class="text-light text-decoration-none">Women's Shoes</a></li>
+          <li class="mb-2"><a routerLink="/products/children" class="text-light text-decoration-none">Children's Shoes</a></li>
+          <li class="mb-2"><a routerLink="/cart/view" class="text-light text-decoration-none">Shopping Cart</a></li>
+        </ul>
+      </div>
 
-        <!-- Company -->
-        <div class="footer-section">
-          <h4>Company</h4>
-          <ul class="footer-links">
-            <!-- <li><a href="#" (click)="openAboutModal()">About Us</a></li>
-            <li><a href="#" (click)="openCareersModal()">Careers</a></li>
-            <li><a href="#" (click)="openPressModal()">Press</a></li>
-            <li><a href="#" (click)="openPartnersModal()">Partners</a></li>
-            <li><a href="#" (click)="openSustainabilityModal()">Sustainability</a></li>
-            <li><a href="#" (click)="openPrivacyModal()">Privacy Policy</a></li> -->
-          </ul>
-        </div>
+      <!-- Customer Service -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h4>Customer Service</h4>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openContactModal()">Contact Us</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openHelpModal()">Help & FAQ</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openShippingModal()">Shipping Info</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openReturnsModal()">Returns & Exchanges</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openSizeGuideModal()">Size Guide</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openTrackOrderModal()">Track Order</a></li>
+        </ul>
+      </div>
 
-        <!-- Newsletter -->
-        <div class="footer-section newsletter-section">
-          <h4>Stay Updated</h4>
-          <p>Subscribe to our newsletter for the latest styles, exclusive offers, and fashion tips.</p>
-          <div class="newsletter-form">
-            <!-- <mat-form-field appearance="outline" class="newsletter-input"> -->
-              <!-- <mat-label>Enter your email</mat-label> -->
-              <input matInput type="email" [(ngModel)]="newsletterEmail" placeholder="your@email.com">
-              <!-- <mat-icon matSuffix>email</mat-icon> -->
-            <!-- </mat-form-field> -->
-            <button mat-raised-button color="primary" (click)="subscribeNewsletter()" [disabled]="!newsletterEmail">
-              Subscribe
-            </button>
-          </div>
-          <div class="newsletter-benefits">
-            <div class="benefit-item">
-              <!-- <mat-icon>local_offer</mat-icon> -->
-              <span>Exclusive Offers</span>
-            </div>
-            <div class="benefit-item">
-              <!-- <mat-icon>new_releases</mat-icon> -->
-              <span>New Arrivals</span>
-            </div>
-            <div class="benefit-item">
-              <!-- <mat-icon>style</mat-icon> -->
-              <span>Style Tips</span>
+      <!-- Company -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h4>Company</h4>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openAboutModal()">About Us</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openCareersModal()">Careers</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openPressModal()">Press</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openPartnersModal()">Partners</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openSustainabilityModal()">Sustainability</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openPrivacyModal()">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Newsletter Section -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card bg-secondary text-light">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <h4>Stay Updated</h4>
+                <p class="mb-0">Subscribe to our newsletter for the latest styles, exclusive offers, and fashion tips.</p>
+                <div class="newsletter-benefits mt-2">
+                  <span class="badge bg-primary me-2">
+                    <i class="bi bi-tag"></i> Exclusive Offers
+                  </span>
+                  <span class="badge bg-primary me-2">
+                    <i class="bi bi-star"></i> New Arrivals
+                  </span>
+                  <span class="badge bg-primary">
+                    <i class="bi bi-palette"></i> Style Tips
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <input type="email" class="form-control" [(ngModel)]="newsletterEmail" placeholder="your@email.com">
+                  <button class="btn btn-primary" (click)="subscribeNewsletter()" [disabled]="!newsletterEmail">
+                    <i class="bi bi-envelope"></i> Subscribe
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Footer Bottom -->
-      <div class="footer-bottom">
-        <div class="footer-bottom-content">
-          <div class="payment-methods">
-            <span class="payment-label">We Accept:</span>
-            <div class="payment-icons">
-              <!-- <mat-icon class="payment-icon">credit_card</mat-icon>
-              <mat-icon class="payment-icon">account_balance</mat-icon>
-              <mat-icon class="payment-icon">payment</mat-icon>
-              <mat-icon class="payment-icon">account_balance_wallet</mat-icon> -->
-            </div>
+    <!-- Footer Bottom -->
+    <div class="row mt-4 pt-4 border-top border-secondary">
+      <div class="col-md-4">
+        <div class="payment-methods">
+          <span class="text-muted">We Accept:</span>
+          <div class="payment-icons mt-2">
+            <i class="bi bi-credit-card text-muted me-2 fs-4"></i>
+            <i class="bi bi-bank text-muted me-2 fs-4"></i>
+            <i class="bi bi-wallet2 text-muted me-2 fs-4"></i>
+            <i class="bi bi-paypal text-muted fs-4"></i>
           </div>
-          
-          <div class="footer-legal">
-            <!-- <a href="#" (click)="openTermsModal()">Terms of Service</a> -->
-            <span class="separator">|</span>
-            <!-- <a href="#" (click)="openPrivacyModal()">Privacy Policy</a> -->
-            <span class="separator">|</span>
-            <!-- <a href="#" (click)="openCookiesModal()">Cookie Policy</a> -->
-          </div>
-          
-          <div class="copyright">
-            <p>&copy; 2024 ShoeStore. All rights reserved.</p>
-          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 text-center">
+        <div class="footer-legal">
+          <a href="#" class="text-muted text-decoration-none me-3" (click)="openTermsModal()">Terms of Service</a>
+          <a href="#" class="text-muted text-decoration-none me-3" (click)="openPrivacyModal()">Privacy Policy</a>
+          <a href="#" class="text-muted text-decoration-none" (click)="openCookiesModal()">Cookie Policy</a>
+        </div>
+      </div>
+      
+      <div class="col-md-4 text-end">
+        <div class="copyright">
+          <p class="text-muted mb-0">&copy; 2024 ShoeStore. All rights reserved.</p>
         </div>
       </div>
     </div>
@@ -133,13 +134,12 @@
 
   <!-- Back to Top Button -->
   <button 
-    mat-fab 
-    color="primary" 
-    class="back-to-top" 
+    class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4" 
+    style="width: 50px; height: 50px; z-index: 1000;"
     (click)="scrollToTop()"
-    [class.visible]="showBackToTop"
+    [class.d-none]="!showBackToTop"
     aria-label="Back to top"
   >
-    <!-- <mat-icon>keyboard_arrow_up</mat-icon> -->
+    <i class="bi bi-arrow-up"></i>
   </button>
 </footer>

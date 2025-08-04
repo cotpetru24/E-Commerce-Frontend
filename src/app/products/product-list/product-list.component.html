@@ -13,75 +13,84 @@
       <aside class="filters-sidebar">
         <div class="filters-header">
           <h3>Filters</h3>
-          <button mat-button color="primary" (click)="clearFilters()">Clear All</button>
+          <button class="btn btn-primary btn-sm" (click)="clearFilters()">Clear All</button>
         </div>
 
         <!-- Search Filter -->
         <div class="filter-section">
           <h4>Search</h4>
-          <mat-form-field appearance="outline" class="search-field">
-            <mat-label>Search products...</mat-label>
-            <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()"
-              placeholder="Enter product name or brand">
-            <mat-icon matSuffix>search</mat-icon>
-          </mat-form-field>
+          <div class="input-group">
+            <input type="search" class="form-control" placeholder="Enter product name or brand" title="Search"
+              (input)="onSearchChange()">
+            <button class=" btn btn-outline-secondary" type="button" title="Search button">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
         </div>
+
 
         <!-- Category Filter -->
         <div class="filter-section">
           <h4>Gender</h4>
-          <mat-radio-group [(ngModel)]="selectedGender" (change)="onFilterChange()">
-            <mat-radio-button value="">All Categories</mat-radio-button>
-            <mat-radio-button [value]="Gender.Men">{{Gender.Men | titlecase}}</mat-radio-button>
-            <mat-radio-button [value]="Gender.Women">{{Gender.Women | titlecase}}</mat-radio-button>
-            <mat-radio-button [value]="Gender.Children">{{Gender.Children | titlecase}}</mat-radio-button>
-            <mat-radio-button [value]="Gender.Unisex">{{Gender.Unisex | titlecase}}</mat-radio-button>
-          </mat-radio-group>
+
+          <div class="input-group mb-2" *ngFor="let gender of audienceOptions">
+            <div class="input-group-text">
+              <input class="form-check-input mt-0" type="radio" name="gender" [value]="gender"
+                [(ngModel)]="selectedGender" (change)="onFilterChange()" [attr.aria-label]="'Select ' + gender"
+                title="Select gender">
+            </div>
+            <input type="text" class="form-control" [value]="gender | titlecase" aria-label="Gender label" readonly>
+          </div>
         </div>
+
 
         <!-- Brand Filter -->
         <div class="filter-section">
           <h4>Brand</h4>
-          <mat-form-field appearance="outline" class="brand-select">
-            <mat-label>Select Brand</mat-label>
-            <mat-select [(ngModel)]="selectedBrand" (selectionChange)="onFilterChange()">
-              <mat-option value="">All Brands</mat-option>
-              <mat-option *ngFor="let brand of availableBrands" [value]="brand">
-                {{ brand }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <label for="selectedBrand" class="form-label">Select brand</label>
+          <select id="selectedBrand" class="form-select" [(ngModel)]="selectedBrand" (change)="onFilterChange()">
+            <option value="">All Brands</option>
+            <option *ngFor="let brand of availableBrands" [value]="brand">
+              {{brand}}
+            </option>
+          </select>
         </div>
 
         <!-- Price Range Filter -->
         <div class="filter-section">
-          <h4>Price Range</h4>
+          <h4 class="mb-3">Price Range</h4>
           <div class="price-range">
-            <mat-form-field appearance="outline">
-              <mat-label>Min Price</mat-label>
-              <input matInput type="number" [(ngModel)]="minPrice" (input)="onFilterChange()" placeholder="0">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Max Price</mat-label>
-              <input matInput type="number" [(ngModel)]="maxPrice" (input)="onFilterChange()" placeholder="1000">
-            </mat-form-field>
+            <div class="mb-3">
+              <label for="minPrice" class="form-label">Min Price</label>
+              <input type="number" name="minPrice" id="minPrice" class="form-control" placeholder="0"
+                aria-describedby="minPriceHelp" [(ngModel)]="minPrice" (input)="onFilterChange()" />
+              <div id="minPriceHelp" class="visually-hidden">Enter minimum price</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="maxPrice" class="form-label">Max Price</label>
+              <input type="number" name="maxPrice" id="maxPrice" class="form-control" placeholder="1000"
+                aria-describedby="maxPriceHelper" [(ngModel)]="maxPrice" (input)="onFilterChange()" />
+              <div id="maxPriceHelper" class="visually-hidden">Enter maximum price</div>
+            </div>
           </div>
+
         </div>
 
         <!-- Sort Options -->
         <div class="filter-section">
           <h4>Sort By</h4>
-          <mat-form-field appearance="outline">
-            <mat-label>Sort</mat-label>
-            <mat-select [(ngModel)]="sortBy" (selectionChange)="onSortChange()">
-              <mat-option value="name">Name A-Z</mat-option>
-              <mat-option value="name-desc">Name Z-A</mat-option>
-              <mat-option value="price">Price Low to High</mat-option>
-              <mat-option value="price-desc">Price High to Low</mat-option>
-              <mat-option value="brand">Brand A-Z</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <label for="sortSelect" class="form-label">Sort</label>
+          <select id="sortSelect" class="form-select" [(ngModel)]="sortBy" (change)="onSortChange()">
+            <option value="" disabled selected>Select sorting option</option>
+            <option value="name">Name A-Z</option>
+            <option value="name-desc">Name Z-A</option>
+            <option value="price">Price Low to High</option>
+            <option value="price-desc">Price High to Low</option>
+            <option value="brand">Brand A-Z</option>
+          </select>
         </div>
+
       </aside>
 
       <!-- Products Grid -->
@@ -95,27 +104,30 @@
             </span>
           </div>
           <div class="view-options">
-            <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
-              <mat-icon>grid_view</mat-icon>
+            <button class="btn btn-outline-secondary" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')"
+              title="Grid view button">
+              <i class="bi bi-grid"></i>
             </button>
-            <button mat-icon-button [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
-              <mat-icon>view_list</mat-icon>
+            <button class="btn btn-outline-secondary" [class.active]="viewMode === 'list'" (click)="setViewMode('list')"
+              title="List view button">
+              <i class="bi bi-list"></i>
             </button>
           </div>
         </div>
 
         <!-- Products Grid/List -->
         <div class="products-container" [class.list-view]="viewMode === 'list'">
-          <mat-card class="product-card" *ngFor="let product of filteredProducts"
-            [class.list-card]="viewMode === 'list'">
+          <div class="card-header" *ngFor="let product of filteredProducts" [class.list-card]="viewMode === 'list'">
             <div class="product-image">
               <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
               <div class="product-overlay">
-                <button mat-icon-button color="primary" class="quick-view-btn" (click)="quickView(product)">
-                  <mat-icon>visibility</mat-icon>
+                <button class="btn btn-light btn-sm quick-view-btn" (click)="quickView(product)"
+                  title="Quick view button">
+                  <i class="bi bi-eye"></i>
                 </button>
-                <button mat-icon-button color="primary" class="add-to-cart-btn" (click)="addToCart(product)">
-                  <mat-icon>add_shopping_cart</mat-icon>
+                <button class="btn btn-primary btn-sm add-to-cart-btn" (click)="addToCart(product)"
+                  title="Add to cart button">
+                  <i class="bi bi-cart-plus"></i>
                 </button>
               </div>
               <div class="product-badges">
@@ -127,7 +139,7 @@
               </div>
             </div>
 
-            <mat-card-content>
+            <div class="card-body">
               <div class="product-info">
                 <h3 class="product-name">{{ product.name }}</h3>
                 <p class="product-brand">{{ product.brandName }}</p>
@@ -139,25 +151,25 @@
                   </span>
                 </div>
               </div>
-            </mat-card-content>
+            </div>
 
-            <mat-card-actions>
-              <button mat-button color="primary" [routerLink]="['/products/details', product.id]">
+            <div class="card-footer">
+              <button class="btn btn-outline-primary" [routerLink]="['/products/details', product.id]">
                 View Details
               </button>
-              <button mat-raised-button color="primary" [disabled]="product.stock === 0" (click)="addToCart(product)">
+              <button class="btn btn-primary" [disabled]="product.stock === 0" (click)="addToCart(product)">
                 Add to Cart
               </button>
-            </mat-card-actions>
-          </mat-card>
+            </div>
+          </div>
         </div>
 
         <!-- No Results -->
         <div class="no-results" *ngIf="filteredProducts.length === 0">
-          <mat-icon class="no-results-icon">search_off</mat-icon>
+          <i class="bi bi-search"></i>
           <h3>No products found</h3>
           <p>Try adjusting your filters or search terms</p>
-          <button mat-raised-button color="primary" (click)="clearFilters()">
+          <button class="btn btn-primary" (click)="clearFilters()">
             Clear Filters
           </button>
         </div>

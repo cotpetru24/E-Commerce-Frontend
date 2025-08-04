@@ -2,27 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
 import { ProductDto } from '../../models/product.dto';
 import { AdminApiService, AdminStats, Order } from '../../services/api/admin-api.service';
-import { User } from '../../services/api/user-api.service';
+import { ToastService } from '../../services/toast.service';
+import { UserDto } from '../../models/user.dto';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -31,23 +15,7 @@ import { User } from '../../services/api/user-api.service';
     CommonModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCardModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDialogModule,
-    MatTabsModule,
-    MatChipsModule,
-    MatProgressBarModule,
-    MatMenuModule,
-    MatBadgeModule,
-    MatTooltipModule
+    ReactiveFormsModule
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss'
@@ -77,8 +45,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   // ============================================================================
   // USER MANAGEMENT
   // ============================================================================
-  users: User[] = [];
-  filteredUsers: User[] = [];
+  users: UserDto[] = [];
+  filteredUsers: UserDto[] = [];
   isLoadingUsers = false;
   userSearchTerm = '';
 
@@ -114,9 +82,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private adminApi: AdminApiService,
+    private toastService: ToastService,
     // private productApi: ProductApiService,
     // private userApi: UserApiService,
-    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -143,9 +111,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error loading dashboard stats:', error);
           this.isLoadingStats = false;
-          this.snackBar.open('Failed to load dashboard statistics', 'Close', {
-            duration: 3000
-          });
+          this.toastService.error('Failed to load dashboard statistics');
         }
       })
     );
@@ -168,9 +134,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error loading products:', error);
           this.isLoadingProducts = false;
-          this.snackBar.open('Failed to load products', 'Close', {
-            duration: 3000
-          });
+          this.toastService.error('Failed to load products');
         }
       })
     );
@@ -211,16 +175,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         this.adminApi.deleteProduct(product.id).subscribe({
           next: () => {
-            this.snackBar.open('Product deleted successfully', 'Close', {
-              duration: 3000
-            });
+                      this.toastService.success('Product deleted successfully');
             this.loadProducts(); // Reload products
           },
           error: (error) => {
             console.error('Error deleting product:', error);
-            this.snackBar.open('Failed to delete product', 'Close', {
-              duration: 3000
-            });
+                      this.toastService.error('Failed to delete product');
           }
         })
       );
@@ -238,15 +198,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.filterProducts();
           }
           
-          this.snackBar.open('Product stock updated successfully', 'Close', {
-            duration: 3000
-          });
+          this.toastService.success('Product stock updated successfully');
         },
         error: (error) => {
           console.error('Error updating product stock:', error);
-          this.snackBar.open('Failed to update product stock', 'Close', {
-            duration: 3000
-          });
+          this.toastService.error('Failed to update product stock');
         }
       })
     );
@@ -270,9 +226,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error loading users:', error);
           this.isLoadingUsers = false;
-          this.snackBar.open('Failed to load users', 'Close', {
-            duration: 3000
-          });
+          this.toastService.error('Failed to load users');
         }
       })
     );
@@ -291,33 +245,29 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.filterUsers();
   }
 
-  editUser(user: User): void {
+  editUser(user: UserDto): void {
     console.log('Edit user:', user);
     // this.router.navigate(['/admin/users/edit', user.id]);
   }
 
-  deleteUser(user: User): void {
+  deleteUser(user: UserDto): void {
     if (confirm(`Are you sure you want to delete user "${user.email}"?`)) {
       this.subscriptions.add(
         this.adminApi.deleteUser(user.id).subscribe({
           next: () => {
-            this.snackBar.open('User deleted successfully', 'Close', {
-              duration: 3000
-            });
+                      this.toastService.success('User deleted successfully');
             this.loadUsers(); // Reload users
           },
           error: (error) => {
             console.error('Error deleting user:', error);
-            this.snackBar.open('Failed to delete user', 'Close', {
-              duration: 3000
-            });
+                      this.toastService.error('Failed to delete user');
           }
         })
       );
     }
   }
 
-  toggleUserStatus(user: User): void {
+  toggleUserStatus(user: UserDto): void {
     const newStatus = !user.isBlocked; // Assuming User interface has isBlocked property
     
     this.subscriptions.add(
@@ -330,15 +280,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.filterUsers();
           }
           
-          this.snackBar.open(`User ${newStatus ? 'blocked' : 'unblocked'} successfully`, 'Close', {
-            duration: 3000
-          });
+          this.toastService.success(`User ${newStatus ? 'blocked' : 'unblocked'} successfully`);
         },
         error: (error) => {
           console.error('Error updating user status:', error);
-          this.snackBar.open('Failed to update user status', 'Close', {
-            duration: 3000
-          });
+          this.toastService.error('Failed to update user status');
         }
       })
     );
@@ -362,9 +308,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error loading orders:', error);
           this.isLoadingOrders = false;
-          this.snackBar.open('Failed to load orders', 'Close', {
-            duration: 3000
-          });
+          this.toastService.error('Failed to load orders');
         }
       })
     );
@@ -396,15 +340,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.filterOrders();
           }
           
-          this.snackBar.open('Order status updated successfully', 'Close', {
-            duration: 3000
-          });
+          this.toastService.success('Order status updated successfully');
         },
         error: (error) => {
           console.error('Error updating order status:', error);
-          this.snackBar.open('Failed to update order status', 'Close', {
-            duration: 3000
-          });
+          this.toastService.error('Failed to update order status');
         }
       })
     );
@@ -415,16 +355,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         this.adminApi.cancelOrder(order.id).subscribe({
           next: () => {
-            this.snackBar.open('Order cancelled successfully', 'Close', {
-              duration: 3000
-            });
+                      this.toastService.success('Order cancelled successfully');
             this.loadOrders(); // Reload orders
           },
           error: (error) => {
             console.error('Error cancelling order:', error);
-            this.snackBar.open('Failed to cancel order', 'Close', {
-              duration: 3000
-            });
+                      this.toastService.error('Failed to cancel order');
           }
         })
       );
@@ -446,11 +382,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  getUserStatusColor(user: User): string {
+  getUserStatusColor(user: UserDto): string {
     return user.isBlocked ? 'warn' : 'primary';
   }
 
-  getUserStatusText(user: User): string {
+  getUserStatusText(user: UserDto): string {
     return user.isBlocked ? 'Blocked' : 'Active';
   }
 

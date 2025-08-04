@@ -1,0 +1,199 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">
+          <i class="bi bi-bag me-2"></i>My Orders
+        </h1>
+        <div class="btn-group" role="group">
+          <button class="btn btn-outline-primary" 
+                  [ngClass]="{'active': currentFilter === 'all'}"
+                  (click)="filterOrders('all')">
+            All Orders
+          </button>
+          <button class="btn btn-outline-primary" 
+                  [ngClass]="{'active': currentFilter === 'pending'}"
+                  (click)="filterOrders('pending')">
+            Pending
+          </button>
+          <button class="btn btn-outline-primary" 
+                  [ngClass]="{'active': currentFilter === 'shipped'}"
+                  (click)="filterOrders('shipped')">
+            Shipped
+          </button>
+          <button class="btn btn-outline-primary" 
+                  [ngClass]="{'active': currentFilter === 'delivered'}"
+                  (click)="filterOrders('delivered')">
+            Delivered
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <!-- Orders List -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="bi bi-list-ul me-2"></i>Order History
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Tracking</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of filteredOrders">
+                  <td>
+                    <strong>#{{ order.orderId }}</strong>
+                  </td>
+                  <td>{{ order.orderDate | date:'MMM dd, yyyy' }}</td>
+                  <td>
+                    <span class="badge bg-secondary">{{ order.itemCount }} items</span>
+                  </td>
+                  <td>£{{ order.total | number:'1.2-2' }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(order.status)">
+                      {{ order.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn btn-outline-info btn-sm" 
+                            (click)="trackOrder(order)"
+                            *ngIf="order.trackingNumber">
+                      <i class="bi bi-truck me-1"></i>Track
+                    </button>
+                    <span class="text-muted" *ngIf="!order.trackingNumber">N/A</span>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <button class="btn btn-outline-primary btn-sm" 
+                              (click)="viewOrderDetails(order.orderId)">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                      <button class="btn btn-outline-success btn-sm" 
+                              (click)="reorder(order)"
+                              *ngIf="order.status === 'Delivered'">
+                        <i class="bi bi-arrow-clockwise"></i>
+                      </button>
+                      <button class="btn btn-outline-warning btn-sm" 
+                              (click)="cancelOrder(order)"
+                              *ngIf="order.status === 'Pending'">
+                        <i class="bi bi-x-circle"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredOrders.length === 0">
+                  <td colspan="7" class="text-center py-5">
+                    <i class="bi bi-bag-x display-4 text-muted mb-3"></i>
+                    <h5 class="text-muted">No orders found</h5>
+                    <p class="text-muted">You haven't placed any orders yet.</p>
+                    <a routerLink="/products" class="btn btn-primary">
+                      <i class="bi bi-cart-plus me-2"></i>Start Shopping
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Tracking Modal -->
+  <div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="trackingModalLabel">
+            <i class="bi bi-truck me-2"></i>Order Tracking
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="selectedOrder">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <strong>Order ID:</strong> #{{ selectedOrder.orderId }}
+              </div>
+              <div class="col-md-6">
+                <strong>Tracking Number:</strong> {{ selectedOrder.trackingNumber }}
+              </div>
+            </div>
+
+            <!-- Tracking Timeline -->
+            <div class="tracking-timeline">
+              <div class="timeline-item" *ngFor="let event of selectedOrder.trackingEvents; let i = index">
+                <div class="timeline-marker" [ngClass]="{'completed': i <= selectedOrder.currentStep}">
+                  <i class="bi" [ngClass]="getTimelineIcon(event.status)"></i>
+                </div>
+                <div class="timeline-content">
+                  <h6 class="mb-1">{{ event.title }}</h6>
+                  <p class="text-muted mb-1">{{ event.description }}</p>
+                  <small class="text-muted">{{ event.timestamp | date:'MMM dd, yyyy HH:mm' }}</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Estimated Delivery -->
+            <div class="alert alert-info mt-3" *ngIf="selectedOrder.estimatedDelivery">
+              <i class="bi bi-calendar-event me-2"></i>
+              <strong>Estimated Delivery:</strong> {{ selectedOrder.estimatedDelivery | date:'EEEE, MMMM dd, yyyy' }}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.tracking-timeline {
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -35px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+}
+
+.timeline-marker.completed {
+  background-color: #28a745;
+  color: white;
+}
+
+.timeline-content {
+  padding-left: 15px;
+}
+</style> 

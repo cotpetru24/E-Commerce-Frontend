@@ -16,11 +16,27 @@ const routes: Routes = [
   },
   { 
     path: 'add-product', 
-    loadComponent: () => import('./add-product/add-product.component').then(m => m.AddProductComponet) 
+    loadComponent: () => import('./add-product/add-product.component').then(m => m.AddProductComponent) 
   },
   { 
     path: 'edit-product/:id', 
     loadComponent: () => import('./edit-product/edit-product.component').then(m => m.EditProductComponent) 
+  },
+  { 
+    path: 'orders', 
+    loadComponent: () => import('./order-management/order-management.component').then(m => m.OrderManagementComponent) 
+  },
+  { 
+    path: 'users', 
+    loadComponent: () => import('./user-management/user-management.component').then(m => m.UserManagementComponent) 
+  },
+  { 
+    path: 'content-management', 
+    loadComponent: () => import('./content-management/content-management.component').then(m => m.ContentManagementComponent) 
+  },
+  { 
+    path: 'barcode-scanner', 
+    loadComponent: () => import('./barcode-scanner/barcode-scanner.component').then(m => m.BarcodeScannerComponent) 
   },
 ];
 

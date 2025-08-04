@@ -1,15 +1,12 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-// import { MatCardModule } from '@angular/material/card';
-// import { MatButtonModule } from '@angular/material/button';
-// import { MatIconModule } from '@angular/material/icon';
-// import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-// import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
-import { TargetAudience } from '../../models/gender.enum';
+import { ToastService } from '../../services/toast.service';
+import { Audience } from '../../models/gender.enum';
 import { Toast} from 'bootstrap';
+import { SpinneComponent } from "../../shared/spinner/spinner.component";
 
 @Component({
   selector: 'product-details',
@@ -17,12 +14,8 @@ import { Toast} from 'bootstrap';
   imports: [
     CommonModule,
     RouterModule,
-    // MatCardModule,
-    // MatButtonModule,
-    // MatIconModule,
-    // MatProgressSpinnerModule,
-    // MatSnackBarModule,
-  ],
+    SpinneComponent
+],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.scss',
 })
@@ -46,6 +39,7 @@ export class ProductDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private cartService: CartService,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -67,7 +61,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 64.99,
         imagePath: 'products/retro-sneaker.png',
         stock: 10,
-        audience: TargetAudience.Men,
+        audience: Audience.Men,
         brandName: 'Nike',
       },
       {
@@ -78,7 +72,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 89.39,
         imagePath: 'products/running-shoe.png',
         stock: 7,
-        audience: TargetAudience.Men,
+        audience: Audience.Men,
         brandName: 'Adidas',
       },
       {
@@ -89,7 +83,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 74.39,
         imagePath: 'products/casual-sneaker.png',
         stock: 5,
-        audience: TargetAudience.Men,
+        audience: Audience.Men,
         brandName: 'Puma',
       },
       {
@@ -100,7 +94,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 99.99,
         imagePath: 'products/retro-sneaker2.png',
         stock: 8,
-        audience: TargetAudience.Women,
+        audience: Audience.Women,
         brandName: 'Steve Madden',
       },
       {
@@ -111,7 +105,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 45.99,
         imagePath: 'products/casual-sneaker.png',
         stock: 12,
-        audience: TargetAudience.Children,
+        audience: Audience.Children,
         brandName: 'Skechers',
       },
       {
@@ -122,7 +116,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 79.99,
         imagePath: 'products/running-shoe.png',
         stock: 6,
-        audience: TargetAudience.Women,
+        audience: Audience.Women,
         brandName: 'Under Armour',
       },
             {
@@ -133,7 +127,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 79.99,
         imagePath: 'products/running-shoe.png',
         stock: 6,
-        audience: TargetAudience.Women,
+        audience: Audience.Women,
         brandName: 'Under Armour',
       },
             {
@@ -144,7 +138,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 79.99,
         imagePath: 'products/running-shoe.png',
         stock: 6,
-        audience: TargetAudience.Women,
+        audience: Audience.Women,
         brandName: 'Under Armour',
       },
             {
@@ -155,7 +149,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 79.99,
         imagePath: 'products/running-shoe.png',
         stock: 6,
-        audience: TargetAudience.Women,
+        audience: Audience.Women,
         brandName: 'Under Armour',
       },
             {
@@ -166,7 +160,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 79.99,
         imagePath: 'products/running-shoe.png',
         stock: 6,
-        audience: TargetAudience.Women,
+        audience: Audience.Women,
         brandName: 'Under Armour',
       },
     ];
@@ -217,7 +211,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 89.39,
         imagePath: 'products/running-shoe.png',
         stock: 7,
-        audience: TargetAudience.Men,
+        audience: Audience.Men,
         brandName: 'Adidas',
       },
       {
@@ -227,7 +221,7 @@ export class ProductDetailsComponent implements OnInit {
         price: 74.39,
         imagePath: 'products/casual-sneaker.png',
         stock: 5,
-        audience: TargetAudience.Men,
+        audience: Audience.Men,
         brandName: 'Puma',
       },
     ];
@@ -300,36 +294,27 @@ export class ProductDetailsComponent implements OnInit {
 
   addToCart(): void {
     if (!this.product || !this.selectedSize) {
-      this.showToast('Please select a size before adding to cart', 'warning');
+      this.toastService.warning('Please select a size before adding to cart');
       return;
     }
 
     this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
-    this.showToast(`${this.product.name} added to cart!`, 'success');
+    this.toastService.success(`${this.product.name} added to cart!`);
   }
 
 buyNow() {
-  // if (!this.product || !this.selectedSize) {
-  //   const toast = new Toast(this.errorToastRef.nativeElement, {
-  //     delay: 3000,
-  //     autohide: true,
-  //   });
-  //   toast.show();
-  //   return;
-  // }
-
-  //   // Add to cart and proceed to checkout
-  //   this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
-
-  //   this.toast.open('Proceeding to checkout...', 'Close', {
-  //     duration: 2000,
-  //     horizontalPosition: 'center',
-  //     verticalPosition: 'bottom',
-  //   });
-
-    // Navigate to checkout
-    console.log('Navigate to checkout');
+  if (!this.product || !this.selectedSize) {
+    this.toastService.warning('Please select a size before purchasing');
+    return;
   }
+
+  // Add to cart and proceed to checkout
+  this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
+  this.toastService.info('Proceeding to checkout...');
+
+  // Navigate to checkout
+  console.log('Navigate to checkout');
+}
 
   toggleWishlist() {
     this.isInWishlist = !this.isInWishlist;

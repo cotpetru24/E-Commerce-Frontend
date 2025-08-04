@@ -32,9 +32,13 @@ export interface Order {
   id: number;
   userId: number;
   userEmail: string;
+  orderNumber: string;
+  customerName?: string;
   items: OrderItem[];
   total: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: 'paid' | 'pending' | 'failed';
+  itemCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,6 +48,19 @@ export interface OrderItem {
   productName: string;
   quantity: number;
   price: number;
+}
+
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: 'customer' | 'admin' | 'moderator';
+  isBlocked: boolean;
+  emailVerified: boolean;
+  createdAt: Date;
+  lastLoginAt?: Date;
+  orderCount?: number;
 }
 
 @Injectable({

@@ -2,17 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductDto, ProductDtoSchema } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
-import { TargetAudience } from '../../models/gender.enum';
+import { ToastService } from '../../services/toast.service';
+import { Audience } from '../../models/gender.enum';
 import { ProductApiService } from '../../services/api';
 
 @Component({
@@ -22,22 +15,16 @@ import { ProductApiService } from '../../services/api';
     CommonModule,
     FormsModule,
     RouterModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatRadioModule,
-    MatSnackBarModule,
   ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent implements OnInit {
-  Gender = TargetAudience;
+  Gender = Audience;
 
   public allProducts: ProductDto[] = [];
+
+  public audienceOptions:Audience[] = [Audience.Men, Audience.Women, Audience.Children, Audience.Unisex];
 
   // allProducts: ProductDto[] = [
   //   {
@@ -131,7 +118,7 @@ export class ProductListComponent implements OnInit {
 
   // Filter properties
   searchTerm: string = '';
-  selectedGender: TargetAudience | '' = '';
+  selectedGender: Audience | '' = '';
   selectedBrand: string = '';
   minPrice: number | null = null;
   maxPrice: number | null = null;
@@ -141,7 +128,7 @@ export class ProductListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private cartService: CartService,
-    private snackBar: MatSnackBar,
+    private toastService: ToastService,
     private productApi: ProductApiService
   ) {}
 
@@ -173,9 +160,7 @@ export class ProductListComponent implements OnInit {
           );
         } catch (err) {
           console.error('Validation failed', err);
-          this.snackBar.open('Product data is invalid', 'Close', {
-            duration: 3000,
-          });
+          this.toastService.error('Product data is invalid');
         }
 
         this.filteredProducts = [...products];
@@ -184,9 +169,7 @@ export class ProductListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load products:', err);
-        this.snackBar.open('Error loading products', 'Close', {
-          duration: 3000,
-        });
+        this.toastService.error('Error loading products');
       },
     });
   }
@@ -310,17 +293,6 @@ export class ProductListComponent implements OnInit {
   addToCart(product: ProductDto) {
     // For product list, add with default size and quantity
     this.cartService.addToCart(product, 1);
-
-    this.snackBar
-      .open(`${product.name} added to cart!`, 'View Cart', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      })
-      .onAction()
-      .subscribe(() => {
-        // Navigate to cart
-        console.log('Navigate to cart');
-      });
+    this.toastService.success(`${product.name} added to cart!`);
   }
 }
