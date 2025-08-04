@@ -160,7 +160,7 @@
 
       .hero-stats {
         display: flex;
-        gap: 2rem;
+        gap: 1.5rem; // Reduced gap
 
         @media (max-width: 768px) {
           justify-content: center;
@@ -169,22 +169,22 @@
 
         .stat-item {
           text-align: center;
-          padding: 1rem;
+          padding: 0.75rem; // Reduced padding
           background: rgba(26, 26, 26, 0.05);
-          border-radius: 8px;
+          border-radius: 6px; // Smaller border radius
           border: 1px solid rgba(26, 26, 26, 0.1);
           backdrop-filter: blur(10px);
 
           .stat-number {
             display: block;
-            font-size: 2rem;
+            font-size: 1.5rem; // Reduced from 2rem
             font-weight: 700;
             color: #1a1a1a;
             margin-bottom: 0.25rem;
           }
 
           .stat-label {
-            font-size: 0.875rem;
+            font-size: 0.75rem; // Reduced from 0.875rem
             color: rgba(26, 26, 26, 0.8);
           }
         }
