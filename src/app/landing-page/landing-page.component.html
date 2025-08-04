@@ -3,11 +3,6 @@
   <section class="hero-section">
     <div class="hero-background">
       <div class="hero-overlay"></div>
-      <div class="floating-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-      </div>
     </div>
 
     <div class="hero-content">
@@ -15,9 +10,9 @@
         <div class="hero-text">
           <h1 class="hero-title">
             Step into
-            <span class="gradient-text">Style</span>
+            <span class="accent-text">Style</span>
             <br>Walk with
-            <span class="gradient-text">Confidence</span>
+            <span class="accent-text">Confidence</span>
           </h1>
           <p class="hero-subtitle">
             Discover the perfect blend of comfort and fashion. From casual sneakers to elegant formal wear,
@@ -51,26 +46,8 @@
 
         <div class="hero-visual">
           <div class="hero-shoe-showcase">
-            <div class="shoe-card shoe-1">
-              <img src="/assets/products/running-shoe.png" alt="Running Shoe">
-              <div class="shoe-info">
-                <h4>Running Pro</h4>
-                <p>Ultimate comfort</p>
-              </div>
-            </div>
-            <div class="shoe-card shoe-2">
-              <img src="/assets/products/casual-sneaker.png" alt="Casual Sneaker">
-              <div class="shoe-info">
-                <h4>Casual Classic</h4>
-                <p>Everyday style</p>
-              </div>
-            </div>
-            <div class="shoe-card shoe-3">
-              <img src="/assets/products/retro-sneaker.png" alt="Retro Sneaker">
-              <div class="shoe-info">
-                <h4>Retro Vibes</h4>
-                <p>Vintage charm</p>
-              </div>
+            <div class="hero-image">
+              <img src="/assets/products/running-shoe.png" alt="Premium Running Shoe">
             </div>
           </div>
         </div>
@@ -189,7 +166,7 @@
             <i class="bi bi-truck"></i>
           </div>
           <h3>Free Shipping</h3>
-          <p>Free standard shipping on orders over $50. Fast delivery to your doorstep.</p>
+          <p>Free standard shipping on orders over $50</p>
         </div>
 
         <div class="feature-card">
@@ -197,7 +174,7 @@
             <i class="bi bi-shield-check"></i>
           </div>
           <h3>Secure Payment</h3>
-          <p>100% secure payment processing. Your data is protected with bank-level security.</p>
+          <p>100% secure payment processing</p>
         </div>
 
         <div class="feature-card">
@@ -205,7 +182,7 @@
             <i class="bi bi-arrow-repeat"></i>
           </div>
           <h3>Easy Returns</h3>
-          <p>30-day return policy. Not satisfied? Return for free, no questions asked.</p>
+          <p>30-day return policy</p>
         </div>
 
         <div class="feature-card">
@@ -213,7 +190,7 @@
             <i class="bi bi-headset"></i>
           </div>
           <h3>24/7 Support</h3>
-          <p>Round-the-clock customer support. We're here to help whenever you need us.</p>
+          <p>Round-the-clock customer support</p>
         </div>
       </div>
     </div>
@@ -320,12 +297,10 @@
             Join our community of fashion-forward individuals.</p>
         </div>
 
-        <div class="mb-3">
-          <label for="newsletterEmail" class="form-label">Enter your email address</label>
+        <div class="newsletter-form">
           <div class="input-group">
             <input type="email" name="newsletterEmail" id="newsletterEmail" class="form-control"
               placeholder="your@email.com" [(ngModel)]="newsletterEmail" aria-describedby="helpId" />
-            <span class="input-group-text"> <i class="bi bi-envelope"></i></span>
             <button type="button" class="btn btn-primary">
               Subscribe
               <i class="bi bi-send"></i>
@@ -333,7 +308,6 @@
           </div>
           <div id="helpId" class="form-text">Enter your email to subscribe to newsletter</div>
         </div>
-
       </div>
     </div>
   </section>

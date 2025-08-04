@@ -1,11 +1,14 @@
-.footer {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+footer {
+  background: #1a1a1a !important; // Strong override to match navbar background color
   color: #ffffff;
   position: relative;
   margin-top: auto;
+  padding: 3rem 0 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); // Line separator at top
 
-  .footer-content {
-    padding: 4rem 0 2rem;
+  // Override Bootstrap's bg-dark class
+  &.bg-dark {
+    background: #1a1a1a !important;
   }
 
   .container {
@@ -14,58 +17,25 @@
     padding: 0 2rem;
   }
 
-  .footer-sections {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 3rem;
-    margin-bottom: 3rem;
-  }
-
-  .footer-section {
-    h4 {
-      color: #ffffff;
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      position: relative;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -0.5rem;
-        left: 0;
-        width: 3rem;
-        height: 2px;
-        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-        border-radius: 1px;
-      }
-    }
-
-    p {
-      color: #b0b0b0;
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-    }
-  }
-
   .footer-brand {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
 
-    .brand-icon {
+    i {
       font-size: 2rem;
       margin-right: 0.75rem;
-      color: #4ecdc4;
+      color: #ffffff !important;
+    }
+
+    .bi-bag-heart {
+      color: #ffffff !important;
     }
 
     h3 {
       font-size: 1.75rem;
       font-weight: 700;
-      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #ffffff;
       margin: 0;
     }
   }
@@ -78,34 +48,45 @@
 
   .social-links {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 
-    .social-link {
+    .btn {
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      color: #ffffff;
-      text-decoration: none;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
       transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
+      font-size: 0.875rem;
 
       &:hover {
-        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
         transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-      }
-
-      mat-icon {
-        font-size: 1.25rem;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
       }
     }
   }
 
-  .footer-links {
+  h4 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -0.5rem;
+      left: 0;
+      width: 3rem;
+      height: 2px;
+      background: #e0e0e0;
+      border-radius: 1px;
+    }
+  }
+
+  ul {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -126,7 +107,7 @@
           left: -1rem;
           opacity: 0;
           transition: all 0.3s ease;
-          color: #4ecdc4;
+          color: #e0e0e0;
         }
 
         &:hover {
@@ -142,271 +123,86 @@
     }
   }
 
-  .newsletter-section {
-    .newsletter-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-
-      .newsletter-input {
-        width: 100%;
-
-        ::ng-deep .mat-mdc-form-field {
-          width: 100%;
-        }
-
-        ::ng-deep .mat-mdc-text-field-wrapper {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
-          backdrop-filter: blur(10px);
-        }
-
-        ::ng-deep .mat-mdc-form-field-focus-overlay {
-          background: transparent;
-        }
-
-        ::ng-deep .mat-mdc-form-field-label {
-          color: #b0b0b0;
-        }
-
-        ::ng-deep .mat-mdc-input-element {
-          color: #ffffff;
-        }
-
-        ::ng-deep .mat-mdc-form-field-outline {
-          color: rgba(255, 255, 255, 0.2);
-        }
-
-        ::ng-deep .mat-mdc-form-field-outline-thick {
-          color: #4ecdc4;
-        }
-      }
-
-      button {
-        height: 3rem;
-        border-radius: 8px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-        border: none;
-        transition: all 0.3s ease;
-
-        &:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-        }
-
-        &:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-      }
-    }
-
-    .newsletter-benefits {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-
-      .benefit-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #b0b0b0;
-        font-size: 0.875rem;
-
-        mat-icon {
-          font-size: 1rem;
-          color: #4ecdc4;
-        }
-      }
-    }
+  .border-top {
+    border-color: rgba(255, 255, 255, 0.1) !important;
   }
 
-  .footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 2rem;
-
-    .footer-bottom-content {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      align-items: center;
-      text-align: center;
-
-      @media (min-width: 768px) {
-        flex-direction: row;
-        justify-content: space-between;
-        text-align: left;
-      }
+  .payment-methods {
+    .text-muted {
+      color: #b0b0b0 !important;
     }
 
-    .payment-methods {
+    .payment-icons {
       display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
 
-      .payment-label {
+      i {
         color: #b0b0b0;
-        font-size: 0.875rem;
-      }
-
-      .payment-icons {
-        display: flex;
-        gap: 0.5rem;
-
-        .payment-icon {
-          color: #b0b0b0;
-          font-size: 1.5rem;
-          transition: color 0.3s ease;
-
-          &:hover {
-            color: #4ecdc4;
-          }
-        }
-      }
-    }
-
-    .footer-legal {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-
-      a {
-        color: #b0b0b0;
-        text-decoration: none;
-        font-size: 0.875rem;
+        font-size: 1.5rem;
         transition: color 0.3s ease;
 
         &:hover {
-          color: #ffffff;
+          color: #e0e0e0;
         }
-      }
-
-      .separator {
-        color: #b0b0b0;
-        font-size: 0.875rem;
-      }
-    }
-
-    .copyright {
-      p {
-        color: #b0b0b0;
-        font-size: 0.875rem;
-        margin: 0;
       }
     }
   }
 
-  .back-to-top {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(20px);
-    transition: all 0.3s ease;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-    border: none;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  .footer-legal {
+    a {
+      color: #b0b0b0 !important;
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.3s ease;
 
-    &.visible {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
+      &:hover {
+        color: #ffffff !important;
+      }
     }
+  }
+
+  .copyright {
+    p {
+      color: #b0b0b0 !important;
+      font-size: 0.875rem;
+      margin: 0;
+    }
+  }
+
+  .btn-primary {
+    background: #ffffff;
+    color: #1a1a1a;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 
     &:hover {
+      background: #f0f0f0;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-    }
-
-    mat-icon {
-      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
   }
 }
 
 // Responsive Design
 @media (max-width: 768px) {
-  .footer {
-    .footer-content {
-      padding: 3rem 0 1.5rem;
-    }
+  footer {
+    padding: 2rem 0 1rem;
 
     .container {
       padding: 0 1rem;
     }
 
-    .footer-sections {
-      grid-template-columns: 1fr;
-      gap: 2rem;
+    .social-links {
+      justify-content: center;
     }
 
-    .footer-bottom {
-      .footer-bottom-content {
-        gap: 1rem;
-      }
-
-      .payment-methods {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .footer-legal {
-        flex-direction: column;
-        gap: 0.5rem;
-
-        .separator {
-          display: none;
-        }
-      }
+    .footer-legal {
+      text-align: center !important;
     }
 
-    .back-to-top {
-      bottom: 1rem;
-      right: 1rem;
+    .copyright {
+      text-align: center !important;
     }
-  }
-}
-
-// Animation for newsletter form
-.newsletter-form {
-  animation: slideInUp 0.6s ease-out;
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// Hover effects for social links
-.social-links .social-link {
-  &:nth-child(1):hover {
-    background: linear-gradient(45deg, #1877f2, #42a5f5);
-  }
-  
-  &:nth-child(2):hover {
-    background: linear-gradient(45deg, #1da1f2, #64b5f6);
-  }
-  
-  &:nth-child(3):hover {
-    background: linear-gradient(45deg, #e4405f, #f06292);
-  }
-  
-  &:nth-child(4):hover {
-    background: linear-gradient(45deg, #ff0000, #f44336);
   }
 }
