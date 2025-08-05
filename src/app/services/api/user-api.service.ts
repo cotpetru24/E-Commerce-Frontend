@@ -26,68 +26,7 @@ export class UserApiService extends BaseApiService {
     super(http);
   }
 
-  // ============================================================================
-  // AUTHENTICATION ENDPOINTS
-  // ============================================================================
 
-  /**
-   * User login
-   */
-
-
-  /**
-   * User registration
-   */
-  register(userData: RegisterRequestDto): Observable<string> {
-    return this.http
-      .post<string>(`${this.authUrl}/register`, userData)
-      .pipe(
-        tap((response) => {
-          localStorage.setItem('accessToken', response);
-        }),
-        catchError(this.handleError)
-      );
-  }
-
-
-
-  /**
-   * Refresh access token
-   */
-  refreshToken(): Observable<{ token: string }> {
-    const refreshToken = localStorage.getItem('refreshToken');
-    return this.http
-      .post<{ token: string }>(`${this.authUrl}/refresh`, {
-        refreshToken,
-      })
-      .pipe(
-        tap((response) => {
-          localStorage.setItem('accessToken', response.token);
-        }),
-        catchError(this.handleError)
-      );
-  }
-
-  /**
-   * Forgot password
-   */
-  forgotPassword(email: string): Observable<void> {
-    return this.http
-      .post<void>(`${this.authUrl}/forgot-password`, { email })
-      .pipe(catchError(this.handleError));
-  }
-
-  /**
-   * Reset password
-   */
-  resetPassword(token: string, newPassword: string): Observable<void> {
-    return this.http
-      .post<void>(`${this.authUrl}/reset-password`, {
-        token,
-        newPassword,
-      })
-      .pipe(catchError(this.handleError));
-  }
 
   // ============================================================================
   // USER PROFILE ENDPOINTS

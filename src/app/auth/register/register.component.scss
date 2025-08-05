@@ -1,0 +1,88 @@
+/* Button Styles - Matching Landing Page Colors */
+.btn-primary {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+  border-color: #1a1a1a !important;
+}
+
+.btn-primary:hover {
+  background: #333333 !important;
+  border-color: #333333 !important;
+}
+
+.btn-outline-primary {
+  color: #1a1a1a !important;
+  border-color: rgba(26, 26, 26, 0.3) !important;
+}
+
+.btn-outline-primary:hover {
+  background: rgba(26, 26, 26, 0.1) !important;
+  border-color: rgba(26, 26, 26, 0.5) !important;
+  color: #1a1a1a !important;
+}
+
+.btn-outline-secondary {
+  color: #1a1a1a !important;
+  border-color: rgba(26, 26, 26, 0.3) !important;
+}
+
+.btn-outline-secondary:hover {
+  background: rgba(26, 26, 26, 0.1) !important;
+  border-color: rgba(26, 26, 26, 0.5) !important;
+  color: #1a1a1a !important;
+}
+
+.btn-outline-danger {
+  color: #dc3545 !important;
+  border-color: rgba(220, 53, 69, 0.3) !important;
+}
+
+.btn-outline-danger:hover {
+  background: rgba(220, 53, 69, 0.1) !important;
+  border-color: rgba(220, 53, 69, 0.5) !important;
+  color: #dc3545 !important;
+}
+
+.btn-outline-dark {
+  color: #1a1a1a !important;
+  border-color: rgba(26, 26, 26, 0.3) !important;
+}
+
+.btn-outline-dark:hover {
+  background: rgba(26, 26, 26, 0.1) !important;
+  border-color: rgba(26, 26, 26, 0.5) !important;
+  color: #1a1a1a !important;
+}
+
+.btn-success {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+  border-color: #1a1a1a !important;
+}
+
+.btn-success:hover {
+  background: #333333 !important;
+  border-color: #333333 !important;
+}
+
+/* Card header styling to match theme */
+.card-header.bg-success {
+  background: #1a1a1a !important;
+}
+
+/* Form styling */
+.form-control:focus {
+  border-color: #1a1a1a !important;
+  box-shadow: 0 0 0 0.2rem rgba(26, 26, 26, 0.25) !important;
+}
+
+.form-check-input:checked {
+  background-color: #1a1a1a !important;
+  border-color: #1a1a1a !important;
+}
+
+.form-check-input:focus {
+  border-color: #1a1a1a !important;
+  box-shadow: 0 0 0 0.2rem rgba(26, 26, 26, 0.25) !important;
+}
+

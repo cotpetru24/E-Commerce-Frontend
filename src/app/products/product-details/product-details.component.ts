@@ -6,15 +6,13 @@ import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { Audience } from '../../models/gender.enum';
 import { Toast} from 'bootstrap';
-import { SpinneComponent } from "../../shared/spinner/spinner.component";
 
 @Component({
   selector: 'product-details',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
-    SpinneComponent
+    RouterModule
 ],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.scss',

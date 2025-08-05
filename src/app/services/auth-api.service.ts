@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs';
 import {
   LoginRequestDto,
+  RegisterRequestDto,
   UserInfoDto,
   UserRole,
 } from '../models/auth.dto';
@@ -29,35 +30,49 @@ export class AuthApiService extends BaseApiService {
   }
 
   // Traditional email/password login
-login(credentials: LoginRequestDto): Observable<{ token: string }> {
-  return this.post<{ token: string }>(
-    this.buildUrl('/api/auth/login'),
-    credentials
-  ).pipe(
-    tap((response) => {
-      this.setCurrentUser(response);
-    })
-  );
-}
+  login(credentials: LoginRequestDto): Observable<{ token: string }> {
+    return this.post<{ token: string }>(
+      this.buildUrl(this.baseUrl+'/login'),
+      credentials
+    ).pipe(
+      tap((response) => {
+        this.setCurrentUser(response);
+      })
+    );
+  }
 
-  // register(userData: any): Promise<UserDto> {
-  //   return new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       const user: User = {
-  //         id: 'user-' + Date.now(),
-  //         email: userData.email,
-  //         name: `${userData.firstName} ${userData.lastName}`,
-  //         firstName: userData.firstName,
-  //         lastName: userData.lastName,
-  //         provider: 'email',
-  //         loginMethod: 'traditional',
-  //         registrationTime: new Date().toISOString(),
-  //       };
-  //       this.setCurrentUser(user);
-  //       resolve(user);
-  //     }, 2000);
-  //   });
+
+  register(userData: RegisterRequestDto): Observable<{token:string}> {
+    return this.post<{token:string}>(
+      this.buildUrl(this.baseUrl+`/register`), userData)
+      .pipe(
+      tap((response) => {
+        this.setCurrentUser(response)
+      })
+    );
+  }
+
+  // /**
+  //  * Forgot password
+  //  */
+  // forgotPassword(email: string): Observable<void> {
+  //   return this.http
+  //     .post<void>(`${this.authUrl}/forgot-password`, { email })
+  //     .pipe(catchError(this.handleError));
   // }
+
+  // /**
+  //  * Reset password
+  //  */
+  // resetPassword(token: string, newPassword: string): Observable<void> {
+  //   return this.http
+  //     .post<void>(`${this.authUrl}/reset-password`, {
+  //       token,
+  //       newPassword,
+  //     })
+  //     .pipe(catchError(this.handleError));
+  // }
+
 
   logout(): void {
     this.clearAuthData();
@@ -229,7 +244,7 @@ login(credentials: LoginRequestDto): Observable<{ token: string }> {
     }
   }
 
-  private setCurrentUser(response: {token:string}): void {
+  private setCurrentUser(response: { token: string }): void {
     if (!response.token) {
       throw new Error('Invalid token!');
     }
@@ -243,13 +258,12 @@ login(credentials: LoginRequestDto): Observable<{ token: string }> {
         throw new Error('Invalid JWT token.');
       }
 
-    const userInfo = {
-      Id: token.Id,
-      FirstName: token.FirstName,
-      Email: token.Email,
-      Role: this.validateRole(token.Role),
-    };
-
+      const userInfo = {
+        Id: token.Id,
+        FirstName: token.FirstName,
+        Email: token.Email,
+        Role: this.validateRole(token.Role),
+      };
 
       localStorage.setItem('currentUser', JSON.stringify(userInfo));
     } catch (err) {

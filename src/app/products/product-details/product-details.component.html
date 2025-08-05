@@ -91,8 +91,9 @@
         <div class="size-selection" *ngIf="availableSizes.length > 0">
           <h3>Select Size</h3>
           <div class="size-options">
-            <button class="btn btn-outline-primary" *ngFor="let size of availableSizes" [class.selected]="selectedSize === size"
-              [class.disabled]="!isSizeAvailable(size)" (click)="selectSize(size)">
+            <button class="btn btn-outline-primary" *ngFor="let size of availableSizes"
+              [class.selected]="selectedSize === size" [class.disabled]="!isSizeAvailable(size)"
+              (click)="selectSize(size)">
               {{ size }}
             </button>
           </div>
@@ -102,7 +103,8 @@
         <div class="quantity-selection">
           <h3>Quantity</h3>
           <div class="quantity-controls">
-            <button class="btn btn-outline-secondary" (click)="decreaseQuantity()" [disabled]="quantity <= 1" title="Decrease quantity">
+            <button class="btn btn-outline-secondary" (click)="decreaseQuantity()" [disabled]="quantity <= 1"
+              title="Decrease quantity">
               <i class="bi bi-dash"></i>
             </button>
             <span class="quantity-display">{{ quantity }}</span>
@@ -115,8 +117,8 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-          <button class="btn btn-primary add-to-cart-btn"
-            [disabled]="product.stock === 0 || !selectedSize" (click)="addToCart()">
+          <button class="btn btn-primary add-to-cart-btn" [disabled]="product.stock === 0 || !selectedSize"
+            (click)="addToCart()">
             <i class="bi bi-cart-plus"></i>
             Add to Cart
           </button>
@@ -152,7 +154,7 @@
 
     <!-- Loading State -->
     <div class="loading-state" *ngIf="!product">
-      <app-spinner></app-spinner>
+      <span class="spinner-border spinner-border-sm me-2 text-primary" role="status"></span>
     </div>
 
     <!-- Related Products -->
@@ -160,7 +162,8 @@
       <h2>Related Products</h2>
       <div class="related-products-grid">
         <div class="card related-product-card" *ngFor="let relatedProduct of relatedProducts">
-          <img class="card-img-top" [src]="relatedProduct.imagePath" [alt]="relatedProduct.name" title="Product image" />
+          <img class="card-img-top" [src]="relatedProduct.imagePath" [alt]="relatedProduct.name"
+            title="Product image" />
           <div class="card-body">
             <h3 class="card-title">{{ relatedProduct.name }}</h3>
             <p class="brand">{{ relatedProduct.brandName }}</p>

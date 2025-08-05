@@ -20,7 +20,7 @@ export class RegisterComponent {
     password: '',
     confirmPassword: '',
     acceptTerms: false,
-    subscribeNewsletter: false
+    subscribeNewsletter: false,
   };
 
   isLoading = false;
@@ -33,13 +33,18 @@ export class RegisterComponent {
   constructor(
     private router: Router,
     private toastService: ToastService,
-    private authService: AuthApiService
+    private authApiService: AuthApiService
   ) {}
 
   onSubmit() {
-    if (!this.registerData.firstName || !this.registerData.lastName || 
-        !this.registerData.email || !this.registerData.password || 
-        !this.registerData.confirmPassword || !this.registerData.acceptTerms) {
+    if (
+      !this.registerData.firstName ||
+      !this.registerData.lastName ||
+      !this.registerData.email ||
+      !this.registerData.password ||
+      !this.registerData.confirmPassword ||
+      !this.registerData.acceptTerms
+    ) {
       this.toastService.error('Please fill in all required fields.');
       return;
     }
@@ -56,22 +61,28 @@ export class RegisterComponent {
 
     this.isLoading = true;
 
-    // this.authService.register(this.registerData)
-    //   .then((user) => {
-    //     this.toastService.success('Account created successfully! Welcome to our platform.');
-    //     this.router.navigate(['/products']);
-    //   })
-    //   .catch((error) => {
-    //     this.toastService.error('Registration failed. Please try again.');
-    //   })
-    //   .finally(() => {
-    //     this.isLoading = false;
-    //   });
+    this.authApiService.register(this.registerData).subscribe({
+      next: (user) => {
+        this.toastService.success('Registered successful!');
+        if (this.authApiService.isAdmin()) {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/products']);
+        }
+      },
+      error: () => {
+        this.toastService.error('Failed to regiter.');
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
   }
+
 
   signUpWithGoogle() {
     this.isGoogleLoading = true;
-    
+
     // this.authService.signUpWithGoogle()
     //   .then((user) => {
     //     this.toastService.success('Successfully signed up with Google! Welcome to our platform.');
@@ -87,7 +98,6 @@ export class RegisterComponent {
 
   signUpWithGitHub() {
     // this.isGitHubLoading = true;
-    
     // this.authService.signUpWithGitHub()
     //   .then((user) => {
     //     this.toastService.success('Successfully signed up with GitHub! Welcome to our platform.');
@@ -103,7 +113,7 @@ export class RegisterComponent {
 
   signUpWithFacebook() {
     this.isFacebookLoading = true;
-    
+
     // this.authService.signUpWithFacebook()
     //   .then((user) => {
     //     this.toastService.success('Successfully signed up with Facebook! Welcome to our platform.');

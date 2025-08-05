@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
       <div class="card shadow">
@@ -157,7 +157,7 @@
                 class="btn btn-success btn-lg"
                 [disabled]="isLoading"
               >
-                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2 text-primary " role="status"></span>
                 <i class="bi bi-person-plus me-2" *ngIf="!isLoading"></i>
                 {{ isLoading ? 'Creating Account...' : 'Create Account' }}
               </button>

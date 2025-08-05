@@ -4,6 +4,8 @@ import { RouterModule, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 import { CartService, CartItem } from '../../services/cart.service';
+import { ToastService } from '../../services/toast.service';
+import { AuthApiService } from '../../services/auth-api.service';
 
 @Component({
   selector: 'app-cart-view',
@@ -21,7 +23,10 @@ export class CartViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService,
+    private authApiService:AuthApiService
+
   ) {
     this.cartSubscription = this.cartService.cartItems$.subscribe((items) => {
       this.cartItems = items;
@@ -93,16 +98,17 @@ export class CartViewComponent implements OnInit, OnDestroy {
   }
 
   proceedToCheckout(): void {
-    // if (this.cartItems.length === 0) {
-    //   this.snackBar.open('Your cart is empty', 'Close', {
-    //     duration: 3000,
-    //     horizontalPosition: 'center',
-    //     verticalPosition: 'bottom',
-    //   });
-    //   return;
-    // }
+    if (this.cartItems.length === 0) {
+      this.toastService.error('Your cart is empty');
+      return;
+    }
 
-    console.log('Proceeding to checkout...');
+    if(this.authApiService.getCurrentUser() === null){
+      this.toastService.info('Please login to proceed to checkout.')
+      this.router.navigate(['/auth/login'])
+      return
+    }
+
     this.router.navigate(['/checkout/addressForm']);
   }
 
