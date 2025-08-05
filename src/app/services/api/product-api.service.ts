@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ProductDto } from '../../models/product.dto';
 import { BaseApiService } from './base-api.service';
+import { GetProductsDto } from '../../models/get-products.dto';
+import { ProductFilterDto } from '../../models/product-filter.dto';
 
 // ============================================================================
 // PRODUCT API SERVICE
@@ -29,20 +31,12 @@ export class ProductApiService extends BaseApiService {
   /**
    * Get all products with optional filtering
    */
-  getProducts(params?: {
-    category?: string;
-    brand?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    search?: string;
-    page?: number;
-    limit?: number;
-  }): Observable<ProductDto[]> {
+  getProducts(params?: ProductFilterDto): Observable<GetProductsDto> {
     let httpParams = this.createParams(params || {});
 
     this.logRequest('GET', this.buildUrl('/api/product'), httpParams);
 
-    return this.get<ProductDto[]>(this.buildUrl('/api/product'), {
+    return this.get<GetProductsDto>(this.buildUrl('/api/product'), {
       params: httpParams,
     });
   }

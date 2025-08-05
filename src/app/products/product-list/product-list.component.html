@@ -20,9 +20,8 @@
         <div class="filter-section">
           <h4>Search</h4>
           <div class="input-group">
-            <input type="search" class="form-control" placeholder="Enter product name or brand" title="Search"
-              (input)="onSearchChange()">
-            <button class=" btn btn-outline-secondary" type="button" title="Search button">
+            <input [(ngModel)]="productFilterDto.SearchTerm" type="search" class="form-control" placeholder="Search..." title="Search" (input)="onSearchTermClear($event)">
+            <button class=" btn btn-outline-secondary" type="button" title="Search button" (click)="onSearch()">
               <i class="bi bi-search"></i>
             </button>
           </div>
@@ -36,7 +35,7 @@
           <div class="input-group mb-2" *ngFor="let gender of audienceOptions">
             <div class="input-group-text">
               <input class="form-check-input mt-0" type="radio" name="gender" [value]="gender"
-                [(ngModel)]="selectedGender" (change)="onFilterChange()" [attr.aria-label]="'Select ' + gender"
+                [(ngModel)]="productFilterDto.Gender" (change)="onFilterChange()" [attr.aria-label]="'Select ' + gender"
                 title="Select gender">
             </div>
             <input type="text" class="form-control" [value]="gender | titlecase" aria-label="Gender label" readonly>
@@ -48,7 +47,7 @@
         <div class="filter-section">
           <h4>Brand</h4>
           <label for="selectedBrand" class="form-label">Select brand</label>
-          <select id="selectedBrand" class="form-select" [(ngModel)]="selectedBrand" (change)="onFilterChange()">
+          <select id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand" (change)="onFilterChange()">
             <option value="">All Brands</option>
             <option *ngFor="let brand of availableBrands" [value]="brand">
               {{brand}}
@@ -63,14 +62,14 @@
             <div class="mb-3">
               <label for="minPrice" class="form-label">Min Price</label>
               <input type="number" name="minPrice" id="minPrice" class="form-control" placeholder="0"
-                aria-describedby="minPriceHelp" [(ngModel)]="minPrice" (input)="onFilterChange()" />
+                aria-describedby="minPriceHelp" [(ngModel)]="productFilterDto.MinPrice" (input)="onFilterChange()" />
               <div id="minPriceHelp" class="visually-hidden">Enter minimum price</div>
             </div>
 
             <div class="mb-3">
               <label for="maxPrice" class="form-label">Max Price</label>
               <input type="number" name="maxPrice" id="maxPrice" class="form-control" placeholder="1000"
-                aria-describedby="maxPriceHelper" [(ngModel)]="maxPrice" (input)="onFilterChange()" />
+                aria-describedby="maxPriceHelper" [(ngModel)]="productFilterDto.MaxPrice" (input)="onFilterChange()" />
               <div id="maxPriceHelper" class="visually-hidden">Enter maximum price</div>
             </div>
           </div>
@@ -98,8 +97,8 @@
         <!-- Results Header -->
         <div class="results-header">
           <div class="results-info">
-            <span>{{ filteredProducts.length }} products found</span>
-            <span *ngIf="selectedGender || selectedBrand || searchTerm" class="active-filters">
+            <span>{{ products.length }} products found</span>
+            <span *ngIf="productFilterDto.Gender || productFilterDto.Brand || productFilterDto.SearchTerm" class="active-filters">
               (filtered)
             </span>
           </div>
@@ -117,7 +116,7 @@
 
         <!-- Products Grid/List -->
         <div class="products-container" [class.list-view]="viewMode === 'list'">
-          <div class="card-header" *ngFor="let product of filteredProducts" [class.list-card]="viewMode === 'list'">
+          <div class="card-header" *ngFor="let product of products" [class.list-card]="viewMode === 'list'">
             <div class="product-image">
               <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
               <div class="product-overlay">
@@ -165,7 +164,7 @@
         </div>
 
         <!-- No Results -->
-        <div class="no-results" *ngIf="filteredProducts.length === 0">
+        <div class="no-results" *ngIf="products.length === 0">
           <i class="bi bi-search"></i>
           <h3>No products found</h3>
           <p>Try adjusting your filters or search terms</p>

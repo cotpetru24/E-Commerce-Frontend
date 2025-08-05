@@ -103,7 +103,7 @@ export class CartViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if(this.authApiService.getCurrentUser() === null){
+    if(this.authApiService.isLoggedIn() === false){
       this.toastService.info('Please login to proceed to checkout.')
       this.router.navigate(['/auth/login'])
       return
