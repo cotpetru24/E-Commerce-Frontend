@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Audience } from "./gender.enum";
+import { Audience } from "./audience.enum";
 
 interface ProductDto {
   id: number;

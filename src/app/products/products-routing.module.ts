@@ -11,7 +11,7 @@ const routes: Routes = [
     path: '',
     children: [
       { path: '', component: ProductListComponent },
-      { path: ':gender', component: ProductListComponent }, // default /products
+      { path: ':audience', component: ProductListComponent }, // default /products
       // default /products
     ],
   },

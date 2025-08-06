@@ -5,9 +5,12 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ProductDto, ProductDtoSchema } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
-import { Audience } from '../../models/gender.enum';
+import { Audience } from '../../models/audience.enum';
 import { ProductApiService } from '../../services/api';
-import { ProductFilterDto } from '../../models/product-filter.dto';
+import {
+  ProductFilterDto,
+  SortByOption,
+} from '../../models/product-filter.dto';
 
 @Component({
   selector: 'app-product-list',
@@ -17,7 +20,7 @@ import { ProductFilterDto } from '../../models/product-filter.dto';
   styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent implements OnInit {
-  Gender = Audience;
+  // SortBy = SortByOption;
 
   public products: ProductDto[] = [];
 
@@ -28,11 +31,19 @@ export class ProductListComponent implements OnInit {
     Audience.Unisex,
   ];
 
+  public sortByOptions: { value: SortByOption; label: string }[] = [
+    { value: SortByOption.NameAsc, label: 'Name A-Z' },
+    { value: SortByOption.NameDesc, label: 'Name Z-A' },
+    { value: SortByOption.PriceAsc, label: 'Price Low to High' },
+    { value: SortByOption.PriceDesc, label: 'Price High to Low' },
+    { value: SortByOption.BrandAsc, label: 'Brand A-Z' },
+    { value: SortByOption.BrandDesc, label: 'Brand Z-A' },
+  ];
+
   public productFilterDto: ProductFilterDto = {};
 
   availableBrands: string[] = [];
 
-  sortBy: string = 'name';
   viewMode: 'grid' | 'list' = 'grid';
 
   constructor(
@@ -44,13 +55,13 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
-      const gender = params['gender'];
-      if (gender) {
-        this.productFilterDto.Gender = gender;
+      const audience = params['audience'];
+      if (audience) {
+        this.setFilters({ Audience: audience });
+      } else {
+        this.getProducts();
       }
     });
-
-    this.getProducts();
   }
 
   getProducts() {
@@ -74,31 +85,24 @@ export class ProductListComponent implements OnInit {
   }
 
   getPageTitle(): string {
-    if (this.productFilterDto.Gender) {
+    if (this.productFilterDto.Audience) {
       return `${
-        this.productFilterDto.Gender.charAt(0).toUpperCase() +
-        this.productFilterDto.Gender.slice(1)
+        this.productFilterDto.Audience.charAt(0).toUpperCase() +
+        this.productFilterDto.Audience.slice(1)
       }'s Shoes`;
     }
     return 'All Products';
   }
 
   getPageSubtitle(): string {
-    if (this.productFilterDto.Gender) {
-      return `Discover our collection of ${this.productFilterDto.Gender}'s footwear`;
+    if (this.productFilterDto.Audience) {
+      return `Discover our collection of ${this.productFilterDto.Audience}'s footwear`;
     }
     return 'Browse our complete collection of stylish and comfortable shoes';
   }
 
-  onSearch() {
-    this.getProducts();
-  }
-
-  onFilterChange() {
-    this.getProducts();
-  }
-
-  onSortChange() {
+  setFilters(value: Partial<ProductFilterDto>) {
+    this.productFilterDto = { ...this.productFilterDto, ...value };
     this.getProducts();
   }
 

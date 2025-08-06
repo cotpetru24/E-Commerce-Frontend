@@ -10,7 +10,7 @@
   <div class="container">
     <div class="product-layout">
       <!-- Filters Sidebar -->
-      <aside class="filters-sidebar">
+      <aside class="filters-sidebar mb-5">
         <div class="filters-header">
           <h3>Filters</h3>
           <button class="btn btn-primary btn-sm" (click)="clearFilters()">Clear All</button>
@@ -20,8 +20,9 @@
         <div class="filter-section">
           <h4>Search</h4>
           <div class="input-group">
-            <input [(ngModel)]="productFilterDto.SearchTerm" type="search" class="form-control" placeholder="Search..." title="Search" (input)="onSearchTermClear($event)">
-            <button class=" btn btn-outline-secondary" type="button" title="Search button" (click)="onSearch()">
+            <input [(ngModel)]="productFilterDto.SearchTerm" type="search" class="form-control" placeholder="Search..."
+              title="Search" (input)="onSearchTermClear($event)" (keydown.enter)="getProducts()">
+            <button class=" btn btn-outline-secondary" type="button" title="Search button" (click)="getProducts()">
               <i class="bi bi-search"></i>
             </button>
           </div>
@@ -35,7 +36,7 @@
           <div class="input-group mb-2" *ngFor="let gender of audienceOptions">
             <div class="input-group-text">
               <input class="form-check-input mt-0" type="radio" name="gender" [value]="gender"
-                [(ngModel)]="productFilterDto.Gender" (change)="onFilterChange()" [attr.aria-label]="'Select ' + gender"
+                [(ngModel)]="productFilterDto.Audience" (change)="getProducts()" [attr.aria-label]="'Select ' + gender"
                 title="Select gender">
             </div>
             <input type="text" class="form-control" [value]="gender | titlecase" aria-label="Gender label" readonly>
@@ -47,7 +48,7 @@
         <div class="filter-section">
           <h4>Brand</h4>
           <label for="selectedBrand" class="form-label">Select brand</label>
-          <select id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand" (change)="onFilterChange()">
+          <select id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand" (change)="getProducts()">
             <option value="">All Brands</option>
             <option *ngFor="let brand of availableBrands" [value]="brand">
               {{brand}}
@@ -62,14 +63,14 @@
             <div class="mb-3">
               <label for="minPrice" class="form-label">Min Price</label>
               <input type="number" name="minPrice" id="minPrice" class="form-control" placeholder="0"
-                aria-describedby="minPriceHelp" [(ngModel)]="productFilterDto.MinPrice" (input)="onFilterChange()" />
+                aria-describedby="minPriceHelp" [(ngModel)]="productFilterDto.MinPrice" (input)="getProducts()" />
               <div id="minPriceHelp" class="visually-hidden">Enter minimum price</div>
             </div>
 
             <div class="mb-3">
               <label for="maxPrice" class="form-label">Max Price</label>
               <input type="number" name="maxPrice" id="maxPrice" class="form-control" placeholder="1000"
-                aria-describedby="maxPriceHelper" [(ngModel)]="productFilterDto.MaxPrice" (input)="onFilterChange()" />
+                aria-describedby="maxPriceHelper" [(ngModel)]="productFilterDto.MaxPrice" (input)="getProducts()" />
               <div id="maxPriceHelper" class="visually-hidden">Enter maximum price</div>
             </div>
           </div>
@@ -80,25 +81,25 @@
         <div class="filter-section">
           <h4>Sort By</h4>
           <label for="sortSelect" class="form-label">Sort</label>
-          <select id="sortSelect" class="form-select" [(ngModel)]="sortBy" (change)="onSortChange()">
+          <select id="sortSelect" class="form-select" [(ngModel)]="productFilterDto.SortBy" (change)="getProducts()">
             <option value="" disabled selected>Select sorting option</option>
-            <option value="name">Name A-Z</option>
-            <option value="name-desc">Name Z-A</option>
-            <option value="price">Price Low to High</option>
-            <option value="price-desc">Price High to Low</option>
-            <option value="brand">Brand A-Z</option>
+            <option *ngFor="let option of sortByOptions" [value]="option.value">
+              {{option.label}}
+            </option>
+
           </select>
         </div>
 
       </aside>
 
       <!-- Products Grid -->
-      <main class="products-main">
+      <main class="products-main mb-5">
         <!-- Results Header -->
         <div class="results-header">
           <div class="results-info">
             <span>{{ products.length }} products found</span>
-            <span *ngIf="productFilterDto.Gender || productFilterDto.Brand || productFilterDto.SearchTerm" class="active-filters">
+            <span *ngIf="productFilterDto.Audience || productFilterDto.Brand || productFilterDto.SearchTerm"
+              class="active-filters">
               (filtered)
             </span>
           </div>
@@ -130,11 +131,12 @@
                 </button>
               </div>
               <div class="product-badges">
-                <span class="category-badge" [class]="product.audience">{{ product.audience }}</span>
-                <span class="stock-badge" [class.in-stock]="product.stock > 0"
+                <span class="audience-badge" [class]="product.audience">{{ product.audience
+                  }}</span>
+                <!-- <span class="stock-badge" [class.in-stock]="product.stock > 0"
                   [class.out-of-stock]="product.stock === 0">
                   {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
-                </span>
+                </span> -->
               </div>
             </div>
 
@@ -145,18 +147,22 @@
                 <p class="product-description">{{ product.description }}</p>
                 <div class="product-price">
                   <span class="price">£{{ product.price }}</span>
-                  <span class="stock-count" *ngIf="product.stock > 0">
-                    {{ product.stock }} left
+                  <span class="stock-badge" [class.in-stock]="product.stock > 0"
+                    [class.out-of-stock]="product.stock === 0">
+                    {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
                   </span>
+                  <!-- <span class="stock-count" *ngIf="product.stock > 0">
+                    {{ product.stock }} left
+                  </span> -->
                 </div>
               </div>
             </div>
 
-            <div class="card-footer">
-              <button class="btn btn-outline-primary" [routerLink]="['/products/details', product.id]">
+            <div class="card-footer d-flex justify-content-end">
+              <button class="btn btn-outline-primary m-2" [routerLink]="['/products/details', product.id]">
                 View Details
               </button>
-              <button class="btn btn-primary" [disabled]="product.stock === 0" (click)="addToCart(product)">
+              <button class="btn btn-primary m-2" [disabled]="product.stock === 0" (click)="addToCart(product)">
                 Add to Cart
               </button>
             </div>

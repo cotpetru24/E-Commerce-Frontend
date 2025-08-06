@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
-import { Audience } from '../../models/gender.enum';
+import { Audience } from '../../models/audience.enum';
 import { Toast} from 'bootstrap';
 
 @Component({

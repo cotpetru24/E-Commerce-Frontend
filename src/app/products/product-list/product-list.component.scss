@@ -47,7 +47,7 @@
   position: sticky;
   top: 100px;
   height: fit-content;
-  margin-bottom: 32px;
+  // margin-bottom: 32px;
 }
 
 .filters-header {
@@ -253,7 +253,7 @@ mat-radio-button {
   gap: 0.5rem;
 }
 
-.gender-badge {
+.audience-badge {
   background: #1976d2;
   color: white;
   padding: 4px 8px;
@@ -263,15 +263,15 @@ mat-radio-button {
   text-transform: capitalize;
 }
 
-.gender-badge.men {
+.audience-badge.men {
   background: #2196f3;
 }
 
-.gender-badge.women {
+.audience-badge.women {
   background: #e91e63;
 }
 
-.gender-badge.children {
+.audience-badge.children {
   background: #ff9800;
 }
 
