@@ -92,6 +92,11 @@
 
       </aside>
 
+        <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5" *ngIf="isLoading">
+          <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
+          <span>Loading...</span>
+        </div>
+
       <!-- Products Grid -->
       <main class="products-main mb-5">
         <!-- Results Header -->
@@ -115,28 +120,17 @@
           </div>
         </div>
 
+
+
         <!-- Products Grid/List -->
         <div class="products-container" [class.list-view]="viewMode === 'list'">
-          <div class="card-header" *ngFor="let product of products" [class.list-card]="viewMode === 'list'">
+          <div class="product-card" *ngFor="let product of products" [class.list-card]="viewMode === 'list'"
+            (click)="navigateToProductDetails(product.id)">
             <div class="product-image">
               <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
-              <div class="product-overlay">
-                <button class="btn btn-light btn-sm quick-view-btn" (click)="quickView(product)"
-                  title="Quick view button">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn btn-primary btn-sm add-to-cart-btn" (click)="addToCart(product)"
-                  title="Add to cart button">
-                  <i class="bi bi-cart-plus"></i>
-                </button>
-              </div>
               <div class="product-badges">
                 <span class="audience-badge" [class]="product.audience">{{ product.audience
                   }}</span>
-                <!-- <span class="stock-badge" [class.in-stock]="product.stock > 0"
-                  [class.out-of-stock]="product.stock === 0">
-                  {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
-                </span> -->
               </div>
             </div>
 
@@ -159,10 +153,12 @@
             </div>
 
             <div class="card-footer d-flex justify-content-end">
-              <button class="btn btn-outline-primary m-2" [routerLink]="['/products/details', product.id]">
+              <button class="btn btn-outline-primary m-2" [routerLink]="['/products/details', product.id]"
+                (click)="$event.stopPropagation()">
                 View Details
               </button>
-              <button class="btn btn-primary m-2" [disabled]="product.stock === 0" (click)="addToCart(product)">
+              <button class="btn btn-primary m-2" [disabled]="product.stock === 0"
+                (click)="addToCart(product); $event.stopPropagation()">
                 Add to Cart
               </button>
             </div>
@@ -170,7 +166,7 @@
         </div>
 
         <!-- No Results -->
-        <div class="no-results" *ngIf="products.length === 0">
+        <div class="no-results" *ngIf="(products.length === 0 && !isLoading)">
           <i class="bi bi-search"></i>
           <h3>No products found</h3>
           <p>Try adjusting your filters or search terms</p>

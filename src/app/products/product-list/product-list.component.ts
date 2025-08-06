@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ProductDto, ProductDtoSchema } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
@@ -11,6 +11,7 @@ import {
   ProductFilterDto,
   SortByOption,
 } from '../../models/product-filter.dto';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -20,8 +21,6 @@ import {
   styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent implements OnInit {
-  // SortBy = SortByOption;
-
   public products: ProductDto[] = [];
 
   public audienceOptions: Audience[] = [
@@ -42,12 +41,15 @@ export class ProductListComponent implements OnInit {
 
   public productFilterDto: ProductFilterDto = {};
 
-  availableBrands: string[] = [];
+  public availableBrands: string[] = [];
 
-  viewMode: 'grid' | 'list' = 'grid';
+  public isLoading: boolean = false;
+
+  public viewMode: 'grid' | 'list' = 'grid';
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private cartService: CartService,
     private toastService: ToastService,
     private productApi: ProductApiService
@@ -65,23 +67,27 @@ export class ProductListComponent implements OnInit {
   }
 
   getProducts() {
-    this.productApi.getProducts(this.productFilterDto).subscribe({
-      next: (response) => {
-        try {
-          this.products = response.products.map((item) =>
-            ProductDtoSchema.parse(item)
-          );
-          this.availableBrands = response.brands;
-        } catch (err) {
-          console.error('Validation failed', err);
-          this.toastService.error('Product data is invalid');
-        }
-      },
-      error: (err) => {
-        console.error('Failed to load products:', err);
-        this.toastService.error('Error loading products');
-      },
-    });
+    this.isLoading = true;
+    this.productApi
+      .getProducts(this.productFilterDto)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (response) => {
+          try {
+            this.products = response.products.map((item) =>
+              ProductDtoSchema.parse(item)
+            );
+            this.availableBrands = response.brands;
+          } catch (err) {
+            console.error('Validation failed', err);
+            this.toastService.error('Product data is invalid');
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load products:', err);
+          this.toastService.error('Error loading products');
+        },
+      });
   }
 
   getPageTitle(): string {
@@ -122,14 +128,13 @@ export class ProductListComponent implements OnInit {
     this.viewMode = mode;
   }
 
-  quickView(product: ProductDto) {
-    // Implement quick view functionality
-    console.log('Quick view:', product);
-  }
-
   addToCart(product: ProductDto) {
     // For product list, add with default size and quantity
     this.cartService.addToCart(product, 1);
     this.toastService.success(`${product.name} added to cart!`);
+  }
+
+  navigateToProductDetails(productId: number) {
+    this.router.navigate(['/products/details', productId]);
   }
 }
