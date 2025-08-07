@@ -33,7 +33,9 @@
         <div class="filter-section">
           <h4>Gender</h4>
 
-          <div class="input-group mb-2" *ngFor="let gender of audienceOptions">
+          @for ( gender of audienceOptions; track gender)
+          {
+          <div class="input-group mb-2">
             <div class="input-group-text">
               <input class="form-check-input mt-0" type="radio" name="gender" [value]="gender"
                 [(ngModel)]="productFilterDto.Audience" (change)="getProducts()" [attr.aria-label]="'Select ' + gender"
@@ -41,6 +43,7 @@
             </div>
             <input type="text" class="form-control" [value]="gender | titlecase" aria-label="Gender label" readonly>
           </div>
+          }
         </div>
 
 
@@ -50,9 +53,12 @@
           <label for="selectedBrand" class="form-label">Select brand</label>
           <select id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand" (change)="getProducts()">
             <option value="">All Brands</option>
-            <option *ngFor="let brand of availableBrands" [value]="brand">
+            @for ( brand of availableBrands; track brand)
+            {
+            <option [value]="brand">
               {{brand}}
             </option>
+            }
           </select>
         </div>
 
@@ -83,30 +89,36 @@
           <label for="sortSelect" class="form-label">Sort</label>
           <select id="sortSelect" class="form-select" [(ngModel)]="productFilterDto.SortBy" (change)="getProducts()">
             <option value="" disabled selected>Select sorting option</option>
-            <option *ngFor="let option of sortByOptions" [value]="option.value">
+
+            @for ( option of sortByOptions; track option)
+            {
+            <option [value]="option.value">
               {{option.label}}
             </option>
+            }
 
           </select>
         </div>
 
       </aside>
 
-        <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5" *ngIf="isLoading">
-          <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
-          <span>Loading...</span>
-        </div>
-
+      @if (isLoading)
+      {
+      <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
+        <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
+        <span>Loading...</span>
+      </div>
+      }
       <!-- Products Grid -->
       <main class="products-main mb-5">
         <!-- Results Header -->
         <div class="results-header">
           <div class="results-info">
             <span>{{ products.length }} products found</span>
-            <span *ngIf="productFilterDto.Audience || productFilterDto.Brand || productFilterDto.SearchTerm"
-              class="active-filters">
-              (filtered)
-            </span>
+            @if (productFilterDto.Audience || productFilterDto.Brand || productFilterDto.SearchTerm)
+            {
+            <span class="active-filters"> (filtered) </span>
+            }
           </div>
           <div class="view-options">
             <button class="btn btn-outline-secondary" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')"
@@ -124,7 +136,11 @@
 
         <!-- Products Grid/List -->
         <div class="products-container" [class.list-view]="viewMode === 'list'">
-          <div class="product-card" *ngFor="let product of products" [class.list-card]="viewMode === 'list'"
+
+          @for ( product of products; track product)
+          {
+
+          <div class="product-card" [class.list-card]="viewMode === 'list'"
             (click)="navigateToProductDetails(product.id)">
             <div class="product-image">
               <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
@@ -145,7 +161,7 @@
                     [class.out-of-stock]="product.stock === 0">
                     {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
                   </span>
-                  <!-- <span class="stock-count" *ngIf="product.stock > 0">
+                  <!-- <span class="stock-count" @if="product.stock > 0">
                     {{ product.stock }} left
                   </span> -->
                 </div>
@@ -163,10 +179,13 @@
               </button>
             </div>
           </div>
+          }
         </div>
 
         <!-- No Results -->
-        <div class="no-results" *ngIf="(products.length === 0 && !isLoading)">
+        @if (products.length === 0 && !isLoading)
+        {
+        <div class="no-results">
           <i class="bi bi-search"></i>
           <h3>No products found</h3>
           <p>Try adjusting your filters or search terms</p>
@@ -174,6 +193,7 @@
             Clear Filters
           </button>
         </div>
+        }
       </main>
     </div>
   </div>
