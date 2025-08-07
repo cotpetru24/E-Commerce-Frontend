@@ -13,6 +13,7 @@ import {
 } from '../../models/product-filter.dto';
 import { finalize } from 'rxjs';
 
+
 @Component({
   selector: 'app-product-list',
   standalone: true,
@@ -20,7 +21,10 @@ import { finalize } from 'rxjs';
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
+
+
 export class ProductListComponent implements OnInit {
+  
   public products: ProductDto[] = [];
 
   public audienceOptions: Audience[] = [

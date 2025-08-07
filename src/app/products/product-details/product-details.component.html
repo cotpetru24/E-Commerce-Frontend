@@ -16,7 +16,7 @@
       <!-- Product Images -->
       <div class="product-images">
         <div class="main-image">
-          <img src="selectedImage || product.image" alt="product.name" />
+          <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" />
           <div class="image-overlay">
             <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()">
               <i class="bi bi-zoom-in"></i>

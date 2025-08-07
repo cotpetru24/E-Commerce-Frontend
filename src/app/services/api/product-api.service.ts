@@ -46,7 +46,7 @@ export class ProductApiService extends BaseApiService {
    */
   getProductById(id: number): Observable<ProductDto> {
 
-    const url = this.buildUrl(`/${id}`);
+    const url = this.buildUrl(`/api/product/${id}`);
 
     this.logRequest('GET', url);
 
