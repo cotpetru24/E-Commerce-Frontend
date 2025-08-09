@@ -6,6 +6,7 @@ import { ProductDto } from '../../models/product.dto';
 import { BaseApiService } from './base-api.service';
 import { GetProductsDto } from '../../models/get-products.dto';
 import { ProductFilterDto } from '../../models/product-filter.dto';
+import { GetSingleProductDto } from '../../models/get-single-product.dto';
 
 // ============================================================================
 // PRODUCT API SERVICE
@@ -44,13 +45,13 @@ export class ProductApiService extends BaseApiService {
   /**
    * Get a single product by ID
    */
-  getProductById(id: number): Observable<ProductDto> {
+  getProductById(id: number): Observable<GetSingleProductDto> {
 
     const url = this.buildUrl(`/api/product/${id}`);
 
     this.logRequest('GET', url);
 
-    return this.get<ProductDto>(url)
+    return this.get<GetSingleProductDto>(url)
     .pipe(
       tap((response) => this.logResponse('GET', url, response))
     );

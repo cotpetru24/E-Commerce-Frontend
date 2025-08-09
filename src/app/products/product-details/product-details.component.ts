@@ -7,6 +7,7 @@ import { ToastService } from '../../services/toast.service';
 import { Audience } from '../../models/audience.enum';
 import { ProductApiService } from '../../services/api';
 import { firstValueFrom } from 'rxjs';
+import { AdditionalProductImageDto } from '../../models/additional-product-image.dto';
 
 @Component({
   selector: 'product-details',
@@ -18,8 +19,12 @@ import { firstValueFrom } from 'rxjs';
 export class ProductDetailsComponent implements OnInit {
   public product: ProductDto | null = null;
 
+  public relatedProducts: ProductDto[] = [];
+
+  public additionalProductImages: AdditionalProductImageDto[] = [];
+
+
   selectedImage: string = '';
-  productImages: string[] = [];
   rating: number = 4.5;
   reviewCount: number = 128;
   selectedSize: string = '';
@@ -28,7 +33,6 @@ export class ProductDetailsComponent implements OnInit {
   isInWishlist: boolean = false;
   productFeatures: string[] = [];
   availableSizes: string[] = ['7', '8', '9', '10', '11', '12'];
-  relatedProducts: ProductDto[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -42,23 +46,20 @@ export class ProductDetailsComponent implements OnInit {
       const productId: number = Number(params['id']);
 
       if (productId !== undefined || productId !== null) {
-        this.loadProduct(productId);
+        this.getProduct(productId);
       }
     });
-  }
-
-  loadProduct(productId: number) {
-    this.getProduct(productId);
-    if (this.product) {
-      this.initializeProductData();
-      this.loadRelatedProducts();
-    }
   }
 
   getProduct(id: number) {
     this.productApi.getProductById(id).subscribe({
       next: (response) => {
-        this.product = response;
+        this.product = response.product;
+        this.relatedProducts = response.relatedProducts ||  [];
+        this.additionalProductImages=response.additionalImages || [];
+            if (this.product) {
+      this.initializeProductData();
+    }
       },
     });
   }
@@ -66,14 +67,8 @@ export class ProductDetailsComponent implements OnInit {
   initializeProductData() {
     if (!this.product) return;
 
-    // Set up product images
-    this.productImages = [
-      this.product.imagePath,
-      'products/retro-sneaker2.png',
-      'products/running-shoe.png',
-      'products/casual-sneaker.png',
-    ];
-    this.selectedImage = this.productImages[0];
+
+    this.selectedImage = this.product.imagePath;
 
     // Set up product features
     this.productFeatures = [
@@ -86,34 +81,6 @@ export class ProductDetailsComponent implements OnInit {
 
     // Set max quantity based on stock
     this.maxQuantity = Math.min(this.product.stock, 10);
-  }
-
-  loadRelatedProducts() {
-    if (!this.product) return;
-
-    // Simulate loading related products
-    this.relatedProducts = [
-      {
-        id: 2,
-        name: "Men's Running Shoe",
-        description: 'Lightweight and cushioned running shoe.',
-        price: 89.39,
-        imagePath: 'products/running-shoe.png',
-        stock: 7,
-        audience: Audience.Men,
-        brandName: 'Adidas',
-      },
-      {
-        id: 3,
-        name: "Men's Casual Sneaker",
-        description: 'A versatile casual sneaker.',
-        price: 74.39,
-        imagePath: 'products/casual-sneaker.png',
-        stock: 5,
-        audience: Audience.Men,
-        brandName: 'Puma',
-      },
-    ];
   }
 
   selectImage(image: string) {

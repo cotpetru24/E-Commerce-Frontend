@@ -11,25 +11,39 @@
       <span class="current">{{ product?.name }}</span>
     </nav>
 
+    @if(product)
+    {
     <!-- Product Details -->
-    <div class="product-details" *ngIf="product">
+    <div class="product-details">
       <!-- Product Images -->
       <div class="product-images">
         <div class="main-image">
-          <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" />
+          <!-- <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" /> -->
+                     <img [src]="'/assets/'+ selectedImage" alt="product.name" />
+
           <div class="image-overlay">
-            <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()">
+            <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" title="Open image">
               <i class="bi bi-zoom-in"></i>
             </button>
           </div>
         </div>
 
-        <div class="image-thumbnails" *ngIf="productImages.length > 1">
-          <div class="thumbnail" *ngFor="let image of productImages" [class.active]="selectedImage === image"
-            (click)="selectImage(image)">
-            <img [src]="image" [alt]="product.name" title="Product image" />
+        @if (additionalProductImages && additionalProductImages.length > 0)
+        {
+        <div class="image-thumbnails">
+                    <div class="thumbnail" [class.active]="selectedImage === product.imagePath"
+            (click)="selectImage(product.imagePath)">
+            <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
           </div>
+          @for (image of additionalProductImages; track image)
+          {
+          <div class="thumbnail" [class.active]="selectedImage === image.imagePath"
+            (click)="selectImage(image.imagePath)">
+            <img [src]="'/assets/'+image.imagePath" [alt]="product.name" title="Product image" />
+          </div>
+          }
         </div>
+        }
       </div>
 
       <!-- Product Info -->
@@ -77,27 +91,38 @@
         </div>
 
         <!-- Product Features -->
-        <div class="product-features" *ngIf="productFeatures.length > 0">
+        @if(productFeatures.length > 0)
+        {
+        <div class="product-features">
           <h3>Features</h3>
           <ul class="features-list">
-            <li *ngFor="let feature of productFeatures">
+            @for (feature of productFeatures; track feature)
+            {
+            <li>
               <i class="bi bi-check"></i>
               {{ feature }}
             </li>
+            }
           </ul>
         </div>
+        }
 
+        @if(availableSizes.length > 0)
+        {
         <!-- Size Selection -->
-        <div class="size-selection" *ngIf="availableSizes.length > 0">
+        <div class="size-selection">
           <h3>Select Size</h3>
           <div class="size-options">
-            <button class="btn btn-outline-primary" *ngFor="let size of availableSizes"
-              [class.selected]="selectedSize === size" [class.disabled]="!isSizeAvailable(size)"
-              (click)="selectSize(size)">
+            @for (size of availableSizes; track availableSizes)
+            {
+            <button class="btn btn-outline-primary" [class.selected]="selectedSize === size"
+              [class.disabled]="!isSizeAvailable(size)" (click)="selectSize(size)">
               {{ size }}
             </button>
+            }
           </div>
         </div>
+        }
 
         <!-- Quantity Selection -->
         <div class="quantity-selection">
@@ -129,7 +154,7 @@
             Buy Now
           </button>
 
-          <button class="btn btn-outline-danger wishlist-btn" (click)="toggleWishlist()">
+          <button class="btn btn-outline-danger wishlist-btn" (click)="toggleWishlist()" title="Add to wishlist.">
             <i [class]="isInWishlist ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
           </button>
         </div>
@@ -151,18 +176,26 @@
         </div>
       </div>
     </div>
+    }
 
+    @if(!product)
+    {
     <!-- Loading State -->
-    <div class="loading-state" *ngIf="!product">
+    <div class="loading-state">
       <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
     </div>
+    }
 
     <!-- Related Products -->
-    <section class="related-products" *ngIf="relatedProducts.length > 0">
+    @if (relatedProducts && relatedProducts.length>0)
+    {
+    <section class="related-products">
       <h2>Related Products</h2>
       <div class="related-products-grid">
-        <div class="card related-product-card" *ngFor="let relatedProduct of relatedProducts">
-          <img class="card-img-top" [src]="relatedProduct.imagePath" [alt]="relatedProduct.name"
+        @for (relatedProduct of relatedProducts; track relatedProduct)
+        {
+        <div class="card related-product-card">
+          <img class="card-img-top" [src]="'/assets/'+relatedProduct.imagePath" [alt]="relatedProduct.name"
             title="Product image" />
           <div class="card-body">
             <h3 class="card-title">{{ relatedProduct.name }}</h3>
@@ -175,8 +208,10 @@
             </button>
           </div>
         </div>
+        }
       </div>
     </section>
+    }
   </div>
 </div>
 
