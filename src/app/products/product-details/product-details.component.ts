@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
@@ -23,7 +23,6 @@ export class ProductDetailsComponent implements OnInit {
 
   public additionalProductImages: AdditionalProductImageDto[] = [];
 
-
   selectedImage: string = '';
   rating: number = 4.5;
   reviewCount: number = 128;
@@ -38,7 +37,8 @@ export class ProductDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private cartService: CartService,
     private toastService: ToastService,
-    private productApi: ProductApiService
+    private productApi: ProductApiService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -55,18 +55,17 @@ export class ProductDetailsComponent implements OnInit {
     this.productApi.getProductById(id).subscribe({
       next: (response) => {
         this.product = response.product;
-        this.relatedProducts = response.relatedProducts ||  [];
-        this.additionalProductImages=response.additionalImages || [];
-            if (this.product) {
-      this.initializeProductData();
-    }
+        this.relatedProducts = response.relatedProducts || [];
+        this.additionalProductImages = response.additionalImages || [];
+        if (this.product) {
+          this.initializeProductData();
+        }
       },
     });
   }
 
   initializeProductData() {
     if (!this.product) return;
-
 
     this.selectedImage = this.product.imagePath;
 
@@ -90,6 +89,11 @@ export class ProductDetailsComponent implements OnInit {
   openImageModal() {
     // Implement image modal functionality
     console.log('Open image modal');
+  }
+
+  navigateToProductDetails(productId: number) {
+    this.router.navigate(['/products/details', productId]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   selectSize(size: string) {

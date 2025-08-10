@@ -19,19 +19,22 @@
       <div class="product-images">
         <div class="main-image">
           <!-- <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" /> -->
-                     <img [src]="'/assets/'+ selectedImage" alt="product.name" />
+          <img [src]="'/assets/'+ selectedImage" alt="product.name" />
 
           <div class="image-overlay">
-            <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" title="Open image">
+            <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" data-bs-toggle="modal"
+              data-bs-target="#productImagesModal" title="Open image">
               <i class="bi bi-zoom-in"></i>
             </button>
           </div>
         </div>
 
+
+
         @if (additionalProductImages && additionalProductImages.length > 0)
         {
         <div class="image-thumbnails">
-                    <div class="thumbnail" [class.active]="selectedImage === product.imagePath"
+          <div class="thumbnail" [class.active]="selectedImage === product.imagePath"
             (click)="selectImage(product.imagePath)">
             <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
           </div>
@@ -194,18 +197,16 @@
       <div class="related-products-grid">
         @for (relatedProduct of relatedProducts; track relatedProduct)
         {
-        <div class="card related-product-card">
-          <img class="card-img-top" [src]="'/assets/'+relatedProduct.imagePath" [alt]="relatedProduct.name"
-            title="Product image" />
+        <div class="card related-product-card" role="button" (click)="navigateToProductDetails(relatedProduct.id)">
+          <div class="product-image">
+
+            <img class="card-img-top" [src]="'/assets/'+relatedProduct.imagePath" [alt]="relatedProduct.name"
+              title="Product image" />
+          </div>
           <div class="card-body">
             <h3 class="card-title">{{ relatedProduct.name }}</h3>
             <p class="brand">{{ relatedProduct.brandName }}</p>
             <p class="price">£{{ relatedProduct.price }}</p>
-          </div>
-          <div class="card-footer">
-            <button class="btn btn-primary" [routerLink]="['/products/details', relatedProduct.id]">
-              View Details
-            </button>
           </div>
         </div>
         }
@@ -214,6 +215,49 @@
     }
   </div>
 </div>
+
+
+<!-- Modal Body -->
+<div class="modal fade" id="productImagesModal" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="productImagesCarousel" class="carousel slide">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <div class="carousel-image-wrapper">
+                <img class="carousel-image" [src]="'/assets/'+ selectedImage" alt="product.name" />
+              </div>
+            </div>
+            @for (image of additionalProductImages; track image)
+            {
+            <div class="carousel-item">
+              <div class="carousel-image-wrapper">
+                <img class="carousel-image" [src]="'/assets/'+ image.imagePath" alt="product.name" />
+              </div>
+            </div>
+            }
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#productImagesCarousel"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#productImagesCarousel"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- In your component HTML -->
 <div #errorToast class="toast position-fixed bottom-0 start-50 translate-middle-x text-bg-danger" role="alert"

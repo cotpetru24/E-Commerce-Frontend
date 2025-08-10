@@ -548,9 +548,25 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-.related-product-card img {
+.product-image {
+  position: relative;
   height: 200px;
+  overflow: hidden;
+}
+
+.related-product-card .product-image {
+  height: 200px;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.related-product-card:hover .product-image img {
+  transform: scale(1.1);
 }
 
 .related-product-card h3 {
@@ -572,6 +588,51 @@
   color: #1976d2;
   margin-bottom: 1rem;
 }
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%231a1a1a'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/%3e%3c/svg%3e");
+}
+
+.carousel-control-next-icon {
+background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%231a1a1a'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/%3e%3c/svg%3e");
+}
+
+/* Carousel Modal Styles */
+#productImagesModal .modal-content {
+  background-color: #f8f9fa;
+  border: none;
+  border-radius: 12px;
+}
+
+#productImagesModal .modal-header {
+  border-bottom: none;
+  padding: 1rem 1.5rem 0.5rem;
+}
+
+#productImagesModal .modal-body {
+  padding: 0;
+  min-height: 60vh;
+}
+
+.carousel-image-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  min-height: 400px;
+  padding: 2rem;
+  background-color: #ffffff;
+}
+
+.carousel-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+
 
 /* Responsive Design */
 @media (max-width: 1024px) {
