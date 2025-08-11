@@ -1,28 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-interface AddressData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  instructions: string;
-  saveAddress: boolean;
-}
+import { Router, RouterModule } from '@angular/router';
+import { AddressData, OrderSummary } from '../../models';
 
 @Component({
   selector: 'app-address-form',
   templateUrl: './address-form.component.html',
-  styleUrls: ['./address-form.component.css'],
+  styleUrls: ['./address-form.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, RouterModule]
 })
 export class AddressFormComponent implements OnInit {
   addressData: AddressData = {
@@ -39,12 +26,19 @@ export class AddressFormComponent implements OnInit {
     saveAddress: false
   };
 
+  orderSummary: OrderSummary = {
+    subtotal: 0,
+    shipping: 0,
+    total: 0
+  };
+
   isLoading: boolean = false;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.loadSavedAddress();
+    this.loadOrderSummary();
   }
 
   loadSavedAddress(): void {
@@ -53,6 +47,15 @@ export class AddressFormComponent implements OnInit {
     if (savedAddress) {
       this.addressData = { ...this.addressData, ...JSON.parse(savedAddress) };
     }
+  }
+
+  loadOrderSummary(): void {
+    // Mock data - replace with actual service call
+    this.orderSummary = {
+      subtotal: 129.98,
+      shipping: 0, // Free shipping
+      total: 129.98
+    };
   }
 
   onSubmit(): void {
@@ -71,7 +74,7 @@ export class AddressFormComponent implements OnInit {
     setTimeout(() => {
       this.isLoading = false;
       // Navigate to payment method page
-      this.router.navigate(['/checkout/payment']);
+      this.router.navigate(['/checkout/payment-method']);
     }, 1000);
   }
 

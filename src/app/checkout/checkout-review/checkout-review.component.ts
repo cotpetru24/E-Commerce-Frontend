@@ -1,49 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-interface OrderItem {
-  product: {
-    id: number;
-    name: string;
-    brandName: string;
-    imagePath: string;
-    price: number;
-  };
-  quantity: number;
-  size?: string;
-}
-
-interface ShippingAddress {
-  firstName: string;
-  lastName: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  phone: string;
-}
-
-interface PaymentMethod {
-  method: 'card' | 'paypal';
-  cardNumber?: string;
-  cardholderName?: string;
-  paypalEmail?: string;
-}
-
-interface ShippingInfo {
-  method: string;
-  estimatedDelivery: string;
-}
+import { Router, RouterModule } from '@angular/router';
+import { OrderItem, ShippingAddress, PaymentMethod, ShippingInfo } from '../../models';
 
 @Component({
   selector: 'app-checkout-review',
   templateUrl: './checkout-review.component.html',
-  styleUrls: ['./checkout-review.component.css'],
+  styleUrls: ['./checkout-review.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, RouterModule]
 })
 export class CheckoutReviewComponent implements OnInit {
   orderItems: OrderItem[] = [];
@@ -147,12 +113,12 @@ export class CheckoutReviewComponent implements OnInit {
 
   editShippingAddress(): void {
     // Navigate to shipping address edit page
-    this.router.navigate(['/checkout/shipping']);
+    this.router.navigate(['/checkout/addressForm']);
   }
 
   editPaymentMethod(): void {
     // Navigate to payment method edit page
-    this.router.navigate(['/checkout/payment']);
+    this.router.navigate(['/checkout/payment-method']);
   }
 
   placeOrder(): void {
@@ -165,12 +131,12 @@ export class CheckoutReviewComponent implements OnInit {
     // Simulate API call
     setTimeout(() => {
       this.isLoading = false;
-      // Navigate to order confirmation
+      // Navigate to order confirmation (you'll need to add this route)
       this.router.navigate(['/checkout/confirmation']);
     }, 2000);
   }
 
   goBack(): void {
-    this.router.navigate(['/checkout/payment']);
+    this.router.navigate(['/checkout/payment-method']);
   }
 }

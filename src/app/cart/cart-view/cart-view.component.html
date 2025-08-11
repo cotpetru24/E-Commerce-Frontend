@@ -1,20 +1,24 @@
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h1 class="h2 mb-1">
-            <i class="bi bi-cart me-2"></i>Shopping Cart
-          </h1>
-          <p class="text-muted mb-0" *ngIf="cartItems.length > 0">
-            {{ cartItems.length }} item(s) in your cart
-          </p>
-        </div>
+<!-- Page Header -->
+<div class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1 class="page-title">
+          <i class="bi bi-cart me-2"></i>Shopping Cart
+        </h1>
+        <p class="page-subtitle" *ngIf="cartItems.length > 0">
+          {{ cartItems.length }} item(s) in your cart
+        </p>
+        <p class="page-subtitle" *ngIf="cartItems.length === 0">
+          Your cart is empty
+        </p>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="row mb-5 mt-4" *ngIf="cartItems.length > 0">
+<div class="container">
+  <div class="row mb-5" *ngIf="cartItems.length > 0">
     <!-- Cart Items -->
     <div class="col-lg-8">
       <div class="card shadow-sm">
@@ -32,7 +36,7 @@
                        class="img-fluid rounded" style="max-height: 80px;">
                 </div>
                 
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <h6 class="mb-1">{{ item.product.name }}</h6>
                   <p class="text-muted mb-1 small">{{ item.product.brandName }}</p>
                   <p class="text-muted mb-0 small">{{ item.product.audience | titlecase }}</p>
@@ -59,7 +63,7 @@
                   </div>
                 </div>
 
-                <div class="col-md-1 text-center">
+                <div class="col-md-2 text-center">
                   <span class="h6 text-success">£{{ getItemTotal(item) }}</span>
                 </div>
 

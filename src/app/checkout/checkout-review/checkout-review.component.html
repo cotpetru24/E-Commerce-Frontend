@@ -1,44 +1,118 @@
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h2 mb-0">
-          <i class="bi bi-clipboard-check me-2"></i>Review Your Order
-        </h1>
-        <div class="badge bg-success fs-6">
-          <i class="bi bi-shield-check me-1"></i>Secure Checkout
-        </div>
-      </div>
+<div class="checkout-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">
+        <i class="bi bi-clipboard-check me-2"></i>Review Your Order
+      </h1>
+      <p class="page-subtitle">Final step before completing your purchase</p>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-lg-8">
-      <!-- Order Items -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-          <h5 class="mb-0">
-            <i class="bi bi-bag me-2"></i>Order Items
-          </h5>
-        </div>
-        <div class="card-body p-0">
-          <div class="list-group list-group-flush">
-            <div class="list-group-item" *ngFor="let item of orderItems">
-              <div class="row align-items-center">
-                <div class="col-md-2">
-                  <img [src]="item.product.imagePath" [alt]="item.product.name" 
-                       class="img-fluid rounded" style="max-height: 60px;">
+  <div class="container">
+    <div class="checkout-layout">
+      <!-- Main Content -->
+      <div class="checkout-main">
+        <!-- Order Items -->
+        <div class="review-card">
+          <div class="review-header">
+            <div class="step-indicator">
+              <span class="step-number">3</span>
+              <span class="step-label">Order Review</span>
+            </div>
+            <div class="step-status">
+              <i class="bi bi-shield-check text-success"></i>
+              <span class="text-muted">Final Review</span>
+            </div>
+          </div>
+
+          <div class="review-content">
+            <div class="review-section">
+              <h3 class="section-title">
+                <i class="bi bi-bag me-2"></i>Order Items
+              </h3>
+              <div class="order-items">
+                <div class="order-item" *ngFor="let item of orderItems">
+                  <div class="item-image">
+                    <img [src]="'/assets/'+item.product.imagePath" [alt]="item.product.name" />
+                  </div>
+                  <div class="item-details">
+                    <h4 class="item-name">{{ item.product.name }}</h4>
+                    <p class="item-brand">{{ item.product.brandName }}</p>
+                    <div class="item-meta">
+                      <span class="item-size" *ngIf="item.size">Size: {{ item.size }}</span>
+                      <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                    </div>
+                  </div>
+                  <div class="item-price">
+                    <span class="price">£{{ getItemTotal(item) }}</span>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <h6 class="mb-1">{{ item.product.name }}</h6>
-                  <p class="text-muted mb-1 small">{{ item.product.brandName }}</p>
-                  <span class="badge bg-secondary" *ngIf="item.size">Size: {{ item.size }}</span>
+              </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="review-section">
+              <h3 class="section-title">
+                <i class="bi bi-geo-alt me-2"></i>Shipping Address
+              </h3>
+              <div class="address-card">
+                <div class="address-content">
+                  <div class="address-info">
+                    <p class="address-name"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName }}</strong></p>
+                    <p class="address-line">{{ shippingAddress.address }}</p>
+                    <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.state }} {{ shippingAddress.zipCode }}</p>
+                    <p class="address-line">{{ shippingAddress.country }}</p>
+                    <p class="address-phone">{{ shippingAddress.phone }}</p>
+                  </div>
+                  <div class="address-actions">
+                    <button class="btn btn-outline-primary btn-sm" (click)="editShippingAddress()">
+                      <i class="bi bi-pencil me-1"></i>Edit
+                    </button>
+                  </div>
                 </div>
-                <div class="col-md-2 text-center">
-                  <span class="text-muted">Qty: {{ item.quantity }}</span>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="review-section">
+              <h3 class="section-title">
+                <i class="bi bi-credit-card me-2"></i>Payment Method
+              </h3>
+              <div class="payment-card">
+                <div class="payment-content">
+                  <div class="payment-info">
+                    <div *ngIf="paymentMethod.method === 'card'">
+                      <p class="payment-type"><strong>Credit/Debit Card</strong></p>
+                      <p class="payment-details">**** **** **** {{ paymentMethod.cardNumber?.slice(-4) || '****' }}</p>
+                      <p class="payment-name">{{ paymentMethod.cardholderName }}</p>
+                    </div>
+                    <div *ngIf="paymentMethod.method === 'paypal'">
+                      <p class="payment-type"><strong>PayPal</strong></p>
+                      <p class="payment-details">{{ paymentMethod.paypalEmail }}</p>
+                    </div>
+                  </div>
+                  <div class="payment-actions">
+                    <button class="btn btn-outline-primary btn-sm" (click)="editPaymentMethod()">
+                      <i class="bi bi-pencil me-1"></i>Edit
+                    </button>
+                  </div>
                 </div>
-                <div class="col-md-2 text-end">
-                  <span class="h6 text-primary">£{{ getItemTotal(item) }}</span>
+              </div>
+            </div>
+
+            <!-- Shipping Information -->
+            <div class="review-section" *ngIf="shippingInfo">
+              <h3 class="section-title">
+                <i class="bi bi-truck me-2"></i>Shipping Information
+              </h3>
+              <div class="shipping-info-card">
+                <div class="shipping-method">
+                  <i class="bi bi-truck"></i>
+                  <div class="shipping-details">
+                    <h4>{{ shippingInfo.method }}</h4>
+                    <p>{{ shippingInfo.estimatedDelivery }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -46,137 +120,75 @@
         </div>
       </div>
 
-      <!-- Shipping Address -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-          <h5 class="mb-0">
-            <i class="bi bi-geo-alt me-2"></i>Shipping Address
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-8">
-              <p class="mb-1"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName }}</strong></p>
-              <p class="mb-1">{{ shippingAddress.address }}</p>
-              <p class="mb-1">{{ shippingAddress.city }}, {{ shippingAddress.state }} {{ shippingAddress.zipCode }}</p>
-              <p class="mb-1">{{ shippingAddress.country }}</p>
-              <p class="mb-0 text-muted">{{ shippingAddress.phone }}</p>
-            </div>
-            <div class="col-md-4 text-end">
-              <button class="btn btn-outline-primary btn-sm" (click)="editShippingAddress()">
-                <i class="bi bi-pencil me-1"></i>Edit
-              </button>
-            </div>
+      <!-- Order Summary Sidebar -->
+      <div class="checkout-sidebar">
+        <div class="summary-card">
+          <div class="summary-header">
+            <h3>
+              <i class="bi bi-calculator me-2"></i>Order Summary
+            </h3>
           </div>
-        </div>
-      </div>
-
-      <!-- Payment Method -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-          <h5 class="mb-0">
-            <i class="bi bi-credit-card me-2"></i>Payment Method
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-8">
-              <div *ngIf="paymentMethod.method === 'card'">
-                <p class="mb-1"><strong>Credit/Debit Card</strong></p>
-                <p class="mb-1">**** **** **** {{ paymentMethod.cardNumber?.slice(-4) || '****' }}</p>
-                <p class="mb-0 text-muted">{{ paymentMethod.cardholderName }}</p>
-              </div>
-              <div *ngIf="paymentMethod.method === 'paypal'">
-                <p class="mb-1"><strong>PayPal</strong></p>
-                <p class="mb-0 text-muted">{{ paymentMethod.paypalEmail }}</p>
-              </div>
+          <div class="summary-content">
+            <div class="summary-item">
+              <span>Subtotal ({{ getTotalItems() }} items)</span>
+              <span>£{{ getSubtotal() | number:'1.2-2' }}</span>
             </div>
-            <div class="col-md-4 text-end">
-              <button class="btn btn-outline-primary btn-sm" (click)="editPaymentMethod()">
-                <i class="bi bi-pencil me-1"></i>Edit
-              </button>
+            <div class="summary-item">
+              <span>Shipping</span>
+              <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-item discount" *ngIf="getDiscount() > 0">
+              <span>Discount</span>
+              <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-item total">
+              <span>Total</span>
+              <span>£{{ getTotal() | number:'1.2-2' }}</span>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="col-lg-4">
-      <!-- Order Summary -->
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">
-            <i class="bi bi-calculator me-2"></i>Order Summary
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="d-flex justify-content-between mb-2">
-            <span>Subtotal ({{ getTotalItems() }} items)</span>
-            <span>£{{ getSubtotal() | number:'1.2-2' }}</span>
-          </div>
-
-          <div class="d-flex justify-content-between mb-2">
-            <span>Shipping</span>
-            <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
-          </div>
-
-          <div class="d-flex justify-content-between mb-2 text-success" *ngIf="getDiscount() > 0">
-            <span>Discount</span>
-            <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
-          </div>
-
-          <hr>
-
-          <div class="d-flex justify-content-between mb-3">
-            <span class="h5 mb-0">Total</span>
-            <span class="h5 mb-0 text-primary">£{{ getTotal() | number:'1.2-2' }}</span>
-          </div>
-
-          <!-- Shipping Info -->
-          <div class="alert alert-info" *ngIf="shippingInfo">
-            <i class="bi bi-truck me-2"></i>
-            <strong>{{ shippingInfo.method }}</strong><br>
-            <small class="text-muted">{{ shippingInfo.estimatedDelivery }}</small>
-          </div>
-
-          <!-- Terms and Conditions -->
-          <div class="mb-4">
-            <div class="form-check">
-              <input 
-                type="checkbox" 
-                class="form-check-input" 
-                id="acceptTerms"
-                [(ngModel)]="acceptTerms"
-                required
-              >
-              <label class="form-check-label" for="acceptTerms">
-                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
-              </label>
-            </div>
-          </div>
-
-          <div class="d-grid gap-2">
-            <button 
-              class="btn btn-success btn-lg"
-              (click)="placeOrder()"
-              [disabled]="!acceptTerms || isLoading"
+        <!-- Terms and Conditions -->
+        <div class="terms-card">
+          <div class="form-check">
+            <input 
+              type="checkbox" 
+              class="form-check-input" 
+              id="acceptTerms"
+              [(ngModel)]="acceptTerms"
+              required
             >
-              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              <i class="bi bi-check-circle me-2" *ngIf="!isLoading"></i>
-              {{ isLoading ? 'Processing...' : 'Place Order' }}
-            </button>
-            
-            <button class="btn btn-outline-secondary" (click)="goBack()">
-              <i class="bi bi-arrow-left me-2"></i>Back
-            </button>
+            <label class="form-check-label" for="acceptTerms">
+              I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+            </label>
           </div>
+        </div>
 
-          <!-- Security Notice -->
-          <div class="mt-3 text-center">
-            <small class="text-muted">
-              <i class="bi bi-shield-lock me-1"></i>
-              Your payment information is secure and encrypted
-            </small>
+        <!-- Place Order Button -->
+        <div class="order-actions">
+          <button 
+            class="btn btn-primary btn-lg w-100"
+            (click)="placeOrder()"
+            [disabled]="!acceptTerms || isLoading"
+          >
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <i class="bi bi-check-circle me-2" *ngIf="!isLoading"></i>
+            {{ isLoading ? 'Processing...' : 'Place Order' }}
+          </button>
+          
+          <button class="btn btn-outline-secondary w-100 mt-2" (click)="goBack()">
+            <i class="bi bi-arrow-left me-2"></i>Back
+          </button>
+        </div>
+
+        <!-- Security Notice -->
+        <div class="security-notice">
+          <div class="security-icon">
+            <i class="bi bi-shield-lock"></i>
+          </div>
+          <div class="security-text">
+            <h4>Secure Checkout</h4>
+            <p>Your payment information is secure and encrypted</p>
           </div>
         </div>
       </div>

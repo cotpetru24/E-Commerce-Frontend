@@ -1,239 +1,309 @@
-<div class="card shadow-sm">
-  <div class="card-header bg-primary text-white">
-    <h5 class="mb-0">
-      <i class="bi bi-geo-alt me-2"></i>Shipping Address
-    </h5>
+<div class="checkout-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">
+        <i class="bi bi-geo-alt me-3"></i>Shipping Address
+      </h1>
+      <p class="page-subtitle">Enter your delivery information to continue with your purchase</p>
+    </div>
   </div>
-  <div class="card-body">
-    <form (ngSubmit)="onSubmit()" #addressForm="ngForm">
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="firstName" class="form-label">
-            <i class="bi bi-person me-2"></i>First Name *
-          </label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="firstName" 
-            name="firstName"
-            [(ngModel)]="addressData.firstName"
-            required
-            placeholder="Enter your first name"
-            [ngClass]="{'is-invalid': addressForm.submitted && !addressData.firstName}"
-          >
-          <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.firstName">
-            First name is required.
+
+  <div class="container">
+    <div class="checkout-layout">
+      <!-- Main Form -->
+      <div class="checkout-main">
+        <!-- Address Form Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="bi bi-geo-alt me-2"></i>Shipping Address
+            </h3>
+          </div>
+          
+          <div class="card-body">
+            <form (ngSubmit)="onSubmit()" #addressForm="ngForm" class="checkout-form">
+              <!-- Personal Information -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="firstName" class="form-label">First Name *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="firstName" 
+                    name="firstName"
+                    [(ngModel)]="addressData.firstName"
+                    required
+                    placeholder="Enter your first name"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.firstName}"
+                  >
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.firstName">
+                    First name is required.
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="lastName" class="form-label">Last Name *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="lastName" 
+                    name="lastName"
+                    [(ngModel)]="addressData.lastName"
+                    required
+                    placeholder="Enter your last name"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.lastName}"
+                  >
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.lastName">
+                    Last name is required.
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email Address *</label>
+                  <input 
+                    type="email" 
+                    class="form-control" 
+                    id="email" 
+                    name="email"
+                    [(ngModel)]="addressData.email"
+                    required
+                    email
+                    placeholder="Enter your email"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.email}"
+                  >
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.email">
+                    Please enter a valid email address.
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="phone" class="form-label">Phone Number *</label>
+                  <input 
+                    type="tel" 
+                    class="form-control" 
+                    id="phone" 
+                    name="phone"
+                    [(ngModel)]="addressData.phone"
+                    required
+                    placeholder="Enter your phone number"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.phone}"
+                  >
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.phone">
+                    Phone number is required.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Address Information -->
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label for="address" class="form-label">Street Address *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="address" 
+                    name="address"
+                    [(ngModel)]="addressData.address"
+                    required
+                    placeholder="Enter your street address"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.address}"
+                  >
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.address">
+                    Street address is required.
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="city" class="form-label">City *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="city" 
+                    name="city"
+                    [(ngModel)]="addressData.city"
+                    required
+                    placeholder="Enter your city"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.city}"
+                  >
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.city">
+                    City is required.
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="state" class="form-label">State/Province *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="state" 
+                    name="state"
+                    [(ngModel)]="addressData.state"
+                    required
+                    placeholder="State"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.state}"
+                  >
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.state">
+                    State is required.
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="zipCode" class="form-label">ZIP/Postal Code *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="zipCode" 
+                    name="zipCode"
+                    [(ngModel)]="addressData.zipCode"
+                    required
+                    placeholder="ZIP Code"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.zipCode}"
+                  >
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.zipCode">
+                    ZIP code is required.
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="country" class="form-label">Country *</label>
+                  <select 
+                    class="form-select" 
+                    id="country" 
+                    name="country"
+                    [(ngModel)]="addressData.country"
+                    required
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.country}"
+                  >
+                    <option value="">Select your country</option>
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="JP">Japan</option>
+                    <option value="IT">Italy</option>
+                    <option value="ES">Spain</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="SE">Sweden</option>
+                    <option value="NO">Norway</option>
+                    <option value="DK">Denmark</option>
+                    <option value="FI">Finland</option>
+                    <option value="CH">Switzerland</option>
+                    <option value="AT">Austria</option>
+                    <option value="BE">Belgium</option>
+                    <option value="IE">Ireland</option>
+                    <option value="NZ">New Zealand</option>
+                  </select>
+                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.country">
+                    Country is required.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Additional Information -->
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label for="instructions" class="form-label">Delivery Instructions (Optional)</label>
+                  <textarea 
+                    class="form-control" 
+                    id="instructions" 
+                    name="instructions"
+                    [(ngModel)]="addressData.instructions"
+                    rows="3"
+                    placeholder="Any special delivery instructions, building access codes, or notes for the delivery person..."
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="form-check mb-3">
+                <input 
+                  type="checkbox" 
+                  class="form-check-input" 
+                  id="saveAddress"
+                  [(ngModel)]="addressData.saveAddress"
+                  name="saveAddress"
+                >
+                <label class="form-check-label" for="saveAddress">
+                  Save this address for future orders
+                </label>
+              </div>
+            </form>
+          </div>
+
+          <!-- Card Footer with Order Summary and Security -->
+          <div class="card-footer">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="order-summary">
+                  <h5><i class="bi bi-calculator me-2"></i>Order Summary</h5>
+                  <div class="summary-item">
+                    <span>Subtotal:</span>
+                    <span>£{{ (orderSummary?.subtotal || 0) | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="summary-item">
+                    <span>Shipping:</span>
+                    <span>{{ (orderSummary?.shipping || 0) === 0 ? 'Free' : '£' + ((orderSummary?.shipping || 0) | number:'1.2-2') }}</span>
+                  </div>
+                  <div class="summary-item total">
+                    <span>Total:</span>
+                    <span>£{{ (orderSummary?.total || 0) | number:'1.2-2' }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="security-info">
+                  <h5><i class="bi bi-shield-check me-2"></i>Secure Payment</h5>
+                  <p>Your information is protected with bank-level security</p>
+                  <div class="trust-badges">
+                    <div class="trust-badge">
+                      <i class="bi bi-truck"></i>
+                      <span>Free Shipping</span>
+                    </div>
+                    <div class="trust-badge">
+                      <i class="bi bi-arrow-clockwise"></i>
+                      <span>Easy Returns</span>
+                    </div>
+                    <div class="trust-badge">
+                      <i class="bi bi-headset"></i>
+                      <span>24/7 Support</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="col-md-6 mb-3">
-          <label for="lastName" class="form-label">
-            <i class="bi bi-person me-2"></i>Last Name *
-          </label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="lastName" 
-            name="lastName"
-            [(ngModel)]="addressData.lastName"
-            required
-            placeholder="Enter your last name"
-            [ngClass]="{'is-invalid': addressForm.submitted && !addressData.lastName}"
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary"
+            (click)="goBack()"
           >
-          <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.lastName">
-            Last name is required.
-          </div>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label for="email" class="form-label">
-          <i class="bi bi-envelope me-2"></i>Email Address *
-        </label>
-        <input 
-          type="email" 
-          class="form-control" 
-          id="email" 
-          name="email"
-          [(ngModel)]="addressData.email"
-          required
-          email
-          placeholder="Enter your email"
-          [ngClass]="{'is-invalid': addressForm.submitted && !addressData.email}"
-        >
-        <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.email">
-          Please enter a valid email address.
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label for="phone" class="form-label">
-          <i class="bi bi-telephone me-2"></i>Phone Number *
-        </label>
-        <input 
-          type="tel" 
-          class="form-control" 
-          id="phone" 
-          name="phone"
-          [(ngModel)]="addressData.phone"
-          required
-          placeholder="Enter your phone number"
-          [ngClass]="{'is-invalid': addressForm.submitted && !addressData.phone}"
-        >
-        <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.phone">
-          Phone number is required.
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label for="address" class="form-label">
-          <i class="bi bi-house me-2"></i>Street Address *
-        </label>
-        <input 
-          type="text" 
-          class="form-control" 
-          id="address" 
-          name="address"
-          [(ngModel)]="addressData.address"
-          required
-          placeholder="Enter your street address"
-          [ngClass]="{'is-invalid': addressForm.submitted && !addressData.address}"
-        >
-        <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.address">
-          Street address is required.
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="city" class="form-label">
-            <i class="bi bi-building me-2"></i>City *
-          </label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="city" 
-            name="city"
-            [(ngModel)]="addressData.city"
-            required
-            placeholder="Enter your city"
-            [ngClass]="{'is-invalid': addressForm.submitted && !addressData.city}"
+            <i class="bi bi-arrow-left me-2"></i>Back to Cart
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="isLoading"
+            (click)="onSubmit()"
           >
-          <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.city">
-            City is required.
-          </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-          <label for="state" class="form-label">
-            <i class="bi bi-geo me-2"></i>State *
-          </label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="state" 
-            name="state"
-            [(ngModel)]="addressData.state"
-            required
-            placeholder="State"
-            [ngClass]="{'is-invalid': addressForm.submitted && !addressData.state}"
-          >
-          <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.state">
-            State is required.
-          </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-          <label for="zipCode" class="form-label">
-            <i class="bi bi-pin-map me-2"></i>ZIP Code *
-          </label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="zipCode" 
-            name="zipCode"
-            [(ngModel)]="addressData.zipCode"
-            required
-            placeholder="ZIP Code"
-            [ngClass]="{'is-invalid': addressForm.submitted && !addressData.zipCode}"
-          >
-          <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.zipCode">
-            ZIP code is required.
-          </div>
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <i class="bi bi-arrow-right me-2" *ngIf="!isLoading"></i>
+            {{ isLoading ? 'Processing...' : 'Continue to Payment' }}
+          </button>
         </div>
       </div>
-
-      <div class="mb-3">
-        <label for="country" class="form-label">
-          <i class="bi bi-globe me-2"></i>Country *
-        </label>
-        <select 
-          class="form-select" 
-          id="country" 
-          name="country"
-          [(ngModel)]="addressData.country"
-          required
-          [ngClass]="{'is-invalid': addressForm.submitted && !addressData.country}"
-        >
-          <option value="">Select country</option>
-          <option value="US">United States</option>
-          <option value="CA">Canada</option>
-          <option value="UK">United Kingdom</option>
-          <option value="AU">Australia</option>
-          <option value="DE">Germany</option>
-          <option value="FR">France</option>
-          <option value="JP">Japan</option>
-        </select>
-        <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.country">
-          Country is required.
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label for="instructions" class="form-label">
-          <i class="bi bi-chat-text me-2"></i>Delivery Instructions
-        </label>
-        <textarea 
-          class="form-control" 
-          id="instructions" 
-          name="instructions"
-          [(ngModel)]="addressData.instructions"
-          rows="3"
-          placeholder="Any special delivery instructions (optional)"
-        ></textarea>
-      </div>
-
-      <div class="mb-3 form-check">
-        <input 
-          type="checkbox" 
-          class="form-check-input" 
-          id="saveAddress"
-          [(ngModel)]="addressData.saveAddress"
-          name="saveAddress"
-        >
-        <label class="form-check-label" for="saveAddress">
-          Save this address for future orders
-        </label>
-      </div>
-
-      <div class="d-flex justify-content-between">
-        <button 
-          type="button" 
-          class="btn btn-outline-secondary"
-          (click)="goBack()"
-        >
-          <i class="bi bi-arrow-left me-2"></i>Back
-        </button>
-        <button 
-          type="submit" 
-          class="btn btn-primary"
-          [disabled]="isLoading"
-        >
-          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          <i class="bi bi-arrow-right me-2" *ngIf="!isLoading"></i>
-          {{ isLoading ? 'Processing...' : 'Continue to Payment' }}
-        </button>
-      </div>
-    </form>
+    </div>
   </div>
 </div>

@@ -1,298 +1,305 @@
-<div class="card shadow-sm">
-  <div class="card-header bg-success text-white">
-    <h5 class="mb-0">
-      <i class="bi bi-credit-card me-2"></i>Payment Method
-    </h5>
+<div class="checkout-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">
+        <i class="bi bi-credit-card me-2"></i>Payment Method
+      </h1>
+      <p class="page-subtitle">Complete your purchase securely</p>
+    </div>
   </div>
-  <div class="card-body">
-    <form (ngSubmit)="onSubmit()" #paymentForm="ngForm">
-      <!-- Payment Method Selection -->
-      <div class="mb-4">
-        <label class="form-label">
-          <i class="bi bi-credit-card me-2"></i>Select Payment Method
-        </label>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <div class="form-check border rounded p-3" [ngClass]="{'border-primary': paymentData.method === 'card'}">
-              <input 
-                class="form-check-input" 
-                type="radio" 
-                name="paymentMethod" 
-                id="card" 
-                value="card"
-                [(ngModel)]="paymentData.method"
-                required
+
+  <div class="container">
+    <div class="checkout-layout">
+      <!-- Main Form -->
+      <div class="checkout-main">
+        <div class="form-card">
+          <div class="form-header">
+            <div class="step-indicator">
+              <span class="step-number">2</span>
+              <span class="step-label">Payment Information</span>
+            </div>
+            <div class="step-status">
+              <i class="bi bi-shield-check text-success"></i>
+              <span class="text-muted">PCI Compliant</span>
+            </div>
+          </div>
+
+          <form (ngSubmit)="onSubmit()" #paymentForm="ngForm" class="checkout-form">
+            <!-- Payment Method Selection -->
+            <div class="form-section">
+              <h3 class="section-title">
+                <i class="bi bi-credit-card me-2"></i>Payment Method
+              </h3>
+              <div class="payment-methods">
+                <div class="payment-option" [class.selected]="paymentData.method === 'card'">
+                  <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    name="paymentMethod" 
+                    id="card" 
+                    value="card"
+                    [(ngModel)]="paymentData.method"
+                    required
+                  >
+                  <label class="form-check-label" for="card">
+                    <i class="bi bi-credit-card"></i>
+                    <span>Credit/Debit Card</span>
+                  </label>
+                </div>
+                <div class="payment-option" [class.selected]="paymentData.method === 'paypal'">
+                  <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    name="paymentMethod" 
+                    id="paypal" 
+                    value="paypal"
+                    [(ngModel)]="paymentData.method"
+                    required
+                  >
+                  <label class="form-check-label" for="paypal">
+                    <i class="bi bi-paypal"></i>
+                    <span>PayPal</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stripe Card Elements -->
+            <div *ngIf="paymentData.method === 'card'" class="form-section">
+              <h3 class="section-title">
+                <i class="bi bi-shield-lock me-2"></i>Card Details
+              </h3>
+              
+              <!-- Stripe Elements Container -->
+              <div class="stripe-container">
+                <div class="stripe-element-wrapper">
+                  <label class="form-label">Card Information *</label>
+                  <div id="card-element" class="stripe-element"></div>
+                  <div id="card-errors" class="stripe-error" role="alert"></div>
+                </div>
+              </div>
+
+              <!-- Cardholder Name -->
+              <div class="mb-3">
+                <label for="cardholderName" class="form-label">Cardholder Name *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="cardholderName" 
+                  name="cardholderName"
+                  [(ngModel)]="paymentData.cardholderName"
+                  required
+                  placeholder="Enter cardholder name"
+                  [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.cardholderName}"
+                >
+                <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.cardholderName">
+                  Cardholder name is required.
+                </div>
+              </div>
+
+              <div class="form-check">
+                <input 
+                  type="checkbox" 
+                  class="form-check-input" 
+                  id="saveCard"
+                  [(ngModel)]="paymentData.saveCard"
+                  name="saveCard"
+                >
+                <label class="form-check-label" for="saveCard">
+                  Save this card for future payments
+                </label>
+              </div>
+            </div>
+
+            <!-- PayPal Form -->
+            <div *ngIf="paymentData.method === 'paypal'" class="form-section">
+              <div class="paypal-notice">
+                <i class="bi bi-info-circle"></i>
+                <div>
+                  <h4>PayPal Checkout</h4>
+                  <p>You will be redirected to PayPal to complete your payment securely.</p>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="paypalEmail" class="form-label">PayPal Email *</label>
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="paypalEmail" 
+                  name="paypalEmail"
+                  [(ngModel)]="paymentData.paypalEmail"
+                  required
+                  email
+                  placeholder="Enter your PayPal email"
+                  [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.paypalEmail}"
+                >
+                <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.paypalEmail">
+                  Please enter a valid PayPal email address.
+                </div>
+              </div>
+            </div>
+
+            <!-- Billing Address -->
+            <div class="form-section">
+              <h3 class="section-title">
+                <i class="bi bi-geo-alt me-2"></i>Billing Address
+              </h3>
+              <div class="form-check mb-3">
+                <input 
+                  type="checkbox" 
+                  class="form-check-input" 
+                  id="sameAsShipping"
+                  [(ngModel)]="paymentData.sameAsShipping"
+                  name="sameAsShipping"
+                  (change)="onBillingAddressChange()"
+                >
+                <label class="form-check-label" for="sameAsShipping">
+                  Same as shipping address
+                </label>
+              </div>
+
+              <div *ngIf="!paymentData.sameAsShipping" class="billing-address">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="billingFirstName" class="form-label">First Name *</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="billingFirstName" 
+                      name="billingFirstName"
+                      [(ngModel)]="paymentData.billingFirstName"
+                      required
+                      placeholder="Enter first name"
+                    >
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="billingLastName" class="form-label">Last Name *</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="billingLastName" 
+                      name="billingLastName"
+                      [(ngModel)]="paymentData.billingLastName"
+                      required
+                      placeholder="Enter last name"
+                    >
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="billingAddress" class="form-label">Address *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="billingAddress" 
+                    name="billingAddress"
+                    [(ngModel)]="paymentData.billingAddress"
+                    required
+                    placeholder="Enter billing address"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="form-section">
+              <div class="form-check">
+                <input 
+                  type="checkbox" 
+                  class="form-check-input" 
+                  id="acceptTerms"
+                  [(ngModel)]="paymentData.acceptTerms"
+                  name="acceptTerms"
+                  required
+                  [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.acceptTerms}"
+                >
+                <label class="form-check-label" for="acceptTerms">
+                  I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                </label>
+                <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.acceptTerms">
+                  You must agree to the terms and conditions.
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                (click)="goBack()"
               >
-              <label class="form-check-label" for="card">
-                <i class="bi bi-credit-card me-2"></i>Credit/Debit Card
-              </label>
-            </div>
-          </div>
-          <div class="col-md-6 mb-3">
-            <div class="form-check border rounded p-3" [ngClass]="{'border-primary': paymentData.method === 'paypal'}">
-              <input 
-                class="form-check-input" 
-                type="radio" 
-                name="paymentMethod" 
-                id="paypal" 
-                value="paypal"
-                [(ngModel)]="paymentData.method"
-                required
+                <i class="bi bi-arrow-left me-2"></i>Back
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="isLoading"
               >
-              <label class="form-check-label" for="paypal">
-                <i class="bi bi-paypal me-2"></i>PayPal
-              </label>
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                <i class="bi bi-lock me-2" *ngIf="!isLoading"></i>
+                {{ isLoading ? 'Processing Payment...' : 'Complete Order' }}
+              </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
 
-      <!-- Credit Card Form -->
-      <div *ngIf="paymentData.method === 'card'">
-        <div class="mb-3">
-          <label for="cardNumber" class="form-label">
-            <i class="bi bi-credit-card me-2"></i>Card Number *
-          </label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="cardNumber" 
-            name="cardNumber"
-            [(ngModel)]="paymentData.cardNumber"
-            required
-            placeholder="1234 5678 9012 3456"
-            maxlength="19"
-            [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.cardNumber}"
-          >
-          <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.cardNumber">
-            Card number is required.
+      <!-- Order Summary Sidebar -->
+      <div class="checkout-sidebar">
+        <div class="summary-card">
+          <div class="summary-header">
+            <h3>
+              <i class="bi bi-calculator me-2"></i>Order Summary
+            </h3>
           </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="expiryDate" class="form-label">
-              <i class="bi bi-calendar me-2"></i>Expiry Date *
-            </label>
-            <input 
-              type="text" 
-              class="form-control" 
-              id="expiryDate" 
-              name="expiryDate"
-              [(ngModel)]="paymentData.expiryDate"
-              required
-              placeholder="MM/YY"
-              maxlength="5"
-              [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.expiryDate}"
-            >
-            <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.expiryDate">
-              Expiry date is required.
+          <div class="summary-content">
+            <div class="summary-item">
+              <span>Subtotal</span>
+              <span>£{{ (orderSummary.subtotal || 0) | number:'1.2-2' }}</span>
             </div>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label for="cvv" class="form-label">
-              <i class="bi bi-shield-lock me-2"></i>CVV *
-            </label>
-            <input 
-              type="text" 
-              class="form-control" 
-              id="cvv" 
-              name="cvv"
-              [(ngModel)]="paymentData.cvv"
-              required
-              placeholder="123"
-              maxlength="4"
-              [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.cvv}"
-            >
-            <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.cvv">
-              CVV is required.
+            <div class="summary-item">
+              <span>Shipping</span>
+              <span>{{ (orderSummary.shipping || 0) === 0 ? 'Free' : '£' + ((orderSummary.shipping || 0) | number:'1.2-2') }}</span>
+            </div>
+            <div class="summary-item total">
+              <span>Total</span>
+              <span>£{{ (orderSummary.total || 0) | number:'1.2-2' }}</span>
             </div>
           </div>
         </div>
 
-        <div class="mb-3">
-          <label for="cardholderName" class="form-label">
-            <i class="bi bi-person me-2"></i>Cardholder Name *
-          </label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="cardholderName" 
-            name="cardholderName"
-            [(ngModel)]="paymentData.cardholderName"
-            required
-            placeholder="Enter cardholder name"
-            [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.cardholderName}"
-          >
-          <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.cardholderName">
-            Cardholder name is required.
+        <!-- Security Notice -->
+        <div class="security-notice">
+          <div class="security-icon">
+            <i class="bi bi-shield-lock"></i>
+          </div>
+          <div class="security-text">
+            <h4>Secure Payment</h4>
+            <p>Your payment information is encrypted and secure</p>
           </div>
         </div>
 
-        <div class="mb-3 form-check">
-          <input 
-            type="checkbox" 
-            class="form-check-input" 
-            id="saveCard"
-            [(ngModel)]="paymentData.saveCard"
-            name="saveCard"
-          >
-          <label class="form-check-label" for="saveCard">
-            Save this card for future payments
-          </label>
-        </div>
-      </div>
-
-      <!-- PayPal Form -->
-      <div *ngIf="paymentData.method === 'paypal'">
-        <div class="alert alert-info">
-          <i class="bi bi-info-circle me-2"></i>
-          You will be redirected to PayPal to complete your payment securely.
-        </div>
-        <div class="mb-3">
-          <label for="paypalEmail" class="form-label">
-            <i class="bi bi-envelope me-2"></i>PayPal Email *
-          </label>
-          <input 
-            type="email" 
-            class="form-control" 
-            id="paypalEmail" 
-            name="paypalEmail"
-            [(ngModel)]="paymentData.paypalEmail"
-            required
-            email
-            placeholder="Enter your PayPal email"
-            [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.paypalEmail}"
-          >
-          <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.paypalEmail">
-            Please enter a valid PayPal email address.
+        <!-- Payment Icons -->
+        <div class="payment-icons">
+          <div class="payment-icon">
+            <i class="bi bi-credit-card"></i>
+            <span>Visa</span>
+          </div>
+          <div class="payment-icon">
+            <i class="bi bi-credit-card"></i>
+            <span>Mastercard</span>
+          </div>
+          <div class="payment-icon">
+            <i class="bi bi-credit-card"></i>
+            <span>American Express</span>
+          </div>
+          <div class="payment-icon">
+            <i class="bi bi-paypal"></i>
+            <span>PayPal</span>
           </div>
         </div>
       </div>
-
-      <!-- Billing Address -->
-      <div class="mb-4">
-        <h6 class="mb-3">
-          <i class="bi bi-geo-alt me-2"></i>Billing Address
-        </h6>
-        <div class="form-check mb-3">
-          <input 
-            type="checkbox" 
-            class="form-check-input" 
-            id="sameAsShipping"
-            [(ngModel)]="paymentData.sameAsShipping"
-            name="sameAsShipping"
-            (change)="onBillingAddressChange()"
-          >
-          <label class="form-check-label" for="sameAsShipping">
-            Same as shipping address
-          </label>
-        </div>
-
-        <div *ngIf="!paymentData.sameAsShipping">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="billingFirstName" class="form-label">First Name *</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                id="billingFirstName" 
-                name="billingFirstName"
-                [(ngModel)]="paymentData.billingFirstName"
-                required
-                placeholder="Enter first name"
-              >
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="billingLastName" class="form-label">Last Name *</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                id="billingLastName" 
-                name="billingLastName"
-                [(ngModel)]="paymentData.billingLastName"
-                required
-                placeholder="Enter last name"
-              >
-            </div>
-          </div>
-          <div class="mb-3">
-            <label for="billingAddress" class="form-label">Address *</label>
-            <input 
-              type="text" 
-              class="form-control" 
-              id="billingAddress" 
-              name="billingAddress"
-              [(ngModel)]="paymentData.billingAddress"
-              required
-              placeholder="Enter billing address"
-            >
-          </div>
-        </div>
-      </div>
-
-      <!-- Order Summary -->
-      <div class="card bg-light mb-4">
-        <div class="card-body">
-          <h6 class="card-title">
-            <i class="bi bi-receipt me-2"></i>Order Summary
-          </h6>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Subtotal</span>
-            <span>£{{ orderSummary.subtotal | number:'1.2-2' }}</span>
-          </div>
-          <div class="d-flex justify-content-between mb-2">
-            <span>Shipping</span>
-            <span>{{ orderSummary.shipping === 0 ? 'Free' : '£' + orderSummary.shipping | number:'1.2-2' }}</span>
-          </div>
-          <hr>
-          <div class="d-flex justify-content-between">
-            <span class="h6 mb-0">Total</span>
-            <span class="h6 mb-0 text-primary">£{{ orderSummary.total | number:'1.2-2' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Terms and Conditions -->
-      <div class="mb-4">
-        <div class="form-check">
-          <input 
-            type="checkbox" 
-            class="form-check-input" 
-            id="acceptTerms"
-            [(ngModel)]="paymentData.acceptTerms"
-            name="acceptTerms"
-            required
-            [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.acceptTerms}"
-          >
-          <label class="form-check-label" for="acceptTerms">
-            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
-          </label>
-          <div class="invalid-feedback" *ngIf="paymentForm.submitted && !paymentData.acceptTerms">
-            You must agree to the terms and conditions.
-          </div>
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-between">
-        <button 
-          type="button" 
-          class="btn btn-outline-secondary"
-          (click)="goBack()"
-        >
-          <i class="bi bi-arrow-left me-2"></i>Back
-        </button>
-        <button 
-          type="submit" 
-          class="btn btn-success btn-lg"
-          [disabled]="isLoading"
-        >
-          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          <i class="bi bi-lock me-2" *ngIf="!isLoading"></i>
-          {{ isLoading ? 'Processing Payment...' : 'Complete Order' }}
-        </button>
-      </div>
-    </form>
+    </div>
   </div>
 </div>

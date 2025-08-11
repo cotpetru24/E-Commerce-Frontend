@@ -1,35 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-interface PaymentData {
-  method: 'card' | 'paypal';
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  cardholderName: string;
-  saveCard: boolean;
-  paypalEmail: string;
-  sameAsShipping: boolean;
-  billingFirstName: string;
-  billingLastName: string;
-  billingAddress: string;
-  acceptTerms: boolean;
-}
-
-interface OrderSummary {
-  subtotal: number;
-  shipping: number;
-  total: number;
-}
+import { Router, RouterModule } from '@angular/router';
+import { PaymentData, OrderSummary } from '../../models';
 
 @Component({
   selector: 'app-payment-method',
   templateUrl: './payment-method.component.html',
-  styleUrls: ['./payment-method.component.css'],
+  styleUrls: ['./payment-method.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, RouterModule]
 })
 export class PaymentMethodComponent implements OnInit {
   paymentData: PaymentData = {
@@ -81,7 +61,7 @@ export class PaymentMethodComponent implements OnInit {
     setTimeout(() => {
       this.isLoading = false;
       // Navigate to review page
-      this.router.navigate(['/checkout/review']);
+      this.router.navigate(['/checkout/checkout-review']);
     }, 2000);
   }
 
@@ -126,7 +106,7 @@ export class PaymentMethodComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/checkout/shipping']);
+    this.router.navigate(['/checkout/addressForm']);
   }
 
   formatCardNumber(event: any): void {

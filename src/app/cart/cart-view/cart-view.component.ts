@@ -10,10 +10,7 @@ import { AuthApiService } from '../../services/auth-api.service';
 @Component({
   selector: 'app-cart-view',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-  ],
+  imports: [CommonModule, RouterModule],
   templateUrl: './cart-view.component.html',
   styleUrls: ['./cart-view.component.scss'],
 })
@@ -25,8 +22,7 @@ export class CartViewComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private router: Router,
     private toastService: ToastService,
-    private authApiService:AuthApiService
-
+    private authApiService: AuthApiService
   ) {
     this.cartSubscription = this.cartService.cartItems$.subscribe((items) => {
       this.cartItems = items;
@@ -74,7 +70,7 @@ export class CartViewComponent implements OnInit, OnDestroy {
   }
 
   getItemTotal(item: CartItem): number {
-    return item.product.price * item.quantity;
+    return parseFloat((item.product.price * item.quantity).toFixed(2));
   }
 
   getTotalItems(): number {
@@ -103,10 +99,10 @@ export class CartViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if(this.authApiService.isLoggedIn() === false){
-      this.toastService.info('Please login to proceed to checkout.')
-      this.router.navigate(['/auth/login'])
-      return
+    if (this.authApiService.isLoggedIn() === false) {
+      this.toastService.info('Please login to proceed to checkout.');
+      this.router.navigate(['/auth/login']);
+      return;
     }
 
     this.router.navigate(['/checkout/addressForm']);
