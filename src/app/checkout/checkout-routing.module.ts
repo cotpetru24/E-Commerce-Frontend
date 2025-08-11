@@ -6,7 +6,7 @@ import { AddressFormComponent } from './address-form/address-form.component';
 
 const routes: Routes = [
   { path: '', component: AddressFormComponent, pathMatch: 'full' },
-  { path: 'addressForm', component: AddressFormComponent },
+  { path: 'address-form', component: AddressFormComponent },
   { path: 'payment-method', component: PaymentMethodComponent },
   { path: 'checkout-review', component: CheckoutReviewComponent },
 ];
