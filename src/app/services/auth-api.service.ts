@@ -12,7 +12,7 @@ import {
   UserInfoDto,
   UserRole,
 } from '../models/auth.dto';
-import { USerModule } from '../user/user.module';
+import { UserModule } from '../user/user.module';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({

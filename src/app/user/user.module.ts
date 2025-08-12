@@ -7,4 +7,4 @@ import { UserOrdersComponent } from './user-orders/user-orders.component';
   declarations: [],
   imports: [CommonModule, UserAccountComponent, UserOrdersComponent],
 })
-export class USerModule {}
+export class UserModule {}
