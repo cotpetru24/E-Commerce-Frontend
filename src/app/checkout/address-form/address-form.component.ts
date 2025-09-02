@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AddressData, OrderSummary } from '../../models';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-address-form',
@@ -20,21 +21,26 @@ export class AddressFormComponent implements OnInit {
     address: '',
     city: '',
     state: '',
-    zipCode: '',
+    postcode: '',
     country: '',
     instructions: '',
     saveAddress: false
   };
-
+  
   orderSummary: OrderSummary = {
     subtotal: 0,
+    discount: 0,
     shipping: 0,
     total: 0
   };
 
+
   isLoading: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private cartService: CartService) {
+  }
 
   ngOnInit(): void {
     this.loadSavedAddress();
@@ -50,11 +56,11 @@ export class AddressFormComponent implements OnInit {
   }
 
   loadOrderSummary(): void {
-    // Mock data - replace with actual service call
     this.orderSummary = {
-      subtotal: 129.98,
+      subtotal: this.cartService.getSubtotal(),
+      discount: this.cartService.getDiscount(),
       shipping: 0, // Free shipping
-      total: 129.98
+      total: this.cartService.getTotal()
     };
   }
 
@@ -79,14 +85,11 @@ export class AddressFormComponent implements OnInit {
   }
 
   validateForm(): boolean {
-    return !!(this.addressData.firstName && 
-              this.addressData.lastName && 
-              this.addressData.email && 
-              this.addressData.phone && 
+    return !!(
               this.addressData.address && 
               this.addressData.city && 
               this.addressData.state && 
-              this.addressData.zipCode && 
+              this.addressData.postcode && 
               this.addressData.country);
   }
 

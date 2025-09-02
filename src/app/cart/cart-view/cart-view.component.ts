@@ -105,7 +105,7 @@ export class CartViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.router.navigate(['/checkout/addressForm']);
+    this.router.navigate(['/checkout/address-form']);
   }
 
   clearCart(): void {

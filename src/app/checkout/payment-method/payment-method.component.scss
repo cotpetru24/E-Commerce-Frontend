@@ -170,10 +170,23 @@
           background: white;
           min-height: 50px;
           transition: all 0.3s ease;
+          position: relative;
 
           &:focus-within {
             border-color: #1a1a1a;
             box-shadow: 0 0 0 0.2rem rgba(26, 26, 26, 0.1);
+          }
+
+          // Ensure Stripe Elements are visible
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            pointer-events: none;
           }
         }
 
@@ -182,6 +195,16 @@
           font-size: 0.875rem;
           margin-top: 0.5rem;
           min-height: 20px;
+        }
+
+        // Loading state for Stripe Elements
+        .stripe-loading {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 50px;
+          color: #6c757d;
+          font-style: italic;
         }
       }
     }

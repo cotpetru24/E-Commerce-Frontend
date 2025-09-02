@@ -87,7 +87,6 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   openImageModal() {
-    // Implement image modal functionality
     console.log('Open image modal');
   }
 

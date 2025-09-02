@@ -6,7 +6,7 @@ export interface AddressData {
   address: string;
   city: string;
   state: string;
-  zipCode: string;
+  postcode: string;
   country: string;
   instructions: string;
   saveAddress: boolean;
