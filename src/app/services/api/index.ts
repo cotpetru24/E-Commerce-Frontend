@@ -8,6 +8,8 @@ export { BaseApiService } from './base-api.service';
 export { ProductApiService } from './product-api.service';
 export { UserApiService } from './user-api.service';
 export { AdminApiService } from './admin-api.service';
+export { OrderApiService } from './order-api.service';
+export { ShippingAddressApiService } from './shipping-address-api.service';
 
 // ============================================================================
 // ADDITIONAL API SERVICES YOU MIGHT NEED
@@ -16,7 +18,6 @@ export { AdminApiService } from './admin-api.service';
 // Uncomment and create these services as needed:
 
 // export { CartApiService } from './cart-api.service';
-// export { OrderApiService } from './order-api.service';
 // export { PaymentApiService } from './payment-api.service';
 // export { NotificationApiService } from './notification-api.service';
 // export { FileUploadApiService } from './file-upload-api.service';

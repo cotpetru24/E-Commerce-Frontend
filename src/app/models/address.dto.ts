@@ -1,9 +1,5 @@
 export interface AddressData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
+  addressLine1: string;
   city: string;
   state: string;
   postcode: string;

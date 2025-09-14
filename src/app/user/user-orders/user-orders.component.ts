@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../services/toast.service';
+import { OrderApiService } from '../../services/api/order-api.service';
+import { OrderDto, GetOrdersRequestDto, GetOrdersResponseDto } from '../../models/order.dto';
 
 @Component({
   selector: 'app-user-orders',
@@ -12,112 +14,20 @@ import { ToastService } from '../../services/toast.service';
 })
 export class UserOrdersComponent implements OnInit {
   currentFilter = 'all';
-  selectedOrder: any = null;
+  selectedOrder: OrderDto | null = null;
   
-  allOrders = [
-    {
-      orderId: 'ORD-2024-001',
-      orderDate: new Date('2024-01-15'),
-      itemCount: 2,
-      total: 129.99,
-      status: 'Delivered',
-      trackingNumber: 'TRK123456789',
-      currentStep: 4,
-      estimatedDelivery: new Date('2024-01-18'),
-      trackingEvents: [
-        {
-          status: 'ordered',
-          title: 'Order Placed',
-          description: 'Your order has been successfully placed',
-          timestamp: new Date('2024-01-15 10:30:00')
-        },
-        {
-          status: 'processing',
-          title: 'Order Processing',
-          description: 'Your order is being prepared for shipment',
-          timestamp: new Date('2024-01-15 14:20:00')
-        },
-        {
-          status: 'shipped',
-          title: 'Order Shipped',
-          description: 'Your order has been shipped',
-          timestamp: new Date('2024-01-16 09:15:00')
-        },
-        {
-          status: 'out_for_delivery',
-          title: 'Out for Delivery',
-          description: 'Your package is out for delivery',
-          timestamp: new Date('2024-01-18 08:00:00')
-        },
-        {
-          status: 'delivered',
-          title: 'Delivered',
-          description: 'Your package has been delivered',
-          timestamp: new Date('2024-01-18 14:30:00')
-        }
-      ]
-    },
-    {
-      orderId: 'ORD-2024-002',
-      orderDate: new Date('2024-01-10'),
-      itemCount: 1,
-      total: 89.50,
-      status: 'Processing',
-      trackingNumber: null,
-      currentStep: 1,
-      estimatedDelivery: new Date('2024-01-15'),
-      trackingEvents: [
-        {
-          status: 'ordered',
-          title: 'Order Placed',
-          description: 'Your order has been successfully placed',
-          timestamp: new Date('2024-01-10 16:45:00')
-        },
-        {
-          status: 'processing',
-          title: 'Order Processing',
-          description: 'Your order is being prepared for shipment',
-          timestamp: new Date('2024-01-11 11:20:00')
-        }
-      ]
-    },
-    {
-      orderId: 'ORD-2024-003',
-      orderDate: new Date('2024-01-05'),
-      itemCount: 3,
-      total: 199.99,
-      status: 'Shipped',
-      trackingNumber: 'TRK987654321',
-      currentStep: 3,
-      estimatedDelivery: new Date('2024-01-12'),
-      trackingEvents: [
-        {
-          status: 'ordered',
-          title: 'Order Placed',
-          description: 'Your order has been successfully placed',
-          timestamp: new Date('2024-01-05 13:15:00')
-        },
-        {
-          status: 'processing',
-          title: 'Order Processing',
-          description: 'Your order is being prepared for shipment',
-          timestamp: new Date('2024-01-06 10:30:00')
-        },
-        {
-          status: 'shipped',
-          title: 'Order Shipped',
-          description: 'Your order has been shipped',
-          timestamp: new Date('2024-01-08 14:45:00')
-        }
-      ]
-    }
-  ];
-
-  filteredOrders = [...this.allOrders];
+  allOrders: OrderDto[] = [];
+  filteredOrders: OrderDto[] = [];
+  isLoading = false;
+  currentPage = 1;
+  pageSize = 10;
+  totalPages = 0;
+  totalCount = 0;
 
   constructor(
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private orderApiService: OrderApiService
   ) {}
 
   ngOnInit() {
@@ -125,40 +35,68 @@ export class UserOrdersComponent implements OnInit {
   }
 
   loadOrders() {
-    // Simulate loading orders from API
-    // In real app, this would fetch from order service
+    // Check if user is logged in before making API call
+    const token = sessionStorage.getItem('accessToken');
+    if (!token) {
+      console.warn('No access token found, user may not be logged in');
+      this.toastService.error('Please log in to view your orders');
+      this.isLoading = false;
+      return;
+    }
+
+    this.isLoading = true;
+    
+    const request: GetOrdersRequestDto = {
+      page: this.currentPage,
+      pageSize: this.pageSize,
+      ...(this.currentFilter !== 'all' && { orderStatus: this.currentFilter })
+    };
+
+    this.orderApiService.getOrders(request).subscribe({
+      next: (response: GetOrdersResponseDto) => {
+        this.allOrders = response.orders;
+        this.filteredOrders = response.orders;
+        this.totalCount = response.totalCount;
+        this.totalPages = response.totalPages;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading orders:', error);
+        this.toastService.error('Failed to load orders');
+        this.isLoading = false;
+      }
+    });
   }
 
   filterOrders(filter: string) {
     this.currentFilter = filter;
-    
-    if (filter === 'all') {
-      this.filteredOrders = [...this.allOrders];
-    } else {
-      this.filteredOrders = this.allOrders.filter(order => 
-        order.status.toLowerCase() === filter
-      );
-    }
+    this.currentPage = 1; // Reset to first page when filtering
+    this.loadOrders();
   }
 
-  trackOrder(order: any) {
+  loadPage(page: number) {
+    this.currentPage = page;
+    this.loadOrders();
+  }
+
+  trackOrder(order: OrderDto) {
     this.selectedOrder = order;
     // Show tracking modal using Bootstrap
     const modal = new (window as any).bootstrap.Modal(document.getElementById('trackingModal'));
     modal.show();
   }
 
-  viewOrderDetails(orderId: string) {
+  viewOrderDetails(orderId: number) {
     this.router.navigate(['/account/orders', orderId]);
   }
 
-  reorder(order: any) {
+  reorder(order: OrderDto) {
     // Implement reorder functionality
     this.toastService.success('Items added to cart for reorder!');
     this.router.navigate(['/cart']);
   }
 
-  cancelOrder(order: any) {
+  cancelOrder(order: OrderDto) {
     if (confirm('Are you sure you want to cancel this order?')) {
       // Implement cancel order functionality
       this.toastService.success('Order cancelled successfully!');
@@ -166,7 +104,13 @@ export class UserOrdersComponent implements OnInit {
     }
   }
 
-  getStatusBadgeClass(status: string): string {
+  getItemCount(order: OrderDto): number {
+    return order.orderItems.reduce((total, item) => total + item.quantity, 0);
+  }
+
+  getStatusBadgeClass(status: string | undefined): string {
+    if (!status) return 'bg-secondary';
+    
     switch (status.toLowerCase()) {
       case 'delivered':
         return 'bg-success';

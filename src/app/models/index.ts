@@ -4,6 +4,10 @@ export * from './payment.dto';
 export * from './order-summary.dto';
 export * from './checkout.dto';
 
+// Order and Shipping Address interfaces
+export * from './order.dto';
+export * from './shipping-address.dto';
+
 // Existing interfaces
 export * from './auth.dto';
 export * from './user.dto';

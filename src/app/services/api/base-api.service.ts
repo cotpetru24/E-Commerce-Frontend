@@ -117,7 +117,15 @@ export abstract class BaseApiService {
    * Create HTTP headers with authentication token
    */
   protected getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('accessToken');
+    const token = sessionStorage.getItem('accessToken');
+    
+    // Debug logging to help identify authentication issues
+    if (!token) {
+      console.warn('No access token found in sessionStorage');
+    } else {
+      console.log('Access token found, length:', token.length);
+    }
+    
     return new HttpHeaders({
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),

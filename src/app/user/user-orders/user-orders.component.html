@@ -6,24 +6,20 @@
           <i class="bi bi-bag me-2"></i>My Orders
         </h1>
         <div class="btn-group" role="group">
-          <button class="btn btn-outline-primary" 
-                  [ngClass]="{'active': currentFilter === 'all'}"
-                  (click)="filterOrders('all')">
+          <button class="btn btn-outline-primary" [ngClass]="{'active': currentFilter === 'all'}"
+            (click)="filterOrders('all')">
             All Orders
           </button>
-          <button class="btn btn-outline-primary" 
-                  [ngClass]="{'active': currentFilter === 'pending'}"
-                  (click)="filterOrders('pending')">
+          <button class="btn btn-outline-primary" [ngClass]="{'active': currentFilter === 'pending'}"
+            (click)="filterOrders('pending')">
             Pending
           </button>
-          <button class="btn btn-outline-primary" 
-                  [ngClass]="{'active': currentFilter === 'shipped'}"
-                  (click)="filterOrders('shipped')">
+          <button class="btn btn-outline-primary" [ngClass]="{'active': currentFilter === 'shipped'}"
+            (click)="filterOrders('shipped')">
             Shipped
           </button>
-          <button class="btn btn-outline-primary" 
-                  [ngClass]="{'active': currentFilter === 'delivered'}"
-                  (click)="filterOrders('delivered')">
+          <button class="btn btn-outline-primary" [ngClass]="{'active': currentFilter === 'delivered'}"
+            (click)="filterOrders('delivered')">
             Delivered
           </button>
         </div>
@@ -57,40 +53,37 @@
               <tbody>
                 <tr *ngFor="let order of filteredOrders">
                   <td>
-                    <strong>#{{ order.orderId }}</strong>
+                    <strong>#{{ order.id }}</strong>
                   </td>
-                  <td>{{ order.orderDate | date:'MMM dd, yyyy' }}</td>
-                  <td>
+                  <td>{{ order.createdAt | date:'MMM dd, yyyy' }}</td>
+                  <!-- <td>
                     <span class="badge bg-secondary">{{ order.itemCount }} items</span>
-                  </td>
+                  </td> -->
                   <td>£{{ order.total | number:'1.2-2' }}</td>
                   <td>
-                    <span class="badge" [ngClass]="getStatusBadgeClass(order.status)">
-                      {{ order.status }}
+                    <span class="badge" [ngClass]="getStatusBadgeClass(order.orderStatusName)">
+                      {{ order.orderStatusName || 'Unknown' }}
                     </span>
                   </td>
                   <td>
-                    <button class="btn btn-outline-info btn-sm" 
+                    <!-- <button class="btn btn-outline-info btn-sm" 
                             (click)="trackOrder(order)"
                             *ngIf="order.trackingNumber">
                       <i class="bi bi-truck me-1"></i>Track
                     </button>
-                    <span class="text-muted" *ngIf="!order.trackingNumber">N/A</span>
+                    <span class="text-muted" *ngIf="!order.trackingNumber">N/A</span> -->
                   </td>
                   <td>
                     <div class="btn-group" role="group">
-                      <button class="btn btn-outline-primary btn-sm" 
-                              (click)="viewOrderDetails(order.orderId)">
+                      <button class="btn btn-outline-primary btn-sm" (click)="viewOrderDetails(order.id)" title="View Details">
                         <i class="bi bi-eye"></i>
                       </button>
-                      <button class="btn btn-outline-success btn-sm" 
-                              (click)="reorder(order)"
-                              *ngIf="order.status === 'Delivered'">
+                      <button class="btn btn-outline-success btn-sm" (click)="reorder(order)" title="Reorder"
+                        *ngIf="order.orderStatusName === 'Delivered'">
                         <i class="bi bi-arrow-clockwise"></i>
                       </button>
-                      <button class="btn btn-outline-warning btn-sm" 
-                              (click)="cancelOrder(order)"
-                              *ngIf="order.status === 'Pending'">
+                      <button class="btn btn-outline-warning btn-sm" (click)="cancelOrder(order)" title="Cancel Order"
+                        *ngIf="order.orderStatusName === 'Pending'">
                         <i class="bi bi-x-circle"></i>
                       </button>
                     </div>
@@ -128,15 +121,15 @@
           <div *ngIf="selectedOrder">
             <div class="row mb-3">
               <div class="col-md-6">
-                <strong>Order ID:</strong> #{{ selectedOrder.orderId }}
+                <strong>Order ID:</strong> #{{ selectedOrder.id }}
               </div>
               <div class="col-md-6">
-                <strong>Tracking Number:</strong> {{ selectedOrder.trackingNumber }}
+                <strong>Tracking Number:</strong> N/A
               </div>
             </div>
 
             <!-- Tracking Timeline -->
-            <div class="tracking-timeline">
+            <!-- <div class="tracking-timeline">
               <div class="timeline-item" *ngFor="let event of selectedOrder.trackingEvents; let i = index">
                 <div class="timeline-marker" [ngClass]="{'completed': i <= selectedOrder.currentStep}">
                   <i class="bi" [ngClass]="getTimelineIcon(event.status)"></i>
@@ -147,12 +140,16 @@
                   <small class="text-muted">{{ event.timestamp | date:'MMM dd, yyyy HH:mm' }}</small>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <!-- Estimated Delivery -->
-            <div class="alert alert-info mt-3" *ngIf="selectedOrder.estimatedDelivery">
+            <!-- <div class="alert alert-info mt-3" *ngIf="selectedOrder.estimatedDelivery">
               <i class="bi bi-calendar-event me-2"></i>
               <strong>Estimated Delivery:</strong> {{ selectedOrder.estimatedDelivery | date:'EEEE, MMMM dd, yyyy' }}
+            </div> -->
+            <div class="alert alert-info mt-3">
+              <i class="bi bi-calendar-event me-2"></i>
+              <strong>Estimated Delivery:</strong> {{'EEEE, MMMM dd, yyyy' }}
             </div>
           </div>
         </div>
@@ -165,35 +162,35 @@
 </div>
 
 <style>
-.tracking-timeline {
-  position: relative;
-  padding-left: 30px;
-}
+  .tracking-timeline {
+    position: relative;
+    padding-left: 30px;
+  }
 
-.timeline-item {
-  position: relative;
-  margin-bottom: 20px;
-}
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
 
-.timeline-marker {
-  position: absolute;
-  left: -35px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #e9ecef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6c757d;
-}
+  .timeline-marker {
+    position: absolute;
+    left: -35px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+  }
 
-.timeline-marker.completed {
-  background-color: #28a745;
-  color: white;
-}
+  .timeline-marker.completed {
+    background-color: #28a745;
+    color: white;
+  }
 
-.timeline-content {
-  padding-left: 15px;
-}
-</style> 
+  .timeline-content {
+    padding-left: 15px;
+  }
+</style>

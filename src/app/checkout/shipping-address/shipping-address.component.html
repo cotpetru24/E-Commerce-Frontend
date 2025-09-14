@@ -25,18 +25,66 @@
           </div>
 
           <form (ngSubmit)="onSubmit()" #addressForm="ngForm" class="checkout-form">
-            <!-- Address Information -->
+            <!-- Address Selection Mode -->
             <div class="form-section">
+              <div class="address-mode-toggle">
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" id="newAddress" name="addressMode" 
+                         [checked]="!useExistingAddress" (change)="toggleAddressMode()">
+                  <label class="form-check-label" for="newAddress">
+                    <i class="bi bi-plus-circle me-2"></i>New Address
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" id="existingAddress" name="addressMode" 
+                         [checked]="useExistingAddress" (change)="toggleAddressMode()">
+                  <label class="form-check-label" for="existingAddress">
+                    <i class="bi bi-bookmark me-2"></i>Saved Address
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Existing Addresses -->
+            <div class="form-section" *ngIf="useExistingAddress && savedAddresses.length > 0">
+              <h3 class="section-title">
+                <i class="bi bi-bookmark me-2"></i>Select Address
+              </h3>
+              <div class="address-list">
+                <div class="address-card" 
+                     *ngFor="let address of savedAddresses" 
+                     [class.selected]="selectedAddressId === address.id"
+                     (click)="selectExistingAddress(address.id)">
+                  <div class="address-header">
+                    <div class="form-check">
+                      <input type="radio" class="form-check-input" 
+                             [checked]="selectedAddressId === address.id"
+                             [id]="'address-' + address.id">
+                      <label class="form-check-label" [for]="'address-' + address.id">
+                        <strong>{{ address.addressLine1 }}</strong>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="address-details">
+                    <p>{{ address.city }}, {{ address.county }} {{ address.postcode }}</p>
+                    <p>{{ address.country }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- New Address Form -->
+            <div class="form-section" *ngIf="!useExistingAddress">
               <h3 class="section-title">
                 <i class="bi bi-house me-2"></i>Address Details
               </h3>
               
               <div class="mb-3">
-                <label for="address" class="form-label">Address Line 1 *</label>
-                <input type="text" class="form-control" id="address" name="address" [(ngModel)]="addressData.address"
+                <label for="addressLine1" class="form-label">Address Line 1 *</label>
+                <input type="text" class="form-control" id="addressLine1" name="addressLine1" [(ngModel)]="addressData.addressLine1"
                   required placeholder="Enter your street address"
-                  [ngClass]="{'is-invalid': addressForm.submitted && !addressData.address}">
-                <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.address">
+                  [ngClass]="{'is-invalid': addressForm.submitted && !addressData.addressLine1}">
+                <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.addressLine1">
                   Street address is required.
                 </div>
               </div>
@@ -53,12 +101,12 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                  <label for="state" class="form-label">State/Province *</label>
+                  <label for="state" class="form-label">State/County *</label>
                   <input type="text" class="form-control" id="state" name="state" [(ngModel)]="addressData.state"
-                    required placeholder="State"
+                    required placeholder="State/County"
                     [ngClass]="{'is-invalid': addressForm.submitted && !addressData.state}">
                   <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.state">
-                    State is required.
+                    State/County is required.
                   </div>
                 </div>
               </div>

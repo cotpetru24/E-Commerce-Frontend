@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { PaymentData, OrderSummary } from '../../models';
+import { PaymentData, OrderSummary, PlaceOrderRequestDto, OrderItemRequestDto } from '../../models';
 import { CartService } from '../../services/cart.service';
 import {
   loadStripe,
@@ -12,6 +12,8 @@ import {
 } from '@stripe/stripe-js';
 import { environment } from '../../../environments/environment';
 import { PaymentApiService } from '../../services/api/payment-api.service';
+import { OrderApiService } from '../../services/api/order-api.service';
+import { ToastService } from '../../services/toast.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -54,7 +56,9 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private router: Router,
     private cartService: CartService,
-    private paymentApiService: PaymentApiService
+    private paymentApiService: PaymentApiService,
+    private orderApiService: OrderApiService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -161,26 +165,66 @@ console.log('Container dimensions:', mountEl.getBoundingClientRect());
     if (!this.validateForm()) return;
     this.isLoading = true;
 
-    if (this.paymentData.method === 'card') {
-      if (!this.stripe || !this.elements) {
-        this.isLoading = false;
-        return;
+    try {
+      // First, place the order
+      const orderRequest = this.createOrderRequest();
+      const orderResponse = await firstValueFrom(this.orderApiService.placeOrder(orderRequest));
+      
+      this.toastService.success('Order placed successfully!');
+      
+      // Store order ID for confirmation page
+      localStorage.setItem('lastOrderId', orderResponse.orderId.toString());
+      
+      if (this.paymentData.method === 'card') {
+        if (!this.stripe || !this.elements) {
+          this.isLoading = false;
+          return;
+        }
+        
+        // Process payment with Stripe
+        const { error } = await this.stripe.confirmPayment({
+          elements: this.elements,
+          confirmParams: {
+            return_url: `${window.location.origin}/checkout/order-confirmed`,
+          },
+        });
+        
+        if (error) {
+          console.error('Payment error:', error.message);
+          this.toastService.error('Payment failed: ' + error.message);
+          this.isLoading = false;
+          return;
+        }
+      } else {
+        // For non-card payments, redirect to confirmation
+        this.router.navigate(['/checkout/order-confirmed']);
       }
-      const { error } = await this.stripe.confirmPayment({
-        elements: this.elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/checkout/order-confirmed`,
-        },
-      });
-      // If Stripe handles a redirect, this code may not run; if it does, surface errors:
-      if (error) console.error(error.message);
+    } catch (error) {
+      console.error('Error placing order:', error);
+      this.toastService.error('Failed to place order. Please try again.');
       this.isLoading = false;
-      return;
     }
+  }
 
-    // (Optional) handle other methods e.g. PayPal
-    this.isLoading = false;
-    this.router.navigate(['/checkout/checkout-review']);
+  private createOrderRequest(): PlaceOrderRequestDto {
+    const cartItems = this.cartService.getCartItems();
+    const orderItems: OrderItemRequestDto[] = cartItems.map(item => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+      ...(item.size && { size: item.size }) // Only include size if it's defined
+    }));
+
+    const shippingAddressId = parseInt(localStorage.getItem('selectedShippingAddressId') || '0');
+    const deliveryInstructions = localStorage.getItem('deliveryInstructions') || '';
+
+    return {
+      orderItems,
+      shippingAddressId,
+      billingAddressId: shippingAddressId, // Using same address for billing
+      shippingCost: this.orderSummary.shipping,
+      discount: this.orderSummary.discount,
+      notes: deliveryInstructions
+    };
   }
 
   validateForm(): boolean {
