@@ -5,13 +5,13 @@ import { Router, RouterModule } from '@angular/router';
 import { OrderItem, ShippingAddress, PaymentMethod, ShippingInfo } from '../../models';
 
 @Component({
-  selector: 'app-checkout-review',
-  templateUrl: './checkout-review.component.html',
-  styleUrls: ['./checkout-review.component.scss'],
+  selector: 'order-confirmed',
+  templateUrl: './order-confirmed.component.html',
+  styleUrls: ['./order-confirmed.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule]
 })
-export class CheckoutReviewComponent implements OnInit {
+export class OrderConfirmedComponent implements OnInit {
   orderItems: OrderItem[] = [];
   shippingAddress: ShippingAddress = {
     firstName: '',

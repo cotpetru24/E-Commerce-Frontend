@@ -6,13 +6,13 @@ import { AddressData, OrderSummary } from '../../models';
 import { CartService } from '../../services/cart.service';
 
 @Component({
-  selector: 'app-address-form',
-  templateUrl: './address-form.component.html',
-  styleUrls: ['./address-form.component.scss'],
+  selector: 'shipping-address',
+  templateUrl: './shipping-address.component.html',
+  styleUrls: ['./shipping-address.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule]
 })
-export class AddressFormComponent implements OnInit {
+export class ShippingAddressComponent implements OnInit {
   addressData: AddressData = {
     firstName: '',
     lastName: '',
@@ -80,7 +80,7 @@ export class AddressFormComponent implements OnInit {
     setTimeout(() => {
       this.isLoading = false;
       // Navigate to payment method page
-      this.router.navigate(['/checkout/payment-method']);
+      this.router.navigate(['/checkout/payment']);
     }, 1000);
   }
 

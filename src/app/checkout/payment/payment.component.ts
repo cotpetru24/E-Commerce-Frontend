@@ -15,13 +15,13 @@ import { PaymentApiService } from '../../services/api/payment-api.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'app-payment-method',
-  templateUrl: './payment-method.component.html',
-  styleUrls: ['./payment-method.component.scss'],
+  selector: 'payment',
+  templateUrl: './payment.component.html',
+  styleUrls: ['./payment.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
 })
-export class PaymentMethodComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   private stripe: Stripe | null = null;
   private elements: StripeElements | null = null;
   private paymentElement: StripePaymentElement | null = null;
@@ -169,7 +169,7 @@ console.log('Container dimensions:', mountEl.getBoundingClientRect());
       const { error } = await this.stripe.confirmPayment({
         elements: this.elements,
         confirmParams: {
-          return_url: `${window.location.origin}/checkout/checkout-review`,
+          return_url: `${window.location.origin}/checkout/order-confirmed`,
         },
       });
       // If Stripe handles a redirect, this code may not run; if it does, surface errors:
@@ -185,15 +185,16 @@ console.log('Container dimensions:', mountEl.getBoundingClientRect());
 
   validateForm(): boolean {
     if (this.paymentData.method === 'card') {
-      if (
-        !this.paymentData.cardNumber ||
-        !this.paymentData.expiryDate ||
-        !this.paymentData.cvv ||
-        !this.paymentData.cardholderName
-      ) {
-        return false;
-      }
-    } else if (this.paymentData.method === 'paypal') {
+      // if (
+      //   !this.paymentData.cardNumber ||
+      //   !this.paymentData.expiryDate ||
+      //   !this.paymentData.cvv ||
+      //   !this.paymentData.cardholderName
+      // ) {
+      //   return false;
+      // }
+    } 
+    else if (this.paymentData.method === 'paypal') {
       if (!this.paymentData.paypalEmail) {
         return false;
       }

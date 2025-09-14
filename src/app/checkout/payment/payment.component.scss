@@ -10,24 +10,23 @@
   color: white;
   padding: 3rem 0;
   margin-bottom: 2rem;
-}
 
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
 
-.page-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
-}
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
 
-/* Container */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  .page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    color: #e0e0e0;
+  }
 }
 
 /* Checkout Layout */
