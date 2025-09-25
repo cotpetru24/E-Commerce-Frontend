@@ -1,24 +1,42 @@
-import { UserRole } from "./auth.dto";
-
 export interface UserDto {
   id: number;
-  role:UserRole;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: 'customer' | 'admin' | 'moderator';
+  isBlocked: boolean;
+  emailVerified: boolean;
+  createdAt: Date;
+  lastLoginAt?: Date;
+  orderCount?: number;
+}
+
+export interface UserProfileDto {
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
-  phone?: string;
-  address?: AddressDto;
-  isBlocked: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  joinDate: Date;
+  totalOrders: number;
+  completedOrders: number;
+  pendingOrders: number;
 }
 
+export interface UpdateUserProfileRequestDto {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
 
+export interface ChangePasswordRequestDto {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
 
-export interface AddressDto {
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
+export interface UserStatsDto {
+  totalOrders: number;
+  completedOrders: number;
+  pendingOrders: number;
+  totalSpent: number;
 }

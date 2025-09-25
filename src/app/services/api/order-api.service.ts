@@ -15,7 +15,7 @@ import {
   providedIn: 'root',
 })
 export class OrderApiService extends BaseApiService {
-  private readonly orderEndpoint = '/api/order';
+  private readonly orderEndpoint = '/api/Order';
 
   // ============================================================================
   // ORDER METHODS
@@ -53,8 +53,8 @@ export class OrderApiService extends BaseApiService {
   getOrders(request: GetOrdersRequestDto): Observable<GetOrdersResponseDto> {
     const url = this.buildUrl(this.orderEndpoint);
     const params = this.createParams({
-      page: request.page,
-      pageSize: request.pageSize,
+      Page: request.page,
+      PageSize: request.pageSize,
       ...(request.orderStatus && { orderStatus: request.orderStatus }),
       ...(request.fromDate && { fromDate: request.fromDate.toISOString() }),
       ...(request.toDate && { toDate: request.toDate.toISOString() }),

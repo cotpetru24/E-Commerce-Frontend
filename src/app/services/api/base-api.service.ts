@@ -39,7 +39,8 @@ export abstract class BaseApiService {
     } = {}
   ): Observable<T> {
     // need to add the logic for the related products
-    return this.http.get<T>(url, options).pipe(catchError(this.handleError));
+    const headers = options.headers ?? this.getAuthHeaders();
+    return this.http.get<T>(url, {...options, headers}).pipe(catchError(this.handleError));
   }
 
   /**

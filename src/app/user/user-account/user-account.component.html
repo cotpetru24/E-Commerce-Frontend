@@ -1,25 +1,30 @@
 <div class="container mt-4">
-  <div class="row">
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading your account...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && userProfile" class="row">
     <div class="col-lg-3">
       <!-- User Profile Card -->
       <div class="card shadow-sm mb-4">
         <div class="card-body text-center">
           <div class="mb-3">
             <div class="position-relative d-inline-block">
-              <img [src]="userProfile.avatar || 'assets/images/default-avatar.png'" 
-                   alt="Profile Picture" 
-                   class="rounded-circle" 
-                   style="width: 100px; height: 100px; object-fit: cover;">
-              <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0" 
-                      (click)="editProfilePicture()">
-                <i class="bi bi-camera"></i>
-              </button>
+              <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" 
+                   style="width: 100px; height: 100px;">
+                <i class="bi bi-person-fill text-white" style="font-size: 2rem;"></i>
+              </div>
             </div>
           </div>
           <h5 class="card-title">{{ userProfile.firstName }} {{ userProfile.lastName }}</h5>
           <p class="text-muted">{{ userProfile.email }}</p>
           <div class="badge bg-success mb-2">Member since {{ userProfile.joinDate | date:'MMM yyyy' }}</div>
-          <button class="btn btn-outline-primary btn-sm" (click)="editProfile()">
+          <button class="btn btn-outline-primary btn-sm" (click)="startEditing()" *ngIf="!isEditing">
             <i class="bi bi-pencil me-2"></i>Edit Profile
           </button>
         </div>
@@ -34,38 +39,14 @@
         </div>
         <div class="list-group list-group-flush">
           <a class="list-group-item list-group-item-action" 
-             [routerLink]="['/account']" 
+             [routerLink]="['/user']" 
              routerLinkActive="active">
             <i class="bi bi-person me-2"></i>Profile
           </a>
           <a class="list-group-item list-group-item-action" 
-             [routerLink]="['/account/orders']" 
+             [routerLink]="['/user/orders']" 
              routerLinkActive="active">
             <i class="bi bi-bag me-2"></i>My Orders
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [routerLink]="['/account/wishlist']" 
-             routerLinkActive="active">
-            <i class="bi bi-heart me-2"></i>Wishlist
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [routerLink]="['/account/addresses']" 
-             routerLinkActive="active">
-            <i class="bi bi-geo-alt me-2"></i>Addresses
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [routerLink]="['/account/payment-methods']" 
-             routerLinkActive="active">
-            <i class="bi bi-credit-card me-2"></i>Payment Methods
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [routerLink]="['/account/settings']" 
-             routerLinkActive="active">
-            <i class="bi bi-gear me-2"></i>Settings
-          </a>
-          <a class="list-group-item list-group-item-action text-danger" 
-             (click)="logout()">
-            <i class="bi bi-box-arrow-right me-2"></i>Logout
           </a>
         </div>
       </div>
@@ -83,26 +64,26 @@
           <div class="row">
             <div class="col-md-3 mb-3">
               <div class="text-center">
-                <div class="h3 text-primary">{{ accountStats.totalOrders }}</div>
+                <div class="h3 text-primary">{{ userStats?.totalOrders || 0 }}</div>
                 <small class="text-muted">Total Orders</small>
               </div>
             </div>
             <div class="col-md-3 mb-3">
               <div class="text-center">
-                <div class="h3 text-success">{{ accountStats.completedOrders }}</div>
+                <div class="h3 text-success">{{ userStats?.completedOrders || 0 }}</div>
                 <small class="text-muted">Completed</small>
               </div>
             </div>
             <div class="col-md-3 mb-3">
               <div class="text-center">
-                <div class="h3 text-warning">{{ accountStats.pendingOrders }}</div>
+                <div class="h3 text-warning">{{ userStats?.pendingOrders || 0 }}</div>
                 <small class="text-muted">Pending</small>
               </div>
             </div>
             <div class="col-md-3 mb-3">
               <div class="text-center">
-                <div class="h3 text-info">{{ accountStats.wishlistItems }}</div>
-                <small class="text-muted">Wishlist Items</small>
+                <div class="h3 text-info">£{{ userStats?.totalSpent || 0 | number:'1.2-2' }}</div>
+                <small class="text-muted">Total Spent</small>
               </div>
             </div>
           </div>
@@ -115,7 +96,7 @@
           <h5 class="mb-0">
             <i class="bi bi-clock-history me-2"></i>Recent Orders
           </h5>
-          <a routerLink="/account/orders" class="btn btn-outline-primary btn-sm">
+          <a routerLink="/user/orders" class="btn btn-outline-primary btn-sm">
             View All
           </a>
         </div>
@@ -132,24 +113,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let order of recentOrders">
-                  <td>
-                    <strong>#{{ order.orderId }}</strong>
-                  </td>
-                  <td>{{ order.orderDate | date:'MMM dd, yyyy' }}</td>
-                  <td>
-                    <span class="badge" [ngClass]="getStatusBadgeClass(order.status)">
-                      {{ order.status }}
-                    </span>
-                  </td>
-                  <td>£{{ order.total | number:'1.2-2' }}</td>
-                  <td>
-                    <button class="btn btn-outline-primary btn-sm" (click)="viewOrder(order.orderId)">
-                      <i class="bi bi-eye"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr *ngIf="recentOrders.length === 0">
+                <tr *ngIf="userProfile && userProfile.totalOrders === 0">
                   <td colspan="5" class="text-center text-muted">
                     <i class="bi bi-bag-x display-6"></i>
                     <p class="mt-2">No orders yet</p>
@@ -158,9 +122,83 @@
                     </a>
                   </td>
                 </tr>
+                <tr *ngIf="userProfile && userProfile.totalOrders > 0">
+                  <td colspan="5" class="text-center text-muted">
+                    <p class="mt-2">You have {{ userProfile.totalOrders }} order(s)</p>
+                    <a routerLink="/user/orders" class="btn btn-primary btn-sm">
+                      View All Orders
+                    </a>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      <!-- Profile Edit Form -->
+      <div class="card shadow-sm mb-4" *ngIf="isEditing">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="bi bi-pencil me-2"></i>Edit Profile
+          </h5>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="saveProfile()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstName" 
+                       [(ngModel)]="editForm.firstName" name="firstName" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastName" 
+                       [(ngModel)]="editForm.lastName" name="lastName" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" 
+                     [(ngModel)]="editForm.email" name="email" required>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelEditing()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Change Password Form -->
+      <div class="card shadow-sm mb-4" *ngIf="isChangingPassword">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="bi bi-shield-lock me-2"></i>Change Password
+          </h5>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="savePassword()">
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Current Password</label>
+              <input type="password" class="form-control" id="currentPassword" 
+                     [(ngModel)]="passwordForm.currentPassword" name="currentPassword" required>
+            </div>
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="newPassword" 
+                     [(ngModel)]="passwordForm.newPassword" name="newPassword" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm New Password</label>
+              <input type="password" class="form-control" id="confirmPassword" 
+                     [(ngModel)]="passwordForm.confirmPassword" name="confirmPassword" required>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Change Password</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="cancelChangingPassword()">Cancel</button>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -177,9 +215,9 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h6 class="mb-1">Password</h6>
-                  <small class="text-muted">Last changed: {{ userProfile.lastPasswordChange | date:'MMM dd, yyyy' }}</small>
+                  <small class="text-muted">Click to change your password</small>
                 </div>
-                <button class="btn btn-outline-primary btn-sm" (click)="changePassword()">
+                <button class="btn btn-outline-primary btn-sm" (click)="startChangingPassword()" *ngIf="!isChangingPassword">
                   Change
                 </button>
               </div>
@@ -187,13 +225,11 @@
             <div class="col-md-6 mb-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 class="mb-1">Two-Factor Authentication</h6>
-                  <small class="text-muted" [ngClass]="{'text-success': userProfile.twoFactorEnabled, 'text-danger': !userProfile.twoFactorEnabled}">
-                    {{ userProfile.twoFactorEnabled ? 'Enabled' : 'Disabled' }}
-                  </small>
+                  <h6 class="mb-1">Account Actions</h6>
+                  <small class="text-muted">Manage your account</small>
                 </div>
-                <button class="btn btn-outline-primary btn-sm" (click)="toggleTwoFactor()">
-                  {{ userProfile.twoFactorEnabled ? 'Disable' : 'Enable' }}
+                <button class="btn btn-outline-primary btn-sm" (click)="viewOrders()">
+                  View Orders
                 </button>
               </div>
             </div>

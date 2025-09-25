@@ -1,19 +1,59 @@
 /* User Orders Component Styles */
 
+
+
+.container {
+  display: flex;
+    flex: 1 1 auto;    /* full viewport height */
+
+  flex-direction: column;  /* stack children vertically */
+}
+
+.row.flex-fill {
+  flex: 1 1 auto;          /* row takes remaining space */
+}
+
+.col-12.d-flex {
+  display: flex;
+  flex-direction: column;  /* card inside can stretch */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .card {
   border: none;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   border-radius: 0.5rem;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
 }
-
 .card-header {
   background-color: #f8f9fa;
   border-bottom: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.5rem 0.5rem 0 0 !important;
+  
+}
+.row {
+  flex: 1 1 auto; /* allow row to grow */
 }
 
 .table {
-  margin-bottom: 0;
+  // margin-bottom: 0;
+  border-radius: 8;
 }
 
 .table th {
