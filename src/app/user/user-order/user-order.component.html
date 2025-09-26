@@ -1,11 +1,19 @@
-<div class="checkout-container">
+<div class="checkout-container pb-5">
+  @if(isNewOrder)
+  {
+  <div class="alert alert-success text-center" role="alert">
+    <h2 class="text-center my-4">Thank you for your order!</h2>
+    <p class="text-center mb-4">Your order has been placed successfully. You can view your order details below.</p>
+  </div>
+  }
+
   <!-- Page Header -->
   <div class="page-header">
     <div class="container">
       <h1 class="page-title">
-        <i class="bi bi-clipboard-check me-2"></i>Review Your Order
+        <i class="bi bi-clipboard-check me-2"></i>Order ref. {{ orderId }}
       </h1>
-      <p class="page-subtitle">Final step before completing your purchase</p>
+      <p class="page-subtitle">{{orderStatus}}</p>
     </div>
   </div>
 
@@ -15,24 +23,14 @@
       <div class="checkout-main">
         <!-- Order Items -->
         <div class="review-card">
-          <div class="review-header">
-            <div class="step-indicator">
-              <span class="step-number">3</span>
-              <span class="step-label">Order Review</span>
-            </div>
-            <div class="step-status">
-              <i class="bi bi-shield-check text-success"></i>
-              <span class="text-muted">Final Review</span>
-            </div>
-          </div>
 
           <div class="review-content">
             <div class="review-section">
               <h3 class="section-title">
                 <i class="bi bi-bag me-2"></i>Order Items
               </h3>
-              <div class="order-items">
-                <div class="order-item" *ngFor="let item of orderItems">
+              <div class="order-items" *ngIf="orderItems.length > 0">
+                <div class="order-item" *ngFor="let item of orderItems" (click)="goToItem(item.product.id)">
                   <div class="item-image">
                     <img [src]="'/assets/'+item.product.imagePath" [alt]="item.product.name" />
                   </div>
@@ -59,16 +57,13 @@
               <div class="address-card">
                 <div class="address-content">
                   <div class="address-info">
-                    <p class="address-name"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName }}</strong></p>
+                    <p class="address-name"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName
+                        }}</strong></p>
                     <p class="address-line">{{ shippingAddress.address }}</p>
-                    <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.state }} {{ shippingAddress.zipCode }}</p>
+                    <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.state }} {{
+                      shippingAddress.zipCode }}</p>
                     <p class="address-line">{{ shippingAddress.country }}</p>
                     <p class="address-phone">{{ shippingAddress.phone }}</p>
-                  </div>
-                  <div class="address-actions">
-                    <button class="btn btn-outline-primary btn-sm" (click)="editShippingAddress()">
-                      <i class="bi bi-pencil me-1"></i>Edit
-                    </button>
                   </div>
                 </div>
               </div>
@@ -91,11 +86,6 @@
                       <p class="payment-type"><strong>PayPal</strong></p>
                       <p class="payment-details">{{ paymentMethod.paypalEmail }}</p>
                     </div>
-                  </div>
-                  <div class="payment-actions">
-                    <button class="btn btn-outline-primary btn-sm" (click)="editPaymentMethod()">
-                      <i class="bi bi-pencil me-1"></i>Edit
-                    </button>
                   </div>
                 </div>
               </div>
@@ -148,49 +138,24 @@
           </div>
         </div>
 
-        <!-- Terms and Conditions -->
-        <div class="terms-card">
-          <div class="form-check">
-            <input 
-              type="checkbox" 
-              class="form-check-input" 
-              id="acceptTerms"
-              [(ngModel)]="acceptTerms"
-              required
-            >
-            <label class="form-check-label" for="acceptTerms">
-              I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
-            </label>
-          </div>
-        </div>
 
         <!-- Place Order Button -->
         <div class="order-actions">
-          <button 
-            class="btn btn-primary btn-lg w-100"
-            (click)="placeOrder()"
-            [disabled]="!acceptTerms || isLoading"
-          >
+          @if (canCancel)
+          {
+          <button class="btn btn-primary btn-lg w-100" (click)="cancelOrder()" [disabled]="isLoading">
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-            <i class="bi bi-check-circle me-2" *ngIf="!isLoading"></i>
-            {{ isLoading ? 'Processing...' : 'Place Order' }}
+            <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
+            {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}
           </button>
-          
+          }
+
+
           <button class="btn btn-outline-secondary w-100 mt-2" (click)="goBack()">
             <i class="bi bi-arrow-left me-2"></i>Back
           </button>
         </div>
 
-        <!-- Security Notice -->
-        <div class="security-notice">
-          <div class="security-icon">
-            <i class="bi bi-shield-lock"></i>
-          </div>
-          <div class="security-text">
-            <h4>Secure Checkout</h4>
-            <p>Your payment information is secure and encrypted</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>

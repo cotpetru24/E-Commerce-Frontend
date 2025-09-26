@@ -77,7 +77,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('Initializing Stripe...');
       this.stripeError = null;
       
-      const publishableKey = environment.stripePublishableKey;
+      // const publishableKey = environment.stripePublishableKey;
+      const publishableKey = 'environment.stripePublishableKey';
       if (!publishableKey) {
         this.stripeError = 'Stripe publishable key is missing';
         console.error('Stripe publishable key is missing');

@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { OrderItem, ShippingAddress, PaymentMethod, ShippingInfo } from '../../models';
+import { OrderItem, PaymentMethod, ShippingAddress, ShippingInfo } from '../../models';
+import { ToastService } from '../../services/toast.service';
+import { OrderApiService } from '../../services/api';
 
 @Component({
-  selector: 'order-confirmed',
-  templateUrl: './order-confirmed.component.html',
-  styleUrls: ['./order-confirmed.component.scss'],
+  selector: 'app-user-order',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, RouterModule, FormsModule],
+  templateUrl: './user-order.component.html',
+  styleUrl: './user-order.component.scss'
 })
-export class OrderConfirmedComponent implements OnInit {
+
+
+export class UserOrderComponent implements OnInit {
   orderItems: OrderItem[] = [];
   shippingAddress: ShippingAddress = {
     firstName: '',
@@ -32,12 +36,21 @@ export class OrderConfirmedComponent implements OnInit {
   };
   acceptTerms: boolean = false;
   isLoading: boolean = false;
+  canCancel: boolean  = true;
+  orderId: string = 'ORD123456'; 
+  orderStatus: string = 'Processing'; 
+  isNewOrder: boolean = true;
 
-  constructor(private router: Router) {}
 
+  constructor(
+    private router: Router,
+    private toastService: ToastService,
+    private orderApiService: OrderApiService
+  ) {}
   ngOnInit(): void {
     // Load order data from service or route parameters
     this.loadOrderData();
+    this.orderConfirmed();
   }
 
   loadOrderData(): void {
@@ -111,20 +124,8 @@ export class OrderConfirmedComponent implements OnInit {
     return this.getSubtotal() + this.getShippingCost() - this.getDiscount();
   }
 
-  editShippingAddress(): void {
-    // Navigate to shipping address edit page
-    this.router.navigate(['/checkout/addressForm']);
-  }
+  cancelOrder(): void {
 
-  editPaymentMethod(): void {
-    // Navigate to payment method edit page
-    this.router.navigate(['/checkout/payment-method']);
-  }
-
-  placeOrder(): void {
-    if (!this.acceptTerms) {
-      return;
-    }
 
     this.isLoading = true;
 
@@ -132,11 +133,22 @@ export class OrderConfirmedComponent implements OnInit {
     setTimeout(() => {
       this.isLoading = false;
       // Navigate to order confirmation (you'll need to add this route)
-      this.router.navigate(['/checkout/confirmation']);
+      this.router.navigate(['/user/order/1']);
     }, 2000);
   }
 
   goBack(): void {
-    this.router.navigate(['/checkout/payment-method']);
+    this.router.navigate(['/user']);
   }
+
+  goToItem(productId: number): void {
+    this.router.navigate(['/product', productId]);
+  }
+
+  orderConfirmed(): void {
+    if (this.isNewOrder) {
+      this.toastService.success('Thank you for your order!\nYour order has been placed successfully!', 5000);
+      this.isNewOrder = false; // Prevent multiple toasts
+    }
+}
 }
