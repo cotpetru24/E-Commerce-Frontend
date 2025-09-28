@@ -8,8 +8,10 @@ import { NgModule } from "@angular/core";
 
 const routes : Routes=[
     {path: '', component: UserAccountComponent},
-    {path: 'order/:id', component: UserOrderComponent},
+    // {path: 'order/:id', component: UserOrderComponent},
+    { path: 'order/:id', loadComponent: () => import('./user-order/user-order.component').then(m => m.UserOrderComponent) },
     {path:'orders', component: UserOrdersComponent}
+
 ];
 
 @NgModule({

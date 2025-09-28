@@ -2,21 +2,29 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { OrderItem, PaymentMethod, ShippingAddress, ShippingInfo } from '../../models';
+import {
+  OrderDto,
+  OrderItem,
+  OrderItemDto,
+  PaymentMethod,
+  ShippingAddress,
+  ShippingInfo,
+} from '../../models';
 import { ToastService } from '../../services/toast.service';
 import { OrderApiService } from '../../services/api';
+import { ActivatedRoute } from '@angular/router';
+import { number } from 'zod';
 
 @Component({
   selector: 'app-user-order',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './user-order.component.html',
-  styleUrl: './user-order.component.scss'
+  styleUrl: './user-order.component.scss',
 })
-
-
 export class UserOrderComponent implements OnInit {
-  orderItems: OrderItem[] = [];
+  order: OrderDto | null = null;
+  orderItems: OrderItemDto[] = [];
   shippingAddress: ShippingAddress = {
     firstName: '',
     lastName: '',
@@ -25,60 +33,52 @@ export class UserOrderComponent implements OnInit {
     state: '',
     zipCode: '',
     country: '',
-    phone: ''
+    phone: '',
   };
   paymentMethod: PaymentMethod = {
-    method: 'card'
+    method: 'card',
   };
   shippingInfo: ShippingInfo = {
     method: 'Standard Shipping',
-    estimatedDelivery: '3-5 business days'
+    estimatedDelivery: '3-5 business days',
   };
   acceptTerms: boolean = false;
   isLoading: boolean = false;
-  canCancel: boolean  = true;
-  orderId: string = 'ORD123456'; 
-  orderStatus: string = 'Processing'; 
-  isNewOrder: boolean = true;
-
+  canCancel: boolean = true;
+  orderId: number | null = null;
+  orderStatus: string = 'Processing';
+  isNewOrder: boolean = false;
 
   constructor(
     private router: Router,
     private toastService: ToastService,
-    private orderApiService: OrderApiService
+    private orderApiService: OrderApiService,
+    private route: ActivatedRoute
   ) {}
   ngOnInit(): void {
     // Load order data from service or route parameters
+    const isNewOrderParam = this.route.snapshot.queryParamMap.get('isNewOrder');
+    this.isNewOrder = isNewOrderParam === 'true';
+    this.orderId = Number(this.route.snapshot.paramMap.get('id'));
+
     this.loadOrderData();
     this.orderConfirmed();
   }
 
   loadOrderData(): void {
     // Mock data - replace with actual service call
-    this.orderItems = [
-      {
-        product: {
-          id: 1,
-          name: 'Premium Cotton T-Shirt',
-          brandName: 'Fashion Brand',
-          imagePath: '/assets/images/product1.jpg',
-          price: 29.99
-        },
-        quantity: 2,
-        size: 'M'
+
+    this.orderApiService.getOrder(this.orderId!).subscribe({
+      next: (order) => {
+        this.order = order;
+        this.orderItems = order.orderItems;
+        this.orderStatus = order.orderStatusName!;
+        this.canCancel =
+          order.orderStatusName !== 'Cancelled' &&
+          order.orderStatusName !== 'Refunded' &&
+          order.orderStatusName !== 'Returned';
       },
-      {
-        product: {
-          id: 2,
-          name: 'Denim Jeans',
-          brandName: 'Denim Co.',
-          imagePath: '/assets/images/product2.jpg',
-          price: 79.99
-        },
-        quantity: 1,
-        size: '32'
-      }
-    ];
+    });
 
     this.shippingAddress = {
       firstName: 'John',
@@ -88,18 +88,18 @@ export class UserOrderComponent implements OnInit {
       state: 'England',
       zipCode: 'SW1A 1AA',
       country: 'United Kingdom',
-      phone: '+44 20 1234 5678'
+      phone: '+44 20 1234 5678',
     };
 
     this.paymentMethod = {
       method: 'card',
       cardNumber: '1234567890123456',
-      cardholderName: 'John Doe'
+      cardholderName: 'John Doe',
     };
   }
 
-  getItemTotal(item: OrderItem): number {
-    return item.product.price * item.quantity;
+  getItemTotal(item: OrderItemDto): number {
+    return item.productPrice * item.quantity;
   }
 
   getTotalItems(): number {
@@ -107,7 +107,10 @@ export class UserOrderComponent implements OnInit {
   }
 
   getSubtotal(): number {
-    return this.orderItems.reduce((total, item) => total + this.getItemTotal(item), 0);
+    return this.orderItems.reduce(
+      (total, item) => total + this.getItemTotal(item),
+      0
+    );
   }
 
   getShippingCost(): number {
@@ -125,16 +128,24 @@ export class UserOrderComponent implements OnInit {
   }
 
   cancelOrder(): void {
-
-
     this.isLoading = true;
 
-    // Simulate API call
-    setTimeout(() => {
-      this.isLoading = false;
-      // Navigate to order confirmation (you'll need to add this route)
-      this.router.navigate(['/user/order/1']);
-    }, 2000);
+    this.orderApiService.cancelOrder(this.orderId!).subscribe({
+      next: (response) => {
+        this.orderStatus = response.orderStatusName!; // comes from OrderDto
+        this.canCancel = false;
+        this.toastService.success('Order cancelled successfully!');
+        this.isLoading = false;
+      },
+      error: (err) => {
+        if (err.status === 404) {
+          this.toastService.warning('Order not found or cannot be cancelled.');
+        } else {
+          this.toastService.error('Failed to cancel order.');
+        }
+        this.isLoading = false;
+      },
+    });
   }
 
   goBack(): void {
@@ -142,13 +153,20 @@ export class UserOrderComponent implements OnInit {
   }
 
   goToItem(productId: number): void {
-    this.router.navigate(['/product', productId]);
+    this.router.navigate(['/products/details', productId]);
   }
 
   orderConfirmed(): void {
     if (this.isNewOrder) {
-      this.toastService.success('Thank you for your order!\nYour order has been placed successfully!', 5000);
+      this.toastService.success(
+        'Thank you for your order!\nYour order has been placed successfully!',
+        5000
+      );
       this.isNewOrder = false; // Prevent multiple toasts
     }
-}
+  }
+
+  navMyOrders(): void {
+    this.router.navigate(['/user/orders']);
+  }
 }

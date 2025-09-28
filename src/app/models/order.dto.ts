@@ -12,6 +12,8 @@ export interface OrderItemDto {
   quantity: number;
   size?: string;
   createdAt?: Date;
+  imagePath: string;
+  brandName: string;
 }
 
 export interface OrderDto {

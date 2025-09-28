@@ -2,7 +2,13 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { PaymentData, OrderSummary, PlaceOrderRequestDto, OrderItemRequestDto } from '../../models';
+import {
+  PaymentData,
+  OrderSummary,
+  PlaceOrderRequestDto,
+  OrderItemRequestDto,
+  PlaceOrderResponseDto,
+} from '../../models';
 import { CartService } from '../../services/cart.service';
 import {
   loadStripe,
@@ -27,6 +33,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   private stripe: Stripe | null = null;
   private elements: StripeElements | null = null;
   private paymentElement: StripePaymentElement | null = null;
+  private orderResponse: PlaceOrderResponseDto | null = null;
   paymentData: PaymentData = {
     method: 'card',
     cardNumber: '',
@@ -76,9 +83,9 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       console.log('Initializing Stripe...');
       this.stripeError = null;
-      
-      // const publishableKey = environment.stripePublishableKey;
-      const publishableKey = 'environment.stripePublishableKey';
+
+      const publishableKey = environment.stripePublishableKey;
+      // const publishableKey = 'environment.stripePublishableKey';
       if (!publishableKey) {
         this.stripeError = 'Stripe publishable key is missing';
         console.error('Stripe publishable key is missing');
@@ -102,8 +109,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       );
 
       if (!clientSecret) {
-        this.stripeError = 'Missing clientSecret from /api/create-payment-intent response';
-        console.error('Missing clientSecret from /api/create-payment-intent response');
+        this.stripeError =
+          'Missing clientSecret from /api/create-payment-intent response';
+        console.error(
+          'Missing clientSecret from /api/create-payment-intent response'
+        );
         return;
       }
 
@@ -121,10 +131,10 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.elements = this.stripe.elements({ clientSecret });
       this.paymentElement = this.elements.create('payment');
-      
+
       console.log('Payment element created, mounting...');
       this.paymentElement.mount('#payment-element');
-      
+
       // Remove loading text after mounting
       const mountEl2 = document.querySelector('#payment-element');
       if (mountEl2) {
@@ -134,16 +144,14 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
 
+      console.log(
+        'Mount element found:',
+        document.querySelector('#payment-element')
+      );
+      console.log('Stripe Elements object:', this.elements);
+      console.log('Payment Element object:', this.paymentElement);
+      console.log('Container dimensions:', mountEl.getBoundingClientRect());
 
-
-console.log('Mount element found:', document.querySelector('#payment-element'));
-console.log('Stripe Elements object:', this.elements);
-console.log('Payment Element object:', this.paymentElement);
-console.log('Container dimensions:', mountEl.getBoundingClientRect());
-
-
-
-      
       console.log('Stripe Elements mounted successfully');
       this.isStripeInitialized = true;
     } catch (e) {
@@ -169,36 +177,55 @@ console.log('Container dimensions:', mountEl.getBoundingClientRect());
     try {
       // First, place the order
       const orderRequest = this.createOrderRequest();
-      const orderResponse = await firstValueFrom(this.orderApiService.placeOrder(orderRequest));
-      
+      this.orderResponse = await firstValueFrom(
+        this.orderApiService.placeOrder(orderRequest)
+      );
+
       this.toastService.success('Order placed successfully!');
-      
+
       // Store order ID for confirmation page
-      localStorage.setItem('lastOrderId', orderResponse.orderId.toString());
-      
+      localStorage.setItem(
+        'lastOrderId',
+        this.orderResponse.orderId.toString()
+      );
+
       if (this.paymentData.method === 'card') {
         if (!this.stripe || !this.elements) {
           this.isLoading = false;
           return;
         }
-        
+
         // Process payment with Stripe
-        const { error } = await this.stripe.confirmPayment({
+        const { error, paymentIntent } = await this.stripe.confirmPayment({
           elements: this.elements,
           confirmParams: {
-            return_url: `${window.location.origin}/checkout/order-confirmed`,
+            // return_url: `${window.location.origin}/user/order/${orderResponse.orderId}?isNewOrder=true`,
           },
+          redirect: 'if_required',
         });
-        
-        if (error) {
+
+        if (paymentIntent && paymentIntent.status === 'succeeded' && !error) {
+          this.cartService.clearCart();
+          this.isLoading = false;
+          this.router.navigate(['/user/order', this.orderResponse!.orderId], {
+            queryParams: { isNewOrder: true },
+          });
+        }
+        else if (error) {
+          {
           console.error('Payment error:', error.message);
           this.toastService.error('Payment failed: ' + error.message);
           this.isLoading = false;
           return;
+          }
         }
       } else {
         // For non-card payments, redirect to confirmation
-        this.router.navigate(['/checkout/order-confirmed']);
+
+        // this.router.navigate(['/checkout/order-confirmed']);
+        this.router.navigate(['/user/order', this.orderResponse.orderId], {
+          queryParams: { isNewOrder: true },
+        });
       }
     } catch (error) {
       console.error('Error placing order:', error);
@@ -209,14 +236,17 @@ console.log('Container dimensions:', mountEl.getBoundingClientRect());
 
   private createOrderRequest(): PlaceOrderRequestDto {
     const cartItems = this.cartService.getCartItems();
-    const orderItems: OrderItemRequestDto[] = cartItems.map(item => ({
+    const orderItems: OrderItemRequestDto[] = cartItems.map((item) => ({
       productId: item.product.id,
       quantity: item.quantity,
-      ...(item.size && { size: item.size }) // Only include size if it's defined
+      ...(item.size && { size: item.size }), // Only include size if it's defined
     }));
 
-    const shippingAddressId = parseInt(localStorage.getItem('selectedShippingAddressId') || '0');
-    const deliveryInstructions = localStorage.getItem('deliveryInstructions') || '';
+    const shippingAddressId = parseInt(
+      localStorage.getItem('selectedShippingAddressId') || '0'
+    );
+    const deliveryInstructions =
+      localStorage.getItem('deliveryInstructions') || '';
 
     return {
       orderItems,
@@ -224,7 +254,7 @@ console.log('Container dimensions:', mountEl.getBoundingClientRect());
       billingAddressId: shippingAddressId, // Using same address for billing
       shippingCost: this.orderSummary.shipping,
       discount: this.orderSummary.discount,
-      notes: deliveryInstructions
+      notes: deliveryInstructions,
     };
   }
 
@@ -238,8 +268,7 @@ console.log('Container dimensions:', mountEl.getBoundingClientRect());
       // ) {
       //   return false;
       // }
-    } 
-    else if (this.paymentData.method === 'paypal') {
+    } else if (this.paymentData.method === 'paypal') {
       if (!this.paymentData.paypalEmail) {
         return false;
       }
@@ -287,7 +316,7 @@ console.log('Container dimensions:', mountEl.getBoundingClientRect());
       if (this.elements) {
         this.elements = null;
       }
-      
+
       // Re-initialize Stripe Elements
       setTimeout(() => {
         this.initializeStripe();

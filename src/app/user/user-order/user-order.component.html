@@ -1,11 +1,11 @@
 <div class="checkout-container pb-5">
-  @if(isNewOrder)
+  <!-- @if(isNewOrder)
   {
   <div class="alert alert-success text-center" role="alert">
     <h2 class="text-center my-4">Thank you for your order!</h2>
     <p class="text-center mb-4">Your order has been placed successfully. You can view your order details below.</p>
   </div>
-  }
+  } -->
 
   <!-- Page Header -->
   <div class="page-header">
@@ -30,13 +30,13 @@
                 <i class="bi bi-bag me-2"></i>Order Items
               </h3>
               <div class="order-items" *ngIf="orderItems.length > 0">
-                <div class="order-item" *ngFor="let item of orderItems" (click)="goToItem(item.product.id)">
+                <div class="order-item" *ngFor="let item of orderItems" (click)="goToItem(item.productId!)">
                   <div class="item-image">
-                    <img [src]="'/assets/'+item.product.imagePath" [alt]="item.product.name" />
+                    <img [src]="'/assets/'+item.imagePath" [alt]="item.productName" title="productName">
                   </div>
                   <div class="item-details">
-                    <h4 class="item-name">{{ item.product.name }}</h4>
-                    <p class="item-brand">{{ item.product.brandName }}</p>
+                    <h4 class="item-name">{{ item.productName }}</h4>
+                    <p class="item-brand">{{ item.brandName }}</p>
                     <div class="item-meta">
                       <span class="item-size" *ngIf="item.size">Size: {{ item.size }}</span>
                       <span class="item-quantity">Qty: {{ item.quantity }}</span>
@@ -141,9 +141,15 @@
 
         <!-- Place Order Button -->
         <div class="order-actions">
-          @if (canCancel)
+
+          <button class="btn btn-primary btn-lg w-100" (click)="navMyOrders()" [disabled]="isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
+            My Orders
+          </button>
+                    @if (canCancel)
           {
-          <button class="btn btn-primary btn-lg w-100" (click)="cancelOrder()" [disabled]="isLoading">
+          <button class="btn btn-outline-secondary w-100 mt-2" (click)="cancelOrder()" [disabled]="isLoading">
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
             <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
             {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}

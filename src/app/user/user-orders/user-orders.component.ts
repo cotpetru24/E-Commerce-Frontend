@@ -88,6 +88,10 @@ export class UserOrdersComponent implements OnInit {
 
   viewOrderDetails(orderId: number) {
     this.router.navigate(['/account/orders', orderId]);
+
+            this.router.navigate(['/user/order', orderId], {
+          queryParams: { isNewOrder: false },
+        });
   }
 
   reorder(order: OrderDto) {
@@ -96,12 +100,27 @@ export class UserOrdersComponent implements OnInit {
     this.router.navigate(['/cart']);
   }
 
-  cancelOrder(order: OrderDto) {
-    if (confirm('Are you sure you want to cancel this order?')) {
-      // Implement cancel order functionality
-      this.toastService.success('Order cancelled successfully!');
-      this.loadOrders(); // Reload orders
-    }
+
+
+    cancelOrder(order: OrderDto): void {
+    this.isLoading = true;
+
+    this.orderApiService.cancelOrder(order.id).subscribe({
+      next: (response) => {
+        order.orderStatusName = response.orderStatusName!;
+        order.orderStatusId = response.orderStatusId! // comes from OrderDto
+        this.toastService.success('Order cancelled successfully!');
+        this.isLoading = false;
+      },
+      error: (err) => {
+        if (err.status === 404) {
+          this.toastService.warning('Order not found or cannot be cancelled.');
+        } else {
+          this.toastService.error('Failed to cancel order.');
+        }
+        this.isLoading = false;
+      },
+    });
   }
 
   getItemCount(order: OrderDto): number {

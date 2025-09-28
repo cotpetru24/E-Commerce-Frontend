@@ -124,6 +124,16 @@ export class OrderApiService extends BaseApiService {
       );
   }
 
+    cancelOrder(orderId: number): Observable<OrderDto> {
+    const url = this.buildUrl(`${this.orderEndpoint}/cancel-order/${orderId}`);
+    this.logRequest('PUT', url);
+    
+    return this.put<OrderDto>(url, null)
+      .pipe(
+        tap(response => this.logResponse('PUT', url, response))
+      );
+  }
+
   /**
    * Delete a shipping address
    */
