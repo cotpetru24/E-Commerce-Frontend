@@ -3,31 +3,38 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../services/toast.service';
 import { OrderApiService } from '../../services/api/order-api.service';
-import { OrderDto, GetOrdersRequestDto, GetOrdersResponseDto } from '../../models/order.dto';
+import {
+  OrderDto,
+  GetOrdersRequestDto,
+  GetOrdersResponseDto,
+} from '../../models/order.dto';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 
 @Component({
   selector: 'app-user-orders',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './user-orders.component.html',
-  styleUrl: './user-orders.component.scss'
+  styleUrl: './user-orders.component.scss',
 })
 export class UserOrdersComponent implements OnInit {
   currentFilter = 'all';
   selectedOrder: OrderDto | null = null;
-  
+
   allOrders: OrderDto[] = [];
   filteredOrders: OrderDto[] = [];
   isLoading = false;
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 100;
   totalPages = 0;
   totalCount = 0;
 
   constructor(
     private router: Router,
     private toastService: ToastService,
-    private orderApiService: OrderApiService
+    private orderApiService: OrderApiService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit() {
@@ -45,11 +52,11 @@ export class UserOrdersComponent implements OnInit {
     }
 
     this.isLoading = true;
-    
+
     const request: GetOrdersRequestDto = {
       page: this.currentPage,
       pageSize: this.pageSize,
-      ...(this.currentFilter !== 'all' && { orderStatus: this.currentFilter })
+      ...(this.currentFilter !== 'all' && { orderStatus: this.currentFilter }),
     };
 
     this.orderApiService.getOrders(request).subscribe({
@@ -64,7 +71,7 @@ export class UserOrdersComponent implements OnInit {
         console.error('Error loading orders:', error);
         this.toastService.error('Failed to load orders');
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -82,16 +89,18 @@ export class UserOrdersComponent implements OnInit {
   trackOrder(order: OrderDto) {
     this.selectedOrder = order;
     // Show tracking modal using Bootstrap
-    const modal = new (window as any).bootstrap.Modal(document.getElementById('trackingModal'));
+    const modal = new (window as any).bootstrap.Modal(
+      document.getElementById('trackingModal')
+    );
     modal.show();
   }
 
   viewOrderDetails(orderId: number) {
     this.router.navigate(['/account/orders', orderId]);
 
-            this.router.navigate(['/user/order', orderId], {
-          queryParams: { isNewOrder: false },
-        });
+    this.router.navigate(['/user/order', orderId], {
+      queryParams: { isNewOrder: false },
+    });
   }
 
   reorder(order: OrderDto) {
@@ -100,26 +109,35 @@ export class UserOrdersComponent implements OnInit {
     this.router.navigate(['/cart']);
   }
 
+  cancelOrder(order: OrderDto): void {
+    const modalRef = this.modalService.open(ModalDialogComponent);
+    modalRef.componentInstance.title = 'Cancel Order';
+    modalRef.componentInstance.message =
+      'Are you sure you want to cancel this order?';
 
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.isLoading = true;
 
-    cancelOrder(order: OrderDto): void {
-    this.isLoading = true;
-
-    this.orderApiService.cancelOrder(order.id).subscribe({
-      next: (response) => {
-        order.orderStatusName = response.orderStatusName!;
-        order.orderStatusId = response.orderStatusId! // comes from OrderDto
-        this.toastService.success('Order cancelled successfully!');
-        this.isLoading = false;
-      },
-      error: (err) => {
-        if (err.status === 404) {
-          this.toastService.warning('Order not found or cannot be cancelled.');
-        } else {
-          this.toastService.error('Failed to cancel order.');
-        }
-        this.isLoading = false;
-      },
+        this.orderApiService.cancelOrder(order.id).subscribe({
+          next: (response) => {
+            order.orderStatusName = response.orderStatusName!;
+            order.orderStatusId = response.orderStatusId!; // comes from OrderDto
+            this.toastService.success('Order cancelled successfully!');
+            this.isLoading = false;
+          },
+          error: (err) => {
+            if (err.status === 404) {
+              this.toastService.warning(
+                'Order not found or cannot be cancelled.'
+              );
+            } else {
+              this.toastService.error('Failed to cancel order.');
+            }
+            this.isLoading = false;
+          },
+        });
+      }
     });
   }
 
@@ -129,7 +147,7 @@ export class UserOrdersComponent implements OnInit {
 
   getStatusBadgeClass(status: string | undefined): string {
     if (!status) return 'bg-secondary';
-    
+
     switch (status.toLowerCase()) {
       case 'delivered':
         return 'bg-success';
@@ -162,4 +180,4 @@ export class UserOrdersComponent implements OnInit {
         return 'bi-circle';
     }
   }
-} 
+}

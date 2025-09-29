@@ -104,7 +104,108 @@
                 </label>
               </div>
 
+
+
+            <!-- New Address Form -->
+
               <div *ngIf="!paymentData.sameAsShipping" class="billing-address">
+              <div  class="mb-3">
+                <label for="addressLine1" class="form-label">Address Line 1 *</label>
+                <input type="text" class="form-control" id="addressLine1" name="addressLine1" [(ngModel)]="billingAddress.addressLine1"
+                  required placeholder="Enter your street address"
+                    [ngClass]="{'is-invalid': !billingAddress.addressLine1 || billingAddress.addressLine1.trim() === ''}">
+                  <div class="invalid-feedback" *ngIf="!billingAddress.addressLine1 || billingAddress.addressLine1.trim() === ''">
+                  Street address is required.
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="city" class="form-label">City *</label>
+                  <input type="text" class="form-control" id="city" name="city" [(ngModel)]="billingAddress.city" required
+                    placeholder="Enter your city"
+                    [ngClass]="{'is-invalid': !billingAddress.city || billingAddress.city.trim() === ''}">
+                  <div class="invalid-feedback" *ngIf="!billingAddress.city || billingAddress.city.trim() === ''">
+                    City is required.
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="state" class="form-label">State/County *</label>
+                  <input type="text" class="form-control" id="state" name="state" [(ngModel)]="billingAddress.county"
+                    required placeholder="State/County"
+                    [ngClass]="{'is-invalid': !billingAddress.county || billingAddress.county.trim() === ''}">
+                  <div class="invalid-feedback" *ngIf="!billingAddress.county || billingAddress.county.trim() === ''">
+                    State/County is required.
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="postcode" class="form-label">Postcode/ZIP *</label>
+                  <input type="text" class="form-control" id="postcode" name="postcode" [(ngModel)]="billingAddress.postcode"
+                    required placeholder="Postcode"
+                    [ngClass]="{'is-invalid': !billingAddress.postcode || billingAddress.postcode.trim() === ''}">
+                  <div class="invalid-feedback" *ngIf="!billingAddress.postcode || billingAddress.postcode.trim() === ''">
+                    Postcode is required.
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="country" class="form-label">Country *</label>
+                  <select class="form-select" id="country" name="country" [(ngModel)]="billingAddress.country" required
+                    [ngClass]="{'is-invalid': !billingAddress.country || billingAddress.country.trim() === ''}">
+                    <option value="">Select your country</option>
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="JP">Japan</option>
+                    <option value="IT">Italy</option>
+                    <option value="ES">Spain</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="SE">Sweden</option>
+                    <option value="NO">Norway</option>
+                    <option value="DK">Denmark</option>
+                    <option value="FI">Finland</option>
+                    <option value="CH">Switzerland</option>
+                    <option value="AT">Austria</option>
+                    <option value="BE">Belgium</option>
+                    <option value="IE">Ireland</option>
+                    <option value="NZ">New Zealand</option>
+                  </select>
+                  <div class="invalid-feedback" *ngIf="!billingAddress.country || billingAddress.country.trim() === ''">
+                    Country is required.
+                  </div>
+                </div>
+              </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <!-- <div *ngIf="!paymentData.sameAsShipping" class="billing-address">
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="billingFirstName" class="form-label">First Name *</label>
@@ -122,7 +223,7 @@
                   <input type="text" class="form-control" id="billingAddress" name="billingAddress"
                     [(ngModel)]="paymentData.billingAddress" required placeholder="Enter billing address">
                 </div>
-              </div>
+              </div> -->
             </div>
 
             <!-- Terms and Conditions -->

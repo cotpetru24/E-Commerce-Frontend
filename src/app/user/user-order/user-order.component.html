@@ -57,13 +57,13 @@
               <div class="address-card">
                 <div class="address-content">
                   <div class="address-info">
-                    <p class="address-name"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName
-                        }}</strong></p>
-                    <p class="address-line">{{ shippingAddress.address }}</p>
-                    <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.state }} {{
-                      shippingAddress.zipCode }}</p>
+                    <!-- <p class="address-name"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName
+                        }}</strong></p> -->
+                    <p class="address-line">{{ shippingAddress.addressLine1 }}</p>
+                    <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }} {{
+                      shippingAddress.postcode }}</p>
                     <p class="address-line">{{ shippingAddress.country }}</p>
-                    <p class="address-phone">{{ shippingAddress.phone }}</p>
+                    <!-- <p class="address-phone">{{ shippingAddress.phone }}</p> -->
                   </div>
                 </div>
               </div>

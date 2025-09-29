@@ -8,12 +8,17 @@ import {
   OrderItemDto,
   PaymentMethod,
   ShippingAddress,
+  ShippingAddressDto,
   ShippingInfo,
 } from '../../models';
 import { ToastService } from '../../services/toast.service';
 import { OrderApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
 import { number } from 'zod';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { switchMap } from 'rxjs';
+import { CountryMapService } from '../../services/country-map.service';
 
 @Component({
   selector: 'app-user-order',
@@ -25,15 +30,24 @@ import { number } from 'zod';
 export class UserOrderComponent implements OnInit {
   order: OrderDto | null = null;
   orderItems: OrderItemDto[] = [];
-  shippingAddress: ShippingAddress = {
-    firstName: '',
-    lastName: '',
-    address: '',
+  shippingAddress: ShippingAddressDto = {
+    addressLine1: '',
     city: '',
-    state: '',
-    zipCode: '',
+    county: '',
+    postcode: '',
     country: '',
-    phone: '',
+    id: 0,
+    userId: '',
+  };
+
+  billingAddress: ShippingAddressDto = {
+    addressLine1: '',
+    city: '',
+    county: '',
+    postcode: '',
+    country: '',
+    id: 0,
+    userId: '',
   };
   paymentMethod: PaymentMethod = {
     method: 'card',
@@ -53,7 +67,9 @@ export class UserOrderComponent implements OnInit {
     private router: Router,
     private toastService: ToastService,
     private orderApiService: OrderApiService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private countryMap: CountryMapService
   ) {}
   ngOnInit(): void {
     // Load order data from service or route parameters
@@ -77,19 +93,30 @@ export class UserOrderComponent implements OnInit {
           order.orderStatusName !== 'Cancelled' &&
           order.orderStatusName !== 'Refunded' &&
           order.orderStatusName !== 'Returned';
+        this.shippingAddress = order.shippingAddress;
+        this.shippingAddress.country = this.shippingAddress.country =
+          this.countryMap.getName(this.order.shippingAddress.country);
+
+        this.billingAddress = order.billingAddress;
+        this.billingAddress.country = this.billingAddress.country =
+          this.countryMap.getName(this.order.billingAddress.country);
+      },
+      error: (err) => {
+        console.error('Error loading order or shipping address:', err);
+        this.toastService.error('Failed to load order details');
       },
     });
 
-    this.shippingAddress = {
-      firstName: 'John',
-      lastName: 'Doe',
-      address: '123 Main Street',
-      city: 'London',
-      state: 'England',
-      zipCode: 'SW1A 1AA',
-      country: 'United Kingdom',
-      phone: '+44 20 1234 5678',
-    };
+    // this.shippingAddress = {
+    //   firstName: 'John',
+    //   lastName: 'Doe',
+    //   address: '123 Main Street',
+    //   city: 'London',
+    //   state: 'England',
+    //   zipCode: 'SW1A 1AA',
+    //   country: 'United Kingdom',
+    //   phone: '+44 20 1234 5678',
+    // };
 
     this.paymentMethod = {
       method: 'card',
@@ -128,23 +155,34 @@ export class UserOrderComponent implements OnInit {
   }
 
   cancelOrder(): void {
-    this.isLoading = true;
+    const modalRef = this.modalService.open(ModalDialogComponent);
+    modalRef.componentInstance.title = 'Cancel Order';
+    modalRef.componentInstance.message =
+      'Are you sure you want to cancel this order?';
 
-    this.orderApiService.cancelOrder(this.orderId!).subscribe({
-      next: (response) => {
-        this.orderStatus = response.orderStatusName!; // comes from OrderDto
-        this.canCancel = false;
-        this.toastService.success('Order cancelled successfully!');
-        this.isLoading = false;
-      },
-      error: (err) => {
-        if (err.status === 404) {
-          this.toastService.warning('Order not found or cannot be cancelled.');
-        } else {
-          this.toastService.error('Failed to cancel order.');
-        }
-        this.isLoading = false;
-      },
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.isLoading = true;
+
+        this.orderApiService.cancelOrder(this.orderId!).subscribe({
+          next: (response) => {
+            this.orderStatus = response.orderStatusName!; // comes from OrderDto
+            this.canCancel = false;
+            this.toastService.success('Order cancelled successfully!');
+            this.isLoading = false;
+          },
+          error: (err) => {
+            if (err.status === 404) {
+              this.toastService.warning(
+                'Order not found or cannot be cancelled.'
+              );
+            } else {
+              this.toastService.error('Failed to cancel order.');
+            }
+            this.isLoading = false;
+          },
+        });
+      }
     });
   }
 

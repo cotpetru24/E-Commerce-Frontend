@@ -13,10 +13,10 @@ export interface OrderItem {
 export interface ShippingAddress {
   firstName: string;
   lastName: string;
-  address: string;
+  addressLine1: string;
   city: string;
-  state: string;
-  zipCode: string;
+  county: string;
+  postcode: string;
   country: string;
   phone: string;
 }

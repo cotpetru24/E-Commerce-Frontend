@@ -3,6 +3,8 @@
 // ============================================================================
 // These interfaces match the backend Order DTOs
 
+import { BillingAddressDto, CreateBillingAddressRequestDto, ShippingAddressDto } from "./shipping-address.dto";
+
 export interface OrderItemDto {
   id: number;
   orderId?: number;
@@ -25,8 +27,8 @@ export interface OrderDto {
   shippingCost: number;
   discount: number;
   total: number;
-  shippingAddressId?: number;
-  billingAddressId?: number;
+  shippingAddress: ShippingAddressDto;
+  billingAddress: BillingAddressDto;
   notes?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -36,7 +38,9 @@ export interface OrderDto {
 export interface PlaceOrderRequestDto {
   orderItems: OrderItemRequestDto[];
   shippingAddressId: number;
-  billingAddressId: number;
+  // billingAddressId: number;
+  billingAddressSameAsShipping: boolean;
+  billingAddress: CreateBillingAddressRequestDto | null;
   shippingCost: number;
   discount: number;
   notes?: string;

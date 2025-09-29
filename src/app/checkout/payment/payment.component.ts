@@ -8,6 +8,8 @@ import {
   PlaceOrderRequestDto,
   OrderItemRequestDto,
   PlaceOrderResponseDto,
+  CreateBillingAddressRequestDto,
+  AddressData,
 } from '../../models';
 import { CartService } from '../../services/cart.service';
 import {
@@ -21,6 +23,7 @@ import { PaymentApiService } from '../../services/api/payment-api.service';
 import { OrderApiService } from '../../services/api/order-api.service';
 import { ToastService } from '../../services/toast.service';
 import { firstValueFrom } from 'rxjs';
+import { th } from 'zod/v4/locales/index.cjs';
 
 @Component({
   selector: 'payment',
@@ -49,6 +52,16 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     acceptTerms: false,
   };
 
+    billingAddressData: AddressData = {
+      addressLine1: '',
+      city: '',
+      state: '',
+      postcode: '',
+      country: '',
+      instructions: '',
+      saveAddress: false
+    };
+
   orderSummary: OrderSummary = {
     subtotal: 0,
     discount: 0,
@@ -59,6 +72,16 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading: boolean = false;
   isStripeInitialized: boolean = false;
   stripeError: string | null = null;
+  billingAddress:CreateBillingAddressRequestDto = {
+    addressLine1: '',
+    city: '',
+    county: '',
+    postcode: '',
+    country: '',
+  };
+  //
+  billigngAddressSameAsShipping: boolean = true;
+
 
   constructor(
     private router: Router,
@@ -251,7 +274,15 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     return {
       orderItems,
       shippingAddressId,
-      billingAddressId: shippingAddressId, // Using same address for billing
+      billingAddressSameAsShipping: this.paymentData.sameAsShipping,
+      billingAddress: !this.paymentData.sameAsShipping ? null : {
+        addressLine1: this.billingAddressData.addressLine1!,
+        city: this.billingAddressData.city!,
+        county: this.billingAddressData.state!,
+        postcode: this.billingAddressData.postcode!,
+        country: this.billingAddressData.country!,
+
+      },
       shippingCost: this.orderSummary.shipping,
       discount: this.orderSummary.discount,
       notes: deliveryInstructions,
