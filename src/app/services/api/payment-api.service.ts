@@ -24,4 +24,10 @@ export class PaymentApiService extends BaseApiService {
     );
   }
 
+  storePaymentDetails(orderId: number, paymentIntentId: string): Observable<void> {
+    const body = { orderId, paymentIntentId };
+    return this.post<void, { orderId: number; paymentIntentId: string }>
+    (this.buildUrl(`${this.baseUrl}/storePaymentDetails`), body);
+  }
+
 }

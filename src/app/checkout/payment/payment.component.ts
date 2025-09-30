@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import {
-  PaymentData,
+  PaymentDto,
   OrderSummary,
   PlaceOrderRequestDto,
   OrderItemRequestDto,
@@ -37,30 +37,27 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   private elements: StripeElements | null = null;
   private paymentElement: StripePaymentElement | null = null;
   private orderResponse: PlaceOrderResponseDto | null = null;
-  paymentData: PaymentData = {
-    method: 'card',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    cardholderName: '',
-    saveCard: false,
-    paypalEmail: '',
-    sameAsShipping: true,
-    billingFirstName: '',
-    billingLastName: '',
-    billingAddress: '',
-    acceptTerms: false,
+  paymentData: PaymentDto = {
+  orderId: 0,
+  amount: 0,
+  currency: "",
+  cardBrand: "",
+  cardLast4: "",
+  billingName: "",
+  billingEmail: "",
+  status: "",
+  paymentMethod: ""
   };
 
-    billingAddressData: AddressData = {
-      addressLine1: '',
-      city: '',
-      state: '',
-      postcode: '',
-      country: '',
-      instructions: '',
-      saveAddress: false
-    };
+  billingAddressData: AddressData = {
+    addressLine1: '',
+    city: '',
+    state: '',
+    postcode: '',
+    country: '',
+    instructions: '',
+    saveAddress: false,
+  };
 
   orderSummary: OrderSummary = {
     subtotal: 0,
@@ -72,7 +69,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading: boolean = false;
   isStripeInitialized: boolean = false;
   stripeError: string | null = null;
-  billingAddress:CreateBillingAddressRequestDto = {
+  acceptTerms: boolean = false;
+  billingAddress: CreateBillingAddressRequestDto = {
     addressLine1: '',
     city: '',
     county: '',
@@ -81,7 +79,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   };
   //
   billigngAddressSameAsShipping: boolean = true;
-
 
   constructor(
     private router: Router,
@@ -212,7 +209,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.orderResponse.orderId.toString()
       );
 
-      if (this.paymentData.method === 'card') {
+      if (this.paymentData.paymentMethod === 'card') {
         if (!this.stripe || !this.elements) {
           this.isLoading = false;
           return;
@@ -221,31 +218,36 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         // Process payment with Stripe
         const { error, paymentIntent } = await this.stripe.confirmPayment({
           elements: this.elements,
-          confirmParams: {
-            // return_url: `${window.location.origin}/user/order/${orderResponse.orderId}?isNewOrder=true`,
-          },
+          confirmParams: {},
           redirect: 'if_required',
         });
 
         if (paymentIntent && paymentIntent.status === 'succeeded' && !error) {
-          this.cartService.clearCart();
-          this.isLoading = false;
-          this.router.navigate(['/user/order', this.orderResponse!.orderId], {
-            queryParams: { isNewOrder: true },
-          });
-        }
-        else if (error) {
+          this.paymentApiService
+            .storePaymentDetails(this.orderResponse.orderId, paymentIntent.id)
+            .subscribe({
+              next: () => {
+                console.log('Payment details stored successfully');
+                this.cartService.clearCart();
+                this.isLoading = false;
+                this.router.navigate(
+                  ['/user/order', this.orderResponse!.orderId],
+                  {
+                    queryParams: { isNewOrder: true },
+                  }
+                );
+              },
+            });
+        } else if (error) {
           {
-          console.error('Payment error:', error.message);
-          this.toastService.error('Payment failed: ' + error.message);
-          this.isLoading = false;
-          return;
+            console.error('Payment error:', error.message);
+            this.toastService.error('Payment failed: ' + error.message);
+            this.isLoading = false;
+            return;
           }
         }
       } else {
         // For non-card payments, redirect to confirmation
-
-        // this.router.navigate(['/checkout/order-confirmed']);
         this.router.navigate(['/user/order', this.orderResponse.orderId], {
           queryParams: { isNewOrder: true },
         });
@@ -274,15 +276,16 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     return {
       orderItems,
       shippingAddressId,
-      billingAddressSameAsShipping: this.paymentData.sameAsShipping,
-      billingAddress: !this.paymentData.sameAsShipping ? null : {
-        addressLine1: this.billingAddressData.addressLine1!,
-        city: this.billingAddressData.city!,
-        county: this.billingAddressData.state!,
-        postcode: this.billingAddressData.postcode!,
-        country: this.billingAddressData.country!,
-
-      },
+      billingAddressSameAsShipping: this.billigngAddressSameAsShipping,
+      billingAddress: !this.billingAddressData.saveAddress
+        ? null
+        : {
+            addressLine1: this.billingAddressData.addressLine1!,
+            city: this.billingAddressData.city!,
+            county: this.billingAddressData.state!,
+            postcode: this.billingAddressData.postcode!,
+            country: this.billingAddressData.country!,
+          },
       shippingCost: this.orderSummary.shipping,
       discount: this.orderSummary.discount,
       notes: deliveryInstructions,
@@ -290,7 +293,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   validateForm(): boolean {
-    if (this.paymentData.method === 'card') {
+    if (this.paymentData.paymentMethod === 'card') {
       // if (
       //   !this.paymentData.cardNumber ||
       //   !this.paymentData.expiryDate ||
@@ -299,46 +302,46 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       // ) {
       //   return false;
       // }
-    } else if (this.paymentData.method === 'paypal') {
-      if (!this.paymentData.paypalEmail) {
+    } else if (this.paymentData.paymentMethod === 'paypal') {
+      if (!this.paymentData.billingEmail) {
         return false;
       }
     }
 
-    if (!this.paymentData.acceptTerms) {
+    if (!this.acceptTerms) {
       return false;
     }
 
-    if (!this.paymentData.sameAsShipping) {
-      if (
-        !this.paymentData.billingFirstName ||
-        !this.paymentData.billingLastName ||
-        !this.paymentData.billingAddress
-      ) {
-        return false;
-      }
+    if (!this.billingAddressData.saveAddress) {
+      // if (
+      //   !this.paymentData.billingName 
+      //   // || !this.paymentData.billingLastName ||
+      //   // !this.paymentData.billingAddress
+      // ) {
+      //   return false;
+      // }
     }
 
     return true;
   }
 
   onBillingAddressChange(): void {
-    if (this.paymentData.sameAsShipping) {
+    if (this.billingAddressData.saveAddress) {
       // Clear billing address fields when same as shipping is selected
-      this.paymentData.billingFirstName = '';
-      this.paymentData.billingLastName = '';
-      this.paymentData.billingAddress = '';
+      this.paymentData.billingName = '';
+      // this.paymentData.billingLastName = '';
+      // this.paymentData.billingAddress = '';
     } else {
       // Pre-fill with shipping address data (mock)
-      this.paymentData.billingFirstName = 'John';
-      this.paymentData.billingLastName = 'Doe';
-      this.paymentData.billingAddress = '123 Main Street, London, England';
+      // this.paymentData.billingFirstName = 'John';
+      // this.paymentData.billingLastName = 'Doe';
+      // this.paymentData.billingAddress = '123 Main Street, London, England';
     }
   }
 
   onPaymentMethodChange(): void {
     // If switching to card payment, initialize Stripe Elements
-    if (this.paymentData.method === 'card') {
+    if (this.paymentData.paymentMethod === 'card') {
       // Clear any existing elements
       if (this.paymentElement) {
         this.paymentElement.destroy();
@@ -376,14 +379,14 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   formatCardNumber(event: any): void {
     let value = event.target.value.replace(/\D/g, '');
     value = value.replace(/(\d{4})/g, '$1 ').trim();
-    this.paymentData.cardNumber = value;
+    this.paymentData.cardLast4 = value;
   }
 
-  formatExpiryDate(event: any): void {
-    let value = event.target.value.replace(/\D/g, '');
-    if (value.length >= 2) {
-      value = value.substring(0, 2) + '/' + value.substring(2, 4);
-    }
-    this.paymentData.expiryDate = value;
-  }
+  // formatExpiryDate(event: any): void {
+  //   let value = event.target.value.replace(/\D/g, '');
+  //   if (value.length >= 2) {
+  //     value = value.substring(0, 2) + '/' + value.substring(2, 4);
+  //   }
+  //   this.paymentData = value;
+  // }
 }

@@ -1,6 +1,6 @@
-<div class="checkout-container" title="Shipping Address">
+<div class="checkout-container pb-5">
   <!-- Page Header -->
-  <div class="page-header">
+  <div class="page-header mb-5">
     <div class="container">
       <h1 class="page-title">
         <i class="bi bi-geo-alt me-2"></i>Shipping Address
@@ -57,9 +57,11 @@
                      (click)="selectExistingAddress(address.id)">
                   <div class="address-header">
                     <div class="form-check">
-                      <input type="radio" class="form-check-input" 
-                             [checked]="selectedAddressId === address.id"
-                             [id]="'address-' + address.id">
+<input type="radio" class="form-check-input"
+       name="selectedAddress"
+       [checked]="selectedAddressId === address.id"
+       [id]="'address-' + address.id">
+
                       <label class="form-check-label" [for]="'address-' + address.id">
                         <strong>{{ address.addressLine1 }}</strong>
                       </label>
@@ -76,7 +78,7 @@
             <!-- New Address Form -->
             <div class="form-section" *ngIf="!useExistingAddress">
               <h3 class="section-title">
-                <i class="bi bi-house me-2"></i>Address Details
+                <i class="bi bi-truck me-2"></i>Shipping Address
               </h3>
               
               <div class="mb-3">
@@ -167,7 +169,7 @@
                   placeholder="Any special delivery instructions, building access codes, or notes for the delivery person..."></textarea>
               </div>
 
-              <div class="form-check">
+              <div class="form-check" *ngIf="!useExistingAddress">
                 <input type="checkbox" class="form-check-input" id="saveAddress" [(ngModel)]="addressData.saveAddress"
                   name="saveAddress">
                 <label class="form-check-label" for="saveAddress">

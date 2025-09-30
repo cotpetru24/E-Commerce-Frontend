@@ -8,12 +8,20 @@
   } -->
 
   <!-- Page Header -->
-  <div class="page-header">
+  <div class="page-header mb-5">
     <div class="container">
       <h1 class="page-title">
         <i class="bi bi-clipboard-check me-2"></i>Order ref. {{ orderId }}
       </h1>
-      <p class="page-subtitle">{{orderStatus}}</p>
+      <span class="badge  " [ngClass]="{
+                            'bg-success text-dark': orderStatus === 'Completed',
+                            'bg-warning text-dark': orderStatus === 'Pending',
+                            'bg-danger text-dark': orderStatus === 'Cancelled',
+                            'bg-info text-dark': orderStatus === 'Processing'
+                          }">
+        Status: {{ orderStatus }}
+      </span>
+      
     </div>
   </div>
 
@@ -52,13 +60,12 @@
             <!-- Shipping Address -->
             <div class="review-section">
               <h3 class="section-title">
-                <i class="bi bi-geo-alt me-2"></i>Shipping Address
+                <i class="bi bi-geo-alt me-2"></i>Shipping Details
               </h3>
               <div class="address-card">
                 <div class="address-content">
                   <div class="address-info">
-                    <!-- <p class="address-name"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName
-                        }}</strong></p> -->
+                    <p class="address-name"><strong>{{ order?.payment?.billingName }}</strong></p>
                     <p class="address-line">{{ shippingAddress.addressLine1 }}</p>
                     <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }} {{
                       shippingAddress.postcode }}</p>
@@ -72,15 +79,34 @@
             <!-- Payment Method -->
             <div class="review-section">
               <h3 class="section-title">
-                <i class="bi bi-credit-card me-2"></i>Payment Method
+                <i class="bi bi-credit-card me-2"></i>Payment Details
               </h3>
               <div class="payment-card">
                 <div class="payment-content">
                   <div class="payment-info">
                     <div *ngIf="paymentMethod.method === 'card'">
-                      <p class="payment-type"><strong>Credit/Debit Card</strong></p>
-                      <p class="payment-details">**** **** **** {{ paymentMethod.cardNumber?.slice(-4) || '****' }}</p>
-                      <p class="payment-name">{{ paymentMethod.cardholderName }}</p>
+                      <div class="d-flex justify-content-between mb-2">
+                        <!-- <i class="bi bi-credit-card-2-front me-2"></i> -->
+                        <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
+
+
+                        <span class="badge badge-compact " [ngClass]="{
+                            'bg-success text-dark': order?.payment?.status === 'Completed',
+                            'bg-warning text-dark': order?.payment?.status === 'Pending',
+                            'bg-danger text-dark': order?.payment?.status === 'Failed',
+                            'bg-info text-dark': order?.payment?.status === 'Refunded'
+                          }">
+                          Payment status: {{ order?.payment?.status }}
+                        </span>
+
+
+
+
+                        <!-- <p class="payment-name"></p> -->
+
+                      </div>
+                      <p class="payment-details">**** **** **** {{ order?.payment?.cardLast4 || '****' }}</p>
+
                     </div>
                     <div *ngIf="paymentMethod.method === 'paypal'">
                       <p class="payment-type"><strong>PayPal</strong></p>
@@ -141,25 +167,28 @@
 
         <!-- Place Order Button -->
         <div class="order-actions">
-
-          <button class="btn btn-primary btn-lg w-100" (click)="navMyOrders()" [disabled]="isLoading">
+          @if(isNewOrder)
+          { <button class="btn btn-primary btn-lg w-100" (click)="navMyOrders()" [disabled]="isLoading">
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-            <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
+            <i class="bi bi-list-check me-2" *ngIf="!isLoading"></i>
             My Orders
           </button>
-                    @if (canCancel)
+          }
+          @if (canCancel)
           {
-          <button class="btn btn-outline-secondary w-100 mt-2" (click)="cancelOrder()" [disabled]="isLoading">
+          <button class="btn btn-warning btn-lg w-100 mt-2" (click)="cancelOrder()" [disabled]="isLoading">
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
             <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
             {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}
           </button>
           }
 
-
-          <button class="btn btn-outline-secondary w-100 mt-2" (click)="goBack()">
+          @if(!isNewOrder)
+          {
+          <button class="btn btn-primary btn-lg w-100 mt-2" (click)="goBack()">
             <i class="bi bi-arrow-left me-2"></i>Back
           </button>
+          }
         </div>
 
       </div>

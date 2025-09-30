@@ -3,6 +3,7 @@
 // ============================================================================
 // These interfaces match the backend Order DTOs
 
+import { PaymentDto } from "./payment.dto";
 import { BillingAddressDto, CreateBillingAddressRequestDto, ShippingAddressDto } from "./shipping-address.dto";
 
 export interface OrderItemDto {
@@ -29,6 +30,7 @@ export interface OrderDto {
   total: number;
   shippingAddress: ShippingAddressDto;
   billingAddress: BillingAddressDto;
+  payment: PaymentDto;
   notes?: string;
   createdAt?: Date;
   updatedAt?: Date;

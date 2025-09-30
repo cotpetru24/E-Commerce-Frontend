@@ -1,14 +1,11 @@
-export interface PaymentData {
-  method: 'card' | 'paypal';
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  cardholderName: string;
-  saveCard: boolean;
-  paypalEmail: string;
-  sameAsShipping: boolean;
-  billingFirstName: string;
-  billingLastName: string;
-  billingAddress: string;
-  acceptTerms: boolean;
+export interface PaymentDto {
+  orderId: number;
+  amount: number;
+  currency?: string;
+  cardBrand?: string;
+  cardLast4?: string;
+  billingName?: string;
+  billingEmail?: string;
+  status: string;
+  paymentMethod?: string;
 }

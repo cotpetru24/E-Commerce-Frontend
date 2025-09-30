@@ -154,7 +154,7 @@ export class UserOrdersComponent implements OnInit {
       case 'shipped':
         return 'bg-info';
       case 'processing':
-        return 'bg-warning';
+        return 'bg-info';
       case 'pending':
         return 'bg-warning';
       case 'cancelled':

@@ -107,6 +107,8 @@ export class UserOrderComponent implements OnInit {
       },
     });
 
+    
+
     // this.shippingAddress = {
     //   firstName: 'John',
     //   lastName: 'Doe',
@@ -187,7 +189,7 @@ export class UserOrderComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/user']);
+    this.router.navigate(['/user/orders']);
   }
 
   goToItem(productId: number): void {
