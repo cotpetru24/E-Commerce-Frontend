@@ -23,6 +23,7 @@ export class UserOrdersComponent implements OnInit {
   selectedOrder: OrderDto | null = null;
 
   allOrders: OrderDto[] = [];
+  cachedOrders: OrderDto[] = []; // Store all orders from API
   filteredOrders: OrderDto[] = [];
   isLoading = false;
   currentPage = 1;
@@ -53,18 +54,25 @@ export class UserOrdersComponent implements OnInit {
 
     this.isLoading = true;
 
+    // If we already have cached orders, just filter them
+    if (this.cachedOrders.length > 0) {
+      this.filterCachedOrders();
+      this.isLoading = false;
+      return;
+    }
+
+    // Load all orders from API (no filter, get everything)
     const request: GetOrdersRequestDto = {
-      page: this.currentPage,
-      pageSize: this.pageSize,
-      ...(this.currentFilter !== 'all' && { orderStatus: this.currentFilter }),
+      page: 1,
+      pageSize: 1000, // Get all orders
     };
 
     this.orderApiService.getOrders(request).subscribe({
       next: (response: GetOrdersResponseDto) => {
+        this.cachedOrders = response.orders; // Cache all orders
         this.allOrders = response.orders;
-        this.filteredOrders = response.orders;
         this.totalCount = response.totalCount;
-        this.totalPages = response.totalPages;
+        this.filterCachedOrders(); // Apply current filter
         this.isLoading = false;
       },
       error: (error) => {
@@ -78,7 +86,30 @@ export class UserOrdersComponent implements OnInit {
   filterOrders(filter: string) {
     this.currentFilter = filter;
     this.currentPage = 1; // Reset to first page when filtering
-    this.loadOrders();
+    this.filterCachedOrders();
+  }
+
+  filterCachedOrders() {
+    if (this.currentFilter === 'all') {
+      this.filteredOrders = [...this.cachedOrders];
+    } else {
+      this.filteredOrders = this.cachedOrders.filter(order => {
+        const status = order.orderStatusName?.toLowerCase();
+        switch (this.currentFilter) {
+          case 'delivered':
+            return status === 'delivered' || status === 'completed';
+          case 'shipped':
+            return status === 'shipped';
+          case 'processing':
+            return status === 'processing';
+          case 'cancelled':
+            return status === 'cancelled';
+          default:
+            return true;
+        }
+      });
+    }
+    this.allOrders = this.filteredOrders; // Update allOrders for display
   }
 
   loadPage(page: number) {
@@ -154,7 +185,7 @@ export class UserOrdersComponent implements OnInit {
       case 'shipped':
         return 'bg-info';
       case 'processing':
-        return 'bg-info';
+        return 'bg-warning';
       case 'pending':
         return 'bg-warning';
       case 'cancelled':
@@ -179,5 +210,30 @@ export class UserOrdersComponent implements OnInit {
       default:
         return 'bi-circle';
     }
+  }
+
+  getDeliveredCount(): number {
+    return this.cachedOrders.filter(order => 
+      order.orderStatusName?.toLowerCase() === 'delivered' || 
+      order.orderStatusName?.toLowerCase() === 'completed'
+    ).length;
+  }
+
+  getShippedCount(): number {
+    return this.cachedOrders.filter(order => 
+      order.orderStatusName?.toLowerCase() === 'shipped'
+    ).length;
+  }
+
+  getProcessingCount(): number {
+    return this.cachedOrders.filter(order => 
+      order.orderStatusName?.toLowerCase() === 'processing'
+    ).length;
+  }
+
+  getCancelledCount(): number {
+    return this.cachedOrders.filter(order => 
+      order.orderStatusName?.toLowerCase() === 'cancelled'
+    ).length;
   }
 }

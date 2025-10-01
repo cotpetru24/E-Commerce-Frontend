@@ -7,21 +7,28 @@ import { UserProfileDto, UpdateUserProfileRequestDto, ChangePasswordRequestDto, 
   providedIn: 'root'
 })
 export class UserApiService extends BaseApiService {
-  private readonly baseUrl = `${this.apiBaseUrl}/user`;
+  private readonly userEndpoint = '/api/User';
 
   getUserProfile(): Observable<UserProfileDto> {
-    return this.get<UserProfileDto>(`${this.baseUrl}/profile`);
+    const url = this.buildUrl(this.userEndpoint + '/profile');
+    this.logRequest('GET', url);
+    return this.get<UserProfileDto>(url);
   }
 
   updateUserProfile(request: UpdateUserProfileRequestDto): Observable<{ message: string }> {
-    return this.put<{ message: string }>(`${this.baseUrl}/profile`, request);
+    const url = this.buildUrl(this.userEndpoint + '/profile');
+    this.logRequest('PUT', url, request);
+    return this.put<{ message: string }>(url, request);
   }
 
   changePassword(request: ChangePasswordRequestDto): Observable<{ message: string }> {
-    return this.put<{ message: string }>(`${this.baseUrl}/change-password`, request);
+    const url = this.buildUrl(this.userEndpoint + '/change-password');
+    return this.put<{ message: string }>(url, request);
   }
 
   getUserStats(): Observable<UserStatsDto> {
-    return this.get<UserStatsDto>(`${this.baseUrl}/stats`);
+    const url = this.buildUrl(this.userEndpoint + '/stats');
+    this.logRequest('GET', url);
+    return this.get<UserStatsDto>(url);
   }
 }

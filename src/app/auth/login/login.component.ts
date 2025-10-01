@@ -45,15 +45,17 @@ this.authApiService.login({
 })
 .subscribe({
   next: (user) => {
-    this.toastService.success('Login successful!');
+    // this.toastService.success('Login successful!');
     if (this.authApiService.isAdmin()) {
       this.router.navigate(['/admin']);
     } else {
-      this.router.navigate(['/products']);
+      this.router.navigate(['']);
     }
   },
   error: () => {
     this.toastService.error('Invalid email or password. Please try again.');
+        this.isLoading = false;
+
   },
   complete: () => {
     this.isLoading = false;

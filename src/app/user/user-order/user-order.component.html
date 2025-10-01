@@ -10,18 +10,25 @@
   <!-- Page Header -->
   <div class="page-header mb-5">
     <div class="container">
-      <h1 class="page-title">
-        <i class="bi bi-clipboard-check me-2"></i>Order ref. {{ orderId }}
-      </h1>
-      <span class="badge  " [ngClass]="{
-                            'bg-success text-dark': orderStatus === 'Completed',
-                            'bg-warning text-dark': orderStatus === 'Pending',
-                            'bg-danger text-dark': orderStatus === 'Cancelled',
-                            'bg-info text-dark': orderStatus === 'Processing'
-                          }">
-        Status: {{ orderStatus }}
-      </span>
-      
+      <div class="header-content">
+        <div class="header-main">
+          <h1 class="page-title">
+            <i class="bi bi-clipboard-check me-2"></i>Order #{{ orderId }}
+          </h1>
+          <p class="page-subtitle">Order placed on {{ order?.createdAt | date:'MMMM dd, yyyy' }}</p>
+        </div>
+        <div class="header-status">
+          <div class="status-badge" [ngClass]="{
+            'status-completed': orderStatus === 'Completed',
+            'status-pending': orderStatus === 'Pending',
+            'status-cancelled': orderStatus === 'Cancelled',
+            'status-processing': orderStatus === 'Processing'
+          }">
+            <i class="bi bi-circle-fill me-2"></i>
+            {{ orderStatus }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

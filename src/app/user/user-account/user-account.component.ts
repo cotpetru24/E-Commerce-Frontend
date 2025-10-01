@@ -17,7 +17,7 @@ export class UserAccountComponent implements OnInit {
   userProfile: UserProfileDto | null = null;
   userStats: UserStatsDto | null = null;
   isLoading = false;
-  isEditing = false;
+  isEditing = true;
   isChangingPassword = false;
 
   // Form data
@@ -81,10 +81,13 @@ export class UserAccountComponent implements OnInit {
         // Don't show error for stats as it's not critical
       }
     });
+
   }
 
   startEditing() {
     this.isEditing = true;
+        this.isChangingPassword = false;
+
   }
 
   cancelEditing() {
@@ -111,7 +114,7 @@ export class UserAccountComponent implements OnInit {
     this.userApiService.updateUserProfile(request).subscribe({
       next: (response) => {
         this.toastService.success(response.message);
-        this.isEditing = false;
+        this.isEditing = true;
         this.loadUserData(); // Reload to get updated data
       },
       error: (error) => {
@@ -123,6 +126,7 @@ export class UserAccountComponent implements OnInit {
 
   startChangingPassword() {
     this.isChangingPassword = true;
+        this.isEditing = false;
     this.passwordForm = {
       currentPassword: '',
       newPassword: '',
@@ -155,6 +159,7 @@ export class UserAccountComponent implements OnInit {
       next: (response) => {
         this.toastService.success(response.message);
         this.isChangingPassword = false;
+        this .isEditing = true;
         this.passwordForm = {
           currentPassword: '',
           newPassword: '',
@@ -172,7 +177,9 @@ export class UserAccountComponent implements OnInit {
     this.router.navigate(['/user/orders']);
   }
 
-  getStatusBadgeClass(status: string): string {
+  getStatusBadgeClass(status: string | undefined): string {
+    if (!status) return 'bg-secondary';
+    
     switch (status.toLowerCase()) {
       case 'delivered':
         return 'bg-success';
