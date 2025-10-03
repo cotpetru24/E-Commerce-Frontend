@@ -90,6 +90,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadOrderSummary();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
   }
 
   async ngAfterViewInit(): Promise<void> {

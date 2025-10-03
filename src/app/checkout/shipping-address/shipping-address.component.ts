@@ -45,6 +45,8 @@ export class ShippingAddressComponent implements OnInit {
   }
 
   ngOnInit(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
     this.loadSavedAddresses();
     this.loadOrderSummary();
   }

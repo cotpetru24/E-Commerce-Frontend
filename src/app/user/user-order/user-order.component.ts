@@ -76,6 +76,7 @@ export class UserOrderComponent implements OnInit {
     const isNewOrderParam = this.route.snapshot.queryParamMap.get('isNewOrder');
     this.isNewOrder = isNewOrderParam === 'true';
     this.orderId = Number(this.route.snapshot.paramMap.get('id'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     this.loadOrderData();
     this.orderConfirmed();
