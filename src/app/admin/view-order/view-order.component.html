@@ -1,0 +1,257 @@
+<div class="checkout-container pb-5">
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Order Content -->
+  <div *ngIf="!isLoading && order">
+    <!-- Page Header -->
+    <div class="page-header mb-5">
+      <div class="container">
+        <div class="header-content">
+          <div class="header-main">
+            <h1 class="page-title">
+              <i class="bi bi-clipboard-check me-2"></i>Order #{{ orderId }}
+            </h1>
+            <p class="page-subtitle">Order placed on {{ order?.createdAt | date:'MMMM dd, yyyy' }}</p>
+            <div class="customer-info mt-2">
+              <small class="text-white-50">
+                <i class="bi bi-person me-1"></i>
+                Customer: {{ order?.payment?.billingName || 'N/A' }}
+                <span class="ms-3" *ngIf="order?.userId">
+                  <i class="bi bi-envelope me-1"></i>
+                  ID: {{ order.userId }}
+                </span>
+              </small>
+            </div>
+          </div>
+          <div class="header-status">
+            <div class="status-badge" [ngClass]="{
+              'status-completed': orderStatus === 'Completed',
+              'status-pending': orderStatus === 'Pending',
+              'status-cancelled': orderStatus === 'Cancelled',
+              'status-processing': orderStatus === 'Processing'
+            }">
+              <i class="bi bi-circle-fill me-2"></i>
+              {{ orderStatus }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="checkout-layout">
+        <!-- Main Content -->
+        <div class="checkout-main">
+          <!-- Order Items -->
+          <div class="review-card">
+            <div class="review-content">
+              <div class="review-section">
+                <h3 class="section-title">
+                  <i class="bi bi-bag me-2"></i>Order Items
+                </h3>
+                <div class="order-items" *ngIf="orderItems.length > 0">
+                  <div class="order-item" *ngFor="let item of orderItems" (click)="goToItem(item.productId!)">
+                    <div class="item-image">
+                      <img [src]="'/assets/'+item.imagePath" [alt]="item.productName" title="productName">
+                    </div>
+                    <div class="item-details">
+                      <h4 class="item-name">{{ item.productName }}</h4>
+                      <p class="item-brand">{{ item.brandName }}</p>
+                      <div class="item-meta">
+                        <span class="item-size" *ngIf="item.size">Size: {{ item.size }}</span>
+                        <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                      </div>
+                    </div>
+                    <div class="item-price">
+                      <span class="price">£{{ getItemTotal(item) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Shipping Address -->
+              <div class="review-section">
+                <h3 class="section-title">
+                  <i class="bi bi-geo-alt me-2"></i>Shipping Details
+                </h3>
+                <div class="address-card">
+                  <div class="address-content">
+                    <div class="address-info">
+                      <p class="address-name"><strong>{{ order?.payment?.billingName }}</strong></p>
+                      <p class="address-line">{{ shippingAddress.addressLine1 }}</p>
+                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }} {{
+                        shippingAddress.postcode }}</p>
+                      <p class="address-line">{{ shippingAddress.country }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Billing Address -->
+              <div class="review-section" *ngIf="billingAddress.addressLine1">
+                <h3 class="section-title">
+                  <i class="bi bi-house me-2"></i>Billing Details
+                </h3>
+                <div class="address-card">
+                  <div class="address-content">
+                    <div class="address-info">
+                      <p class="address-name"><strong>{{ order?.payment?.billingName }}</strong></p>
+                      <p class="address-line">{{ billingAddress.addressLine1 }}</p>
+                      <p class="address-line">{{ billingAddress.city }}, {{ billingAddress.county }} {{
+                        billingAddress.postcode }}</p>
+                      <p class="address-line">{{ billingAddress.country }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment Method -->
+              <div class="review-section">
+                <h3 class="section-title">
+                  <i class="bi bi-credit-card me-2"></i>Payment Details
+                </h3>
+                <div class="payment-card">
+                  <div class="payment-content">
+                    <div class="payment-info">
+                      <div *ngIf="paymentMethod.method === 'card'">
+                        <div class="d-flex justify-content-between mb-2">
+                          <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
+                          <span class="badge badge-compact" [ngClass]="{
+                              'bg-success text-dark': order?.payment?.status === 'Completed',
+                              'bg-warning text-dark': order?.payment?.status === 'Pending',
+                              'bg-danger text-dark': order?.payment?.status === 'Failed',
+                              'bg-info text-dark': order?.payment?.status === 'Refunded'
+                            }">
+                            Payment status: {{ order?.payment?.status }}
+                          </span>
+                        </div>
+                        <p class="payment-details">**** **** **** {{ order?.payment?.cardLast4 || '****' }}</p>
+                      </div>
+                      <div *ngIf="paymentMethod.method === 'paypal'">
+                        <p class="payment-type"><strong>PayPal</strong></p>
+                        <p class="payment-details">{{ paymentMethod.paypalEmail }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Shipping Information -->
+              <div class="review-section" *ngIf="shippingInfo">
+                <h3 class="section-title">
+                  <i class="bi bi-truck me-2"></i>Shipping Information
+                </h3>
+                <div class="shipping-info-card">
+                  <div class="shipping-method">
+                    <i class="bi bi-truck"></i>
+                    <div class="shipping-details">
+                      <h4>{{ shippingInfo.method }}</h4>
+                      <p>{{ shippingInfo.estimatedDelivery }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary Sidebar -->
+        <div class="checkout-sidebar">
+          <div class="summary-card">
+            <div class="summary-header">
+              <h3>
+                <i class="bi bi-calculator me-2"></i>Order Summary
+              </h3>
+            </div>
+            <div class="summary-content">
+              <div class="summary-item">
+                <span>Subtotal ({{ getTotalItems() }} items)</span>
+                <span>£{{ getSubtotal() | number:'1.2-2' }}</span>
+              </div>
+              <div class="summary-item">
+                <span>Shipping</span>
+                <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
+              </div>
+              <div class="summary-item discount" *ngIf="getDiscount() > 0">
+                <span>Discount</span>
+                <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
+              </div>
+              <div class="summary-item total">
+                <span>Total</span>
+                <span>£{{ getTotal() | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin Actions -->
+          <div class="order-actions">
+            <button class="btn btn-primary btn-lg w-100" (click)="goToUserProfile()" *ngIf="order?.userId">
+              <i class="bi bi-person me-2"></i>
+              View Customer Profile
+            </button>
+            
+            <button class="btn btn-warning btn-lg w-100 mt-2" (click)="updateOrderStatus()" [disabled]="isLoading || !canUpdateStatus">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              <i class="bi bi-arrow-repeat me-2" *ngIf="!isLoading"></i>
+              {{ isLoading ? 'Updating...' : 'Update Status' }}
+            </button>
+
+            <button class="btn btn-danger btn-lg w-100 mt-2" (click)="cancelOrder()" [disabled]="isLoading || !canUpdateStatus">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
+              {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}
+            </button>
+
+            <button class="btn btn-outline-secondary btn-lg w-100 mt-2" (click)="goBack()">
+              <i class="bi bi-arrow-left me-2"></i>Back to Orders
+            </button>
+          </div>
+
+          <!-- Admin Info Card -->
+          <div class="admin-info-card">
+            <div class="admin-info-header">
+              <h4>
+                <i class="bi bi-shield-check me-2"></i>Admin Information
+              </h4>
+            </div>
+            <div class="admin-info-content">
+              <div class="info-item">
+                <span class="info-label">Order ID:</span>
+                <span class="info-value">{{ orderId }}</span>
+              </div>
+              <div class="info-item" *ngIf="order?.userId">
+                <span class="info-label">Customer ID:</span>
+                <span class="info-value">{{ order.userId }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Created:</span>
+                <span class="info-value">{{ order?.createdAt | date:'short' }}</span>
+              </div>
+              <div class="info-item" *ngIf="order?.updatedAt">
+                <span class="info-label">Last Updated:</span>
+                <span class="info-value">{{ order.updatedAt | date:'short' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && !order" class="container">
+    <div class="text-center py-5">
+      <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+      <h3 class="mt-3">Order Not Found</h3>
+      <p class="text-muted">The order you're looking for doesn't exist or has been removed.</p>
+      <button class="btn btn-primary" (click)="goBack()">
+        <i class="bi bi-arrow-left me-2"></i>Back to Orders
+      </button>
+    </div>
+  </div>
+</div>

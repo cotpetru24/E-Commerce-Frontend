@@ -5,6 +5,15 @@ import { catchError, retry, tap, delay } from 'rxjs/operators';
 import { ProductDto } from '../../models/product.dto';
 import { Audience } from '../../models/audience.enum';
 import { BaseApiService } from './base-api.service';
+import {
+  AdminOrderDto,
+  GetAllOrdersRequestDto,
+  GetAllOrdersResponseDto,
+  // GetAllOrdersResponseDto,
+  GetOrdersResponseDto,
+  SortBy,
+  SortDirection,
+} from '../../models';
 
 // ============================================================================
 // ADMIN API SERVICE
@@ -65,13 +74,13 @@ export interface User {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 
 //modify the methods to use the base api service class
 export class AdminApiService extends BaseApiService {
-  private readonly baseUrl = '/api/admin';
-  
+  private readonly endPoint = '/api/admin';
+
   // Mock data for development
   private mockProducts: ProductDto[] = [
     {
@@ -83,7 +92,7 @@ export class AdminApiService extends BaseApiService {
       audience: Audience.Men,
       description: 'Comfortable running shoes with Air Max technology',
       imagePath: 'assets/products/casual-sneaker.png',
-      selected: false
+      selected: false,
     },
     {
       id: 2,
@@ -94,7 +103,7 @@ export class AdminApiService extends BaseApiService {
       audience: Audience.Women,
       description: 'Premium running shoes with Boost technology',
       imagePath: 'assets/products/running-shoe.png',
-      selected: false
+      selected: false,
     },
     {
       id: 3,
@@ -105,7 +114,7 @@ export class AdminApiService extends BaseApiService {
       audience: Audience.Unisex,
       description: 'Classic canvas sneakers',
       imagePath: 'assets/products/retro-sneaker.png',
-      selected: false
+      selected: false,
     },
     {
       id: 4,
@@ -116,7 +125,7 @@ export class AdminApiService extends BaseApiService {
       audience: Audience.Men,
       description: 'Retro-inspired running shoes',
       imagePath: 'assets/products/retro-sneaker2.png',
-      selected: false
+      selected: false,
     },
     {
       id: 5,
@@ -127,8 +136,8 @@ export class AdminApiService extends BaseApiService {
       audience: Audience.Women,
       description: 'Classic lifestyle sneakers',
       imagePath: 'assets/products/casual-sneaker-2.png',
-      selected: false
-    }
+      selected: false,
+    },
   ];
 
   private mockUsers: User[] = [
@@ -142,7 +151,7 @@ export class AdminApiService extends BaseApiService {
       emailVerified: true,
       createdAt: new Date('2023-01-15'),
       lastLoginAt: new Date('2024-01-20'),
-      orderCount: 5
+      orderCount: 5,
     },
     {
       id: 2,
@@ -154,7 +163,7 @@ export class AdminApiService extends BaseApiService {
       emailVerified: true,
       createdAt: new Date('2023-03-20'),
       lastLoginAt: new Date('2024-01-19'),
-      orderCount: 3
+      orderCount: 3,
     },
     {
       id: 3,
@@ -166,7 +175,7 @@ export class AdminApiService extends BaseApiService {
       emailVerified: true,
       createdAt: new Date('2022-11-10'),
       lastLoginAt: new Date('2024-01-20'),
-      orderCount: 0
+      orderCount: 0,
     },
     {
       id: 4,
@@ -178,7 +187,7 @@ export class AdminApiService extends BaseApiService {
       emailVerified: true,
       createdAt: new Date('2023-06-05'),
       lastLoginAt: new Date('2024-01-15'),
-      orderCount: 2
+      orderCount: 2,
     },
     {
       id: 5,
@@ -190,8 +199,8 @@ export class AdminApiService extends BaseApiService {
       emailVerified: false,
       createdAt: new Date('2024-01-10'),
       lastLoginAt: new Date('2024-01-18'),
-      orderCount: 1
-    }
+      orderCount: 1,
+    },
   ];
 
   private mockOrders: Order[] = [
@@ -202,14 +211,19 @@ export class AdminApiService extends BaseApiService {
       orderNumber: 'ORD-2024-001',
       customerName: 'John Doe',
       items: [
-        { productId: 1, productName: 'Nike Air Max 270', quantity: 1, price: 129.99 }
+        {
+          productId: 1,
+          productName: 'Nike Air Max 270',
+          quantity: 1,
+          price: 129.99,
+        },
       ],
       total: 129.99,
       status: 'delivered',
       paymentStatus: 'paid',
       itemCount: 1,
       createdAt: new Date('2024-01-15'),
-      updatedAt: new Date('2024-01-18')
+      updatedAt: new Date('2024-01-18'),
     },
     {
       id: 2,
@@ -218,15 +232,25 @@ export class AdminApiService extends BaseApiService {
       orderNumber: 'ORD-2024-002',
       customerName: 'Jane Smith',
       items: [
-        { productId: 2, productName: 'Adidas Ultraboost 22', quantity: 1, price: 179.99 },
-        { productId: 5, productName: 'New Balance 574', quantity: 1, price: 79.99 }
+        {
+          productId: 2,
+          productName: 'Adidas Ultraboost 22',
+          quantity: 1,
+          price: 179.99,
+        },
+        {
+          productId: 5,
+          productName: 'New Balance 574',
+          quantity: 1,
+          price: 79.99,
+        },
       ],
       total: 259.98,
       status: 'processing',
       paymentStatus: 'paid',
       itemCount: 2,
       createdAt: new Date('2024-01-16'),
-      updatedAt: new Date('2024-01-17')
+      updatedAt: new Date('2024-01-17'),
     },
     {
       id: 3,
@@ -235,14 +259,14 @@ export class AdminApiService extends BaseApiService {
       orderNumber: 'ORD-2024-003',
       customerName: 'John Doe',
       items: [
-        { productId: 4, productName: 'Puma RS-X', quantity: 1, price: 89.99 }
+        { productId: 4, productName: 'Puma RS-X', quantity: 1, price: 89.99 },
       ],
       total: 89.99,
       status: 'shipped',
       paymentStatus: 'paid',
       itemCount: 1,
       createdAt: new Date('2024-01-17'),
-      updatedAt: new Date('2024-01-18')
+      updatedAt: new Date('2024-01-18'),
     },
     {
       id: 4,
@@ -251,14 +275,19 @@ export class AdminApiService extends BaseApiService {
       orderNumber: 'ORD-2024-004',
       customerName: 'David Brown',
       items: [
-        { productId: 3, productName: 'Converse Chuck Taylor', quantity: 2, price: 59.99 }
+        {
+          productId: 3,
+          productName: 'Converse Chuck Taylor',
+          quantity: 2,
+          price: 59.99,
+        },
       ],
       total: 119.98,
       status: 'pending',
       paymentStatus: 'pending',
       itemCount: 2,
       createdAt: new Date('2024-01-18'),
-      updatedAt: new Date('2024-01-18')
+      updatedAt: new Date('2024-01-18'),
     },
     {
       id: 5,
@@ -267,21 +296,26 @@ export class AdminApiService extends BaseApiService {
       orderNumber: 'ORD-2024-005',
       customerName: 'Jane Smith',
       items: [
-        { productId: 1, productName: 'Nike Air Max 270', quantity: 1, price: 129.99 }
+        {
+          productId: 1,
+          productName: 'Nike Air Max 270',
+          quantity: 1,
+          price: 129.99,
+        },
       ],
       total: 129.99,
       status: 'cancelled',
       paymentStatus: 'failed',
       itemCount: 1,
       createdAt: new Date('2024-01-19'),
-      updatedAt: new Date('2024-01-19')
-    }
+      updatedAt: new Date('2024-01-19'),
+    },
   ];
 
   private mockStats: AdminStats = {
     totalUsers: 1250,
     totalOrders: 3420,
-    totalRevenue: 456789.50,
+    totalRevenue: 456789.5,
     totalProducts: 156,
     lowStockProducts: 8,
     pendingOrders: 23,
@@ -292,33 +326,33 @@ export class AdminApiService extends BaseApiService {
       {
         icon: 'bi-cart-check',
         message: 'New order #ORD-2024-005 placed by Jane Smith',
-        time: '2 minutes ago'
+        time: '2 minutes ago',
       },
       {
         icon: 'bi-person-plus',
         message: 'New user registration: david.brown@example.com',
-        time: '15 minutes ago'
+        time: '15 minutes ago',
       },
       {
         icon: 'bi-box',
         message: 'Product "Nike Air Max 270" stock updated',
-        time: '1 hour ago'
+        time: '1 hour ago',
       },
       {
         icon: 'bi-truck',
         message: 'Order #ORD-2024-003 shipped to John Doe',
-        time: '2 hours ago'
+        time: '2 hours ago',
       },
       {
         icon: 'bi-currency-dollar',
         message: 'Payment received for order #ORD-2024-002',
-        time: '3 hours ago'
-      }
-    ]
+        time: '3 hours ago',
+      },
+    ],
   };
-  
+
   constructor(protected override http: HttpClient) {
-    super(http)
+    super(http);
   }
 
   // ============================================================================
@@ -329,9 +363,11 @@ export class AdminApiService extends BaseApiService {
    * Get admin dashboard statistics
    */
   getDashboardStats(): Observable<AdminStats> {
-    // Mock implementation
-    return of(this.mockStats).pipe(
-      delay(500), // Simulate network delay
+    const url = this.buildUrl(`${this.endPoint}/dashboard`);
+    this.logRequest('GET', url);
+
+    return this.get<AdminStats>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
       catchError(this.handleError)
     );
   }
@@ -341,32 +377,31 @@ export class AdminApiService extends BaseApiService {
    */
   getRecentOrders(limit: number = 10): Observable<Order[]> {
     const recentOrders = this.mockOrders
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
       .slice(0, limit);
-    
-    return of(recentOrders).pipe(
-      delay(300),
-      catchError(this.handleError)
-    );
+
+    return of(recentOrders).pipe(delay(300), catchError(this.handleError));
   }
 
   /**
    * Get revenue chart data
    */
-  getRevenueData(period: 'daily' | 'weekly' | 'monthly' = 'monthly'): Observable<any[]> {
+  getRevenueData(
+    period: 'daily' | 'weekly' | 'monthly' = 'monthly'
+  ): Observable<any[]> {
     // Mock revenue data
     const mockRevenueData = [
       { date: '2024-01-01', revenue: 12345.67 },
-      { date: '2024-01-02', revenue: 15678.90 },
+      { date: '2024-01-02', revenue: 15678.9 },
       { date: '2024-01-03', revenue: 13456.78 },
       { date: '2024-01-04', revenue: 18901.23 },
-      { date: '2024-01-05', revenue: 16789.45 }
+      { date: '2024-01-05', revenue: 16789.45 },
     ];
-    
-    return of(mockRevenueData).pipe(
-      delay(400),
-      catchError(this.handleError)
-    );
+
+    return of(mockRevenueData).pipe(delay(400), catchError(this.handleError));
   }
 
   // ============================================================================
@@ -376,9 +411,25 @@ export class AdminApiService extends BaseApiService {
   /**
    * Get all products with admin details
    */
-  getAllProducts(): Observable<ProductDto[]> {
-    return of([...this.mockProducts]).pipe(
-      delay(600),
+  getAllProducts(params?: {
+    pageNumber?: number;
+    pageSize?: number;
+    searchTerm?: string;
+    brandId?: number;
+    audienceId?: number;
+    minPrice?: number;
+    maxPrice?: number;
+    isNew?: boolean;
+    lowStock?: boolean;
+    sortBy?: string;
+    sortDirection?: string;
+  }): Observable<any> {
+    const url = this.buildUrl('/admin/products');
+    const queryParams = this.createParams(params || {});
+    this.logRequest('GET', url, params);
+
+    return this.get<any>(url, { params: queryParams }).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
       catchError(this.handleError)
     );
   }
@@ -386,18 +437,12 @@ export class AdminApiService extends BaseApiService {
   /**
    * Create new product
    */
-  createProduct(product: Omit<ProductDto, 'id'>): Observable<ProductDto> {
-    const newProduct: ProductDto = {
-      ...product,
-      id: Math.max(...this.mockProducts.map(p => p.id)) + 1,
-      selected: false
-    };
-    
-    this.mockProducts.push(newProduct);
-    
-    return of(newProduct).pipe(
-      delay(800),
-      tap(newProduct => console.log('Product created:', newProduct)),
+  createProduct(product: any): Observable<any> {
+    const url = this.buildUrl('/admin/products');
+    this.logRequest('POST', url, product);
+
+    return this.post<any>(url, product).pipe(
+      tap((response) => this.logResponse('POST', url, response)),
       catchError(this.handleError)
     );
   }
@@ -405,29 +450,28 @@ export class AdminApiService extends BaseApiService {
   /**
    * Update product
    */
-  updateProduct(id: number, product: Partial<ProductDto>): Observable<ProductDto> {
-    const index = this.mockProducts.findIndex(p => p.id === id);
-    if (index !== -1) {
-      this.mockProducts[index] = { ...this.mockProducts[index], ...product };
-      return of(this.mockProducts[index]).pipe(
-        delay(600),
-        tap(updatedProduct => console.log('Product updated:', updatedProduct)),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('Product not found');
+  updateProduct(id: number, product: any): Observable<any> {
+    const url = this.buildUrl(`/admin/products/${id}`);
+    this.logRequest('PUT', url, product);
+
+    return this.put<any>(url, product).pipe(
+      tap((response) => this.logResponse('PUT', url, response)),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Update product stock specifically
    */
   updateProductStock(id: number, stock: number): Observable<ProductDto> {
-    const index = this.mockProducts.findIndex(p => p.id === id);
+    const index = this.mockProducts.findIndex((p) => p.id === id);
     if (index !== -1) {
       this.mockProducts[index].stock = stock;
       return of(this.mockProducts[index]).pipe(
         delay(400),
-        tap(updatedProduct => console.log('Product stock updated:', updatedProduct)),
+        tap((updatedProduct) =>
+          console.log('Product stock updated:', updatedProduct)
+        ),
         catchError(this.handleError)
       );
     }
@@ -437,47 +481,39 @@ export class AdminApiService extends BaseApiService {
   /**
    * Delete product
    */
-  deleteProduct(id: number): Observable<void> {
-    const index = this.mockProducts.findIndex(p => p.id === id);
-    if (index !== -1) {
-      this.mockProducts.splice(index, 1);
-      return of(void 0).pipe(
-        delay(500),
-        tap(() => console.log('Product deleted:', id)),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('Product not found');
+  deleteProduct(id: number): Observable<any> {
+    const url = this.buildUrl(`/admin/products/${id}`);
+    this.logRequest('DELETE', url);
+
+    return this.delete<any>(url).pipe(
+      tap((response) => this.logResponse('DELETE', url, response)),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Bulk update product stock
    */
   bulkUpdateStock(updates: { id: number; stock: number }[]): Observable<void> {
-    updates.forEach(update => {
-      const index = this.mockProducts.findIndex(p => p.id === update.id);
+    updates.forEach((update) => {
+      const index = this.mockProducts.findIndex((p) => p.id === update.id);
       if (index !== -1) {
         this.mockProducts[index].stock = update.stock;
       }
     });
-    
-    return of(void 0).pipe(
-      delay(1000),
-      catchError(this.handleError)
-    );
+
+    return of(void 0).pipe(delay(1000), catchError(this.handleError));
   }
 
   /**
    * Get low stock products
    */
   getLowStockProducts(threshold: number = 10): Observable<ProductDto[]> {
-    const lowStockProducts = this.mockProducts.filter(p => p.stock <= threshold);
-    return of(lowStockProducts).pipe(
-      delay(400),
-      catchError(this.handleError)
+    const lowStockProducts = this.mockProducts.filter(
+      (p) => p.stock <= threshold
     );
+    return of(lowStockProducts).pipe(delay(400), catchError(this.handleError));
   }
-
 
   // ============================================================================
   // ORDER MANAGEMENT
@@ -486,21 +522,23 @@ export class AdminApiService extends BaseApiService {
   /**
    * Get all orders
    */
-  getAllOrders(params?: {
-    status?: string;
-    page?: number;
-    limit?: number;
-    startDate?: string;
-    endDate?: string;
-  }): Observable<{ orders: Order[]; total: number }> {
-    let filteredOrders = [...this.mockOrders];
-    
-    if (params?.status) {
-      filteredOrders = filteredOrders.filter(o => o.status === params.status);
-    }
-    
-    return of({ orders: filteredOrders, total: filteredOrders.length }).pipe(
-      delay(600),
+  getAllOrders(request: GetAllOrdersRequestDto | null): Observable<GetAllOrdersResponseDto> {
+    const url = this.buildUrl(`${this.endPoint}/orders`);
+    const params = this.createParams({
+      pageNumber: request?.page || 1,
+      pageSize: request?.pageSize || 10,
+      ...(request?.searchTerm && { searchTerm: request.searchTerm }),
+      ...(request?.orderStatus && { statusFilter: request.orderStatus }),
+      ...(request?.fromDate && { startDate: request.fromDate }),
+      ...(request?.toDate && { endDate: request.toDate }),
+      ...(request?.sortBy && { sortBy: request.sortBy }),
+      ...(request?.sortDirection && { sortDirection: request.sortDirection }),
+    });
+
+    this.logRequest('GET', url, request);
+
+    return this.get<any>(url, { params }).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
       catchError(this.handleError)
     );
   }
@@ -508,47 +546,38 @@ export class AdminApiService extends BaseApiService {
   /**
    * Get specific order
    */
-  getOrder(orderId: number): Observable<Order> {
-    const order = this.mockOrders.find(o => o.id === orderId);
-    if (order) {
-      return of(order).pipe(
-        delay(300),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('Order not found');
-  }
+  getOrder(orderId: number): Observable<AdminOrderDto> {
+    const url = this.buildUrl(`${this.endPoint}/orders/${orderId}`);
+    this.logRequest('GET', url);
 
+    return this.get<any>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
+      catchError(this.handleError)
+    );
+  }
 
   /**
    * Update order status
    */
-  updateOrderStatus(orderId: number, status: Order['status']): Observable<Order> {
-    const index = this.mockOrders.findIndex(o => o.id === orderId);
-    if (index !== -1) {
-      this.mockOrders[index].status = status;
-      this.mockOrders[index].updatedAt = new Date();
-      return of(this.mockOrders[index]).pipe(
-        delay(500),
-        tap(updatedOrder => console.log('Order status updated:', updatedOrder)),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('Order not found');
+  updateOrderStatus(orderId: number, statusData: any): Observable<any> {
+    const url = this.buildUrl(`/admin/orders/${orderId}/status`);
+    this.logRequest('PUT', url, statusData);
+
+    return this.put<any>(url, statusData).pipe(
+      tap((response) => this.logResponse('PUT', url, response)),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Cancel order
    */
   cancelOrder(orderId: number, reason?: string): Observable<void> {
-    const index = this.mockOrders.findIndex(o => o.id === orderId);
+    const index = this.mockOrders.findIndex((o) => o.id === orderId);
     if (index !== -1) {
       this.mockOrders[index].status = 'cancelled';
       this.mockOrders[index].updatedAt = new Date();
-      return of(void 0).pipe(
-        delay(500),
-        catchError(this.handleError)
-      );
+      return of(void 0).pipe(delay(500), catchError(this.handleError));
     }
     throw new Error('Order not found');
   }
@@ -566,17 +595,15 @@ export class AdminApiService extends BaseApiService {
   }> {
     const stats = {
       total: this.mockOrders.length,
-      pending: this.mockOrders.filter(o => o.status === 'pending').length,
-      processing: this.mockOrders.filter(o => o.status === 'processing').length,
-      shipped: this.mockOrders.filter(o => o.status === 'shipped').length,
-      delivered: this.mockOrders.filter(o => o.status === 'delivered').length,
-      cancelled: this.mockOrders.filter(o => o.status === 'cancelled').length
+      pending: this.mockOrders.filter((o) => o.status === 'pending').length,
+      processing: this.mockOrders.filter((o) => o.status === 'processing')
+        .length,
+      shipped: this.mockOrders.filter((o) => o.status === 'shipped').length,
+      delivered: this.mockOrders.filter((o) => o.status === 'delivered').length,
+      cancelled: this.mockOrders.filter((o) => o.status === 'cancelled').length,
     };
-    
-    return of(stats).pipe(
-      delay(300),
-      catchError(this.handleError)
-    );
+
+    return of(stats).pipe(delay(300), catchError(this.handleError));
   }
 
   // ============================================================================
@@ -587,23 +614,16 @@ export class AdminApiService extends BaseApiService {
    * Get all users
    */
   getAllUsers(params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-  }): Observable<{ users: any[]; total: number }> {
-    let filteredUsers = [...this.mockUsers];
-    
-    if (params?.search) {
-      const searchTerm = params.search.toLowerCase();
-      filteredUsers = filteredUsers.filter(u => 
-        u.email.toLowerCase().includes(searchTerm) ||
-        u.firstName.toLowerCase().includes(searchTerm) ||
-        u.lastName.toLowerCase().includes(searchTerm)
-      );
-    }
-    
-    return of({ users: filteredUsers, total: filteredUsers.length }).pipe(
-      delay(600),
+    pageNumber?: number;
+    pageSize?: number;
+    searchTerm?: string;
+  }): Observable<any> {
+    const url = this.buildUrl(`${this.endPoint}/users`);
+    const queryParams = this.createParams(params || {});
+    this.logRequest('GET', url, params);
+
+    return this.get<any>(url, { params: queryParams }).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
       catchError(this.handleError)
     );
   }
@@ -611,62 +631,67 @@ export class AdminApiService extends BaseApiService {
   /**
    * Get user details
    */
-  getUser(userId: number): Observable<any> {
-    const user = this.mockUsers.find(u => u.id === userId);
-    if (user) {
-      return of(user).pipe(
-        delay(300),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('User not found');
+  getUser(userId: string): Observable<any> {
+    const url = this.buildUrl(`/admin/users/${userId}`);
+    this.logRequest('GET', url);
+
+    return this.get<any>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Update user (admin can update any user)
    */
-  updateUser(userId: number, updates: any): Observable<any> {
-    const index = this.mockUsers.findIndex(u => u.id === userId);
-    if (index !== -1) {
-      this.mockUsers[index] = { ...this.mockUsers[index], ...updates };
-      return of(this.mockUsers[index]).pipe(
-        delay(600),
-        tap(updatedUser => console.log('User updated:', updatedUser)),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('User not found');
+  updateUser(userId: string, updates: any): Observable<any> {
+    const url = this.buildUrl(`/admin/users/${userId}`);
+    this.logRequest('PUT', url, updates);
+
+    return this.put<any>(url, updates).pipe(
+      tap((response) => this.logResponse('PUT', url, response)),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Delete user
    */
-  deleteUser(userId: number): Observable<void> {
-    const index = this.mockUsers.findIndex(u => u.id === userId);
-    if (index !== -1) {
-      this.mockUsers.splice(index, 1);
-      return of(void 0).pipe(
-        delay(500),
-        tap(() => console.log('User deleted:', userId)),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('User not found');
+  deleteUser(userId: string): Observable<any> {
+    const url = this.buildUrl(`/admin/users/${userId}`);
+    this.logRequest('DELETE', url);
+
+    return this.delete<any>(url).pipe(
+      tap((response) => this.logResponse('DELETE', url, response)),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Create new user
+   */
+  createUser(userData: any): Observable<any> {
+    const url = this.buildUrl('/admin/users');
+    this.logRequest('POST', url, userData);
+
+    return this.post<any>(url, userData).pipe(
+      tap((response) => this.logResponse('POST', url, response)),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Block/unblock user
    */
-  toggleUserStatus(userId: number, isBlocked: boolean): Observable<void> {
-    const index = this.mockUsers.findIndex(u => u.id === userId);
-    if (index !== -1) {
-      this.mockUsers[index].isBlocked = isBlocked;
-      return of(void 0).pipe(
-        delay(400),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('User not found');
+  toggleUserStatus(userId: string, isBlocked: boolean): Observable<any> {
+    const url = this.buildUrl(`/admin/users/${userId}`);
+    const updateData = { lockoutEnabled: isBlocked };
+    this.logRequest('PUT', url, updateData);
+
+    return this.put<any>(url, updateData).pipe(
+      tap((response) => this.logResponse('PUT', url, response)),
+      catchError(this.handleError)
+    );
   }
 
   // ============================================================================
@@ -678,30 +703,27 @@ export class AdminApiService extends BaseApiService {
    */
   getCategories(): Observable<any[]> {
     const categories = [
-      { id: 1, name: 'Men', description: 'Men\'s footwear' },
-      { id: 2, name: 'Women', description: 'Women\'s footwear' },
-      { id: 3, name: 'Unisex', description: 'Unisex footwear' }
+      { id: 1, name: 'Men', description: "Men's footwear" },
+      { id: 2, name: 'Women', description: "Women's footwear" },
+      { id: 3, name: 'Unisex', description: 'Unisex footwear' },
     ];
-    
-    return of(categories).pipe(
-      delay(300),
-      catchError(this.handleError)
-    );
+
+    return of(categories).pipe(delay(300), catchError(this.handleError));
   }
 
   /**
    * Create category
    */
-  createCategory(category: { name: string; description?: string }): Observable<any> {
+  createCategory(category: {
+    name: string;
+    description?: string;
+  }): Observable<any> {
     const newCategory = {
       id: Math.floor(Math.random() * 1000) + 10,
-      ...category
+      ...category,
     };
-    
-    return of(newCategory).pipe(
-      delay(600),
-      catchError(this.handleError)
-    );
+
+    return of(newCategory).pipe(delay(600), catchError(this.handleError));
   }
 
   /**
@@ -709,20 +731,14 @@ export class AdminApiService extends BaseApiService {
    */
   updateCategory(id: number, updates: any): Observable<any> {
     const updatedCategory = { id, ...updates };
-    return of(updatedCategory).pipe(
-      delay(500),
-      catchError(this.handleError)
-    );
+    return of(updatedCategory).pipe(delay(500), catchError(this.handleError));
   }
 
   /**
    * Delete category
    */
   deleteCategory(id: number): Observable<void> {
-    return of(void 0).pipe(
-      delay(400),
-      catchError(this.handleError)
-    );
+    return of(void 0).pipe(delay(400), catchError(this.handleError));
   }
 
   /**
@@ -734,13 +750,10 @@ export class AdminApiService extends BaseApiService {
       { id: 2, name: 'Adidas', description: 'Impossible Is Nothing' },
       { id: 3, name: 'Converse', description: 'Classic Style' },
       { id: 4, name: 'Puma', description: 'Forever Faster' },
-      { id: 5, name: 'New Balance', description: 'Fearlessly Independent' }
+      { id: 5, name: 'New Balance', description: 'Fearlessly Independent' },
     ];
-    
-    return of(brands).pipe(
-      delay(300),
-      catchError(this.handleError)
-    );
+
+    return of(brands).pipe(delay(300), catchError(this.handleError));
   }
 
   /**
@@ -749,13 +762,10 @@ export class AdminApiService extends BaseApiService {
   createBrand(brand: { name: string; description?: string }): Observable<any> {
     const newBrand = {
       id: Math.floor(Math.random() * 1000) + 10,
-      ...brand
+      ...brand,
     };
-    
-    return of(newBrand).pipe(
-      delay(600),
-      catchError(this.handleError)
-    );
+
+    return of(newBrand).pipe(delay(600), catchError(this.handleError));
   }
 
   /**
@@ -763,20 +773,14 @@ export class AdminApiService extends BaseApiService {
    */
   updateBrand(id: number, updates: any): Observable<any> {
     const updatedBrand = { id, ...updates };
-    return of(updatedBrand).pipe(
-      delay(500),
-      catchError(this.handleError)
-    );
+    return of(updatedBrand).pipe(delay(500), catchError(this.handleError));
   }
 
   /**
    * Delete brand
    */
   deleteBrand(id: number): Observable<void> {
-    return of(void 0).pipe(
-      delay(400),
-      catchError(this.handleError)
-    );
+    return of(void 0).pipe(delay(400), catchError(this.handleError));
   }
 
   // ============================================================================
@@ -792,23 +796,16 @@ export class AdminApiService extends BaseApiService {
       contactEmail: 'admin@example.com',
       maintenanceMode: false,
       allowRegistration: true,
-      requireEmailVerification: true
+      requireEmailVerification: true,
     };
-    
-    return of(settings).pipe(
-      delay(300),
-      catchError(this.handleError)
-    );
+
+    return of(settings).pipe(delay(300), catchError(this.handleError));
   }
 
   /**
    * Update system settings
    */
   updateSystemSettings(settings: any): Observable<any> {
-    return of(settings).pipe(
-      delay(800),
-      catchError(this.handleError)
-    );
+    return of(settings).pipe(delay(800), catchError(this.handleError));
   }
-
-} 
+}

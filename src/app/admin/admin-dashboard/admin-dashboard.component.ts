@@ -102,7 +102,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   loadDashboardData(): void {
     this.isLoadingStats = true;
     
-    this.subscriptions.add(
       this.adminApi.getDashboardStats().subscribe({
         next: (stats) => {
           this.dashboardStats = stats;
@@ -114,7 +113,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           this.toastService.error('Failed to load dashboard statistics');
         }
       })
-    );
+
   }
 
   // ============================================================================
@@ -253,7 +252,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   deleteUser(user: UserDto): void {
     if (confirm(`Are you sure you want to delete user "${user.email}"?`)) {
       this.subscriptions.add(
-        this.adminApi.deleteUser(user.id).subscribe({
+        this.adminApi.deleteUser(user.id.toString()).subscribe({
           next: () => {
                       this.toastService.success('User deleted successfully');
             this.loadUsers(); // Reload users
@@ -271,7 +270,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     const newStatus = !user.isBlocked; // Assuming User interface has isBlocked property
     
     this.subscriptions.add(
-      this.adminApi.toggleUserStatus(user.id, newStatus).subscribe({
+      this.adminApi.toggleUserStatus(user.id.toString(), newStatus).subscribe({
         next: () => {
           // Update local user
           const index = this.users.findIndex(u => u.id === user.id);
@@ -282,7 +281,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           
           this.toastService.success(`User ${newStatus ? 'blocked' : 'unblocked'} successfully`);
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error updating user status:', error);
           this.toastService.error('Failed to update user status');
         }
@@ -298,11 +297,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.isLoadingOrders = true;
     
     this.subscriptions.add(
-      this.adminApi.getAllOrders().subscribe({
+      this.adminApi.getAllOrders(null).subscribe({
         next: (response) => {
           this.orders = response.orders;
           this.filteredOrders = response.orders;
-          this.totalItems = response.total;
+          this.totalItems = response.totalCount;
           this.isLoadingOrders = false;
         },
         error: (error) => {

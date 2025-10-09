@@ -213,7 +213,7 @@ export class AuthApiService extends BaseApiService {
         Id: parsedUser.Id,
         Email: parsedUser.Email,
         FirstName: parsedUser.FirstName,
-        Role: this.validateRole(parsedUser.Role),
+        role: this.validateRole(parsedUser.role),
       };
     } catch (err) {
       console.error('Failed to get current user:', err);
@@ -229,7 +229,7 @@ export class AuthApiService extends BaseApiService {
 
   isAdmin(): boolean {
     const currentUser = this.getCurrentUser();
-    return currentUser?.Role === UserRole.ADMINISTRATOR;
+    return currentUser?.role === UserRole.ADMINISTRATOR;
   }
 
   getUserRole(): string | null {
@@ -254,7 +254,7 @@ export class AuthApiService extends BaseApiService {
 
       const token = jwtDecode<UserInfoDto>(response.token);
 
-      if (!token || !token.FirstName || !token.Role) {
+      if (!token || !token.FirstName || !token.role) {
         throw new Error('Invalid JWT token.');
       }
 
@@ -262,7 +262,7 @@ export class AuthApiService extends BaseApiService {
         Id: token.Id,
         FirstName: token.FirstName,
         Email: token.Email,
-        Role: this.validateRole(token.Role),
+        role: this.validateRole(token.role),
       };
 
       localStorage.setItem('currentUser', JSON.stringify(userInfo));

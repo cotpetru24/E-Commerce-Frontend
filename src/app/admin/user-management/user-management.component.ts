@@ -234,13 +234,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
     if (confirm(message)) {
       this.subscriptions.add(
-        this.adminApi.toggleUserStatus(user.id, !user.isBlocked).subscribe({
+        this.adminApi.toggleUserStatus(user.id.toString(), !user.isBlocked).subscribe({
           next: () => {
             const status = user.isBlocked ? 'unblocked' : 'blocked';
             this.toastService.success(`User ${status} successfully`);
             this.loadUsers();
           },
-          error: (error) => {
+          error: (error: any) => {
             console.error('Error toggling user status:', error);
             this.toastService.error('Failed to update user status');
           }
@@ -252,12 +252,12 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   deleteUser(user: User): void {
     if (confirm(`Are you sure you want to delete user ${user.firstName} ${user.lastName}? This action cannot be undone.`)) {
       this.subscriptions.add(
-        this.adminApi.deleteUser(user.id).subscribe({
+        this.adminApi.deleteUser(user.id.toString()).subscribe({
           next: () => {
             this.toastService.success('User deleted successfully');
             this.loadUsers();
           },
-          error: (error) => {
+          error: (error: any) => {
             console.error('Error deleting user:', error);
             this.toastService.error('Failed to delete user');
           }

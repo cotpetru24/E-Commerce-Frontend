@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { Order } from '../../services/api/admin-api.service';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
+import { GetAllOrdersRequestDto } from '../../models';
 
 interface OrderStats {
   total: number;
@@ -20,7 +21,7 @@ interface OrderStats {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './order-management.component.html',
-  styleUrls: ['./order-management.component.scss']
+  styleUrls: ['./order-management.component.scss'],
 })
 export class OrderManagementComponent implements OnInit, OnDestroy {
   // Orders data
@@ -28,6 +29,18 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   filteredOrders: Order[] = [];
   paginatedOrders: Order[] = [];
   isLoading = false;
+  initialInit: boolean = true;
+
+  // getAllOrdersRequest: GetAllOrdersRequestDto = {
+  //   orderStatus: null,
+  //   page: null,
+  //   pageSize: null,
+  //   fromDate: null,
+  //   toDate: null,
+  //   sortBy: null,
+  //   sortDirection: null,
+  //   searchTerm: null,
+  // };
 
   // Search and filters
   searchTerm = '';
@@ -36,16 +49,16 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   sortBy = 'date-desc';
 
   // Pagination
-  currentPage = 1;
-  itemsPerPage = 10;
-  totalPages = 1;
+  currentPage: number = 0;
+  itemsPerPage: number = 10;
+  totalPages: number = 0;
 
   // Statistics
   orderStats: OrderStats = {
     total: 0,
     pending: 0,
     processing: 0,
-    completed: 0
+    completed: 0,
   };
 
   // Math utility for template
@@ -60,6 +73,10 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    if (this.initialInit) {
+      this.currentPage = 1;
+      this.initialInit = false;
+    }
     this.loadOrders();
   }
 
@@ -69,20 +86,39 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
 
   loadOrders(): void {
     this.isLoading = true;
-    
+
+    const getAllOrdersRequest:GetAllOrdersRequestDto =
+    {
+      fromDate: null,
+      orderStatus:null,
+      page:this.currentPage,
+      pageSize:this.itemsPerPage,
+      searchTerm:null,
+      sortBy:null,
+      sortDirection:null,
+      toDate:null,
+    } 
+
+
+
+
     this.subscriptions.add(
-      this.adminApi.getAllOrders().subscribe({
+      this.adminApi.getAllOrders(getAllOrdersRequest).subscribe({
         next: (response) => {
           this.orders = response.orders;
+          this.currentPage = response.page;
+          this.totalPages = response.totalPages;
+          this.itemsPerPage = response.pageSize;
           this.applyFilters();
           this.calculateStats();
+          this.orderStats.total = response.totalCount;
           this.isLoading = false;
         },
         error: (error) => {
           console.error('Error loading orders:', error);
           this.isLoading = false;
           this.toastService.error('Failed to load orders');
-        }
+        },
       })
     );
   }
@@ -102,18 +138,23 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    this.filteredOrders = this.orders.filter(order => {
-      const matchesSearch = !this.searchTerm || 
+    this.filteredOrders = this.orders.filter((order) => {
+      const matchesSearch =
+        !this.searchTerm ||
         order.id.toString().includes(this.searchTerm) ||
         order.userEmail.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        (order.customerName && order.customerName.toLowerCase().includes(this.searchTerm.toLowerCase()));
-      
-      const matchesStatus = !this.selectedStatus || 
-        order.status === this.selectedStatus;
-      
-      const matchesDateRange = !this.selectedDateRange || 
+        (order.customerName &&
+          order.customerName
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase()));
+
+      const matchesStatus =
+        !this.selectedStatus || order.status === this.selectedStatus;
+
+      const matchesDateRange =
+        !this.selectedDateRange ||
         this.isInDateRange(order.createdAt, this.selectedDateRange);
-      
+
       return matchesSearch && matchesStatus && matchesDateRange;
     });
 
@@ -125,9 +166,13 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     this.filteredOrders.sort((a, b) => {
       switch (this.sortBy) {
         case 'date-desc':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
         case 'date-asc':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         case 'total-desc':
           return b.total - a.total;
         case 'total-asc':
@@ -141,8 +186,12 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   isInDateRange(date: Date | string, range: string): boolean {
     const orderDate = new Date(date);
     const now = new Date();
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+    const startOfDay = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+
     switch (range) {
       case 'today':
         return orderDate >= startOfDay;
@@ -154,7 +203,11 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         return orderDate >= startOfMonth;
       case 'quarter':
-        const startOfQuarter = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
+        const startOfQuarter = new Date(
+          now.getFullYear(),
+          Math.floor(now.getMonth() / 3) * 3,
+          1
+        );
         return orderDate >= startOfQuarter;
       default:
         return true;
@@ -162,7 +215,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   }
 
   updatePagination(): void {
-    this.totalPages = Math.ceil(this.filteredOrders.length / this.itemsPerPage);
+    // this.totalPages = Math.ceil(this.filteredOrders.length / this.itemsPerPage);
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedOrders = this.filteredOrders.slice(startIndex, endIndex);
@@ -180,44 +233,57 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     const maxVisible = 5;
     let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
     let end = Math.min(this.totalPages, start + maxVisible - 1);
-    
+
     if (end - start + 1 < maxVisible) {
       start = Math.max(1, end - maxVisible + 1);
     }
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
-    
+
     return pages;
   }
 
   calculateStats(): void {
-    this.orderStats = {
-      total: this.orders.length,
-      pending: this.orders.filter(o => o.status === 'pending').length,
-      processing: this.orders.filter(o => o.status === 'processing').length,
-      completed: this.orders.filter(o => o.status === 'delivered').length
-    };
+    (this.orderStats.pending = this.orders.filter(
+      (o) => o.status === 'pending'
+    ).length),
+      (this.orderStats.processing = this.orders.filter(
+        (o) => o.status === 'processing'
+      ).length),
+      (this.orderStats.completed = this.orders.filter(
+        (o) => o.status === 'delivered'
+      ).length);
   }
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'pending': return 'badge bg-warning';
-      case 'processing': return 'badge bg-info';
-      case 'shipped': return 'badge bg-primary';
-      case 'delivered': return 'badge bg-success';
-      case 'cancelled': return 'badge bg-danger';
-      default: return 'badge bg-secondary';
+      case 'pending':
+        return 'badge bg-warning';
+      case 'processing':
+        return 'badge bg-info';
+      case 'shipped':
+        return 'badge bg-primary';
+      case 'delivered':
+        return 'badge bg-success';
+      case 'cancelled':
+        return 'badge bg-danger';
+      default:
+        return 'badge bg-secondary';
     }
   }
 
   getPaymentClass(status: string): string {
     switch (status) {
-      case 'paid': return 'badge bg-success';
-      case 'pending': return 'badge bg-warning';
-      case 'failed': return 'badge bg-danger';
-      default: return 'badge bg-secondary';
+      case 'paid':
+        return 'badge bg-success';
+      case 'pending':
+        return 'badge bg-warning';
+      case 'failed':
+        return 'badge bg-danger';
+      default:
+        return 'badge bg-secondary';
     }
   }
 
@@ -230,7 +296,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   }
 
   viewOrder(order: Order): void {
-    // Navigate to order detail view
+    // Navigate to admin order detail view
     this.router.navigate(['/admin/orders', order.id]);
   }
 
@@ -250,7 +316,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           error: (error) => {
             console.error('Error updating order status:', error);
             this.toastService.error('Failed to update order status');
-          }
+          },
         })
       );
     }
@@ -267,7 +333,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           error: (error) => {
             console.error('Error cancelling order:', error);
             this.toastService.error('Failed to cancel order');
-          }
+          },
         })
       );
     }
@@ -281,4 +347,4 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     // Implement export functionality
     this.toastService.info('Export functionality coming soon!');
   }
-} 
+}

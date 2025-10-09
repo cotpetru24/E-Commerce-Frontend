@@ -15,7 +15,7 @@ export interface UserInfoDto {
   Id: string;
   FirstName: string;
   Email: string;
-  Role: string;
+  role: string;
 }
 
 export enum UserRole {

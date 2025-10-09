@@ -27,6 +27,10 @@ const routes: Routes = [
     loadComponent: () => import('./order-management/order-management.component').then(m => m.OrderManagementComponent) 
   },
   { 
+    path: 'orders/:id', 
+    loadComponent: () => import('./view-order/view-order.component').then(m => m.ViewOrderComponent) 
+  },
+  { 
     path: 'users', 
     loadComponent: () => import('./user-management/user-management.component').then(m => m.UserManagementComponent) 
   },
