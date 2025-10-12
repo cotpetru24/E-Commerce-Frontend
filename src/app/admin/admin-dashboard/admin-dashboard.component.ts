@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ProductDto } from '../../models/product.dto';
@@ -83,6 +83,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private adminApi: AdminApiService,
     private toastService: ToastService,
+    private router: Router,
     // private productApi: ProductApiService,
     // private userApi: UserApiService,
   ) {}
@@ -394,12 +395,114 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(amount: number): string {
-    return `$${amount.toFixed(2)}`;
+    return `£${amount.toFixed(2)}`;
   }
 
   // Utility method for Math.max to use in template
   getMaxValue(a: number, b: number): number {
     return Math.max(a, b);
+  }
+
+  // ============================================================================
+  // ACTIVITY METHODS
+  // ============================================================================
+
+  /**
+   * Get the appropriate Bootstrap icon class based on activity source
+   */
+  getActivityIcon(source: string): string {
+    switch (source.toLowerCase()) {
+      case 'user':
+        return 'bi-person-plus';
+      case 'product':
+        return 'bi-box';
+      case 'order':
+        return 'bi-cart-check';
+      case 'payment':
+        return 'bi-currency-dollar';
+      case 'shipping':
+        return 'bi-truck';
+      default:
+        return 'bi-info-circle';
+    }
+  }
+
+  /**
+   * Format time ago for activity timestamps
+   */
+  formatTimeAgo(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) {
+      return 'Just now';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 2592000) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    } else {
+      return date.toLocaleDateString();
+    }
+  }
+
+  /**
+   * View specific activity item
+   */
+  viewActivity(activity: any): void {
+    console.log('Viewing activity:', activity);
+    
+    // Navigate based on activity source
+    switch (activity.source.toLowerCase()) {
+      case 'user':
+        // Navigate to user management or specific user
+        if (activity.userGuid) {
+        this.toastService.warning('In viewActivity - navigate to user');
+        } else {
+        this.toastService.error('Failed to navidate to activity.')       
+        }
+        break;
+
+      case 'product':
+        if (activity.id) {
+        this.toastService.warning('In viewActivity - navigate to product');
+        } else {
+        this.toastService.error('Failed to navidate to activity.')       
+        }
+        break;
+
+      case 'order':
+        if (activity.id) {
+          this.router.navigate(['/admin/orders', activity.id], {
+            queryParams: { from: 'dashboard' }
+          });
+        } else {
+          this.toastService.error('Failed to navigate to activity.');
+        }
+        break;
+
+      default:
+        console.log('Unknown activity source:', activity.source);
+    }
+  }
+
+  /**
+   * View all activity (navigate to activity log page)
+   */
+  viewAllActivity(): void {
+    this.toastService.info('View all - feature coming soon!');
+  }
+
+  /**
+   * Refresh dashboard data
+   */
+  refreshDashboard(): void {
+    this.loadDashboardData();
   }
 
   onTabChange(event: any): void {

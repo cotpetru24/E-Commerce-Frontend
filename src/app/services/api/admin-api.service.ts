@@ -32,8 +32,9 @@ export interface AdminStats {
   newOrdersToday: number;
   todayRevenue: number;
   recentActivity: {
-    source: string;
+    source: 'User' | 'Product' | 'Order' | 'Payment' | 'Shipping';
     userGuid?: string;
+    userEmail?: string;
     id: number;
     description: string;
     createdAt: string;
@@ -314,44 +315,50 @@ export class AdminApiService extends BaseApiService {
     },
   ];
 
-  // private mockStats: AdminStats = {
-  //   totalUsers: 1250,
-  //   totalOrders: 3420,
-  //   totalRevenue: 456789.5,
-  //   totalProducts: 156,
-  //   lowStockProducts: 8,
-  //   pendingOrders: 23,
-  //   newUsersToday: 45,
-  //   newOrdersToday: 67,
-  //   todayRevenue: 12345.67,
-  //   recentActivity: [
-  //     {
-  //       source: 'bi-cart-check',
-  //       message: 'New order #ORD-2024-005 placed by Jane Smith',
-  //       time: '2 minutes ago',
-  //     },
-  //     {
-  //       icon: 'bi-person-plus',
-  //       message: 'New user registration: david.brown@example.com',
-  //       time: '15 minutes ago',
-  //     },
-  //     {
-  //       icon: 'bi-box',
-  //       message: 'Product "Nike Air Max 270" stock updated',
-  //       time: '1 hour ago',
-  //     },
-  //     {
-  //       icon: 'bi-truck',
-  //       message: 'Order #ORD-2024-003 shipped to John Doe',
-  //       time: '2 hours ago',
-  //     },
-  //     {
-  //       icon: 'bi-currency-dollar',
-  //       message: 'Payment received for order #ORD-2024-002',
-  //       time: '3 hours ago',
-  //     },
-  //   ],
-  // };
+  private mockStats: AdminStats = {
+    totalUsers: 1250,
+    totalOrders: 3420,
+    totalRevenue: 456789.5,
+    totalProducts: 156,
+    lowStockProducts: 8,
+    pendingOrders: 23,
+    newUsersToday: 45,
+    newOrdersToday: 67,
+    todayRevenue: 12345.67,
+    recentActivity: [
+      {
+        source: 'Order',
+        id: 2024005,
+        description: 'New order #ORD-2024-005 placed by Jane Smith',
+        createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 minutes ago
+      },
+      {
+        source: 'User',
+        id: 1251,
+        userGuid: 'user-guid-1251',
+        description: 'New user registration: david.brown@example.com',
+        createdAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
+      },
+      {
+        source: 'Product',
+        id: 45,
+        description: 'Product "Nike Air Max 270" stock updated',
+        createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(), // 1 hour ago
+      },
+      {
+        source: 'Shipping',
+        id: 2024003,
+        description: 'Order #ORD-2024-003 shipped to John Doe',
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+      },
+      {
+        source: 'Payment',
+        id: 2024002,
+        description: 'Payment received for order #ORD-2024-002',
+        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
+      },
+    ],
+  };
 
   constructor(protected override http: HttpClient) {
     super(http);

@@ -59,6 +59,7 @@ export class ViewOrderComponent implements OnInit {
   canUpdateStatus: boolean = true;
   orderId: number | null = null;
   orderStatus: string = 'Processing';
+  cameFromDashboard: boolean = false;
 
   constructor(
     private router: Router,
@@ -71,6 +72,12 @@ export class ViewOrderComponent implements OnInit {
 
   ngOnInit(): void {
     this.orderId = Number(this.route.snapshot.paramMap.get('id'));
+    
+    // Check if we came from dashboard
+    this.route.queryParams.subscribe(params => {
+      this.cameFromDashboard = params['from'] === 'dashboard';
+    });
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (this.orderId) {
@@ -192,7 +199,11 @@ export class ViewOrderComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/admin/orders']);
+    if (this.cameFromDashboard) {
+      this.router.navigate(['/admin']);
+    } else {
+      this.router.navigate(['/admin/orders']);
+    }
   }
 
   goToItem(productId: number): void {
