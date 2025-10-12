@@ -18,7 +18,7 @@
               <div class="stat-content">
                 <h3>{{ dashboardStats.totalOrders }}</h3>
                 <p class="mb-1">Total Orders</p>
-                <span class="stat-change positive">+{{ dashboardStats.newOrders }} today</span>
+                <span class="stat-change positive">+{{ dashboardStats.newOrdersToday }} today</span>
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@
               <div class="stat-content">
                 <h3>{{ dashboardStats.totalUsers }}</h3>
                 <p class="mb-1">Total Users</p>
-                <span class="stat-change positive">+{{ dashboardStats.newUsers }} today</span>
+                <span class="stat-change positive">+{{ dashboardStats.newUsersToday }} today</span>
               </div>
             </div>
           </div>
@@ -97,18 +97,13 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-3 mb-2">
-                <button class="btn btn-primary w-100" routerLink="/admin/add-product">
-                  <i class="bi bi-plus-circle me-2"></i>Add Product
-                </button>
-              </div>
-              <div class="col-md-3 mb-2">
                 <button class="btn btn-success w-100" routerLink="/admin/products">
                   <i class="bi bi-box me-2"></i>Manage Products
                 </button>
               </div>
               <div class="col-md-3 mb-2">
                 <button class="btn btn-info w-100" routerLink="/admin/orders">
-                  <i class="bi bi-cart me-2"></i>View Orders
+                  <i class="bi bi-cart me-2"></i>Manage Orders
                 </button>
               </div>
               <div class="col-md-3 mb-2">
@@ -143,11 +138,11 @@
             <div class="activity-list">
               <div class="activity-item d-flex align-items-center mb-3" *ngFor="let activity of dashboardStats.recentActivity">
                 <div class="activity-icon me-3">
-                  <i class="bi" [class]="activity.icon"></i>
+                  <i class="bi" [class]="activity.source"></i>
                 </div>
                 <div class="activity-content">
-                  <p class="mb-1">{{ activity.message }}</p>
-                  <small class="text-muted">{{ activity.time }}</small>
+                  <p class="mb-1">{{ activity.description }}</p>
+                  <small class="text-muted">{{ activity.createdAt }}</small>
                 </div>
               </div>
             </div>

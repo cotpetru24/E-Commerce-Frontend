@@ -28,13 +28,15 @@ export interface AdminStats {
   totalProducts: number;
   lowStockProducts: number;
   pendingOrders: number;
-  newUsers: number;
-  newOrders: number;
+  newUsersToday: number;
+  newOrdersToday: number;
   todayRevenue: number;
   recentActivity: {
-    icon: string;
-    message: string;
-    time: string;
+    source: string;
+    userGuid?: string;
+    id: number;
+    description: string;
+    createdAt: string;
   }[];
 }
 
@@ -312,44 +314,44 @@ export class AdminApiService extends BaseApiService {
     },
   ];
 
-  private mockStats: AdminStats = {
-    totalUsers: 1250,
-    totalOrders: 3420,
-    totalRevenue: 456789.5,
-    totalProducts: 156,
-    lowStockProducts: 8,
-    pendingOrders: 23,
-    newUsers: 45,
-    newOrders: 67,
-    todayRevenue: 12345.67,
-    recentActivity: [
-      {
-        icon: 'bi-cart-check',
-        message: 'New order #ORD-2024-005 placed by Jane Smith',
-        time: '2 minutes ago',
-      },
-      {
-        icon: 'bi-person-plus',
-        message: 'New user registration: david.brown@example.com',
-        time: '15 minutes ago',
-      },
-      {
-        icon: 'bi-box',
-        message: 'Product "Nike Air Max 270" stock updated',
-        time: '1 hour ago',
-      },
-      {
-        icon: 'bi-truck',
-        message: 'Order #ORD-2024-003 shipped to John Doe',
-        time: '2 hours ago',
-      },
-      {
-        icon: 'bi-currency-dollar',
-        message: 'Payment received for order #ORD-2024-002',
-        time: '3 hours ago',
-      },
-    ],
-  };
+  // private mockStats: AdminStats = {
+  //   totalUsers: 1250,
+  //   totalOrders: 3420,
+  //   totalRevenue: 456789.5,
+  //   totalProducts: 156,
+  //   lowStockProducts: 8,
+  //   pendingOrders: 23,
+  //   newUsersToday: 45,
+  //   newOrdersToday: 67,
+  //   todayRevenue: 12345.67,
+  //   recentActivity: [
+  //     {
+  //       source: 'bi-cart-check',
+  //       message: 'New order #ORD-2024-005 placed by Jane Smith',
+  //       time: '2 minutes ago',
+  //     },
+  //     {
+  //       icon: 'bi-person-plus',
+  //       message: 'New user registration: david.brown@example.com',
+  //       time: '15 minutes ago',
+  //     },
+  //     {
+  //       icon: 'bi-box',
+  //       message: 'Product "Nike Air Max 270" stock updated',
+  //       time: '1 hour ago',
+  //     },
+  //     {
+  //       icon: 'bi-truck',
+  //       message: 'Order #ORD-2024-003 shipped to John Doe',
+  //       time: '2 hours ago',
+  //     },
+  //     {
+  //       icon: 'bi-currency-dollar',
+  //       message: 'Payment received for order #ORD-2024-002',
+  //       time: '3 hours ago',
+  //     },
+  //   ],
+  // };
 
   constructor(protected override http: HttpClient) {
     super(http);

@@ -188,6 +188,7 @@
       .activity-list {
         .activity-item {
           display: flex;
+          flex-direction: row;
           align-items: center;
           gap: 16px;
           padding: 16px 0;
