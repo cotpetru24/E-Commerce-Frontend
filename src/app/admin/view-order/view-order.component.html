@@ -20,7 +20,7 @@
             <div class="customer-info mt-2">
               <small class="text-white-50">
                 <i class="bi bi-person me-1"></i>
-                Customer: {{ order?.payment?.billingName || 'N/A' }}
+                Customer: {{ order?.userName || 'N/A' }}
                 <span class="ms-3" *ngIf="order?.userId">
                   <i class="bi bi-envelope me-1"></i>
                   ID: {{ order.userId }}
@@ -82,7 +82,7 @@
                 <div class="address-card">
                   <div class="address-content">
                     <div class="address-info">
-                      <p class="address-name"><strong>{{ order?.payment?.billingName }}</strong></p>
+                      <p class="address-name"><strong>{{ order?.userName }}</strong></p>
                       <p class="address-line">{{ shippingAddress.addressLine1 }}</p>
                       <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }} {{
                         shippingAddress.postcode }}</p>
@@ -117,24 +117,35 @@
                 </h3>
                 <div class="payment-card">
                   <div class="payment-content">
+
                     <div class="payment-info">
-                      <div *ngIf="paymentMethod.method === 'card'">
+                      <div *ngIf="order.payment.paymentMethod === 'Credit/Debit Card'">
                         <div class="d-flex justify-content-between mb-2">
                           <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
                           <span class="badge badge-compact" [ngClass]="{
-                              'bg-success text-dark': order?.payment?.status === 'Completed',
-                              'bg-warning text-dark': order?.payment?.status === 'Pending',
-                              'bg-danger text-dark': order?.payment?.status === 'Failed',
-                              'bg-info text-dark': order?.payment?.status === 'Refunded'
+                              'bg-success text-dark': order?.payment?.paymentStatusName === 'Completed',
+                              'bg-warning text-dark': order?.payment?.paymentStatusName === 'Pending',
+                              'bg-danger text-dark': order?.payment?.paymentStatusName === 'Failed',
+                              'bg-info text-dark': order?.payment?.paymentStatusName === 'Refunded'
                             }">
-                            Payment status: {{ order?.payment?.status }}
+                            Payment status: {{ order?.payment?.paymentStatusName }}
                           </span>
                         </div>
-                        <p class="payment-details">**** **** **** {{ order?.payment?.cardLast4 || '****' }}</p>
+                        <p class="payment-details text-capitalize">Card brand: {{ order?.payment?.cardBrand || '' }}</p>
+                        <p class="payment-details">Card number: **** **** **** {{ order?.payment?.cardLast4 || '****' }}</p>
+                        <p class="payment-details">
+                          <a [href]="order?.payment?.receiptUrl || ''" target="_blank" rel="noopener noreferrer">
+                            Receipt
+                          </a>
+                        </p>
+                        
+                        <p class="payment-details">Transaction ID: {{ order?.payment?.transactionId || 'Unknown' }}</p>
+
+
                       </div>
-                      <div *ngIf="paymentMethod.method === 'paypal'">
+                      <div *ngIf="order?.payment?.paymentMethod === 'paypal'">
                         <p class="payment-type"><strong>PayPal</strong></p>
-                        <p class="payment-details">{{ paymentMethod.paypalEmail }}</p>
+                        <p class="payment-details">{{ order?.payment?.billingEmail }}</p>
                       </div>
                     </div>
                   </div>
@@ -175,7 +186,9 @@
               </div>
               <div class="summary-item">
                 <span>Shipping</span>
-                <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
+                  <span>
+                    {{ getShippingCost() === 0 ? 'Free' : ('£' + (getShippingCost() | number:'1.2-2')) }}
+                  </span>
               </div>
               <div class="summary-item discount" *ngIf="getDiscount() > 0">
                 <span>Discount</span>
@@ -194,14 +207,16 @@
               <i class="bi bi-person me-2"></i>
               View Customer Profile
             </button>
-            
-            <button class="btn btn-warning btn-lg w-100 mt-2" (click)="updateOrderStatus()" [disabled]="isLoading || !canUpdateStatus">
+
+            <button class="btn btn-warning btn-lg w-100 mt-2" (click)="updateOrderStatus()"
+              [disabled]="isLoading || !canUpdateStatus">
               <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
               <i class="bi bi-arrow-repeat me-2" *ngIf="!isLoading"></i>
               {{ isLoading ? 'Updating...' : 'Update Status' }}
             </button>
 
-            <button class="btn btn-danger btn-lg w-100 mt-2" (click)="cancelOrder()" [disabled]="isLoading || !canUpdateStatus">
+            <button class="btn btn-danger btn-lg w-100 mt-2" (click)="cancelOrder()"
+              [disabled]="isLoading || !canUpdateStatus">
               <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
               <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
               {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}

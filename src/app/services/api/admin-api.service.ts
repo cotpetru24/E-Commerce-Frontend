@@ -13,6 +13,7 @@ import {
   GetOrdersResponseDto,
   SortBy,
   SortDirection,
+  UpdateOrderStatusRequestDto,
 } from '../../models';
 
 // ============================================================================
@@ -531,17 +532,23 @@ export class AdminApiService extends BaseApiService {
   /**
    * Get all orders
    */
-  getAllOrders(request: GetAllOrdersRequestDto | null): Observable<GetAllOrdersResponseDto> {
+  getAllOrders(
+    request: GetAllOrdersRequestDto | null
+  ): Observable<GetAllOrdersResponseDto> {
     const url = this.buildUrl(`${this.endPoint}/orders`);
     const params = this.createParams({
-      pageNumber: request?.page || 1,
+      pageNumber: request?.pageNumber || 1,
       pageSize: request?.pageSize || 10,
       ...(request?.searchTerm && { searchTerm: request.searchTerm }),
       ...(request?.orderStatus && { statusFilter: request.orderStatus }),
-      ...(request?.fromDate && { startDate: request.fromDate }),
-      ...(request?.toDate && { endDate: request.toDate }),
-      ...(request?.sortBy && { sortBy: request.sortBy }),
-      ...(request?.sortDirection && { sortDirection: request.sortDirection }),
+      ...(request?.fromDate && { fromDate: request.fromDate.toISOString() }),
+      ...(request?.toDate && { toDate: request.toDate.toISOString() }),
+      ...(request?.sortBy !== undefined &&
+        request?.sortBy !== null && { sortBy: request.sortBy }),
+      ...(request?.sortDirection !== undefined &&
+        request?.sortDirection !== null && {
+          sortDirection: request.sortDirection,
+        }),
     });
 
     this.logRequest('GET', url, request);
@@ -568,8 +575,11 @@ export class AdminApiService extends BaseApiService {
   /**
    * Update order status
    */
-  updateOrderStatus(orderId: number, statusData: any): Observable<any> {
-    const url = this.buildUrl(`/admin/orders/${orderId}/status`);
+  updateOrderStatus(
+    orderId: number,
+    statusData: UpdateOrderStatusRequestDto
+  ): Observable<any> {
+    const url = this.buildUrl(`${this.endPoint}/orders/${orderId}/status`);
     this.logRequest('PUT', url, statusData);
 
     return this.put<any>(url, statusData).pipe(

@@ -7,6 +7,7 @@ import { ProductDto } from '../../models/product.dto';
 import { AdminApiService, AdminStats, Order } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { UserDto } from '../../models/user.dto';
+import { AdminOrderDto, UpdateOrderStatusRequestDto } from '../../models';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -58,8 +59,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   // ============================================================================
   // ORDER MANAGEMENT
   // ============================================================================
-  orders: Order[] = [];
-  filteredOrders: Order[] = [];
+  orders: AdminOrderDto[] = [];
+  filteredOrders: AdminOrderDto[] = [];
   isLoadingOrders = false;
   selectedOrderStatus = '';
 
@@ -316,7 +317,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   filterOrders(): void {
     this.filteredOrders = this.orders.filter(order => {
-      return !this.selectedOrderStatus || order.status === this.selectedOrderStatus;
+      return !this.selectedOrderStatus || order.orderStatusName === this.selectedOrderStatus;
     });
   }
 
@@ -330,8 +331,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   updateOrderStatus(order: Order, newStatus: Order['status']): void {
+
+const statusData: UpdateOrderStatusRequestDto ={
+  orderStatusId: 7
+}
+
     this.subscriptions.add(
-      this.adminApi.updateOrderStatus(order.id, newStatus).subscribe({
+      this.adminApi.updateOrderStatus(order.id, statusData).subscribe({
         next: (updatedOrder) => {
           // Update local order
           const index = this.orders.findIndex(o => o.id === order.id);

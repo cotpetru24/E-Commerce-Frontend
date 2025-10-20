@@ -7,7 +7,16 @@ import { Subscription } from 'rxjs';
 import { Order } from '../../services/api/admin-api.service';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
-import { GetAllOrdersRequestDto } from '../../models';
+import {
+  AdminOrderDto,
+  GetAllOrdersRequestDto,
+  OrderStatus,
+  SortBy,
+  SortDirection,
+  UpdateOrderStatusRequestDto,
+} from '../../models';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 
 interface OrderStats {
   total: number;
@@ -19,32 +28,23 @@ interface OrderStats {
 @Component({
   selector: 'app-order-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ModalDialogComponent],
   templateUrl: './order-management.component.html',
   styleUrls: ['./order-management.component.scss'],
 })
 export class OrderManagementComponent implements OnInit, OnDestroy {
   // Orders data
-  orders: Order[] = [];
-  filteredOrders: Order[] = [];
-  paginatedOrders: Order[] = [];
+  orders: AdminOrderDto[] = [];
   isLoading = false;
   initialInit: boolean = true;
 
-  // getAllOrdersRequest: GetAllOrdersRequestDto = {
-  //   orderStatus: null,
-  //   page: null,
-  //   pageSize: null,
-  //   fromDate: null,
-  //   toDate: null,
-  //   sortBy: null,
-  //   sortDirection: null,
-  //   searchTerm: null,
-  // };
-
   // Search and filters
-  searchTerm = '';
-  selectedStatus = '';
+  // searchTerm = '';
+  searchTerm: string | null = null;
+
+  // selectedStatus = '';
+  selectedStatus: OrderStatus | null = null;
+
   selectedDateRange = '';
   sortBy = 'date-desc';
 
@@ -67,9 +67,10 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
-    private adminApi: AdminApiService,
+    private adminApiService: AdminApiService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -85,31 +86,65 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   }
 
   loadOrders(): void {
+    if (this.isLoading) {
+      return;
+    }
     this.isLoading = true;
 
-    const getAllOrdersRequest:GetAllOrdersRequestDto =
-    {
-      fromDate: null,
-      orderStatus:null,
-      page:this.currentPage,
-      pageSize:this.itemsPerPage,
-      searchTerm:null,
-      sortBy:null,
-      sortDirection:null,
-      toDate:null,
-    } 
+    const now = new Date();
+    let fromDate: Date | null = null;
+    let toDate: Date | null = null;
 
+    switch (this.selectedDateRange) {
+      case 'today':
+        fromDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        toDate = new Date();
+        break;
+      case 'week':
+        fromDate = new Date(now);
+        fromDate.setDate(now.getDate() - now.getDay());
+        toDate = new Date();
+        break;
+      case 'month':
+        fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        toDate = new Date();
+        break;
+      case 'quarter':
+        fromDate = new Date(
+          now.getFullYear(),
+          Math.floor(now.getMonth() / 3) * 3,
+          1
+        );
+        toDate = new Date();
+        break;
+      default:
+        fromDate = null;
+    }
 
+const [sortByField, sortDir] = this.sortBy.split('-');
 
+    const getAllOrdersRequest: GetAllOrdersRequestDto = {
+      fromDate: fromDate ? fromDate : null,
+      toDate: toDate ? toDate : null,
+      orderStatus: this.selectedStatus,
+      pageNumber: this.currentPage,
+      pageSize: this.itemsPerPage,
+      searchTerm: this.searchTerm,
+      sortBy: sortByField === 'total' ? SortBy.Total : SortBy.DateCreated,
+      sortDirection:
+        sortDir === 'asc'
+        ? SortDirection.Ascending
+        : SortDirection.Descending,   
+    
+    };
 
     this.subscriptions.add(
-      this.adminApi.getAllOrders(getAllOrdersRequest).subscribe({
+      this.adminApiService.getAllOrders(getAllOrdersRequest).subscribe({
         next: (response) => {
           this.orders = response.orders;
-          this.currentPage = response.page;
+          this.currentPage = response.pageNumber;
           this.totalPages = response.totalPages;
           this.itemsPerPage = response.pageSize;
-          this.applyFilters();
           this.calculateStats();
           this.orderStats.total = response.totalCount;
           this.isLoading = false;
@@ -123,64 +158,9 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSearchChange(): void {
-    this.currentPage = 1;
-    this.applyFilters();
-  }
-
   onFilterChange(): void {
     this.currentPage = 1;
-    this.applyFilters();
-  }
-
-  onSortChange(): void {
-    this.applyFilters();
-  }
-
-  applyFilters(): void {
-    this.filteredOrders = this.orders.filter((order) => {
-      const matchesSearch =
-        !this.searchTerm ||
-        order.id.toString().includes(this.searchTerm) ||
-        order.userEmail.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        (order.customerName &&
-          order.customerName
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase()));
-
-      const matchesStatus =
-        !this.selectedStatus || order.status === this.selectedStatus;
-
-      const matchesDateRange =
-        !this.selectedDateRange ||
-        this.isInDateRange(order.createdAt, this.selectedDateRange);
-
-      return matchesSearch && matchesStatus && matchesDateRange;
-    });
-
-    this.sortOrders();
-    this.updatePagination();
-  }
-
-  sortOrders(): void {
-    this.filteredOrders.sort((a, b) => {
-      switch (this.sortBy) {
-        case 'date-desc':
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        case 'date-asc':
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        case 'total-desc':
-          return b.total - a.total;
-        case 'total-asc':
-          return a.total - b.total;
-        default:
-          return 0;
-      }
-    });
+    this.loadOrders();
   }
 
   isInDateRange(date: Date | string, range: string): boolean {
@@ -215,10 +195,9 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   }
 
   updatePagination(): void {
-    // this.totalPages = Math.ceil(this.filteredOrders.length / this.itemsPerPage);
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedOrders = this.filteredOrders.slice(startIndex, endIndex);
+    if (!this.isLoading) {
+      this.loadOrders();
+    }
   }
 
   changePage(page: number): void {
@@ -247,26 +226,31 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
 
   calculateStats(): void {
     (this.orderStats.pending = this.orders.filter(
-      (o) => o.status === 'pending'
+      (o) => o.orderStatusName === 'pending'
     ).length),
       (this.orderStats.processing = this.orders.filter(
-        (o) => o.status === 'processing'
+        (o) => o.orderStatusName === 'processing'
       ).length),
       (this.orderStats.completed = this.orders.filter(
-        (o) => o.status === 'delivered'
+        (o) => o.orderStatusName === 'delivered'
       ).length);
   }
 
   getStatusClass(status: string): string {
     switch (status) {
+      case 'Pending':
       case 'pending':
         return 'badge bg-warning';
+      case 'Processing':
       case 'processing':
         return 'badge bg-info';
+      case 'Shipped':
       case 'shipped':
         return 'badge bg-primary';
+      case 'Delivered':
       case 'delivered':
         return 'badge bg-success';
+      case 'Cancelled':
       case 'cancelled':
         return 'badge bg-danger';
       default:
@@ -276,11 +260,11 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
 
   getPaymentClass(status: string): string {
     switch (status) {
-      case 'paid':
+      case 'Completed':
         return 'badge bg-success';
-      case 'pending':
+      case 'Refunded':
         return 'badge bg-warning';
-      case 'failed':
+      case 'Failed':
         return 'badge bg-danger';
       default:
         return 'badge bg-secondary';
@@ -295,48 +279,150 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     return new Date(date).toLocaleTimeString();
   }
 
-  viewOrder(order: Order): void {
+  viewOrder(order: AdminOrderDto): void {
     // Navigate to admin order detail view
     this.router.navigate(['/admin/orders', order.id]);
   }
 
-  updateStatus(order: Order): void {
-    // Implement status update modal
-    this.toastService.info('Status update functionality coming soon!');
+  updateOrderStatus(order: AdminOrderDto): void {
+    const modalRef = this.modalService.open(ModalDialogComponent, {
+      size: 'md',
+      backdrop: 'static',
+    });
+
+    modalRef.componentInstance.title = 'Update Order Status';
+    modalRef.componentInstance.message = 'Select the new order status';
+    modalRef.componentInstance.modalType = 'updateOrderStatus';
+    modalRef.componentInstance.options = [
+      { label: 'Pending', value: OrderStatus.pending },
+      { label: 'Processing', value: OrderStatus.processing },
+      { label: 'Shipped', value: OrderStatus.shipped },
+      { label: 'Delivered', value: OrderStatus.delivered },
+      { label: 'Refunded', value: OrderStatus.refunded },
+      { label: 'Returned', value: OrderStatus.returned },
+    ];
+    modalRef.result.then((result: OrderStatus[]) => {
+      if (result && result.length > 0) {
+        const selectedStatus = result[0];
+        this.isLoading = true;
+
+        const statusData: UpdateOrderStatusRequestDto = {
+          orderStatusId: selectedStatus,
+          notes: 'testing the notes',
+        };
+
+        this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
+          next: () => {
+            const target = this.orders.find((o) => o.id === order.id);
+            if (target) {
+              target.orderStatusName = OrderStatus[selectedStatus];
+
+              this.orders = [...this.orders];
+            }
+
+            this.toastService.success('Order status updated successfully!');
+            this.isLoading = false;
+          },
+          error: (err) => {
+            if (err.status === 404) {
+              this.toastService.warning(
+                'Order not found or cannot be updated.'
+              );
+            } else {
+              this.toastService.error('Failed to update order status.');
+            }
+            this.isLoading = false;
+          },
+        });
+      }
+    });
   }
 
-  markShipped(order: Order): void {
-    if (confirm(`Mark order #${order.id} as shipped?`)) {
-      this.subscriptions.add(
-        this.adminApi.updateOrderStatus(order.id, 'shipped').subscribe({
-          next: () => {
-            this.toastService.success('Order marked as shipped');
-            this.loadOrders();
+  markShipped(order: AdminOrderDto): void {
+    const modalRef = this.modalService.open(ModalDialogComponent);
+    modalRef.componentInstance.title = 'Cancel Order';
+    modalRef.componentInstance.message =
+      'Are you sure you want to mark this order as Shipped?';
+    modalRef.componentInstance.modalType = 'confirm';
+
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.isLoading = true;
+
+        const statusData: UpdateOrderStatusRequestDto = {
+          // orderStatusId: 5,
+          orderStatusId: OrderStatus.shipped,
+          notes: 'Order marked as shipped by admin',
+        };
+
+        this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
+          next: (response) => {
+            const target = this.orders.find((o) => o.id === order.id);
+            if (target) {
+              target.orderStatusName = 'Shipped';
+
+              this.orders = [...this.orders];
+            }
+
+            this.toastService.success('Order marked as shipped successfully!');
+            this.isLoading = false;
           },
-          error: (error) => {
-            console.error('Error updating order status:', error);
-            this.toastService.error('Failed to update order status');
+          error: (err) => {
+            if (err.status === 404) {
+              this.toastService.warning(
+                'Order not found or cannot be updated.'
+              );
+            } else {
+              this.toastService.error('Failed to mark the order as shipped.');
+            }
+            this.isLoading = false;
           },
-        })
-      );
-    }
+        });
+      }
+    });
   }
 
-  cancelOrder(order: Order): void {
-    if (confirm(`Are you sure you want to cancel order #${order.id}?`)) {
-      this.subscriptions.add(
-        this.adminApi.cancelOrder(order.id).subscribe({
-          next: () => {
-            this.toastService.success('Order cancelled successfully');
-            this.loadOrders();
+  cancelOrder(order: AdminOrderDto): void {
+    const modalRef = this.modalService.open(ModalDialogComponent);
+    modalRef.componentInstance.title = 'Cancel Order';
+    modalRef.componentInstance.message =
+      'Are you sure you want to cancel this order?';
+    modalRef.componentInstance.modalType = 'confirm';
+
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.isLoading = true;
+
+        const statusData: UpdateOrderStatusRequestDto = {
+          orderStatusId: OrderStatus.cancelled,
+          notes: 'Order cancelled by admin',
+        };
+
+        this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
+          next: (response) => {
+            const target = this.orders.find((o) => o.id === order.id);
+            if (target) {
+              target.orderStatusName = 'Cancelled';
+
+              this.orders = [...this.orders];
+            }
+
+            this.toastService.success('Order cancelled successfully!');
+            this.isLoading = false;
           },
-          error: (error) => {
-            console.error('Error cancelling order:', error);
-            this.toastService.error('Failed to cancel order');
+          error: (err) => {
+            if (err.status === 404) {
+              this.toastService.warning(
+                'Order not found or cannot be cancelled.'
+              );
+            } else {
+              this.toastService.error('Failed to cancel order.');
+            }
+            this.isLoading = false;
           },
-        })
-      );
-    }
+        });
+      }
+    });
   }
 
   refreshOrders(): void {
@@ -347,4 +433,29 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     // Implement export functionality
     this.toastService.info('Export functionality coming soon!');
   }
+
+  getOrderItemsCount(order: AdminOrderDto): number {
+    return (
+      order.orderItems.reduce(
+        (orderItmsQuantity, item) => orderItmsQuantity + item.quantity,
+        0
+      ) ?? 0
+    );
+  }
+
+
+
+
+
+resetFilters(): void {    this.searchTerm = null;
+    this.selectedStatus = null;
+    this.selectedDateRange = '';
+    this.sortBy = 'date-desc';
+    this.currentPage = 1;
+    this.loadOrders();
+  }
+
+
 }
+
+

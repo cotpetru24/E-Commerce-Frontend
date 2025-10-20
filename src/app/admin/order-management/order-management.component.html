@@ -96,23 +96,21 @@
             <div class="col-md-4 mb-3">
               <label for="searchInput" class="form-label">Search Orders</label>
               <div class="input-group">
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="searchInput"
-                  [(ngModel)]="searchTerm"
-                  (input)="onSearchChange()"
-                  placeholder="Search by order ID, customer email..."
-                >
+                <input type="text" class="form-control" id="searchInput" [(ngModel)]="searchTerm"
+                  (keyup.enter)="onFilterChange()" placeholder="Search by order ID, customer email...">
                 <span class="input-group-text">
-                  <i class="bi bi-search"></i>
+
+                  <button class="btn page-link" (click)="onFilterChange()"
+                    title="Search Orders">
+                    <i class="bi bi-search"></i>
+                  </button>
                 </span>
               </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-2 mb-3">
               <label for="statusFilter" class="form-label">Status</label>
               <select class="form-select" id="statusFilter" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
-                <option value="">All Statuses</option>
+                <option [ngValue]="null">All Statuses</option>
                 <option value="pending">Pending</option>
                 <option value="processing">Processing</option>
                 <option value="shipped">Shipped</option>
@@ -132,13 +130,19 @@
             </div>
             <div class="col-md-2 mb-3">
               <label for="sortBy" class="form-label">Sort By</label>
-              <select class="form-select" id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()">
+              <select class="form-select" id="sortBy" [(ngModel)]="sortBy" (change)="onFilterChange()">
                 <option value="date-desc">Date (Newest)</option>
                 <option value="date-asc">Date (Oldest)</option>
                 <option value="total-desc">Total (High to Low)</option>
                 <option value="total-asc">Total (Low to High)</option>
               </select>
             </div>
+            <div class="col-md-1 mb-3 d-flex align-items-end justify-content-end">
+              <button class="btn btn-outline-secondary" (click)="resetFilters()">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+              </button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -147,7 +151,7 @@
       <div class="card">
         <div class="card-header">
           <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Orders ({{ filteredOrders.length }})</h5>
+            <h5 class="mb-0">Orders ({{ orders.length }})</h5>
             <div class="d-flex gap-2">
               <span class="badge bg-primary">{{ orderStats.total }} Total</span>
               <span class="badge bg-warning">{{ orderStats.pending }} Pending</span>
@@ -175,14 +179,14 @@
                 <tr *ngFor="let order of orders">
                   <td>
                     <strong>#{{ order.id }}</strong>
-                    <br>
-                    <small class="text-muted">{{ order.orderNumber }}</small>
+                    <!-- <br>
+                    <small class="text-muted">{{ order.id }}</small> -->
                   </td>
                   <td>
                     <div>
                       <strong>{{ order.userEmail }}</strong>
                       <br>
-                      <small class="text-muted">{{ order.customerName }}</small>
+                      <small class="text-muted">{{ order.userName }}</small>
                     </div>
                   </td>
                   <td>
@@ -193,29 +197,34 @@
                     </div>
                   </td>
                   <td>
-                    <span class="badge bg-secondary">{{ order.itemCount }} items</span>
+                    <span class="badge bg-secondary">{{ getOrderItemsCount(order)}} items</span>
                   </td>
                   <td>
-                    <strong class="text-primary">£{{ order.total | number:'1.2-2' }}</strong>
+                    <strong class="text-primary">£{{ order?.total ?? 0 | number:'1.2-2' }}</strong>
                   </td>
                   <td>
-                    <span [class]="getStatusClass(order.status)">{{ order.status | titlecase }}</span>
+                    <span [class]="getStatusClass(order.orderStatusName)">{{ order.orderStatusName | titlecase }}</span>
                   </td>
                   <td>
-                    <span [class]="getPaymentClass(order.paymentStatus)">{{ order.paymentStatus | titlecase }}</span>
+                    <span [class]="getPaymentClass(order.payment.paymentStatusName)">{{
+                      order?.payment?.paymentStatusName | titlecase }}</span>
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm" role="group">
                       <button class="btn btn-outline-info" (click)="viewOrder(order)" title="View Details">
                         <i class="bi bi-eye"></i>
                       </button>
-                      <button class="btn btn-outline-primary" (click)="updateStatus(order)" title="Update Status">
+                      <button class="btn btn-outline-primary" (click)="updateOrderStatus(order)" title="Update Status">
                         <i class="bi bi-pencil"></i>
                       </button>
-                      <button class="btn btn-outline-success" (click)="markShipped(order)" *ngIf="order.status === 'processing'" title="Mark Shipped">
+                      <button class="btn btn-outline-success" (click)="markShipped(order)"
+                        *ngIf="order.orderStatusName === 'Processing' || order.orderStatusName === 'processing'"
+                        title="Mark Shipped">
                         <i class="bi bi-truck"></i>
                       </button>
-                      <button class="btn btn-outline-warning" (click)="cancelOrder(order)" *ngIf="order.status !== 'cancelled' && order.status !== 'delivered'" title="Cancel Order">
+                      <button class="btn btn-outline-warning" (click)="cancelOrder(order)"
+                        *ngIf="order.orderStatusName !== 'Cancelled' && order.orderStatusName !== 'delivered'"
+                        title="Cancel Order">
                         <i class="bi bi-x-circle"></i>
                       </button>
                     </div>
@@ -234,7 +243,7 @@
           </div>
 
           <!-- Empty State -->
-          <div class="text-center p-4" *ngIf="!isLoading && filteredOrders.length === 0">
+          <div class="text-center p-4" *ngIf="!isLoading && orders.length === 0">
             <i class="bi bi-cart display-1 text-muted"></i>
             <h4 class="mt-3">No orders found</h4>
             <p class="text-muted">Try adjusting your search or filters</p>
@@ -242,23 +251,27 @@
         </div>
 
         <!-- Pagination -->
-        <div class="card-footer" *ngIf="filteredOrders.length > 0">
+        <div class="card-footer" *ngIf="orders.length > 0">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, filteredOrders.length) }} 
+              Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage,
+              orders.length) }}
               of {{ orderStats.total }} orders
             </div>
             <nav>
               <ul class="pagination pagination-sm mb-0">
+
                 <li class="page-item" [class.disabled]="currentPage === 1">
-                  <a class="page-link" href="#" (click)="changePage(currentPage - 1)">Previous</a>
+                  <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
                 </li>
                 <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
-                  <a class="page-link" href="#" (click)="changePage(page)">{{ page }}</a>
+                  <button class="page-link" (click)="changePage(page)" [class.disabled]="currentPage === page">{{ page
+                    }}</button>
                 </li>
                 <li class="page-item" [class.disabled]="currentPage === totalPages">
-                  <a class="page-link" href="#" (click)="changePage(currentPage + 1)">Next</a>
+                  <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
                 </li>
+
               </ul>
             </nav>
           </div>
@@ -266,4 +279,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>

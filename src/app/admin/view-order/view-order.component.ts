@@ -7,10 +7,12 @@ import {
   OrderDto,
   OrderItem,
   OrderItemDto,
+  OrderStatus,
   PaymentMethod,
   ShippingAddress,
   ShippingAddressDto,
   ShippingInfo,
+  UpdateOrderStatusRequestDto,
 } from '../../models';
 import { ToastService } from '../../services/toast.service';
 import { AdminApiService } from '../../services/api/admin-api.service';
@@ -22,7 +24,7 @@ import { CountryMapService } from '../../services/country-map.service';
 @Component({
   selector: 'app-view-order',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ModalDialogComponent],
   templateUrl: './view-order.component.html',
   styleUrl: './view-order.component.scss',
 })
@@ -48,9 +50,7 @@ export class ViewOrderComponent implements OnInit {
     id: 0,
     userId: '',
   };
-  paymentMethod: PaymentMethod = {
-    method: 'card',
-  };
+
   shippingInfo: ShippingInfo = {
     method: 'Standard Shipping',
     estimatedDelivery: '3-5 business days',
@@ -72,12 +72,12 @@ export class ViewOrderComponent implements OnInit {
 
   ngOnInit(): void {
     this.orderId = Number(this.route.snapshot.paramMap.get('id'));
-    
+
     // Check if we came from dashboard
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.cameFromDashboard = params['from'] === 'dashboard';
     });
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (this.orderId) {
@@ -90,22 +90,26 @@ export class ViewOrderComponent implements OnInit {
 
   loadOrderData(): void {
     this.isLoading = true;
-    
+
     this.adminApiService.getOrder(this.orderId!).subscribe({
       next: (order) => {
         this.order = order;
         this.orderItems = order.orderItems;
         this.orderStatus = order.orderStatusName!;
-        this.canUpdateStatus = 
-          order.orderStatusName !== 'Cancelled' &&
-          order.orderStatusName !== 'Refunded' &&
-          order.orderStatusName !== 'Returned';
+        this.canUpdateStatus = true;
+          // order.orderStatusName !== 'Cancelled' &&
+          // order.orderStatusName !== 'Refunded' &&
+          // order.orderStatusName !== 'Returned';
         this.shippingAddress = order.shippingAddress;
-        this.shippingAddress.country = this.countryMap.getName(order.shippingAddress.country);
+        this.shippingAddress.country = this.countryMap.getName(
+          order.shippingAddress.country
+        );
 
-        this.billingAddress = order.billingAddress;
-        this.billingAddress.country = this.countryMap.getName(order.billingAddress.country);
-        
+        this.billingAddress = order.billingAddress ?? this.shippingAddress;
+        this.billingAddress.country = this.countryMap.getName(
+          order.billingAddress?.country?? order.shippingAddress.country
+        );
+
         this.isLoading = false;
       },
       error: (err) => {
@@ -126,9 +130,11 @@ export class ViewOrderComponent implements OnInit {
   }
 
   getSubtotal(): number {
-    return this.orderItems.reduce(
-      (total, item) => total + this.getItemTotal(item),
-      0
+    return (
+      this.order?.orderItems?.reduce(
+        (total, item) => total + this.getItemTotal(item),
+        0
+      ) ?? 0
     );
   }
 
@@ -147,21 +153,53 @@ export class ViewOrderComponent implements OnInit {
   }
 
   updateOrderStatus(): void {
-    const modalRef = this.modalService.open(ModalDialogComponent);
-    modalRef.componentInstance.title = 'Update Order Status';
-    modalRef.componentInstance.message =
-      'Are you sure you want to update the order status?';
+    const modalRef = this.modalService.open(ModalDialogComponent, {
+      size: 'md',
+      backdrop: 'static',
+    });
 
-    modalRef.result.then((result) => {
-      if (result === true) {
+    modalRef.componentInstance.title = 'Update Order Status';
+    modalRef.componentInstance.message = 'Select the new order status';
+    modalRef.componentInstance.modalType = 'updateOrderStatus';
+    modalRef.componentInstance.options = [
+      { label: 'Pending', value: OrderStatus.pending },
+      { label: 'Processing', value: OrderStatus.processing },
+      { label: 'Shipped', value: OrderStatus.shipped },
+      { label: 'Delivered', value: OrderStatus.delivered },
+      // { label: 'Cancelled', value: OrderStatus.cancelled },
+      { label: 'Refunded', value: OrderStatus.refunded },
+      { label: 'Returned', value: OrderStatus.returned },
+    ];
+    modalRef.result.then((result: OrderStatus[]) => {
+      if (result && result.length > 0) {
+        const selectedStatus = result[0];
         this.isLoading = true;
 
-        // You can implement status update logic here
-        // For now, we'll just show a success message
-        setTimeout(() => {
-          this.toastService.success('Order status updated successfully!');
-          this.isLoading = false;
-        }, 1000);
+        const statusData: UpdateOrderStatusRequestDto = {
+          orderStatusId: selectedStatus,
+          notes: 'testing the notes',
+        };
+
+        this.adminApiService
+          .updateOrderStatus(this.orderId!, statusData)
+          .subscribe({
+            next: () => {
+              this.orderStatus = OrderStatus[selectedStatus];
+              this.canUpdateStatus = true;
+              this.toastService.success('Order status updated successfully!');
+              this.isLoading = false;
+            },
+            error: (err) => {
+              if (err.status === 404) {
+                this.toastService.warning(
+                  'Order not found or cannot be updated.'
+                );
+              } else {
+                this.toastService.error('Failed to update order status.');
+              }
+              this.isLoading = false;
+            },
+          });
       }
     });
   }
@@ -171,29 +209,37 @@ export class ViewOrderComponent implements OnInit {
     modalRef.componentInstance.title = 'Cancel Order';
     modalRef.componentInstance.message =
       'Are you sure you want to cancel this order?';
+    modalRef.componentInstance.modalType = 'confirm';
 
     modalRef.result.then((result) => {
       if (result === true) {
         this.isLoading = true;
 
-        this.adminApiService.cancelOrder(this.orderId!).subscribe({
-          next: (response) => {
-            this.orderStatus = 'Cancelled';
-            this.canUpdateStatus = false;
-            this.toastService.success('Order cancelled successfully!');
-            this.isLoading = false;
-          },
-          error: (err) => {
-            if (err.status === 404) {
-              this.toastService.warning(
-                'Order not found or cannot be cancelled.'
-              );
-            } else {
-              this.toastService.error('Failed to cancel order.');
-            }
-            this.isLoading = false;
-          },
-        });
+        const statusData: UpdateOrderStatusRequestDto = {
+          orderStatusId: OrderStatus.cancelled,
+          notes: 'Order cancelled by admin',
+        };
+
+        this.adminApiService
+          .updateOrderStatus(this.orderId!, statusData)
+          .subscribe({
+            next: (response) => {
+              this.orderStatus = 'Cancelled';
+              this.canUpdateStatus = false;
+              this.toastService.success('Order cancelled successfully!');
+              this.isLoading = false;
+            },
+            error: (err) => {
+              if (err.status === 404) {
+                this.toastService.warning(
+                  'Order not found or cannot be cancelled.'
+                );
+              } else {
+                this.toastService.error('Failed to cancel order.');
+              }
+              this.isLoading = false;
+            },
+          });
       }
     });
   }
@@ -212,7 +258,9 @@ export class ViewOrderComponent implements OnInit {
 
   goToUserProfile(): void {
     if (this.order?.userId) {
-      this.router.navigate(['/admin/users'], { queryParams: { userId: this.order.userId } });
+      this.router.navigate(['/admin/users'], {
+        queryParams: { userId: this.order.userId },
+      });
     }
   }
 }

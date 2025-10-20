@@ -83,8 +83,8 @@ export interface GetOrdersResponseDto {
 }
 
 export interface GetAllOrdersRequestDto {
-  orderStatus?: string | null;
-  page?: number | null;
+  orderStatus?: OrderStatus | null;
+  pageNumber?: number | null;
   pageSize?: number | null;
   fromDate?: Date | null;
   toDate?: Date | null;
@@ -93,16 +93,16 @@ export interface GetAllOrdersRequestDto {
   searchTerm?: string | null;
 }
 
-
 export interface GetAllOrdersResponseDto {
-  orders: Order[];
+  orders: AdminOrderDto[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
-  totalPages: number;}
+  totalPages: number;
+}
 
 export enum SortBy {
-  Date,
+  DateCreated,
   Total,
 }
 
@@ -155,32 +155,70 @@ export interface AdminBillingAddressDto {
 
 export interface AdminPaymentDto {
   id: number;
-  orderId: number;
-  paymentMethod: string;
-  amount: number;
-  status: string;
+  paymentStatusName: string;
   transactionId?: string;
+  createdAt?: Date;
+  amount: number;
+  currency?: string;
+  cardBrand?: string;
   cardLast4?: string;
-  billingName: string;
-  createdAt: Date;
-  updatedAt: Date;
+  billingName?: string;
+  billingEmail?: string;
+  paymentMethod?: string;
+  receiptUrl?: string;
 }
+
+// export interface AdminOrderDto {
+//   id: number;
+//   userId: string;
+//   orderNumber: string;
+//   orderStatusId: number;
+//   orderStatusName: string;
+//   subtotal: number;
+//   shippingCost: number;
+//   discount: number;
+//   total: number;
+//   shippingAddress: AdminShippingAddressDto;
+//   billingAddress: AdminBillingAddressDto;
+//   payment: AdminPaymentDto;
+//   orderItems: OrderItemDto[];
+//   notes?: string;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   userName: string;
+// }
 
 export interface AdminOrderDto {
   id: number;
   userId: string;
-  orderNumber: string;
-  orderStatusId: number;
+  userEmail: string;
+  userName: string;
   orderStatusName: string;
+  orderStatusCode?: string;
   subtotal: number;
   shippingCost: number;
   discount: number;
   total: number;
-  shippingAddress: AdminShippingAddressDto;
-  billingAddress: AdminBillingAddressDto;
-  payment: AdminPaymentDto;
-  orderItems: OrderItemDto[];
   notes?: string;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
+  shippingAddress: AdminShippingAddressDto;
+  billingAddress?: AdminBillingAddressDto;
+  orderItems: OrderItemDto[];
+  payment: AdminPaymentDto;
+}
+
+export enum OrderStatus {
+  pending = 1,
+  processing = 2,
+  shipped = 3,
+  delivered = 4,
+  cancelled = 5,
+  refunded = 6,
+  returned = 7,
+}
+
+export interface UpdateOrderStatusRequestDto {
+  orderStatusId: OrderStatus;
+  notes?: string;
 }
