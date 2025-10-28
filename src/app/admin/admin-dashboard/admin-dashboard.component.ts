@@ -4,10 +4,10 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ProductDto } from '../../models/product.dto';
-import { AdminApiService, AdminStats, Order } from '../../services/api/admin-api.service';
+import { AdminApiService, AdminStats, AdminUser, Order } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { UserDto } from '../../models/user.dto';
-import { AdminOrderDto, UpdateOrderStatusRequestDto } from '../../models';
+import { AdminOrderDto, GetAllUsersRequestDto, UpdateOrderStatusRequestDto, UsersSortBy, UsersSortDirection } from '../../models';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -46,8 +46,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   // ============================================================================
   // USER MANAGEMENT
   // ============================================================================
-  users: UserDto[] = [];
-  filteredUsers: UserDto[] = [];
+  users: AdminUser[] = [];
+  filteredUsers: AdminUser[] = [];
   isLoadingUsers = false;
   userSearchTerm = '';
 
@@ -216,12 +216,25 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   loadUsers(): void {
     this.isLoadingUsers = true;
     
+    const getAllUsersRequest: GetAllUsersRequestDto = {
+      pageNumber: 1,
+      pageSize: 10,
+      // searchTerm: this.searchTerm,
+      userStatus: null,
+      sortBy: null,
+        // sortByField === 'name' 
+        // ? UsersSortBy.Name 
+        // UsersSortBy.DateCreated,
+      sortDirection: null
+        // : UsersSortDirection.Descending,   
+    };
+
     this.subscriptions.add(
-      this.adminApi.getAllUsers().subscribe({
+      this.adminApi.getAllUsers(getAllUsersRequest).subscribe({
         next: (response) => {
           this.users = response.users;
           this.filteredUsers = response.users;
-          this.totalItems = response.total;
+          this.totalItems = response.totalQueryCount;
           this.isLoadingUsers = false;
         },
         error: (error) => {
@@ -272,7 +285,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     const newStatus = !user.isBlocked; // Assuming User interface has isBlocked property
     
     this.subscriptions.add(
-      this.adminApi.toggleUserStatus(user.id.toString(), newStatus).subscribe({
+      this.adminApi.toggleUserStatus(user.id.toString(), newStatus, user.roles).subscribe({
         next: () => {
           // Update local user
           const index = this.users.findIndex(u => u.id === user.id);
@@ -303,7 +316,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.orders = response.orders;
           this.filteredOrders = response.orders;
-          this.totalItems = response.totalCount;
+          this.totalItems = response.totalQueryCount;
           this.isLoadingOrders = false;
         },
         error: (error) => {
@@ -468,7 +481,7 @@ const statusData: UpdateOrderStatusRequestDto ={
       case 'user':
         // Navigate to user management or specific user
         if (activity.userGuid) {
-        this.toastService.warning('In viewActivity - navigate to user');
+          this.router.navigate(['/admin/users', activity.userGuid]);        
         } else {
         this.toastService.error('Failed to navidate to activity.')       
         }

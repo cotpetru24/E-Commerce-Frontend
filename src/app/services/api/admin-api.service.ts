@@ -9,11 +9,14 @@ import {
   AdminOrderDto,
   GetAllOrdersRequestDto,
   GetAllOrdersResponseDto,
+  GetAllUsersRequestDto,
+  GetAllUsersResponseDto,
   // GetAllOrdersResponseDto,
   GetOrdersResponseDto,
   SortBy,
   SortDirection,
   UpdateOrderStatusRequestDto,
+  UserRole,
 } from '../../models';
 
 // ============================================================================
@@ -64,14 +67,14 @@ export interface OrderItem {
   price: number;
 }
 
-export interface User {
+export interface AdminUser {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
-  role: 'customer' | 'admin' | 'moderator';
+  roles: UserRole [];
   isBlocked: boolean;
-  emailVerified: boolean;
+  emailConfirmed?: boolean;
   createdAt: Date;
   lastLoginAt?: Date;
   orderCount?: number;
@@ -144,15 +147,15 @@ export class AdminApiService extends BaseApiService {
     },
   ];
 
-  private mockUsers: User[] = [
+  private mockUsers: AdminUser[] = [
     {
       id: 1,
       firstName: 'John',
       lastName: 'Doe',
       email: 'john.doe@example.com',
-      role: 'customer',
+      roles: [UserRole.Customer],
       isBlocked: false,
-      emailVerified: true,
+      emailConfirmed: true,
       createdAt: new Date('2023-01-15'),
       lastLoginAt: new Date('2024-01-20'),
       orderCount: 5,
@@ -162,9 +165,9 @@ export class AdminApiService extends BaseApiService {
       firstName: 'Jane',
       lastName: 'Smith',
       email: 'jane.smith@example.com',
-      role: 'customer',
+      roles: [UserRole.Customer],
       isBlocked: false,
-      emailVerified: true,
+      emailConfirmed: true,
       createdAt: new Date('2023-03-20'),
       lastLoginAt: new Date('2024-01-19'),
       orderCount: 3,
@@ -174,9 +177,9 @@ export class AdminApiService extends BaseApiService {
       firstName: 'Mike',
       lastName: 'Johnson',
       email: 'mike.johnson@example.com',
-      role: 'admin',
+      roles: [UserRole.Administrator],
       isBlocked: false,
-      emailVerified: true,
+      emailConfirmed: true,
       createdAt: new Date('2022-11-10'),
       lastLoginAt: new Date('2024-01-20'),
       orderCount: 0,
@@ -186,9 +189,9 @@ export class AdminApiService extends BaseApiService {
       firstName: 'Sarah',
       lastName: 'Wilson',
       email: 'sarah.wilson@example.com',
-      role: 'customer',
+      roles: [UserRole.Customer],
       isBlocked: true,
-      emailVerified: true,
+      emailConfirmed: true,
       createdAt: new Date('2023-06-05'),
       lastLoginAt: new Date('2024-01-15'),
       orderCount: 2,
@@ -198,9 +201,9 @@ export class AdminApiService extends BaseApiService {
       firstName: 'David',
       lastName: 'Brown',
       email: 'david.brown@example.com',
-      role: 'customer',
+      roles: [UserRole.Administrator],
       isBlocked: false,
-      emailVerified: false,
+      emailConfirmed: false,
       createdAt: new Date('2024-01-10'),
       lastLoginAt: new Date('2024-01-18'),
       orderCount: 1,
@@ -560,6 +563,35 @@ export class AdminApiService extends BaseApiService {
   }
 
   /**
+   * Get user orders by userId
+   */
+  getUserOrders(
+    userId: string,
+    params?: {
+      pageNumber?: number;
+      pageSize?: number;
+      statusFilter?: string;
+      fromDate?: Date;
+      toDate?: Date;
+    }
+  ): Observable<any> {
+    const url = this.buildUrl(`${this.endPoint}/users/${userId}/orders`);
+    const queryParams = this.createParams({
+      pageNumber: params?.pageNumber || 1,
+      pageSize: params?.pageSize || 10,
+      ...(params?.statusFilter && { statusFilter: params.statusFilter }),
+      ...(params?.fromDate && { fromDate: params.fromDate.toISOString() }),
+      ...(params?.toDate && { toDate: params.toDate.toISOString() }),
+    });
+    this.logRequest('GET', url, params);
+
+    return this.get<any>(url, { params: queryParams }).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Get specific order
    */
   getOrder(orderId: number): Observable<AdminOrderDto> {
@@ -632,16 +664,26 @@ export class AdminApiService extends BaseApiService {
   /**
    * Get all users
    */
-  getAllUsers(params?: {
-    pageNumber?: number;
-    pageSize?: number;
-    searchTerm?: string;
-  }): Observable<any> {
+  getAllUsers(request: GetAllUsersRequestDto): Observable<GetAllUsersResponseDto> {
     const url = this.buildUrl(`${this.endPoint}/users`);
-    const queryParams = this.createParams(params || {});
+    const params = this.createParams({
+      pageNumber: request?.pageNumber || 1,
+      pageSize: request?.pageSize || 10,
+      ...(request?.searchTerm && { searchTerm: request.searchTerm }),
+      ...(request?.sortDirection !== undefined &&
+          request?.sortDirection !== null && {
+            sortDirection: request.sortDirection,
+      }),
+      ...(request?.sortBy !== undefined &&
+          request?.sortBy !== null && { sortBy: request.sortBy 
+      }),
+      ...(request?.userStatus && { userStatus: request.userStatus }),
+      ...(request?.userRole && { userRole: request.userRole}),
+    });
+    
     this.logRequest('GET', url, params);
 
-    return this.get<any>(url, { params: queryParams }).pipe(
+    return this.get<any>(url, { params: params }).pipe(
       tap((response) => this.logResponse('GET', url, response)),
       catchError(this.handleError)
     );
@@ -652,6 +694,19 @@ export class AdminApiService extends BaseApiService {
    */
   getUser(userId: string): Observable<any> {
     const url = this.buildUrl(`/admin/users/${userId}`);
+    this.logRequest('GET', url);
+
+    return this.get<any>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Get user by ID (for user profile view)
+   */
+  getUserById(userId: string): Observable<any> {
+    const url = this.buildUrl(`${this.endPoint}/users/${userId}`);
     this.logRequest('GET', url);
 
     return this.get<any>(url).pipe(
@@ -677,7 +732,7 @@ export class AdminApiService extends BaseApiService {
    * Delete user
    */
   deleteUser(userId: string): Observable<any> {
-    const url = this.buildUrl(`/admin/users/${userId}`);
+    const url = this.buildUrl(`${this.endPoint}/users/${userId}`);
     this.logRequest('DELETE', url);
 
     return this.delete<any>(url).pipe(
@@ -702,12 +757,28 @@ export class AdminApiService extends BaseApiService {
   /**
    * Block/unblock user
    */
-  toggleUserStatus(userId: string, isBlocked: boolean): Observable<any> {
-    const url = this.buildUrl(`/admin/users/${userId}`);
-    const updateData = { lockoutEnabled: isBlocked };
+  toggleUserStatus(userId: string, isBlocked: boolean, roles: UserRole[]): Observable<any> {
+    const url = this.buildUrl(`${this.endPoint}/users/${userId}`);
+    const updateData = { isBlocked: isBlocked, roles:roles };
     this.logRequest('PUT', url, updateData);
 
     return this.put<any>(url, updateData).pipe(
+      tap((response) => this.logResponse('PUT', url, response)),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Update user password (admin can change any user's password)
+   */
+  updateUserPassword(
+    userId: string,
+    passwordData: { newPassword: string }
+  ): Observable<any> {
+    const url = this.buildUrl(`/admin/users/${userId}/password`);
+    this.logRequest('PUT', url, { password: '***' }); // Don't log actual password
+
+    return this.put<any>(url, passwordData).pipe(
       tap((response) => this.logResponse('PUT', url, response)),
       catchError(this.handleError)
     );

@@ -7,5 +7,6 @@ export interface PaymentDto {
   billingName?: string;
   billingEmail?: string;
   status: string;
+  receiptUrl?: string;
   paymentMethod?: string;
 }

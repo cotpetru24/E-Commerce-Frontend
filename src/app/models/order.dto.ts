@@ -95,10 +95,18 @@ export interface GetAllOrdersRequestDto {
 
 export interface GetAllOrdersResponseDto {
   orders: AdminOrderDto[];
-  totalCount: number;
+  totalQueryCount: number;
+  adminOrdersStats: AdminOrdersStatsDto;
   pageNumber: number;
   pageSize: number;
   totalPages: number;
+}
+
+export interface AdminOrdersStatsDto {
+  totalOrdersCount: number;
+  totalPendingOrdersCount: number;
+  totalProcessingOrdersCount: number;
+  totalDeliveredOrdersCount: number;
 }
 
 export enum SortBy {

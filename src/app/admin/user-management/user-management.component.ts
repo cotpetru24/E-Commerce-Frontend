@@ -4,49 +4,51 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { User } from '../../services/api/admin-api.service';
+import { AdminUser } from '../../services/api/admin-api.service';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
-
-interface UserStats {
-  total: number;
-  active: number;
-  blocked: number;
-  newThisMonth: number;
-}
+import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AdminUsersStatsDto, GetAllUsersRequestDto, UserRole, UserStatus } from '../../models';
+import { UsersSortBy, UsersSortDirection } from '../../models/user.dto';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ModalDialogComponent],
   templateUrl: './user-management.component.html',
-  styleUrls: ['./user-management.component.scss']
+  styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
   // Users data
-  users: User[] = [];
-  filteredUsers: User[] = [];
-  paginatedUsers: User[] = [];
+  users: AdminUser[] = [];
+  filteredUsers: AdminUser[] = [];
+  paginatedUsers: AdminUser[] = [];
+
+  adminUsersStats: AdminUsersStatsDto = {
+    totalUsersCount: 0,
+    totalActiveUsersCount: 0,
+    totalBlockedUsersCount: 0,
+    totalNewUsersCountThisMonth: 0,
+  }
   isLoading = false;
+  UserRole = UserRole;
+  UserStatus = UserStatus;
 
   // Search and filters
   searchTerm = '';
-  selectedStatus = '';
-  selectedRole = '';
+  selectedUserStatus: UserStatus | null = null;
+  selectedRole: UserRole | null = null;
   sortBy = 'date-desc';
+
+  sortDirection: UsersSortDirection | null = UsersSortDirection.Descending;
 
   // Pagination
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
+  totalQueryCount = 0;
 
-  // Statistics
-  userStats: UserStats = {
-    total: 0,
-    active: 0,
-    blocked: 0,
-    newThisMonth: 0
-  };
 
   // Math utility for template
   Math = Math;
@@ -54,9 +56,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
-    private adminApi: AdminApiService,
+    private adminApiService: AdminApiService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -69,20 +72,38 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   loadUsers(): void {
     this.isLoading = true;
-    
+
+    const [sortByField, sortDir] = this.sortBy.split('-');
+
+    const getAllUsersRequest: GetAllUsersRequestDto = {
+      pageNumber: this.currentPage,
+      pageSize: this.itemsPerPage,
+      searchTerm: this.searchTerm,
+      userStatus: this.selectedUserStatus,
+      userRole: this.selectedRole,
+      sortBy:
+        sortByField === 'name' ? UsersSortBy.Name : UsersSortBy.DateCreated,
+      sortDirection:
+        sortDir === 'asc'
+          ? UsersSortDirection.Ascending
+          : UsersSortDirection.Descending,
+    };
+
     this.subscriptions.add(
-      this.adminApi.getAllUsers().subscribe({
+      this.adminApiService.getAllUsers(getAllUsersRequest).subscribe({
         next: (response) => {
           this.users = response.users;
+          this.adminUsersStats = response.adminUsersStats;
+          this.totalPages = response.totalPages;
+          this.totalQueryCount = response.totalQueryCount;
           this.applyFilters();
-          this.calculateStats();
           this.isLoading = false;
         },
         error: (error) => {
           console.error('Error loading users:', error);
           this.isLoading = false;
           this.toastService.error('Failed to load users');
-        }
+        },
       })
     );
   }
@@ -94,7 +115,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   onFilterChange(): void {
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadUsers();
   }
 
   onSortChange(): void {
@@ -102,47 +123,51 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    this.filteredUsers = this.users.filter(user => {
-      const matchesSearch = !this.searchTerm || 
-        user.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        user.firstName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
-      const matchesStatus = !this.selectedStatus || 
-        this.getStatusText(user.isBlocked) === this.selectedStatus;
-      
-      const matchesRole = !this.selectedRole || 
-        user.role === this.selectedRole;
-      
-      return matchesSearch && matchesStatus && matchesRole;
-    });
-
-    this.sortUsers();
-    this.updatePagination();
+    // this.filteredUsers = this.users.filter((user) => {
+    //   const matchesSearch =
+    //     !this.searchTerm ||
+    //     user.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    //     user.firstName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    //     user.lastName.toLowerCase().includes(this.searchTerm.toLowerCase());
+    //   const matchesStatus =
+    //     !this.selectedStatus ||
+    //     this.getStatusText(user.isBlocked) === this.selectedStatus;
+    //   // const matchesRole = !this.selectedRole || user.roles === this.selectedRole;
+    //   // return matchesSearch && matchesStatus && matchesRole;
+    // });
+    // this.sortUsers();
+    // this.updatePagination();
   }
 
   sortUsers(): void {
-    this.filteredUsers.sort((a, b) => {
-      switch (this.sortBy) {
-        case 'date-desc':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case 'date-asc':
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        case 'name-asc':
-          return `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`);
-        case 'name-desc':
-          return `${b.firstName} ${b.lastName}`.localeCompare(`${a.firstName} ${a.lastName}`);
-        default:
-          return 0;
-      }
-    });
+    // this.filteredUsers.sort((a, b) => {
+    //   switch (this.sortBy) {
+    //     case 'date-desc':
+    //       return (
+    //         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    //       );
+    //     case 'date-asc':
+    //       return (
+    //         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    //       );
+    //     case 'name-asc':
+    //       return `${a.firstName} ${a.lastName}`.localeCompare(
+    //         `${b.firstName} ${b.lastName}`
+    //       );
+    //     case 'name-desc':
+    //       return `${b.firstName} ${b.lastName}`.localeCompare(
+    //         `${a.firstName} ${a.lastName}`
+    //       );
+    //     default:
+    //       return 0;
+    //   }
+    // });
   }
 
   updatePagination(): void {
-    this.totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage);
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedUsers = this.filteredUsers.slice(startIndex, endIndex);
+    if (!this.isLoading) {
+      this.loadUsers();
+    }
   }
 
   changePage(page: number): void {
@@ -157,37 +182,50 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     const maxVisible = 5;
     let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
     let end = Math.min(this.totalPages, start + maxVisible - 1);
-    
+
     if (end - start + 1 < maxVisible) {
       start = Math.max(1, end - maxVisible + 1);
     }
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
-    
+
     return pages;
   }
 
-  calculateStats(): void {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    
-    this.userStats = {
-      total: this.users.length,
-      active: this.users.filter(u => !u.isBlocked).length,
-      blocked: this.users.filter(u => u.isBlocked).length,
-      newThisMonth: this.users.filter(u => new Date(u.createdAt) >= startOfMonth).length
-    };
-  }
+  // calculateStats(): void {
+  //   const now = new Date();
+  //   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  getRoleClass(role: string): string {
-    switch (role) {
-      case 'admin': return 'badge bg-danger';
-      case 'moderator': return 'badge bg-warning';
-      case 'customer': return 'badge bg-primary';
-      default: return 'badge bg-secondary';
+  //   this.userStats = {
+  //     total: this.users.length,
+  //     active: this.users.filter((u) => !u.isBlocked).length,
+  //     blocked: this.users.filter((u) => u.isBlocked).length,
+  //     newThisMonth: this.users.filter(
+  //       (u) => new Date(u.createdAt) >= startOfMonth
+  //     ).length,
+  //   };
+  // }
+
+  getRoleClass(roles: UserRole[] | string[]): string {
+    let userRole = '';
+    for (let role of roles) {
+      switch (role) {
+        case UserRole.Administrator:
+        case 'Administrator':
+          userRole = 'badge bg-danger';
+          break;
+        case UserRole.Customer:
+        case 'Customer':
+          userRole = 'badge bg-info';
+          break;
+        default:
+          userRole = 'badge bg-info';
+          break;
+      }
     }
+    return userRole;
   }
 
   getStatusClass(isBlocked: boolean): string {
@@ -207,7 +245,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     const past = new Date(date);
     const diffInMs = now.getTime() - past.getTime();
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffInDays === 0) return 'Today';
     if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} days ago`;
@@ -216,54 +254,88 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     return `${Math.floor(diffInDays / 365)} years ago`;
   }
 
-  viewUser(user: User): void {
-    // Navigate to user detail view
+  viewUser(user: AdminUser): void {
+    // Navigate to user profile view
     this.router.navigate(['/admin/users', user.id]);
   }
 
-  editUser(user: User): void {
+  editUser(user: AdminUser): void {
     // Navigate to user edit form
     this.router.navigate(['/admin/edit-user', user.id]);
   }
 
-  toggleUserStatus(user: User): void {
+  toggleUserStatus(user: AdminUser): void {
     const action = user.isBlocked ? 'unblock' : 'block';
-    const message = user.isBlocked ? 
-      `Unblock user ${user.firstName} ${user.lastName}?` : 
-      `Block user ${user.firstName} ${user.lastName}?`;
 
-    if (confirm(message)) {
-      this.subscriptions.add(
-        this.adminApi.toggleUserStatus(user.id.toString(), !user.isBlocked).subscribe({
-          next: () => {
-            const status = user.isBlocked ? 'unblocked' : 'blocked';
-            this.toastService.success(`User ${status} successfully`);
-            this.loadUsers();
-          },
-          error: (error: any) => {
-            console.error('Error toggling user status:', error);
-            this.toastService.error('Failed to update user status');
-          }
-        })
-      );
-    }
+    const modalRef = this.modalService.open(ModalDialogComponent);
+    modalRef.componentInstance.title = `${
+      action.charAt(0).toUpperCase() + action.slice(1)
+    } User`;
+    modalRef.componentInstance.message = `Are you sure you want to ${action} user: ${user.firstName} ${user.lastName}?`;
+    modalRef.componentInstance.modalType = 'confirm';
+
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.isLoading = true;
+
+        this.subscriptions.add(
+          this.adminApiService
+            .toggleUserStatus(user.id.toString(), !user.isBlocked, user.roles)
+            .subscribe({
+              next: () => {
+                const status = user.isBlocked ? 'unblocked' : 'blocked';
+                this.toastService.success(`User ${status} successfully`);
+
+                this.loadUsers();
+                this.isLoading = false;
+              },
+              error: (err) => {
+                this.toastService.error('Failed to update user status');
+              },
+            })
+        );
+      }
+    });
   }
 
-  deleteUser(user: User): void {
-    if (confirm(`Are you sure you want to delete user ${user.firstName} ${user.lastName}? This action cannot be undone.`)) {
-      this.subscriptions.add(
-        this.adminApi.deleteUser(user.id.toString()).subscribe({
-          next: () => {
-            this.toastService.success('User deleted successfully');
-            this.loadUsers();
-          },
-          error: (error: any) => {
-            console.error('Error deleting user:', error);
-            this.toastService.error('Failed to delete user');
-          }
-        })
-      );
-    }
+  deleteUser(user: AdminUser): void {
+    const modalRef = this.modalService.open(ModalDialogComponent);
+    modalRef.componentInstance.title = 'Delete User';
+    modalRef.componentInstance.message = `Are you sure you want to delete user: ${user.firstName} ${user.lastName}?`;
+    modalRef.componentInstance.modalType = 'confirm';
+
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.isLoading = true;
+
+        this.subscriptions.add(
+          this.adminApiService.deleteUser(user.id.toString()).subscribe({
+            next: () => {
+              this.toastService.success('User deleted successfully');
+
+              this.loadUsers();
+
+              this.isLoading = false;
+            },
+            error: (err) => {
+              this.toastService.error('Failed to delete user');
+              this.isLoading = false;
+            },
+          })
+        );
+      }
+    });
+  }
+
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.selectedUserStatus = null;
+    this.selectedRole = null;
+    this.sortBy = 'date-desc';
+    this.sortDirection = UsersSortDirection.Descending;
+    this.currentPage = 1;
+    this.itemsPerPage = 10;
+    this.loadUsers();
   }
 
   refreshUsers(): void {
@@ -274,4 +346,4 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     // Implement export functionality
     this.toastService.info('Export functionality coming soon!');
   }
-} 
+}

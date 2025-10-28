@@ -9,6 +9,7 @@ import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import {
   AdminOrderDto,
+  AdminOrdersStatsDto,
   GetAllOrdersRequestDto,
   OrderStatus,
   SortBy,
@@ -52,13 +53,13 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   currentPage: number = 0;
   itemsPerPage: number = 10;
   totalPages: number = 0;
+  totalQueryCount = 0;
 
-  // Statistics
-  orderStats: OrderStats = {
-    total: 0,
-    pending: 0,
-    processing: 0,
-    completed: 0,
+  adminOrdersStats: AdminOrdersStatsDto = {
+    totalOrdersCount: 0,
+    totalDeliveredOrdersCount: 0,
+    totalPendingOrdersCount: 0,
+    totalProcessingOrdersCount: 0,
   };
 
   // Math utility for template
@@ -86,9 +87,9 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   }
 
   loadOrders(): void {
-    if (this.isLoading) {
-      return;
-    }
+    // if (this.isLoading) {
+    //   return;
+    // }
     this.isLoading = true;
 
     const now = new Date();
@@ -121,7 +122,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         fromDate = null;
     }
 
-const [sortByField, sortDir] = this.sortBy.split('-');
+    const [sortByField, sortDir] = this.sortBy.split('-');
 
     const getAllOrdersRequest: GetAllOrdersRequestDto = {
       fromDate: fromDate ? fromDate : null,
@@ -132,21 +133,19 @@ const [sortByField, sortDir] = this.sortBy.split('-');
       searchTerm: this.searchTerm,
       sortBy: sortByField === 'total' ? SortBy.Total : SortBy.DateCreated,
       sortDirection:
-        sortDir === 'asc'
-        ? SortDirection.Ascending
-        : SortDirection.Descending,   
-    
+        sortDir === 'asc' ? SortDirection.Ascending : SortDirection.Descending,
     };
 
     this.subscriptions.add(
       this.adminApiService.getAllOrders(getAllOrdersRequest).subscribe({
         next: (response) => {
           this.orders = response.orders;
+          this.adminOrdersStats = response.adminOrdersStats;
           this.currentPage = response.pageNumber;
           this.totalPages = response.totalPages;
           this.itemsPerPage = response.pageSize;
-          this.calculateStats();
-          this.orderStats.total = response.totalCount;
+          // this.calculateStats();
+          this.totalQueryCount = response.totalQueryCount;
           this.isLoading = false;
         },
         error: (error) => {
@@ -224,18 +223,6 @@ const [sortByField, sortDir] = this.sortBy.split('-');
     return pages;
   }
 
-  calculateStats(): void {
-    (this.orderStats.pending = this.orders.filter(
-      (o) => o.orderStatusName === 'pending'
-    ).length),
-      (this.orderStats.processing = this.orders.filter(
-        (o) => o.orderStatusName === 'processing'
-      ).length),
-      (this.orderStats.completed = this.orders.filter(
-        (o) => o.orderStatusName === 'delivered'
-      ).length);
-  }
-
   getStatusClass(status: string): string {
     switch (status) {
       case 'Pending':
@@ -311,16 +298,20 @@ const [sortByField, sortDir] = this.sortBy.split('-');
           notes: 'testing the notes',
         };
 
-        this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
-          next: () => {
-            const target = this.orders.find((o) => o.id === order.id);
-            if (target) {
-              target.orderStatusName = OrderStatus[selectedStatus];
+        this.adminApiService
+          .updateOrderStatus(order.id, statusData)
+            .subscribe({
+              next: () => {
+            // const target = this.orders.find((o) => o.id === order.id);
+            // if (target) {
+            //   target.orderStatusName = OrderStatus[selectedStatus];
 
-              this.orders = [...this.orders];
-            }
+            //   this.orders = [...this.orders];
+            // }
 
             this.toastService.success('Order status updated successfully!');
+
+            this.loadOrders();
             this.isLoading = false;
           },
           error: (err) => {
@@ -356,15 +347,17 @@ const [sortByField, sortDir] = this.sortBy.split('-');
         };
 
         this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
-          next: (response) => {
-            const target = this.orders.find((o) => o.id === order.id);
-            if (target) {
-              target.orderStatusName = 'Shipped';
+          next: () => {
+            // const target = this.orders.find((o) => o.id === order.id);
+            // if (target) {
+            //   target.orderStatusName = 'Shipped';
 
-              this.orders = [...this.orders];
-            }
+            //   this.orders = [...this.orders];
+            // }
 
             this.toastService.success('Order marked as shipped successfully!');
+
+            this.loadOrders()
             this.isLoading = false;
           },
           error: (err) => {
@@ -443,19 +436,12 @@ const [sortByField, sortDir] = this.sortBy.split('-');
     );
   }
 
-
-
-
-
-resetFilters(): void {    this.searchTerm = null;
+  resetFilters(): void {
+    this.searchTerm = null;
     this.selectedStatus = null;
     this.selectedDateRange = '';
     this.sortBy = 'date-desc';
     this.currentPage = 1;
     this.loadOrders();
   }
-
-
 }
-
-

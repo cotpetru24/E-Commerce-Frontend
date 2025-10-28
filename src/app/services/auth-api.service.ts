@@ -229,7 +229,7 @@ export class AuthApiService extends BaseApiService {
 
   isAdmin(): boolean {
     const currentUser = this.getCurrentUser();
-    return currentUser?.role === UserRole.ADMINISTRATOR;
+    return currentUser?.role === UserRole.Administrator;
   }
 
   getUserRole(): string | null {
@@ -272,15 +272,17 @@ export class AuthApiService extends BaseApiService {
     }
   }
 
-  private validateRole(role: string): UserRole {
-    switch (role.toLocaleLowerCase()) {
-      case 'customer':
-        return UserRole.CUSTOMER;
-      case 'admin':
-      case 'administrator':
-        return UserRole.ADMINISTRATOR;
+  private validateRole(role: UserRole | string): UserRole {
+    switch (role) {
+      case UserRole.Customer:
+      case 'Customer':  
+        return UserRole.Customer;
+      // case 'admin':
+      case UserRole.Administrator:
+      case 'Administrator':
+        return UserRole.Administrator;
       default:
-        return UserRole.CUSTOMER;
+        return UserRole.Customer;
     }
   }
 

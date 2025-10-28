@@ -258,9 +258,8 @@ export class ViewOrderComponent implements OnInit {
 
   goToUserProfile(): void {
     if (this.order?.userId) {
-      this.router.navigate(['/admin/users'], {
-        queryParams: { userId: this.order.userId },
-      });
+    this.router.navigate(['/admin/users', this.order.userId]);
+
     }
   }
 }

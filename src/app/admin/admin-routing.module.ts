@@ -35,6 +35,10 @@ const routes: Routes = [
     loadComponent: () => import('./user-management/user-management.component').then(m => m.UserManagementComponent) 
   },
   { 
+    path: 'users/:id', 
+    loadComponent: () => import('./user-profile/user-profile.component').then(m => m.UserProfileComponent) 
+  },
+  { 
     path: 'content-management', 
     loadComponent: () => import('./content-management/content-management.component').then(m => m.ContentManagementComponent) 
   },

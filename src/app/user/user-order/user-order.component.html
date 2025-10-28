@@ -84,45 +84,55 @@
             </div>
 
             <!-- Payment Method -->
-            <div class="review-section">
-              <h3 class="section-title">
-                <i class="bi bi-credit-card me-2"></i>Payment Details
-              </h3>
-              <div class="payment-card">
-                <div class="payment-content">
-                  <div class="payment-info">
-                    <div *ngIf="paymentMethod.method === 'card'">
-                      <div class="d-flex justify-content-between mb-2">
-                        <!-- <i class="bi bi-credit-card-2-front me-2"></i> -->
-                        <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
-
-
-                        <span class="badge badge-compact " [ngClass]="{
-                            'bg-success text-dark': order?.payment?.status === 'Completed',
-                            'bg-warning text-dark': order?.payment?.status === 'Pending',
-                            'bg-danger text-dark': order?.payment?.status === 'Failed',
-                            'bg-info text-dark': order?.payment?.status === 'Refunded'
-                          }">
-                          Payment status: {{ order?.payment?.status }}
-                        </span>
+   
 
 
 
 
-                        <!-- <p class="payment-name"></p> -->
+
+
+
+              <div class="review-section">
+                <h3 class="section-title">
+                  <i class="bi bi-credit-card me-2"></i>Payment Details
+                </h3>
+                <div class="payment-card">
+                  <div class="payment-content">
+
+                    <div class="payment-info">
+                      <div *ngIf="order?.payment?.paymentMethod === 'Credit/Debit Card'">
+                        <div class="d-flex justify-content-between mb-2">
+                          <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
+                          <span class="badge badge-compact" [ngClass]="{
+                              'bg-success text-dark': order?.payment?.status === 'Completed',
+                              'bg-warning text-dark': order?.payment?.status === 'Pending',
+                              'bg-danger text-dark': order?.payment?.status === 'Failed',
+                              'bg-info text-dark': order?.payment?.status === 'Refunded'
+                            }">
+                            Payment status: {{ order?.payment?.status }}
+                          </span>
+                        </div>
+                        <p class="payment-details text-capitalize">Card brand: {{ order?.payment?.cardBrand || '' }}</p>
+                        <p class="payment-details">Card number: **** **** **** {{ order?.payment?.cardLast4 || '****' }}</p>
+                        <p class="payment-details">
+                          <a [href]="order?.payment?.receiptUrl || ''" target="_blank" rel="noopener noreferrer">
+                            Receipt
+                          </a>
+                        </p>
+                        
+
 
                       </div>
-                      <p class="payment-details">**** **** **** {{ order?.payment?.cardLast4 || '****' }}</p>
-
-                    </div>
-                    <div *ngIf="paymentMethod.method === 'paypal'">
-                      <p class="payment-type"><strong>PayPal</strong></p>
-                      <p class="payment-details">{{ paymentMethod.paypalEmail }}</p>
+                      <div *ngIf="order?.payment?.paymentMethod === 'paypal'">
+                        <p class="payment-type"><strong>PayPal</strong></p>
+                        <p class="payment-details">{{ order?.payment?.billingEmail }}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+
+
 
             <!-- Shipping Information -->
             <div class="review-section" *ngIf="shippingInfo">

@@ -15,10 +15,12 @@ export interface UserInfoDto {
   Id: string;
   FirstName: string;
   Email: string;
-  role: string;
+  role: UserRole;
 }
 
 export enum UserRole {
-CUSTOMER='Customer',
-ADMINISTRATOR='Administrator'
+  Administrator = 1,
+  Customer = 2,
+// Customer='Customer',
+// Administrator='Administrator'
 }

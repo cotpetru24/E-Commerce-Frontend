@@ -40,7 +40,7 @@
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
-                  <h4 class="mb-0">{{ orderStats.total }}</h4>
+                  <h4 class="mb-0">{{ adminOrdersStats.totalOrdersCount }}</h4>
                   <small>Total Orders</small>
                 </div>
                 <i class="bi bi-cart display-6"></i>
@@ -53,7 +53,7 @@
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
-                  <h4 class="mb-0">{{ orderStats.pending }}</h4>
+                  <h4 class="mb-0">{{ adminOrdersStats.totalPendingOrdersCount }}</h4>
                   <small>Pending</small>
                 </div>
                 <i class="bi bi-clock display-6"></i>
@@ -66,7 +66,7 @@
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
-                  <h4 class="mb-0">{{ orderStats.processing }}</h4>
+                  <h4 class="mb-0">{{ adminOrdersStats.totalProcessingOrdersCount }}</h4>
                   <small>Processing</small>
                 </div>
                 <i class="bi bi-gear display-6"></i>
@@ -79,8 +79,8 @@
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
-                  <h4 class="mb-0">{{ orderStats.completed }}</h4>
-                  <small>Completed</small>
+                  <h4 class="mb-0">{{ adminOrdersStats.totalDeliveredOrdersCount }}</h4>
+                  <small>Delivered</small>
                 </div>
                 <i class="bi bi-check-circle display-6"></i>
               </div>
@@ -153,10 +153,10 @@
           <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Orders ({{ orders.length }})</h5>
             <div class="d-flex gap-2">
-              <span class="badge bg-primary">{{ orderStats.total }} Total</span>
+              <!-- <span class="badge bg-primary">{{ orderStats.total }} Total</span>
               <span class="badge bg-warning">{{ orderStats.pending }} Pending</span>
               <span class="badge bg-info">{{ orderStats.processing }} Processing</span>
-              <span class="badge bg-success">{{ orderStats.completed }} Completed</span>
+              <span class="badge bg-success">{{ orderStats.completed }} Completed</span> -->
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@
             <div>
               Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage,
               orders.length) }}
-              of {{ orderStats.total }} orders
+              of {{ totalQueryCount }} orders
             </div>
             <nav>
               <ul class="pagination pagination-sm mb-0">
