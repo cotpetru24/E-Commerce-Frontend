@@ -6,24 +6,27 @@ import { Subscription } from 'rxjs';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { AdminOrderDto } from '../../models/order.dto';
+import { AdminUser } from '../../services/api/admin-api.service';
+import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserRole } from '../../models';
 
 // Interface matching backend AdminUserDto
-interface AdminUserDto {
-  id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  emailConfirmed: boolean;
-  lockoutEnabled: boolean;
-  lockoutEnd?: Date;
-  accessFailedCount: number;
-  createdAt?: Date;
-  lastLoginAt?: Date;
-  totalOrders: number;
-  totalSpent: number;
-  roles: UserRole[];
-}
+// interface AdminUserDto {
+//   id: string;
+//   email: string;
+//   firstName?: string;
+//   lastName?: string;
+//   emailConfirmed: boolean;
+//   lockoutEnabled: boolean;
+//   lockoutEnd?: Date;
+//   accessFailedCount: number;
+//   createdAt?: Date;
+//   lastLoginAt?: Date;
+//   totalOrders: number;
+//   totalSpent: number;
+//   roles: UserRole[];
+// }
 
 @Component({
   selector: 'app-user-profile',
@@ -34,7 +37,7 @@ interface AdminUserDto {
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
   // User data
-  user: AdminUserDto | null = null;
+  user: AdminUser | null = null;
   userId: string | null = null;
   isLoading = false;
   isEditing = false;
@@ -62,9 +65,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
+    private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
-    private adminApi: AdminApiService,
+    private adminApiService: AdminApiService,
     private toastService: ToastService
   ) {}
 
@@ -87,7 +91,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.subscriptions.add(
-      this.adminApi.getUserById(this.userId).subscribe({
+      this.adminApiService.getUserById(this.userId).subscribe({
         next: (user) => {
           this.user = user;
           this.editForm = {
@@ -111,7 +115,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
     this.ordersLoading = true;
     this.subscriptions.add(
-      this.adminApi.getUserOrders(this.userId, {
+      this.adminApiService.getUserOrders(this.userId, {
         pageNumber: 1,
         pageSize: 1000
       }).subscribe({
@@ -155,7 +159,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     };
 
     this.subscriptions.add(
-      this.adminApi.updateUser(this.userId, updateData).subscribe({
+      this.adminApiService.updateUser(this.userId, updateData).subscribe({
         next: () => {
           this.toastService.success('User profile updated successfully');
           this.isEditing = false;
@@ -199,7 +203,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     };
 
     this.subscriptions.add(
-      this.adminApi.updateUserPassword(this.userId, passwordData).subscribe({
+      this.adminApiService.updateUserPassword(this.userId, passwordData).subscribe({
         next: () => {
           this.toastService.success('Password updated successfully');
           this.isChangingPassword = false;
@@ -243,30 +247,38 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/orders', orderId]);
   }
 
-  toggleUserStatus(): void {
-    if (!this.user || !this.userId) return;
+  toggleUserStatus(user: AdminUser): void {
+    const action = user.isBlocked ? 'unblock' : 'block';
 
-    const isBlocked = this.getIsBlocked();
-    const action = isBlocked ? 'unblock' : 'block';
-    const message = isBlocked ? 
-      `Unblock user ${this.user.firstName} ${this.user.lastName}?` : 
-      `Block user ${this.user.firstName} ${this.user.lastName}?`;
+    const modalRef = this.modalService.open(ModalDialogComponent);
+    modalRef.componentInstance.title = `${
+      action.charAt(0).toUpperCase() + action.slice(1)
+    } User`;
+    modalRef.componentInstance.message = `Are you sure you want to ${action} user: ${user.firstName} ${user.lastName}?`;
+    modalRef.componentInstance.modalType = 'confirm';
 
-    if (confirm(message)) {
-      this.subscriptions.add(
-        this.adminApi.toggleUserStatus(this.userId, !isBlocked, this.user.roles).subscribe({
-          next: () => {
-            const status = isBlocked ? 'unblocked' : 'blocked';
-            this.toastService.success(`User ${status} successfully`);
-            this.loadUserData();
-          },
-          error: (error: any) => {
-            console.error('Error toggling user status:', error);
-            this.toastService.error('Failed to update user status');
-          }
-        })
-      );
-    }
+    modalRef.result.then((result) => {
+      if (result === true) {
+        this.isLoading = true;
+
+        this.subscriptions.add(
+          this.adminApiService
+            .toggleUserStatus(user.id.toString(), !user.isBlocked, user.roles)
+            .subscribe({
+              next: () => {
+                const status = user.isBlocked ? 'unblocked' : 'blocked';
+                this.toastService.success(`User ${status} successfully`);
+
+                this.loadUserData();
+                this.isLoading = false;
+              },
+              error: (err) => {
+                this.toastService.error('Failed to update user status');
+              },
+            })
+        );
+      }
+    });
   }
 
   getStatusBadgeClass(status: string | undefined): string {
@@ -295,16 +307,27 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   getIsBlocked(): boolean {
-    return this.user?.lockoutEnabled || false;
+    return this.user?.isBlocked || false;
   }
 
-  getRoleClass(role: string): string {
-    switch (role) {
-      case 'admin': return 'badge bg-danger';
-      case 'moderator': return 'badge bg-warning';
-      case 'customer': return 'badge bg-primary';
-      default: return 'badge bg-secondary';
+  getRoleClass(roles: UserRole[] | string[]): string {
+    let userRole = '';
+    for (let role of roles) {
+      switch (role) {
+        case UserRole.Administrator:
+        case 'Administrator':
+          userRole = 'badge bg-danger';
+          break;
+        case UserRole.Customer:
+        case 'Customer':
+          userRole = 'badge bg-info';
+          break;
+        default:
+          userRole = 'badge bg-info';
+          break;
+      }
     }
+    return userRole;
   }
 
   formatDate(date: Date | string): string {

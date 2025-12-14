@@ -146,7 +146,11 @@
             <div class="col-6">
               <label class="form-label fw-bold">Role</label>
               <div>
-                <!-- <span [class]="getRoleClass(user.roles[0] || 'customer')">{{ (user.roles[0] || 'customer') | titlecase }}</span> -->
+                    <span [class]="getRoleClass(user.roles)">
+                      @if (user.roles.length > 0) {
+                      {{ user.roles.join(', ') }}
+                      }
+                    </span>              
               </div>
             </div>
           </div>
@@ -160,14 +164,7 @@
                 <small class="text-muted" *ngIf="user.createdAt">{{ getTimeAgo(user.createdAt) }}</small>
               </div>
             </div>
-            <div class="col-6">
-              <label class="form-label fw-bold">Last Login</label>
-              <div>
-                <p class="mb-0" *ngIf="user.lastLoginAt">{{ formatDate(user.lastLoginAt) }}</p>
-                <p class="mb-0 text-muted" *ngIf="!user.lastLoginAt">Never</p>
-                <small class="text-muted" *ngIf="user.lastLoginAt">{{ getTimeAgo(user.lastLoginAt) }}</small>
-              </div>
-            </div>
+
           </div>
 
           <!-- Action Buttons -->
@@ -190,7 +187,7 @@
           <div class="d-grid gap-2 mt-3" *ngIf="!isEditing && !isChangingPassword">
             <button 
               class="btn btn-outline-warning" 
-              (click)="toggleUserStatus()"
+              (click)="toggleUserStatus(user)"
             >
               <i class="bi" [class]="getIsBlocked() ? 'bi-unlock' : 'bi-lock'"></i>
               {{ getIsBlocked() ? 'Unblock' : 'Block' }} User
