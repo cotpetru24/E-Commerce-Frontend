@@ -719,7 +719,7 @@ export class AdminApiService extends BaseApiService {
    * Update user (admin can update any user)
    */
   updateUser(userId: string, updates: any): Observable<any> {
-    const url = this.buildUrl(`/admin/users/${userId}`);
+    const url = this.buildUrl(`${this.endPoint}/users/${userId}`);
     this.logRequest('PUT', url, updates);
 
     return this.put<any>(url, updates).pipe(
@@ -775,7 +775,7 @@ export class AdminApiService extends BaseApiService {
     userId: string,
     passwordData: { newPassword: string }
   ): Observable<any> {
-    const url = this.buildUrl(`/admin/users/${userId}/password`);
+    const url = this.buildUrl(`${this.endPoint}/users/${userId}/password`);
     this.logRequest('PUT', url, { password: '***' }); // Don't log actual password
 
     return this.put<any>(url, passwordData).pipe(

@@ -60,6 +60,8 @@ export class ViewOrderComponent implements OnInit {
   orderId: number | null = null;
   orderStatus: string = 'Processing';
   cameFromDashboard: boolean = false;
+  cameFromUserProfile: boolean = false;
+
 
   constructor(
     private router: Router,
@@ -76,6 +78,8 @@ export class ViewOrderComponent implements OnInit {
     // Check if we came from dashboard
     this.route.queryParams.subscribe((params) => {
       this.cameFromDashboard = params['from'] === 'dashboard';
+      this.cameFromUserProfile = params['from'] === 'user-profile';
+
     });
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -247,7 +251,11 @@ export class ViewOrderComponent implements OnInit {
   goBack(): void {
     if (this.cameFromDashboard) {
       this.router.navigate(['/admin']);
-    } else {
+    } 
+    else if (this.cameFromUserProfile){
+      this .router.navigate(['/admin/users', this.order?.userId]);
+    }
+    else {
       this.router.navigate(['/admin/orders']);
     }
   }

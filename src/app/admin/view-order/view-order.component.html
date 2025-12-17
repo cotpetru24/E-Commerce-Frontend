@@ -223,7 +223,14 @@
             </button>
 
             <button class="btn btn-outline-secondary btn-lg w-100 mt-2" (click)="goBack()">
-              <i class="bi bi-arrow-left me-2"></i>{{ cameFromDashboard ? 'Back to Dashboard' : 'Back to Orders' }}
+              @if (cameFromUserProfile) {
+              <i class="bi bi-arrow-left me-2"></i>Back to User Profile
+              } @else if (cameFromDashboard) {
+              <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+              }
+              @else{
+              <i class="bi bi-arrow-left me-2"></i>Back to Orders
+              }
             </button>
           </div>
 

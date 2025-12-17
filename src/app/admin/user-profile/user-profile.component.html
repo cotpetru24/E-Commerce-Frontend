@@ -68,7 +68,7 @@
           <!-- User Information -->
           <div class="row mb-3">
             <div class="col-12">
-              <label class="form-label fw-bold">Email</label>
+              <label class="form-label fw-bold" *ngIf="!isChangingPassword">Email</label>
               <div *ngIf="!isEditing && !isChangingPassword">
                 <p class="mb-1">{{ user.email }}</p>
                 <small class="text-muted" *ngIf="user.emailConfirmed">
@@ -90,7 +90,7 @@
 
           <div class="row mb-3">
             <div class="col-6">
-              <label class="form-label fw-bold">First Name</label>
+              <label class="form-label fw-bold" *ngIf="!isChangingPassword">First Name</label>
               <div *ngIf="!isEditing && !isChangingPassword">
                 <p class="mb-0">{{ user.firstName }}</p>
               </div>
@@ -103,7 +103,7 @@
               >
             </div>
             <div class="col-6">
-              <label class="form-label fw-bold">Last Name</label>
+              <label class="form-label fw-bold" *ngIf="!isChangingPassword">Last Name</label>
               <div *ngIf="!isEditing && !isChangingPassword">
                 <p class="mb-0">{{ user.lastName }}</p>
               </div>
@@ -118,22 +118,31 @@
           </div>
 
           <!-- Password Change Form -->
-          <div *ngIf="isChangingPassword" class="mb-3">
-            <label class="form-label fw-bold">New Password</label>
-            <input 
-              type="password" 
-              class="form-control mb-2" 
-              [(ngModel)]="passwordForm.newPassword"
-              placeholder="Enter new password"
-            >
-            <label class="form-label fw-bold">Confirm Password</label>
-            <input 
-              type="password" 
-              class="form-control" 
-              [(ngModel)]="passwordForm.confirmPassword"
-              placeholder="Confirm new password"
-            >
-          </div>
+<div *ngIf="isChangingPassword" class="mb-3">
+  <label class="form-label fw-bold">New Password</label>
+  <div class="input-group mb-2">
+    <input
+      [type]="showPassword ? 'text' : 'password'"
+      class="form-control"
+      [(ngModel)]="passwordForm.newPassword"
+      placeholder="Enter new password"
+    />
+    <button class="btn btn-outline-secondary" type="button" (click)="togglePassword()">
+      <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+    </button>
+  </div>
+
+  <label class="form-label fw-bold">Confirm Password</label>
+  <div class="input-group">
+    <input
+      [type]="showPassword ? 'text' : 'password'"
+      class="form-control"
+      [(ngModel)]="passwordForm.confirmPassword"
+      placeholder="Confirm new password"
+    />
+  </div>
+</div>
+
 
           <!-- User Status and Dates -->
           <div class="row mb-3">
@@ -145,13 +154,27 @@
             </div>
             <div class="col-6">
               <label class="form-label fw-bold">Role</label>
-              <div>
+              <div *ngIf="!isEditing">
                     <span [class]="getRoleClass(user.roles)">
                       @if (user.roles.length > 0) {
-                      {{ user.roles.join(', ') }}
+                      {{ user.roles[0] === UserRole.Administrator? 'Administrator' : 'Customer' }}
                       }
                     </span>              
               </div>
+
+              <div *ngIf="isEditing">
+                <select class="form-select" id="role" [(ngModel)]="editForm.roles">
+                  <option [ngValue]="UserRole.Administrator">Administrator</option>
+                  <option [ngValue]="UserRole.Customer">Customer</option>
+                </select>
+              </div>
+
+
+
+
+
+
+
             </div>
           </div>
 
@@ -235,7 +258,7 @@
               <button 
                 type="button" 
                 class="btn" 
-                [class]="currentFilter === 'processing' ? 'btn-warning' : 'btn-outline-warning'"
+                [class]="currentFilter === 'processing' ? 'btn-info' : 'btn-outline-info'"
                 (click)="filterOrders('processing')"
               >
                 Processing ({{ getProcessingCount() }})
@@ -243,7 +266,7 @@
               <button 
                 type="button" 
                 class="btn" 
-                [class]="currentFilter === 'shipped' ? 'btn-info' : 'btn-outline-info'"
+                [class]="currentFilter === 'shipped' ? 'btn-primary' : 'btn-outline-primary'"
                 (click)="filterOrders('shipped')"
               >
                 Shipped ({{ getShippedCount() }})

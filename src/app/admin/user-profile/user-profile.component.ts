@@ -42,6 +42,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   isLoading = false;
   isEditing = false;
   isChangingPassword = false;
+  showPassword = false;
+
+  UserRole = UserRole;
+  selectedRole: UserRole | null = null;
+
 
   // Orders data
   userOrders: AdminOrderDto[] = [];
@@ -54,7 +59,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   editForm = {
     email: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    roles:UserRole.Customer
   };
 
   passwordForm = {
@@ -94,10 +100,18 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       this.adminApiService.getUserById(this.userId).subscribe({
         next: (user) => {
           this.user = user;
+          if (this.user) {
+            this.user.roles = [
+              user.roles[0] === 'Administrator'
+                ? UserRole.Administrator
+                : UserRole.Customer
+            ];
+          }
           this.editForm = {
             email: user.email,
             firstName: user.firstName,
-            lastName: user.lastName
+            lastName: user.lastName,
+            roles: user.roles[0] === 'Administrator' ? UserRole.Administrator : UserRole.Customer
           };
           this.isLoading = false;
         },
@@ -117,7 +131,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.adminApiService.getUserOrders(this.userId, {
         pageNumber: 1,
-        pageSize: 1000
+        pageSize: 100
       }).subscribe({
         next: (response) => {
           this.userOrders = response.orders;
@@ -144,7 +158,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.editForm = {
           email: this.user.email,
           firstName: this.user.firstName || '',
-          lastName: this.user.lastName || ''
+          lastName: this.user.lastName || '',
+          roles: this.user.roles[0]
         };
     }
   }
@@ -155,7 +170,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     const updateData = {
       email: this.editForm.email,
       firstName: this.editForm.firstName,
-      lastName: this.editForm.lastName
+      lastName: this.editForm.lastName,
+      roles: this.editForm.roles === UserRole.Customer ? ['Customer'] : ['Administrator']
     };
 
     this.subscriptions.add(
@@ -180,6 +196,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       newPassword: '',
       confirmPassword: ''
     };
+  }
+
+  togglePassword(): void{
+    this.showPassword = !this.showPassword;
   }
 
   cancelChangingPassword(): void {
@@ -244,7 +264,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   viewOrderDetails(orderId: number): void {
-    this.router.navigate(['/admin/orders', orderId]);
+    this.router.navigate(['/admin/orders', orderId],
+      { queryParams: {from: 'user-profile'}}
+    );
   }
 
   toggleUserStatus(user: AdminUser): void {
@@ -281,20 +303,25 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  getStatusBadgeClass(status: string | undefined): string {
-    if (!status) return 'bg-secondary';
-    
-    switch (status.toLowerCase()) {
-      case 'delivered':
-        return 'bg-success';
-      case 'shipped':
-        return 'bg-info';
+  getStatusBadgeClass(status: string): string {
+    switch (status) {
+      case 'Pending':
+      case 'pending':
+        return 'badge bg-warning';
+      case 'Processing':
       case 'processing':
-        return 'bg-warning';
+        return 'badge bg-info';
+      case 'Shipped':
+      case 'shipped':
+        return 'badge bg-primary';
+      case 'Delivered':
+      case 'delivered':
+        return 'badge bg-success';
+      case 'Cancelled':
       case 'cancelled':
-        return 'bg-danger';
+        return 'badge bg-danger';
       default:
-        return 'bg-secondary';
+        return 'badge bg-secondary';
     }
   }
 
