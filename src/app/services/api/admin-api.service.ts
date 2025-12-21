@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, retry, tap, delay } from 'rxjs/operators';
-import { ProductDto } from '../../models/product.dto';
+import { GetProductsAdminRequestDto, GetProductsAdminResponseDto, ProductDto } from '../../models/product.dto';
 import { Audience } from '../../models/audience.enum';
 import { BaseApiService } from './base-api.service';
 import {
@@ -424,24 +424,25 @@ export class AdminApiService extends BaseApiService {
   /**
    * Get all products with admin details
    */
-  getAllProducts(params?: {
-    pageNumber?: number;
-    pageSize?: number;
-    searchTerm?: string;
-    brandId?: number;
-    audienceId?: number;
-    minPrice?: number;
-    maxPrice?: number;
-    isNew?: boolean;
-    lowStock?: boolean;
-    sortBy?: string;
-    sortDirection?: string;
-  }): Observable<any> {
-    const url = this.buildUrl('/admin/products');
-    const queryParams = this.createParams(params || {});
+  getAllProducts(request: GetProductsAdminRequestDto | null): Observable<GetProductsAdminResponseDto> {
+    const url = this.buildUrl(`${this.endPoint}/products`);
+    const params = this.createParams({
+      pageNumber: request?.pageNumber || 1,
+      pageSize: request?.pageSize || 10,
+      ...(request?.searchTerm && { searchTerm: request.searchTerm }),
+      ...(request?.productBrand && { productBrand: request.productBrand }),
+      ...(request?.isActive !== null 
+        && request?.isActive !== undefined
+        && { isActive: request.isActive }),
+      ...(request?.productStockStatus && { productStockStatus: request.productStockStatus }),
+      ...(request?.sortBy && { sortBy: request.sortBy }),
+      ...(request?.sortDirection && { sortDirection: request.sortDirection }),
+      ...(request?.productCategory && { productCategory: request.productCategory }),
+
+    });
     this.logRequest('GET', url, params);
 
-    return this.get<any>(url, { params: queryParams }).pipe(
+    return this.get<any>(url, { params: params }).pipe(
       tap((response) => this.logResponse('GET', url, response)),
       catchError(this.handleError)
     );

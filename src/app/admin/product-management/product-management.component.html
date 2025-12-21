@@ -28,6 +28,62 @@
                 </button>
             </div>
 
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                        <h4 class="mb-0">{{ response?.adminProductsStats?.totalProductsCount }}</h4>
+                        <small>Total Products</small>
+                        </div>
+                        <i class="bi bi-box display-6"></i>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                        <h4 class="mb-0">{{ response?.adminProductsStats?.totalActiveProductsCount }}</h4>
+                        <small>Active Products</small>
+                        </div>
+                        <i class="bi bi-check-circle display-6"></i>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                        <h4 class="mb-0">{{ response?.adminProductsStats?.totalLowStockProductsCount }}</h4>
+                        <small>Low Stock Products</small>
+                        </div>
+                        <i class="bi bi-lock display-6"></i>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                        <h4 class="mb-0">{{ response?.adminProductsStats?.totalOutOfStockProductsCount }}</h4>
+                        <small>Out of Stock Products</small>
+                        </div>
+                        <i class="bi bi-person-plus display-6"></i>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
             <!-- Search and Filters -->
             <div class="card mb-4">
                 <div class="card-body">
@@ -36,42 +92,66 @@
                             <label for="searchInput" class="form-label">Search Products</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="searchInput" [(ngModel)]="searchTerm"
-                                    (input)="onSearchChange()" placeholder="Search by name, brand, or category...">
+                                (keyup.enter)="onFilterChange()" placeholder="Search by email, name...">
                                 <span class="input-group-text">
+                                <button class="btn page-link" (click)="onFilterChange()" title="Search Orders">
                                     <i class="bi bi-search"></i>
+                                </button>
                                 </span>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-1 mb-3">
                             <label for="categoryFilter" class="form-label">Category</label>
                             <select class="form-select" id="categoryFilter" [(ngModel)]="selectedCategory"
                                 (change)="onFilterChange()">
                                 <option value="">All Categories</option>
-                                <option value="running">Running</option>
-                                <option value="casual">Casual</option>
-                                <option value="formal">Formal</option>
-                                <option value="sports">Sports</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="brandFilter" class="form-label">Brand</label>
-                            <select class="form-select" id="brandFilter" [(ngModel)]="selectedBrand"
-                                (change)="onFilterChange()">
-                                <option value="">All Brands</option>
-                                <option value="Nike">Nike</option>
-                                <option value="Adidas">Adidas</option>
-                                <option value="Puma">Puma</option>
-                                <option value="Reebok">Reebok</option>
+                                <option *ngFor="let a of audienceOptions" [ngValue]="a">
+                                    {{ a | titlecase }}
+                                </option>
+
                             </select>
                         </div>
                         <div class="col-md-2 mb-3">
-                            <label for="statusFilter" class="form-label">Status</label>
-                            <select class="form-select" id="statusFilter" [(ngModel)]="selectedStatus"
+                            <label for="brandFilter" class="form-label">Brand</label>
+                            <select class="form-select" id="brandFilter" [(ngModel)]="selectedBrand"
                                 (change)="onFilterChange()">
-                                <option value="">All Status</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                                <option value="out-of-stock">Out of Stock</option>
+                                <option [ngValue]="null">All Brands</option>
+                                <option *ngFor="let b of response?.allBrands" [ngValue]="b">
+                                    {{ b | titlecase }}
+                            </select>
+                        </div>
+                        <div class="col-md-1 mb-3">
+                            <label for="statusFilter" class="form-label">Status</label>
+                            <select class="form-select" id="statusFilter" [(ngModel)]="isActive"
+                                (change)="onFilterChange()">
+                                <option [ngValue]="null">All Status</option>
+                                <option [ngValue]="true">Active</option>
+                                <option [ngValue]="false">Inactive</option>
+
+                                <!-- <option *ngFor="let s of productStatus" [ngValue]="s">
+                                    {{ s | titlecase }}
+                                </option> -->
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="statusFilter" class="form-label">Stock</label>
+                            <select class="form-select" id="statusFilter" [(ngModel)]="selectedStock"
+                                (change)="onFilterChange()">
+                                <option value="">All Stock</option>
+                                <option *ngFor="let ss of productStockStatus" [ngValue]="ss">
+                                    {{ ss | titlecase }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="sortBy" class="form-label">Sort By</label>
+                            <select class="form-select" id="sortBy" [(ngModel)]="sortBy" (change)="onFilterChange()">
+                                <option value="date-desc">Date Created (Newest)</option>
+                                <option value="date-asc">Date Created (Oldest)</option>
+                                <option value="name-asc">Name (A-Z)</option>
+                                <option value="name-desc">Name (Z-A)</option>
+                                 <option value="stock-asc">Stock (Low-High)</option>
+                                <option value="stock-desc">Stock (High-Low)</option>
                             </select>
                         </div>
                     </div>
@@ -82,15 +162,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Products ({{ filteredProducts.length }})</h5>
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-outline-secondary btn-sm" (click)="exportProducts()">
-                                <i class="bi bi-download me-1"></i>Export
-                            </button>
-                            <button class="btn btn-outline-secondary btn-sm" (click)="bulkDelete()">
-                                <i class="bi bi-trash me-1"></i>Bulk Delete
-                            </button>
-                        </div>
+                        <h5 class="mb-0">Products ({{ response?.totalQueryCount }})</h5>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -98,10 +170,6 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>
-                                        <input type="checkbox" class="form-check-input" [(ngModel)]="selectAll"
-                                            (change)="toggleSelectAll()" title="Select all">
-                                    </th>
                                     <th>Image</th>
                                     <th>Name</th>
                                     <th>Brand</th>
@@ -113,13 +181,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let product of paginatedProducts">
+                                <tr *ngFor="let product of response?.products">
                                     <td>
-                                        <input type="checkbox" class="form-check-input" [(ngModel)]="product.selected"
-                                            title="selected">
-                                    </td>
-                                    <td>
-                                        <img [src]="product.imagePath" [alt]="product.name"
+                                        <img [src]="'/assets/'+product.imagePath" [alt]="product.name"
                                             class="product-thumbnail img-thumbnail" title="Product image">
                                     </td>
                                     <td>
@@ -167,15 +231,17 @@
                     </div>
 
                     <!-- Loading State -->
-                    <div class="text-center p-4" *ngIf="isLoading">
+                    @if(isLoading) {
+                    <div class="text-center p-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         <p class="mt-2">Loading products...</p>
-                    </div>
+                    </div> }
+
 
                     <!-- Empty State -->
-                    <div class="text-center p-4" *ngIf="!isLoading && filteredProducts.length === 0">
+                    <div class="text-center p-4" *ngIf="!isLoading && response?.products?.length === 0">
                         <i class="bi bi-box display-1 text-muted"></i>
                         <h4 class="mt-3">No products found</h4>
                         <p class="text-muted">Try adjusting your search or filters</p>
@@ -186,24 +252,27 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="card-footer" *ngIf="filteredProducts.length > 0">
+                <div class="card-footer" *ngIf="(response?.products?.length??0) > 0">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage *
-                            itemsPerPage, filteredProducts.length) }}
-                            of {{ filteredProducts.length }} products
+                            Showing {{ ((response?.pageNumber?? 1) - 1) * itemsPerPage + 1 }} to {{ Math.min((response?.pageNumber?? 1) *
+                            itemsPerPage,
+                            (response?.totalQueryCount ?? 0)) }}
+                            of {{ response?.totalQueryCount }} products
                         </div>
                         <nav>
                             <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item" [class.disabled]="currentPage === 1">
-                                    <a class="page-link" href="#" (click)="changePage(currentPage - 1)">Previous</a>
+                                <li class="page-item" [class.disabled]="response?.pageNumber === 1">
+                                    <button class="page-link" (click)="changePage((response?.pageNumber?? 1) - 1)">Previous</button>
                                 </li>
                                 <li class="page-item" *ngFor="let page of getPageNumbers()"
                                     [class.active]="page === currentPage">
-                                    <a class="page-link" href="#" (click)="changePage(page)">{{ page }}</a>
+                                    <button class="page-link" (click)="changePage(page)"
+                                        [class.disabled]="(response?.pageNumber?? 1) === page">{{ page
+                                        }}</button>
                                 </li>
-                                <li class="page-item" [class.disabled]="currentPage === totalPages">
-                                    <a class="page-link" href="#" (click)="changePage(currentPage + 1)">Next</a>
+                                <li class="page-item" [class.disabled]="response?.pageNumber === response?.totalPages">
+                                    <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
                                 </li>
                             </ul>
                         </nav>

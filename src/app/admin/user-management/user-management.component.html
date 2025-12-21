@@ -107,7 +107,8 @@
             </div>
             <div class="col-md-2 mb-3">
               <label for="statusFilter" class="form-label">Status</label>
-              <select class="form-select" id="statusFilter" [(ngModel)]="selectedUserStatus" (change)="onFilterChange()">
+              <select class="form-select" id="statusFilter" [(ngModel)]="selectedUserStatus"
+                (change)="onFilterChange()">
                 <option [ngValue]="null">All Statuses</option>
                 <option [ngValue]="UserStatus.Active">Active</option>
                 <option [ngValue]="UserStatus.Blocked">Blocked</option>

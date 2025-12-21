@@ -19,6 +19,40 @@ interface ProductDto {
   selected?: boolean;
 }
 
+
+export interface GetProductsAdminResponseDto {
+  products: ProductDto[];
+  totalQueryCount: number;
+  adminProductsStats: AdminProductsStatsDto;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  allBrands: string[];
+}
+export interface GetProductsAdminRequestDto {
+pageNumber?: number;
+pageSize?: number;
+searchTerm?: string | null;
+isActive?: boolean | null;
+productCategory?: Audience | null;
+productBrand?: string | null;
+productStockStatus?: ProductStockStatus | null;
+
+sortDirection : ProductsSortDirection | null
+sortBy?: ProductsSortBy | null;
+
+
+}
+
+export interface AdminProductsStatsDto{
+totalProductsCount: number;
+totalLowStockProductsCount: number;
+totalOutOfStockProductsCount: number;
+totalActiveProductsCount: number;
+}
+
+
+
 const ProductDtoSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -42,3 +76,28 @@ type ProductDtoValidated = z.infer<typeof ProductDtoSchema>
 export type { ProductDto, ProductDtoValidated };
 
 export{ProductDtoSchema}
+
+export enum ProductsSortBy {
+  DateCreated = 'createdAt',
+  Name = 'name',
+  Stock = 'stock',
+}
+
+export enum ProductsSortDirection {
+  Ascending = 'asc',
+  Descending = 'desc',
+}
+
+
+export enum ProductStatus {
+  Active = 'active',
+  Inactive = 'inactive',
+}
+
+export enum ProductStockStatus {
+  LowStock = 'low stock',
+  HighStock = 'high stock',
+  InStock = 'in stock',
+  OutOfStock = 'out of stock',
+}
+

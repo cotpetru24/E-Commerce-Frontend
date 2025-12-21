@@ -126,10 +126,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.isLoadingProducts = true;
     
     this.subscriptions.add(
-      this.adminApi.getAllProducts().subscribe({
-        next: (products) => {
-          this.products = products;
-          this.filteredProducts = products;
+      this.adminApi.getAllProducts(null).subscribe({
+        next: (response) => {
+          this.products = response.products;
+          this.filteredProducts = response.products;
           this.isLoadingProducts = false;
         },
         error: (error) => {
