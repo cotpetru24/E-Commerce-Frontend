@@ -20,6 +20,7 @@ import { Audience } from '../../models';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import is from 'zod/v4/locales/is.cjs';
+import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 
 @Component({
   selector: 'app-product-management',
@@ -149,6 +150,29 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.loadProducts();
   }
+
+    openBarcodeScanner() {
+      const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
+        size: 'lg',
+        centered: true,
+      });
+  
+      modalRef.result.then(
+        (scannedBarcode: string) => {
+          // Store in temp variable
+          this.searchTerm = scannedBarcode;
+  
+ 
+this.onFilterChange();
+
+
+          this.toastService.success(`Barcode scanned: ${scannedBarcode}`);
+        },
+        (dismissed) => {
+          // Modal was dismissed
+        }
+      );
+    }
 
   updatePagination(): void {
     if (!this.isLoading) {

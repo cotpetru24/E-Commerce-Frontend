@@ -14,7 +14,7 @@ export interface ProductDto {
   brandName: string;
   rating?: number | undefined;
   reviewCount?: number | undefined;
-  sizes?: string[] | undefined;
+  sizes?: ProductSizeDto[] | undefined;
   productFeatures?: AdminProductFeatureDto[] | undefined;
   isNew?: boolean | undefined;
   discountPercentage?: number;
@@ -29,14 +29,14 @@ export interface AdminProductDto {
   price: number;
   originalPrice?: number | undefined;
   imagePath: string;
-  stock: number;
+  totalStock?: number;
   audience?: Audience;
   audienceId: number;
   brandName: string;
   brandId: number;
   rating?: number | undefined;
   reviewCount?: number | undefined;
-  sizes?: string[] | undefined;
+  productSizes: ProductSizeDto[];
   productFeatures?: AdminProductFeatureDto[] | undefined;
   isNew?: boolean | undefined;
   discountPercentage?: number;
@@ -60,6 +60,14 @@ export interface AdminProductFeatureDto {
   id: number;
   featureText: string;
   sortOrder: number;
+}
+
+export interface ProductSizeDto {
+  id?: number;
+  size: number;
+  stock: number;
+  barcode: string;
+  sku?: string;
 }
 
 export interface GetProductsAdminResponseDto {

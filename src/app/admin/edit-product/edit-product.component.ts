@@ -3,18 +3,22 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router, ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
+import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import {
   AdminBrandDto,
   AdminProductAudienceDto,
   AdminProductDto,
   AdminProductFeatureDto,
   ProductDto,
+  ProductSizeDto,
 } from '../../models';
 import { error } from 'console';
 import { number } from 'zod';
+import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 
 @Component({
   selector: 'app-edit-product',
@@ -38,6 +42,16 @@ export class EditProductComponent implements OnInit {
     featureText: '',
   };
 
+  newSize: ProductSizeDto = {
+    size: 0,
+    stock: 0,
+    barcode: '',
+    sku: '',
+  };
+
+  // Temp variable to store scanned barcode
+  scannedBarcodeTemp: string = '';
+
   isLoading = false;
   private subscriptions = new Subscription();
 
@@ -45,7 +59,8 @@ export class EditProductComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private toastService: ToastService,
-    private adminApiService: AdminApiService
+    private adminApiService: AdminApiService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -63,16 +78,16 @@ export class EditProductComponent implements OnInit {
     }
 
     this.productId = id;
-    this. initialiseData();
+    this.initialiseData();
     // this.getProductBrands();
     // this.loadProductData();
   }
 
-initialiseData() {
+  initialiseData() {
     this.getProductAudience();
     this.getProductBrands();
     this.loadProductData();
-}
+  }
 
   getProductBrands() {
     this.isLoading = true;
@@ -98,7 +113,6 @@ initialiseData() {
     );
   }
 
-
   loadProductData() {
     this.isLoading = true;
     this.subscriptions.add(
@@ -109,6 +123,11 @@ initialiseData() {
           this.priceText = this.productData.price?.toFixed(2) ?? '';
           this.discountText =
             this.productData.discountPercentage?.toFixed(2) ?? '';
+
+          // Initialize sizes array if it doesn't exist
+          if (!this.productData.productSizes) {
+            this.productData.productSizes = [];
+          }
 
           this.isLoading = false;
         },
@@ -196,6 +215,62 @@ initialiseData() {
     this.productData?.productFeatures?.splice(index, 1);
   }
 
+addSize() {
+if (!this.productData) return;
+
+if (!this.productData.productSizes) {
+  this.productData.productSizes = [];
+}
+
+    this.productData.productSizes.push({
+      id: 0,
+      size: this.newSize.size,
+      stock: this.newSize.stock ?? 0,
+      barcode: this.newSize.barcode,
+      sku: this.newSize.sku ?? '',
+});
+
+    this.newSize = {
+      size: 0,
+      stock: 0,
+      barcode: '',
+      sku: '',
+    };
+  }
+
+
+
+  removeSize(index: number) {
+    this.productData?.productSizes?.splice(index, 1);
+  }
+
+  openBarcodeScanner(sizeIndex?: number) {
+    const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
+      size: 'lg',
+      centered: true,
+    });
+
+    modalRef.result.then(
+      (scannedBarcode: string) => {
+        // Store in temp variable
+        this.scannedBarcodeTemp = scannedBarcode;
+
+        // If sizeIndex is provided, update that specific size's barcode
+        if (sizeIndex !== undefined && this.productData?.productSizes) {
+          this.productData.productSizes[sizeIndex].barcode = scannedBarcode;
+        } else {
+          // Otherwise, update the newSize barcode
+          this.newSize.barcode = scannedBarcode;
+        }
+
+        this.toastService.success(`Barcode scanned: ${scannedBarcode}`);
+      },
+      (dismissed) => {
+        // Modal was dismissed
+      }
+    );
+  }
+
   onFileSelected(event: any) {
     const files = event.target.files;
     if (files) {
@@ -214,20 +289,32 @@ initialiseData() {
     // this.productData.images.splice(index, 1);
   }
 
-  deleteProduct() {
-    if (
-      confirm(
-        'Are you sure you want to delete this product? This action cannot be undone.'
-      )
-    ) {
-      this.isLoading = true;
+  deleteProduct(): void {
+    const modalRef = this.modalService.open(ModalDialogComponent);
+    modalRef.componentInstance.title = 'Delete Product';
+    modalRef.componentInstance.message = `Are you sure you want to delete "${this.productData?.name}"?`;
+    modalRef.componentInstance.modalType = 'confirm';
 
-      // Simulate API call
-      setTimeout(() => {
-        this.toastService.success('Product deleted successfully!');
-        this.router.navigate(['/admin']);
-        this.isLoading = false;
-      }, 1500);
-    }
-  }
+    modalRef.result.then((result=> {
+      if (result === true) {
+        this.isLoading = true;
+
+      this.subscriptions.add(
+        this.adminApiService.deleteProduct(this.productData!.id).subscribe({
+          next: () => {
+            this.toastService.success('Product deleted successfully');
+            this.isLoading = false;
+            this.router.navigate(['/admin/products']);
+          },
+          error: (error) => {
+            this.isLoading = false;
+            console.error('Error deleting product:', error);
+            this.toastService.error('Failed to delete product');
+          },
+        })
+      );
+
+    }}))
+
+}
 }
