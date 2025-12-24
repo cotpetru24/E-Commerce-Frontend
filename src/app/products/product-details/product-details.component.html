@@ -1,6 +1,8 @@
 <div class="product-details-container">
   <div class="container">
     <!-- Breadcrumb -->
+    @if(!cameFromProductManagement)
+    {
     <nav class="breadcrumb">
       <a routerLink="/">Home</a>
       <i class="bi bi-chevron-right"></i>
@@ -10,6 +12,30 @@
       <i class="bi bi-chevron-right"></i>
       <span class="current">{{ product?.name }}</span>
     </nav>
+    }
+    @if(cameFromProductManagement)
+    {
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a routerLink="/admin" class="text-decoration-none">
+            <i class="bi bi-house me-1"></i>Admin Dashboard
+          </a>
+        </li>
+
+        <li class="breadcrumb-item ">
+          <a routerLink="/admin/products" class="text-decoration-none">
+            <i class="bi bi-box me-1"></i>Product Management
+          </a>
+        </li>
+
+        <li class="breadcrumb-item active" aria-current="page">
+          <i class="bi bi-eye me-1"></i>View Product
+        </li>
+
+      </ol>
+    </nav>
+    }
 
     @if(product)
     {

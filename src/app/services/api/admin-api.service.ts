@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, retry, tap, delay } from 'rxjs/operators';
-import { GetProductsAdminRequestDto, GetProductsAdminResponseDto, ProductDto } from '../../models/product.dto';
+import { AdminBrandDto, AdminProductAudienceDto, AdminProductDto, GetProductsAdminRequestDto, GetProductsAdminResponseDto, ProductDto } from '../../models/product.dto';
 import { Audience } from '../../models/audience.enum';
 import { BaseApiService } from './base-api.service';
 import {
@@ -90,61 +90,61 @@ export class AdminApiService extends BaseApiService {
 
   // Mock data for development
   private mockProducts: ProductDto[] = [
-    {
-      id: 1,
-      name: 'Nike Air Max 270',
-      brandName: 'Nike',
-      price: 129.99,
-      stock: 45,
-      audience: Audience.Men,
-      description: 'Comfortable running shoes with Air Max technology',
-      imagePath: 'assets/products/casual-sneaker.png',
-      selected: false,
-    },
-    {
-      id: 2,
-      name: 'Adidas Ultraboost 22',
-      brandName: 'Adidas',
-      price: 179.99,
-      stock: 8,
-      audience: Audience.Women,
-      description: 'Premium running shoes with Boost technology',
-      imagePath: 'assets/products/running-shoe.png',
-      selected: false,
-    },
-    {
-      id: 3,
-      name: 'Converse Chuck Taylor',
-      brandName: 'Converse',
-      price: 59.99,
-      stock: 0,
-      audience: Audience.Unisex,
-      description: 'Classic canvas sneakers',
-      imagePath: 'assets/products/retro-sneaker.png',
-      selected: false,
-    },
-    {
-      id: 4,
-      name: 'Puma RS-X',
-      brandName: 'Puma',
-      price: 89.99,
-      stock: 23,
-      audience: Audience.Men,
-      description: 'Retro-inspired running shoes',
-      imagePath: 'assets/products/retro-sneaker2.png',
-      selected: false,
-    },
-    {
-      id: 5,
-      name: 'New Balance 574',
-      brandName: 'New Balance',
-      price: 79.99,
-      stock: 15,
-      audience: Audience.Women,
-      description: 'Classic lifestyle sneakers',
-      imagePath: 'assets/products/casual-sneaker-2.png',
-      selected: false,
-    },
+    // {
+    //   id: 1,
+    //   name: 'Nike Air Max 270',
+    //   brandName: 'Nike',
+    //   price: 129.99,
+    //   stock: 45,
+    //   audience: Audience.Men,
+    //   description: 'Comfortable running shoes with Air Max technology',
+    //   imagePath: 'assets/products/casual-sneaker.png',
+    //   selected: false,
+    // },
+    // {
+    //   id: 2,
+    //   name: 'Adidas Ultraboost 22',
+    //   brandName: 'Adidas',
+    //   price: 179.99,
+    //   stock: 8,
+    //   audience: Audience.Women,
+    //   description: 'Premium running shoes with Boost technology',
+    //   imagePath: 'assets/products/running-shoe.png',
+    //   selected: false,
+    // },
+    // {
+    //   id: 3,
+    //   name: 'Converse Chuck Taylor',
+    //   brandName: 'Converse',
+    //   price: 59.99,
+    //   stock: 0,
+    //   audience: Audience.Unisex,
+    //   description: 'Classic canvas sneakers',
+    //   imagePath: 'assets/products/retro-sneaker.png',
+    //   selected: false,
+    // },
+    // {
+    //   id: 4,
+    //   name: 'Puma RS-X',
+    //   brandName: 'Puma',
+    //   price: 89.99,
+    //   stock: 23,
+    //   audience: Audience.Men,
+    //   description: 'Retro-inspired running shoes',
+    //   imagePath: 'assets/products/retro-sneaker2.png',
+    //   selected: false,
+    // },
+    // {
+    //   id: 5,
+    //   name: 'New Balance 574',
+    //   brandName: 'New Balance',
+    //   price: 79.99,
+    //   stock: 15,
+    //   audience: Audience.Women,
+    //   description: 'Classic lifestyle sneakers',
+    //   imagePath: 'assets/products/casual-sneaker-2.png',
+    //   selected: false,
+    // },
   ];
 
   private mockUsers: AdminUser[] = [
@@ -448,14 +448,47 @@ export class AdminApiService extends BaseApiService {
     );
   }
 
+
+
+  getProductById(productId: number): Observable<AdminProductDto> {
+    const url = this.buildUrl(`${this.endPoint}/products/${productId}`);
+    this.logRequest('GET', url);
+
+    return this.get<AdminProductDto>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
+      catchError(this.handleError)
+    );
+  }
+
+    getProductBrands(): Observable<AdminBrandDto []> {
+    const url = this.buildUrl(`${this.endPoint}/products/brands`);
+    this.logRequest('GET', url);
+
+    return this.get<AdminBrandDto []>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
+      catchError(this.handleError)
+    );
+  }
+
+  getProductAudience(): Observable<AdminProductAudienceDto []> {
+    const url = this.buildUrl(`${this.endPoint}/products/audience`);
+    this.logRequest('GET', url);
+    
+    return this.get<AdminProductAudienceDto []>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response)),
+      catchError(this.handleError)
+    );
+  }
+
+
   /**
    * Create new product
    */
-  createProduct(product: any): Observable<any> {
-    const url = this.buildUrl('/admin/products');
+  createProduct(product: AdminProductDto): Observable<AdminProductDto> {
+    const url = this.buildUrl(`${this.endPoint}/products`);
     this.logRequest('POST', url, product);
 
-    return this.post<any>(url, product).pipe(
+    return this.post<AdminProductDto>(url, product).pipe(
       tap((response) => this.logResponse('POST', url, response)),
       catchError(this.handleError)
     );
@@ -464,11 +497,11 @@ export class AdminApiService extends BaseApiService {
   /**
    * Update product
    */
-  updateProduct(id: number, product: any): Observable<any> {
-    const url = this.buildUrl(`/admin/products/${id}`);
+  updateProduct(id: number, product: AdminProductDto): Observable<ProductDto> {
+    const url = this.buildUrl(`${this.endPoint}/products/${id}`);
     this.logRequest('PUT', url, product);
 
-    return this.put<any>(url, product).pipe(
+    return this.put<ProductDto>(url, product).pipe(
       tap((response) => this.logResponse('PUT', url, response)),
       catchError(this.handleError)
     );
@@ -477,26 +510,26 @@ export class AdminApiService extends BaseApiService {
   /**
    * Update product stock specifically
    */
-  updateProductStock(id: number, stock: number): Observable<ProductDto> {
-    const index = this.mockProducts.findIndex((p) => p.id === id);
-    if (index !== -1) {
-      this.mockProducts[index].stock = stock;
-      return of(this.mockProducts[index]).pipe(
-        delay(400),
-        tap((updatedProduct) =>
-          console.log('Product stock updated:', updatedProduct)
-        ),
-        catchError(this.handleError)
-      );
-    }
-    throw new Error('Product not found');
-  }
+  // updateProductStock(id: number, stock: number): Observable<AdminProductDto> {
+  //   const index = this.mockProducts.findIndex((p) => p.id === id);
+  //   if (index !== -1) {
+  //     this.mockProducts[index].stock = stock;
+  //     return of(this.mockProducts[index]).pipe(
+  //       delay(400),
+  //       tap((updatedProduct) =>
+  //         console.log('Product stock updated:', updatedProduct)
+  //       ),
+  //       catchError(this.handleError)
+  //     );
+  //   }
+  //   throw new Error('Product not found');
+  // }
 
   /**
    * Delete product
    */
   deleteProduct(id: number): Observable<any> {
-    const url = this.buildUrl(`/admin/products/${id}`);
+    const url = this.buildUrl(`${this.endPoint}/products/${id}`);
     this.logRequest('DELETE', url);
 
     return this.delete<any>(url).pipe(

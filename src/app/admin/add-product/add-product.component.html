@@ -18,7 +18,7 @@
     </ol>
   </nav>
 
-  <div class="row justify-content-center">
+  <div class="row justify-content-center mb-4">
     <div class="col-lg-10">
       <div class="card shadow">
         <div class="card-header bg-primary text-white">
@@ -29,6 +29,7 @@
         </div>
         <div class="card-body p-4">
           <form (ngSubmit)="onSubmit()" #addProductForm="ngForm">
+            
             <div class="row">
               <div class="col-md-8">
                 <!-- Basic Information -->
@@ -37,16 +38,9 @@
                     <label for="name" class="form-label">
                       <i class="bi bi-tag me-2"></i>Product Name *
                     </label>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      id="name" 
-                      name="name"
-                      [(ngModel)]="productData.name"
-                      required
-                      placeholder="Enter product name"
-                      [ngClass]="{'is-invalid': addProductForm.submitted && !productData.name}"
-                    >
+                    <input type="text" class="form-control" id="name" name="name" [(ngModel)]="productData.name"
+                      required placeholder="Enter product name"
+                      [ngClass]="{'is-invalid': addProductForm.submitted && !productData.name}">
                     <div class="invalid-feedback" *ngIf="addProductForm.submitted && !productData.name">
                       Product name is required.
                     </div>
@@ -56,224 +50,151 @@
                     <label for="brand" class="form-label">
                       <i class="bi bi-award me-2"></i>Brand
                     </label>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      id="brand" 
-                      name="brand"
-                      [(ngModel)]="productData.brand"
-                      placeholder="Enter brand name"
-                    >
+                    <select class="form-select" id="brand" name="brand" [(ngModel)]="productData.brandId">
+                      <option value="0" disabled>Select brand</option>
+                      <option *ngFor="let b of brands" [ngValue]="b.brandId">
+                        {{ b.brandName| titlecase }}
+                      </option>
+                    </select>
+
+
+
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="price" class="form-label">
-                      <i class="bi bi-currency-dollar me-2"></i>Price *
+                      <i class="bi bi-currency-pound me-2"></i>Price *
                     </label>
                     <div class="input-group">
-                      <span class="input-group-text">$</span>
-                      <input 
-                        type="number" 
-                        class="form-control" 
-                        id="price" 
-                        name="price"
-                        [(ngModel)]="productData.price"
-                        required
-                        min="0"
-                        step="0.01"
-                        placeholder="0.00"
-                        [ngClass]="{'is-invalid': addProductForm.submitted && !productData.price}"
-                      >
-                    </div>
+                      <span class="input-group-text">£</span>
+                      <input type="text" class="form-control" name="price" [(ngModel)]="priceText"
+                        inputmode="decimal" pattern="^[0-9]*\.?[0-9]*$" (keypress)="allowDecimalOnly($event)"
+                        (blur)="normalizePrice()" placeholder="0.00"
+                        [ngClass]="{'is-invalid': addProductForm.submitted && !productData.price}" />
+                      </div>
                     <div class="invalid-feedback" *ngIf="addProductForm.submitted && !productData.price">
                       Price is required.
                     </div>
                   </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="priceDiscount" class="form-label">
+                      <i class="bi bi-percent me-2"></i>Discount *
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">%</span>
+                      <input type="text" class="form-control" name="priceDiscount" [(ngModel)]="discountText"
+                        inputmode="decimal" pattern="^[0-9]*\.?[0-9]*$" (keypress)="allowDecimalOnly($event)"
+                        (blur)="normalizeDiscount()" placeholder="0.00"
+                        [ngClass]="{'is-invalid': addProductForm.submitted && !productData.discountPercentage}" />
+                    </div>
+                    <div class="invalid-feedback" *ngIf="addProductForm.submitted && !productData.discountPercentage">
+                      Price is required.
+                    </div>
+                  </div>
+
+
+                </div>
+
+                <div class="row">
 
                   <div class="col-md-6 mb-3">
                     <label for="stock" class="form-label">
                       <i class="bi bi-box-seam me-2"></i>Stock Quantity *
                     </label>
-                    <input 
-                      type="number" 
-                      class="form-control" 
-                      id="stock" 
-                      name="stock"
-                      [(ngModel)]="productData.stock"
-                      required
-                      min="0"
-                      placeholder="0"
-                      [ngClass]="{'is-invalid': addProductForm.submitted && !productData.stock}"
-                    >
-                    <div class="invalid-feedback" *ngIf="addProductForm.submitted && !productData.stock">
+                    <input type="number" class="form-control" id="stock" name="stock" [(ngModel)]="productData.stock"
+                      required min="0" placeholder="0"
+                      [ngClass]="{'is-invalid': addProductForm.submitted && (productData.stock === null || productData.stock === undefined)}">
+                    <div class="invalid-feedback"
+                      *ngIf="addProductForm.submitted && (productData.stock === null || productData.stock === undefined)">
                       Stock quantity is required.
                     </div>
                   </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label for="category" class="form-label">
-                      <i class="bi bi-grid me-2"></i>Category *
-                    </label>
-                    <select 
-                      class="form-select" 
-                      id="category" 
-                      name="category"
-                      [(ngModel)]="productData.category"
-                      required
-                      [ngClass]="{'is-invalid': addProductForm.submitted && !productData.category}"
-                    >
-                      <option value="">Select category</option>
-                      <option value="sneakers">Sneakers</option>
-                      <option value="running">Running Shoes</option>
-                      <option value="casual">Casual Shoes</option>
-                      <option value="formal">Formal Shoes</option>
-                      <option value="sports">Sports Shoes</option>
-                    </select>
-                    <div class="invalid-feedback" *ngIf="addProductForm.submitted && !productData.category">
-                      Category is required.
-                    </div>
-                  </div>
 
                   <div class="col-md-6 mb-3">
-                    <label for="gender" class="form-label">
+                    <label for="audienceOptions" class="form-label">
                       <i class="bi bi-gender-ambiguous me-2"></i>Gender
                     </label>
-                    <select 
-                      class="form-select" 
-                      id="gender" 
-                      name="gender"
-                      [(ngModel)]="productData.gender"
-                    >
-                      <option value="">Select gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="unisex">Unisex</option>
+                    <select class="form-select" id="audienceOptions" name="audienceOptions" [(ngModel)]="productData.audienceId">
+                      <option value="0" disabled>Select Gender</option>
+                      <option *ngFor="let a of productAudience" [value]="a.audienceId">
+                        {{ a.audienceName| titlecase }}
+                      </option>
                     </select>
+
+
+
+
                   </div>
+
+
                 </div>
 
                 <div class="mb-3">
                   <label for="description" class="form-label">
                     <i class="bi bi-card-text me-2"></i>Description *
                   </label>
-                  <textarea 
-                    class="form-control" 
-                    id="description" 
-                    name="description"
-                    [(ngModel)]="productData.description"
-                    required
-                    rows="4"
-                    placeholder="Enter product description"
-                    [ngClass]="{'is-invalid': addProductForm.submitted && !productData.description}"
-                  ></textarea>
+                  <textarea class="form-control" id="description" name="description"
+                    [(ngModel)]="productData.description" required rows="4" placeholder="Enter product description"
+                    [ngClass]="{'is-invalid': addProductForm.submitted && !productData.description}"></textarea>
                   <div class="invalid-feedback" *ngIf="addProductForm.submitted && !productData.description">
                     Description is required.
                   </div>
                 </div>
 
-                <!-- Specifications -->
+                <!-- Features -->
                 <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-list-check me-2"></i>Specifications
+                  <label class=" col-md-3 form-label">
+                    <i class="bi bi-list-check me-2"></i>Feature order
+                  </label>
+                  <label class=" col-md-7 form-label">
+                    <i class="bi bi-list-check me-2"></i>Feature text
                   </label>
                   <div class="row">
-                    <div class="col-md-4 mb-2">
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        placeholder="Specification name"
-                        [(ngModel)]="newSpec.name"
-                        name="specName"
-                      >
+
+                  @for (feature of productData?.productFeatures; track $index) {
+
+
+                   <div class="col-md-3 mb-2">
+                      <input type="number" class="form-control" placeholder="Feature order..."
+                        [(ngModel)]="feature.sortOrder" name="sortOrder{{$index}}">
                     </div>
-                    <div class="col-md-6 mb-2">
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        placeholder="Specification value"
-                        [(ngModel)]="newSpec.value"
-                        name="specValue"
-                      >
+
+                    <div class="col-md-7 mb-2">
+                      <input type="text" class="form-control" placeholder="Feature text..."
+                        [(ngModel)]="feature.featureText" name="featureText{{$index}}">
                     </div>
+
                     <div class="col-md-2 mb-2">
-                      <button 
-                        type="button" 
-                        class="btn btn-outline-primary btn-sm w-100"
-                        (click)="addSpecification()"
-                      >
-                        <i class="bi bi-plus"></i>
+                      <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeSpecification($index)">
+                        <i class="bi bi-trash"></i>
                       </button>
                     </div>
-                  </div>
-                  
-                  <div class="mt-2" *ngIf="productData.specifications.length > 0">
-                    <div class="list-group">
-                      <div class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let spec of productData.specifications; let i = index">
-                        <div>
-                          <strong>{{spec.name}}:</strong> {{spec.value}}
-                        </div>
-                        <button 
-                          type="button" 
-                          class="btn btn-outline-danger btn-sm"
-                          (click)="removeSpecification(i)"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </div>
+                    }
+
+
+
+                    <div class="col-md-3 mb-2">
+                      <input type="text" class="form-control" placeholder="Feature order..."
+                        [(ngModel)]="newSpec.sortOrder" name="specName">
+                    </div>
+                    <div class="col-md-7 mb-2">
+                      <input type="text" class="form-control" placeholder="Feature text..."
+                        [(ngModel)]="newSpec.featureText" name="specValue">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                      <button type="button" class="btn btn-outline-primary btn-sm" (click)="addSpecification()">
+                        <i class="bi bi-plus"></i>
+                      </button>
+
                     </div>
                   </div>
+
                 </div>
               </div>
 
               <div class="col-md-4">
-                <!-- Image Upload -->
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-image me-2"></i>Product Images
-                  </label>
-                  <div class="border rounded p-3 text-center">
-                    <div class="mb-3">
-                      <i class="bi bi-cloud-upload display-4 text-muted"></i>
-                    </div>
-                    <p class="text-muted">Drag and drop images here or</p>
-                    <button 
-                      type="button" 
-                      class="btn btn-outline-primary"
-                      (click)="fileInput.click()"
-                    >
-                      <i class="bi bi-upload me-2"></i>Choose Files
-                    </button>
-                    <input 
-                      #fileInput
-                      type="file" 
-                      multiple 
-                      accept="image/*" 
-                      class="d-none"
-                      (change)="onFileSelected($event)"
-                    >
-                  </div>
-                  
-                  <div class="mt-3" *ngIf="productData.images.length > 0">
-                    <div class="row">
-                      <div class="col-6 mb-2" *ngFor="let image of productData.images; let i = index">
-                        <div class="position-relative">
-                          <img [src]="image" class="img-fluid rounded" alt="Product image">
-                          <button 
-                            type="button" 
-                            class="btn btn-danger btn-sm position-absolute top-0 end-0"
-                            (click)="removeImage(i)"
-                          >
-                            <i class="bi bi-x"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
                 <!-- Status -->
                 <div class="mb-3">
@@ -281,56 +202,45 @@
                     <i class="bi bi-toggle-on me-2"></i>Status
                   </label>
                   <div class="form-check form-switch">
-                    <input 
-                      class="form-check-input" 
-                      type="checkbox" 
-                      id="isActive"
-                      [(ngModel)]="productData.isActive"
-                      name="isActive"
-                    >
+                    <input class="form-check-input" type="checkbox" id="isActive" [(ngModel)]="productData.isActive"
+                      name="isActive">
                     <label class="form-check-label" for="isActive">
                       Active (Available for purchase)
                     </label>
                   </div>
                 </div>
 
-                <!-- Featured -->
+
                 <div class="mb-3">
-                  <div class="form-check form-switch">
-                    <input 
-                      class="form-check-input" 
-                      type="checkbox" 
-                      id="isFeatured"
-                      [(ngModel)]="productData.isFeatured"
-                      name="isFeatured"
-                    >
-                    <label class="form-check-label" for="isFeatured">
-                      Featured Product
-                    </label>
+                  <div class="row">
+                    <div class="col-12 mb-2">
+                      <div class="fw-semibold">Date created</div>
+                      <div class="text-muted small">
+                        {{ productData.createdAt | date:'medium' }}
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="fw-semibold">Last updated</div>
+                      <div class="text-muted small">
+                        {{ productData.updatedAt | date:'medium' }}
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+
               </div>
             </div>
-
+            
             <hr class="my-4">
 
             <div class="d-flex justify-content-between">
-              <button 
-                type="button" 
-                class="btn btn-outline-secondary"
-                routerLink="/admin"
-              >
-                <i class="bi bi-arrow-left me-2"></i>Cancel
+              <button type="button" class="btn btn-outline-secondary" routerLink="/admin/products">
+                <i class="bi bi-arrow-left me-2"></i>Back
               </button>
               <div>
-                <button 
-                  type="button" 
-                  class="btn btn-outline-primary me-2"
-                  (click)="saveDraft()"
-                  [disabled]="isLoading"
-                >
-                  <i class="bi bi-save me-2"></i>Save Draft
-                </button>
+
                 <button 
                   type="submit" 
                   class="btn btn-primary"
@@ -341,7 +251,24 @@
                   {{ isLoading ? 'Adding Product...' : 'Add Product' }}
                 </button>
               </div>
-            </div>
+            </div>            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+
+
+            
           </form>
         </div>
       </div>

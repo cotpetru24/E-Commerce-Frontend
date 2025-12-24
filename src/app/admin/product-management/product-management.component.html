@@ -64,20 +64,20 @@
                         <h4 class="mb-0">{{ response?.adminProductsStats?.totalLowStockProductsCount }}</h4>
                         <small>Low Stock Products</small>
                         </div>
-                        <i class="bi bi-lock display-6"></i>
+                        <i class="bi bi-exclamation-triangle display-6"></i>
                     </div>
                     </div>
                 </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                <div class="card bg-info text-white">
+                <div class="card bg-danger text-white">
                     <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                         <h4 class="mb-0">{{ response?.adminProductsStats?.totalOutOfStockProductsCount }}</h4>
                         <small>Out of Stock Products</small>
                         </div>
-                        <i class="bi bi-person-plus display-6"></i>
+                        <i class="bi bi-x-circle display-6"></i>
                     </div>
                     </div>
                 </div>
@@ -88,11 +88,11 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-2 mb-3">
                             <label for="searchInput" class="form-label">Search Products</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="searchInput" [(ngModel)]="searchTerm"
-                                (keyup.enter)="onFilterChange()" placeholder="Search by email, name...">
+                                (keyup.enter)="onFilterChange()" placeholder="Search by name, description...">
                                 <span class="input-group-text">
                                 <button class="btn page-link" (click)="onFilterChange()" title="Search Orders">
                                     <i class="bi bi-search"></i>
@@ -100,11 +100,11 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="col-md-1 mb-3">
+                        <div class="col-md-2 mb-3">
                             <label for="categoryFilter" class="form-label">Category</label>
                             <select class="form-select" id="categoryFilter" [(ngModel)]="selectedCategory"
                                 (change)="onFilterChange()">
-                                <option value="">All Categories</option>
+                                <option value="null">All Categories</option>
                                 <option *ngFor="let a of audienceOptions" [ngValue]="a">
                                     {{ a | titlecase }}
                                 </option>
@@ -137,7 +137,7 @@
                             <label for="statusFilter" class="form-label">Stock</label>
                             <select class="form-select" id="statusFilter" [(ngModel)]="selectedStock"
                                 (change)="onFilterChange()">
-                                <option value="">All Stock</option>
+                                <option value="null">All Stock</option>
                                 <option *ngFor="let ss of productStockStatus" [ngValue]="ss">
                                     {{ ss | titlecase }}
                                 </option>
@@ -153,6 +153,12 @@
                                  <option value="stock-asc">Stock (Low-High)</option>
                                 <option value="stock-desc">Stock (High-Low)</option>
                             </select>
+                        </div>
+
+                        <div class="col-md-1 mb-3 d-flex align-items-end justify-content-end">
+                            <button class="btn btn-outline-secondary" (click)="resetFilters()">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -194,20 +200,32 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-secondary">{{ product.brandName }}</span>
+                                        <span class="badge brand-badge">{{ product.brandName }}</span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-info">{{ product.audience }}</span>
+                                    <span class="badge" [ngClass]="getCategoryClass(product?.audience??'not working')">
+                                    {{ product.audience }}
+                                    </span>
                                     </td>
                                     <td>
-                                        <strong class="text-primary">£{{ product.price | number:'1.2-2' }}</strong>
+                                        <strong >£{{ product.price | number:'1.2-2' }}</strong>
                                     </td>
                                     <td>
-                                        <span [class]="getStockClass(product.stock)">{{ product.stock }}</span>
+                                    <!-- <div class="d-flex align-items-center gap-2"> -->
+                                        <span class="badge stock-badge" [ngClass]="getStockBadgeClass(product.stock)">
+                                        {{ getStockText(product.stock) }}
+                                        </span>
+                                        <small class="text-muted">
+                                        ({{ product.stock }})
+                                        </small>
+                                    <!-- </div> -->
                                     </td>
                                     <td>
-                                        <span [class]="getStatusClass(product.stock)">{{ getStatusText(product.stock)
-                                            }}</span>
+                                        <span
+                                        class="badge"
+                                        [ngClass]="product.isActive ? 'bg-success' : 'bg-warning'">
+                                        {{ product.isActive ? 'Active' : 'Inactive' }}
+                                        </span>
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ProductDto, ProductDtoSchema } from '../../models/product.dto';
+import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { Audience } from '../../models/audience.enum';
@@ -78,9 +78,7 @@ export class ProductListComponent implements OnInit {
       .subscribe({
         next: (response) => {
           try {
-            this.products = response.products.map((item) =>
-              ProductDtoSchema.parse(item)
-            );
+            this.products = response.products
             this.availableBrands = response.brands;
           } catch (err) {
             console.error('Validation failed', err);

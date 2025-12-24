@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { ProductDto } from '../../models/product.dto';
+import { AdminProductDto, ProductDto } from '../../models/product.dto';
 import { AdminApiService, AdminStats, AdminUser, Order } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { UserDto } from '../../models/user.dto';
@@ -31,8 +31,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   // ============================================================================
   // PRODUCT MANAGEMENT
   // ============================================================================
-  products: ProductDto[] = [];
-  filteredProducts: ProductDto[] = [];
+  products: AdminProductDto[] = [];
+  filteredProducts: AdminProductDto[] = [];
   isLoadingProducts = false;
   productSearchTerm = '';
   selectedProductCategory = '';
@@ -188,25 +188,25 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateProductStock(product: ProductDto, newStock: number): void {
-    this.subscriptions.add(
-      this.adminApi.updateProductStock(product.id, newStock).subscribe({
-        next: (updatedProduct) => {
-          // Update local product
-          const index = this.products.findIndex(p => p.id === product.id);
-          if (index !== -1) {
-            this.products[index] = updatedProduct;
-            this.filterProducts();
-          }
+  updateProductStock(product: AdminProductDto, newStock: number): void {
+    // this.subscriptions.add(
+    //   this.adminApi.updateProductStock(product.id, newStock).subscribe({
+    //     next: (updatedProduct) => {
+    //       // Update local product
+    //       const index = this.products.findIndex(p => p.id === product.id);
+    //       if (index !== -1) {
+    //         this.products[index] = updatedProduct;
+    //         this.filterProducts();
+    //       }
           
-          this.toastService.success('Product stock updated successfully');
-        },
-        error: (error) => {
-          console.error('Error updating product stock:', error);
-          this.toastService.error('Failed to update product stock');
-        }
-      })
-    );
+    //       this.toastService.success('Product stock updated successfully');
+    //     },
+    //     error: (error) => {
+    //       console.error('Error updating product stock:', error);
+    //       this.toastService.error('Failed to update product stock');
+    //     }
+    //   })
+    // );
   }
 
   // ============================================================================
@@ -514,7 +514,7 @@ const statusData: UpdateOrderStatusRequestDto ={
    * View all activity (navigate to activity log page)
    */
   viewAllActivity(): void {
-    this.toastService.info('View all - feature coming soon!');
+    this.toastService.info('View all - this feature is out of scope!');
   }
 
   /**

@@ -193,66 +193,66 @@ export class LandingPageComponent implements OnInit {
   // ============================================================================
   
   featuredProducts: ProductDto[] = [
-    {
-      id: 1,
-      name: 'Running Pro Elite',
-      brandName: 'Nike',
-      audience: Audience.Men,
-      price: 129.99,
-      originalPrice: 159.99,
-      discount: 19,
-      imagePath: 'products/running-shoe.png',
-      description: 'Professional running shoes with advanced cushioning technology',
-      rating: 4.8,
-      reviewCount: 245,
-      stock: 50,
-      sizes: ['7', '8', '9', '10', '11', '12'],
-      isNew: true
-    },
-    {
-      id: 2,
-      name: 'Casual Comfort Plus',
-      brandName: 'Adidas',
-      audience: Audience.Women,
-      price: 89.99,
-      imagePath: 'products/casual-sneaker.png',
-      description: 'Comfortable casual sneakers perfect for everyday wear',
-      rating: 4.6,
-      reviewCount: 189,
-      stock: 75,
-      sizes: ['6', '7', '8', '9', '10'],
-      isNew: false
-    },
-    {
-      id: 3,
-      name: 'Retro Classic',
-      brandName: 'Converse',
-      audience: Audience.Unisex,
-      price: 69.99,
-      originalPrice: 79.99,
-      discount: 13,
-      imagePath: 'products/retro-sneaker.png',
-      description: 'Timeless retro sneakers with vintage appeal',
-      rating: 4.7,
-      reviewCount: 312,
-      stock: 100,
-      sizes: ['6', '7', '8', '9', '10', '11', '12'],
-      isNew: false
-    },
-    {
-      id: 4,
-      name: 'Performance Max',
-      brandName: 'Under Armour',
-      audience: Audience.Men,
-      price: 149.99,
-      imagePath: 'products/retro-sneaker2.png',
-      description: 'Maximum performance athletic shoes for serious athletes',
-      rating: 4.9,
-      reviewCount: 156,
-      stock: 30,
-      sizes: ['8', '9', '10', '11', '12'],
-      isNew: true
-    }
+    // {
+    //   id: 1,
+    //   name: 'Running Pro Elite',
+    //   brandName: 'Nike',
+    //   audience: Audience.Men,
+    //   price: 129.99,
+    //   originalPrice: 159.99,
+    //   discount: 19,
+    //   imagePath: 'products/running-shoe.png',
+    //   description: 'Professional running shoes with advanced cushioning technology',
+    //   rating: 4.8,
+    //   reviewCount: 245,
+    //   stock: 50,
+    //   sizes: ['7', '8', '9', '10', '11', '12'],
+    //   isNew: true
+    // },
+    // {
+    //   id: 2,
+    //   name: 'Casual Comfort Plus',
+    //   brandName: 'Adidas',
+    //   audience: Audience.Women,
+    //   price: 89.99,
+    //   imagePath: 'products/casual-sneaker.png',
+    //   description: 'Comfortable casual sneakers perfect for everyday wear',
+    //   rating: 4.6,
+    //   reviewCount: 189,
+    //   stock: 75,
+    //   sizes: ['6', '7', '8', '9', '10'],
+    //   isNew: false
+    // },
+    // {
+    //   id: 3,
+    //   name: 'Retro Classic',
+    //   brandName: 'Converse',
+    //   audience: Audience.Unisex,
+    //   price: 69.99,
+    //   originalPrice: 79.99,
+    //   discount: 13,
+    //   imagePath: 'products/retro-sneaker.png',
+    //   description: 'Timeless retro sneakers with vintage appeal',
+    //   rating: 4.7,
+    //   reviewCount: 312,
+    //   stock: 100,
+    //   sizes: ['6', '7', '8', '9', '10', '11', '12'],
+    //   isNew: false
+    // },
+    // {
+    //   id: 4,
+    //   name: 'Performance Max',
+    //   brandName: 'Under Armour',
+    //   audience: Audience.Men,
+    //   price: 149.99,
+    //   imagePath: 'products/retro-sneaker2.png',
+    //   description: 'Maximum performance athletic shoes for serious athletes',
+    //   rating: 4.9,
+    //   reviewCount: 156,
+    //   stock: 30,
+    //   sizes: ['8', '9', '10', '11', '12'],
+    //   isNew: true
+    // }
   ];
 
   testimonials = [

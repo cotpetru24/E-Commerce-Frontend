@@ -19,6 +19,8 @@ import { AdditionalProductImageDto } from '../../models/additional-product-image
 export class ProductDetailsComponent implements OnInit {
   public product: ProductDto | null = null;
 
+  public cameFromProductManagement: boolean = false;
+
   public relatedProducts: ProductDto[] = [];
 
   public additionalProductImages: AdditionalProductImageDto[] = [];
@@ -48,6 +50,10 @@ export class ProductDetailsComponent implements OnInit {
       if (productId !== undefined || productId !== null) {
         this.getProduct(productId);
       }
+    });
+
+    this.route.queryParams.subscribe((params) => {
+      this.cameFromProductManagement = params['from'] === 'product-management';
     });
   }
 
