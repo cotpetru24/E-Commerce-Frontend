@@ -1,5 +1,6 @@
 // import { z } from 'zod';
 import { Audience } from './audience.enum';
+import { ProductImageDto } from './product-image.dto';
 // import is from 'zod/v4/locales/is.cjs';
 
 export interface ProductDto {
@@ -8,14 +9,14 @@ export interface ProductDto {
   description: string;
   price: number;
   originalPrice?: number | undefined;
-  imagePath: string;
-  stock: number;
+  totalStock: number;
   audience: Audience;
   brandName: string;
   rating?: number | undefined;
   reviewCount?: number | undefined;
-  sizes?: ProductSizeDto[] | undefined;
-  productFeatures?: AdminProductFeatureDto[] | undefined;
+  productSizes?: ProductSizeDto[] | undefined;
+  productFeatures: AdminProductFeatureDto[];
+  productImages: ProductImageDto[];
   isNew?: boolean | undefined;
   discountPercentage?: number;
   selected?: boolean;
@@ -28,7 +29,6 @@ export interface AdminProductDto {
   description: string;
   price: number;
   originalPrice?: number | undefined;
-  imagePath: string;
   totalStock?: number;
   audience?: Audience;
   audienceId: number;
@@ -38,6 +38,7 @@ export interface AdminProductDto {
   reviewCount?: number | undefined;
   productSizes: ProductSizeDto[];
   productFeatures?: AdminProductFeatureDto[] | undefined;
+  productImages: ProductImageDto[];
   isNew?: boolean | undefined;
   discountPercentage?: number;
   selected?: boolean;
@@ -66,8 +67,8 @@ export interface ProductSizeDto {
   id?: number;
   size: number;
   stock: number;
-  barcode: string;
   sku?: string;
+  barcode: string;
 }
 
 export interface GetProductsAdminResponseDto {

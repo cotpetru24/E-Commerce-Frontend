@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProductDto } from '../models/product.dto';
 import { CartService } from '../services/cart.service';
 import { ToastService } from '../services/toast.service';
 import { Audience } from '../models/audience.enum';
+import { ProductApiService } from '../services/api';
+import { finalize } from 'rxjs';
 
 // ============================================================================
 // HTTP REQUEST EXAMPLES - ANGULAR HTTP CLIENT
@@ -177,123 +179,80 @@ export class ApiService {
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-  ],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.scss'
+  styleUrl: './landing-page.component.scss',
 })
 export class LandingPageComponent implements OnInit {
   newsletterEmail: string = '';
-  
+
   // ============================================================================
   // FEATURED PRODUCTS DATA
   // ============================================================================
-  
-  featuredProducts: ProductDto[] = [
-    // {
-    //   id: 1,
-    //   name: 'Running Pro Elite',
-    //   brandName: 'Nike',
-    //   audience: Audience.Men,
-    //   price: 129.99,
-    //   originalPrice: 159.99,
-    //   discount: 19,
-    //   imagePath: 'products/running-shoe.png',
-    //   description: 'Professional running shoes with advanced cushioning technology',
-    //   rating: 4.8,
-    //   reviewCount: 245,
-    //   stock: 50,
-    //   sizes: ['7', '8', '9', '10', '11', '12'],
-    //   isNew: true
-    // },
-    // {
-    //   id: 2,
-    //   name: 'Casual Comfort Plus',
-    //   brandName: 'Adidas',
-    //   audience: Audience.Women,
-    //   price: 89.99,
-    //   imagePath: 'products/casual-sneaker.png',
-    //   description: 'Comfortable casual sneakers perfect for everyday wear',
-    //   rating: 4.6,
-    //   reviewCount: 189,
-    //   stock: 75,
-    //   sizes: ['6', '7', '8', '9', '10'],
-    //   isNew: false
-    // },
-    // {
-    //   id: 3,
-    //   name: 'Retro Classic',
-    //   brandName: 'Converse',
-    //   audience: Audience.Unisex,
-    //   price: 69.99,
-    //   originalPrice: 79.99,
-    //   discount: 13,
-    //   imagePath: 'products/retro-sneaker.png',
-    //   description: 'Timeless retro sneakers with vintage appeal',
-    //   rating: 4.7,
-    //   reviewCount: 312,
-    //   stock: 100,
-    //   sizes: ['6', '7', '8', '9', '10', '11', '12'],
-    //   isNew: false
-    // },
-    // {
-    //   id: 4,
-    //   name: 'Performance Max',
-    //   brandName: 'Under Armour',
-    //   audience: Audience.Men,
-    //   price: 149.99,
-    //   imagePath: 'products/retro-sneaker2.png',
-    //   description: 'Maximum performance athletic shoes for serious athletes',
-    //   rating: 4.9,
-    //   reviewCount: 156,
-    //   stock: 30,
-    //   sizes: ['8', '9', '10', '11', '12'],
-    //   isNew: true
-    // }
-  ];
+  public featuredProducts: ProductDto[] = [];
+  public availableBrands: string[] = [];
+
 
   testimonials = [
     {
       name: 'Sarah Johnson',
       location: 'New York, NY',
       rating: 5,
-      text: 'The quality of these shoes is incredible! I\'ve been wearing them for months and they still look brand new. Highly recommend!',
-      avatar: 'assets/avatars/avatar1.jpg'
+      text: "The quality of these shoes is incredible! I've been wearing them for months and they still look brand new. Highly recommend!",
+      avatar: 'assets/avatars/avatar1.jpg',
     },
     {
       name: 'Mike Chen',
       location: 'Los Angeles, CA',
       rating: 5,
       text: 'Fast shipping and excellent customer service. The shoes fit perfectly and are super comfortable for my daily runs.',
-      avatar: 'assets/avatars/avatar2.jpg'
+      avatar: 'assets/avatars/avatar2.jpg',
     },
     {
       name: 'Emily Rodriguez',
       location: 'Miami, FL',
       rating: 4,
       text: 'Great selection of styles and the return process was so easy. Will definitely shop here again!',
-      avatar: 'assets/avatars/avatar3.jpg'
-    }
+      avatar: 'assets/avatars/avatar3.jpg',
+    },
   ];
 
-  brands = [
-    { name: 'Nike', icon: 'sports_soccer' },
-    { name: 'Adidas', icon: 'fitness_center' },
-    { name: 'Converse', icon: 'style' },
-    { name: 'Under Armour', icon: 'sports' },
-    { name: 'Puma', icon: 'directions_run' },
-    { name: 'New Balance', icon: 'hiking' }
-  ];
+  public isLoading: boolean = false;
 
   constructor(
     private cartService: CartService,
     private toastService: ToastService,
+    private productApi: ProductApiService,
+    private router: Router
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit()  {
+
+this.getFeaturedProducts();
+
+  }
+
+  getFeaturedProducts() {
+    this.isLoading = true;
+    this.productApi
+      .getFeaturedProducts()
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (response) => {
+          try {
+            this.featuredProducts = response.products;
+            this.availableBrands = response.brands;
+          } catch (err) {
+            console.error('Validation failed', err);
+            this.toastService.error('Product data is invalid');
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load products:', err);
+          this.toastService.error('Error loading products');
+        },
+      });
+  }
 
   scrollToCategories() {
     const element = document.getElementById('categories');
@@ -302,14 +261,12 @@ export class LandingPageComponent implements OnInit {
     }
   }
 
-
-
-
   // ============================================================================
   // Once the Product details section is implemented, redirect to the product details page
   // ============================================================================
   viewProduct(product: ProductDto) {
-    this.toastService.info(`Viewing ${product.name}`);
+        this.router.navigate(['/products/details', product.id]);
+
   }
 
   addToCart(product: ProductDto) {

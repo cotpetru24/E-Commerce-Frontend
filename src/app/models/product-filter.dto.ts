@@ -8,7 +8,8 @@ export interface ProductFilterDto {
   SearchTerm?: string | null;
   Page?: number | null;
   PageSize?: number | null;
-  SortBy?: SortByOption;
+  SortBy?: SortByOption | null;
+  Size?: number | null;
 }
 
 export enum SortByOption {

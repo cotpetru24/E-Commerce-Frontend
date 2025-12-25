@@ -15,5 +15,5 @@ export * from './product.dto';
 export * from './product-filter.dto';
 export * from './get-products.dto';
 export * from './get-single-product.dto';
-export * from './additional-product-image.dto';
+export * from './product-image.dto';
 export * from './audience.enum';

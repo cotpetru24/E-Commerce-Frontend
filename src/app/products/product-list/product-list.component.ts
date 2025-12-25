@@ -43,7 +43,12 @@ export class ProductListComponent implements OnInit {
     { value: SortByOption.BrandDesc, label: 'Brand Z-A' },
   ];
 
-  public productFilterDto: ProductFilterDto = {};
+  public productFilterDto: ProductFilterDto = {
+    Brand:null,
+    Size: null,
+    Audience: null,
+    SortBy: null,
+  };
 
   public availableBrands: string[] = [];
 

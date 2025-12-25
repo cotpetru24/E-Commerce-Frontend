@@ -1,13 +1,13 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { ProductDto } from '../../models/product.dto';
+import { ProductDto, ProductSizeDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { Audience } from '../../models/audience.enum';
 import { ProductApiService } from '../../services/api';
 import { firstValueFrom } from 'rxjs';
-import { AdditionalProductImageDto } from '../../models/additional-product-image.dto';
+import { ProductImageDto } from '../../models/product-image.dto';
 
 @Component({
   selector: 'product-details',
@@ -20,15 +20,16 @@ export class ProductDetailsComponent implements OnInit {
   public product: ProductDto | null = null;
 
   public cameFromProductManagement: boolean = false;
+  public cameFromAdminDashboard: boolean = false;
 
   public relatedProducts: ProductDto[] = [];
 
-  public additionalProductImages: AdditionalProductImageDto[] = [];
+  public additionalProductImages: ProductImageDto[] = [];
 
   selectedImage: string = '';
   rating: number = 4.5;
   reviewCount: number = 128;
-  selectedSize: string = '';
+  selectedSize?: ProductSizeDto;
   quantity: number = 1;
   maxQuantity: number = 10;
   isInWishlist: boolean = false;
@@ -54,6 +55,7 @@ export class ProductDetailsComponent implements OnInit {
 
     this.route.queryParams.subscribe((params) => {
       this.cameFromProductManagement = params['from'] === 'product-management';
+      this.cameFromAdminDashboard = params['from'] === 'admin-dashboard';
     });
   }
 
@@ -62,7 +64,8 @@ export class ProductDetailsComponent implements OnInit {
       next: (response) => {
         this.product = response.product;
         this.relatedProducts = response.relatedProducts || [];
-        this.additionalProductImages = response.additionalImages || [];
+        // this.additionalProductImages = response.additionalImages || [];
+
         if (this.product) {
           this.initializeProductData();
         }
@@ -73,7 +76,14 @@ export class ProductDetailsComponent implements OnInit {
   initializeProductData() {
     if (!this.product) return;
 
-    this.selectedImage = this.product.imagePath;
+    if ((this.product?.productImages?.length ?? 0) > 0) {
+      this.selectedImage =
+        this.product?.productImages.find((img) => img.isPrimary)?.imagePath ||
+        this.product?.productImages[0]?.imagePath ||
+        '';
+    } else {
+      this.selectedImage = 'products/image-coming-soon.png';
+    }
 
     // Set up product features
     this.productFeatures = [
@@ -85,7 +95,7 @@ export class ProductDetailsComponent implements OnInit {
     ];
 
     // Set max quantity based on stock
-    this.maxQuantity = Math.min(this.product.stock, 10);
+    this.maxQuantity = Math.min(this.product.totalStock, 10);
   }
 
   selectImage(image: string) {
@@ -101,8 +111,9 @@ export class ProductDetailsComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  selectSize(size: string) {
+  selectSize(size: ProductSizeDto) {
     this.selectedSize = size;
+    this.quantity = 1;
   }
 
   isSizeAvailable(size: string): boolean {
@@ -111,7 +122,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   increaseQuantity() {
-    if (this.quantity < this.maxQuantity) {
+    if (this.quantity < this.selectedSize?.stock!) {
       this.quantity++;
     }
   }
@@ -128,7 +139,11 @@ export class ProductDetailsComponent implements OnInit {
       return;
     }
 
-    this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
+    this.cartService.addToCart(
+      this.product,
+      this.quantity,
+      this.selectedSize.size
+    );
     this.toastService.success(`${this.product.name} added to cart!`);
   }
 
@@ -139,7 +154,11 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     // Add to cart and proceed to checkout
-    this.cartService.addToCart(this.product, this.quantity, this.selectedSize);
+    this.cartService.addToCart(
+      this.product,
+      this.quantity,
+      this.selectedSize.size
+    );
     this.toastService.info('Proceeding to checkout...');
 
     // Navigate to checkout

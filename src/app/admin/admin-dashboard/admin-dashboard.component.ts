@@ -4,22 +4,28 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AdminProductDto, ProductDto } from '../../models/product.dto';
-import { AdminApiService, AdminStats, AdminUser, Order } from '../../services/api/admin-api.service';
+import {
+  AdminApiService,
+  AdminStats,
+  AdminUser,
+  Order,
+} from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { UserDto } from '../../models/user.dto';
-import { AdminOrderDto, GetAllUsersRequestDto, UpdateOrderStatusRequestDto, UsersSortBy, UsersSortDirection } from '../../models';
+import {
+  AdminOrderDto,
+  GetAllUsersRequestDto,
+  UpdateOrderStatusRequestDto,
+  UsersSortBy,
+  UsersSortDirection,
+} from '../../models';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.scss'
+  styleUrl: './admin-dashboard.component.scss',
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
   // ============================================================================
@@ -40,7 +46,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   // Product table
   displayedProductColumns: string[] = [
-    'id', 'name', 'brand', 'category', 'price', 'stock', 'actions'
+    'id',
+    'name',
+    'brand',
+    'category',
+    'price',
+    'stock',
+    'actions',
   ];
 
   // ============================================================================
@@ -53,7 +65,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   // User table
   displayedUserColumns: string[] = [
-    'id', 'email', 'firstName', 'lastName', 'status', 'createdAt', 'actions'
+    'id',
+    'email',
+    'firstName',
+    'lastName',
+    'status',
+    'createdAt',
+    'actions',
   ];
 
   // ============================================================================
@@ -66,7 +84,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   // Order table
   displayedOrderColumns: string[] = [
-    'id', 'userEmail', 'total', 'status', 'createdAt', 'actions'
+    'id',
+    'userEmail',
+    'total',
+    'status',
+    'createdAt',
+    'actions',
   ];
 
   // ============================================================================
@@ -84,10 +107,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private adminApi: AdminApiService,
     private toastService: ToastService,
-    private router: Router,
-    // private productApi: ProductApiService,
-    // private userApi: UserApiService,
-  ) {}
+    private router: Router
+  ) // private productApi: ProductApiService,
+  // private userApi: UserApiService,
+  {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -103,19 +126,18 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   loadDashboardData(): void {
     this.isLoadingStats = true;
-    
-      this.adminApi.getDashboardStats().subscribe({
-        next: (stats) => {
-          this.dashboardStats = stats;
-          this.isLoadingStats = false;
-        },
-        error: (error) => {
-          console.error('Error loading dashboard stats:', error);
-          this.isLoadingStats = false;
-          this.toastService.error('Failed to load dashboard statistics');
-        }
-      })
 
+    this.adminApi.getDashboardStats().subscribe({
+      next: (stats) => {
+        this.dashboardStats = stats;
+        this.isLoadingStats = false;
+      },
+      error: (error) => {
+        console.error('Error loading dashboard stats:', error);
+        this.isLoadingStats = false;
+        this.toastService.error('Failed to load dashboard statistics');
+      },
+    });
   }
 
   // ============================================================================
@@ -124,7 +146,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   loadProducts(): void {
     this.isLoadingProducts = true;
-    
+
     this.subscriptions.add(
       this.adminApi.getAllProducts(null).subscribe({
         next: (response) => {
@@ -136,23 +158,30 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           console.error('Error loading products:', error);
           this.isLoadingProducts = false;
           this.toastService.error('Failed to load products');
-        }
+        },
       })
     );
   }
 
   filterProducts(): void {
-    this.filteredProducts = this.products.filter(product => {
-      const matchesSearch = !this.productSearchTerm || 
-        product.name.toLowerCase().includes(this.productSearchTerm.toLowerCase()) ||
-        product.brandName.toLowerCase().includes(this.productSearchTerm.toLowerCase());
-      
-      const matchesCategory = !this.selectedProductCategory || 
+    this.filteredProducts = this.products.filter((product) => {
+      const matchesSearch =
+        !this.productSearchTerm ||
+        product.name
+          .toLowerCase()
+          .includes(this.productSearchTerm.toLowerCase()) ||
+        product.brandName
+          .toLowerCase()
+          .includes(this.productSearchTerm.toLowerCase());
+
+      const matchesCategory =
+        !this.selectedProductCategory ||
         product.audience === this.selectedProductCategory;
-      
-      const matchesBrand = !this.selectedProductBrand || 
+
+      const matchesBrand =
+        !this.selectedProductBrand ||
         product.brandName === this.selectedProductBrand;
-      
+
       return matchesSearch && matchesCategory && matchesBrand;
     });
   }
@@ -176,13 +205,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         this.adminApi.deleteProduct(product.id).subscribe({
           next: () => {
-                      this.toastService.success('Product deleted successfully');
+            this.toastService.success('Product deleted successfully');
             this.loadProducts(); // Reload products
           },
           error: (error) => {
             console.error('Error deleting product:', error);
-                      this.toastService.error('Failed to delete product');
-          }
+            this.toastService.error('Failed to delete product');
+          },
         })
       );
     }
@@ -198,7 +227,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     //         this.products[index] = updatedProduct;
     //         this.filterProducts();
     //       }
-          
     //       this.toastService.success('Product stock updated successfully');
     //     },
     //     error: (error) => {
@@ -215,18 +243,18 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   loadUsers(): void {
     this.isLoadingUsers = true;
-    
+
     const getAllUsersRequest: GetAllUsersRequestDto = {
       pageNumber: 1,
       pageSize: 10,
       // searchTerm: this.searchTerm,
       userStatus: null,
       sortBy: null,
-        // sortByField === 'name' 
-        // ? UsersSortBy.Name 
-        // UsersSortBy.DateCreated,
-      sortDirection: null
-        // : UsersSortDirection.Descending,   
+      // sortByField === 'name'
+      // ? UsersSortBy.Name
+      // UsersSortBy.DateCreated,
+      sortDirection: null,
+      // : UsersSortDirection.Descending,
     };
 
     this.subscriptions.add(
@@ -241,17 +269,21 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           console.error('Error loading users:', error);
           this.isLoadingUsers = false;
           this.toastService.error('Failed to load users');
-        }
+        },
       })
     );
   }
 
   filterUsers(): void {
-    this.filteredUsers = this.users.filter(user => {
-      return !this.userSearchTerm || 
+    this.filteredUsers = this.users.filter((user) => {
+      return (
+        !this.userSearchTerm ||
         user.email.toLowerCase().includes(this.userSearchTerm.toLowerCase()) ||
-        user.firstName.toLowerCase().includes(this.userSearchTerm.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(this.userSearchTerm.toLowerCase());
+        user.firstName
+          .toLowerCase()
+          .includes(this.userSearchTerm.toLowerCase()) ||
+        user.lastName.toLowerCase().includes(this.userSearchTerm.toLowerCase())
+      );
     });
   }
 
@@ -269,13 +301,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         this.adminApi.deleteUser(user.id.toString()).subscribe({
           next: () => {
-                      this.toastService.success('User deleted successfully');
+            this.toastService.success('User deleted successfully');
             this.loadUsers(); // Reload users
           },
           error: (error) => {
             console.error('Error deleting user:', error);
-                      this.toastService.error('Failed to delete user');
-          }
+            this.toastService.error('Failed to delete user');
+          },
         })
       );
     }
@@ -283,24 +315,28 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   toggleUserStatus(user: UserDto): void {
     const newStatus = !user.isBlocked; // Assuming User interface has isBlocked property
-    
+
     this.subscriptions.add(
-      this.adminApi.toggleUserStatus(user.id.toString(), newStatus, user.roles).subscribe({
-        next: () => {
-          // Update local user
-          const index = this.users.findIndex(u => u.id === user.id);
-          if (index !== -1) {
-            this.users[index] = { ...user, isBlocked: newStatus };
-            this.filterUsers();
-          }
-          
-          this.toastService.success(`User ${newStatus ? 'blocked' : 'unblocked'} successfully`);
-        },
-        error: (error: any) => {
-          console.error('Error updating user status:', error);
-          this.toastService.error('Failed to update user status');
-        }
-      })
+      this.adminApi
+        .toggleUserStatus(user.id.toString(), newStatus, user.roles)
+        .subscribe({
+          next: () => {
+            // Update local user
+            const index = this.users.findIndex((u) => u.id === user.id);
+            if (index !== -1) {
+              this.users[index] = { ...user, isBlocked: newStatus };
+              this.filterUsers();
+            }
+
+            this.toastService.success(
+              `User ${newStatus ? 'blocked' : 'unblocked'} successfully`
+            );
+          },
+          error: (error: any) => {
+            console.error('Error updating user status:', error);
+            this.toastService.error('Failed to update user status');
+          },
+        })
     );
   }
 
@@ -310,7 +346,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   loadOrders(): void {
     this.isLoadingOrders = true;
-    
+
     this.subscriptions.add(
       this.adminApi.getAllOrders(null).subscribe({
         next: (response) => {
@@ -323,14 +359,17 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           console.error('Error loading orders:', error);
           this.isLoadingOrders = false;
           this.toastService.error('Failed to load orders');
-        }
+        },
       })
     );
   }
 
   filterOrders(): void {
-    this.filteredOrders = this.orders.filter(order => {
-      return !this.selectedOrderStatus || order.orderStatusName === this.selectedOrderStatus;
+    this.filteredOrders = this.orders.filter((order) => {
+      return (
+        !this.selectedOrderStatus ||
+        order.orderStatusName === this.selectedOrderStatus
+      );
     });
   }
 
@@ -344,27 +383,26 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   updateOrderStatus(order: Order, newStatus: Order['status']): void {
-
-const statusData: UpdateOrderStatusRequestDto ={
-  orderStatusId: 7
-}
+    const statusData: UpdateOrderStatusRequestDto = {
+      orderStatusId: 7,
+    };
 
     this.subscriptions.add(
       this.adminApi.updateOrderStatus(order.id, statusData).subscribe({
         next: (updatedOrder) => {
           // Update local order
-          const index = this.orders.findIndex(o => o.id === order.id);
+          const index = this.orders.findIndex((o) => o.id === order.id);
           if (index !== -1) {
             this.orders[index] = updatedOrder;
             this.filterOrders();
           }
-          
+
           this.toastService.success('Order status updated successfully');
         },
         error: (error) => {
           console.error('Error updating order status:', error);
           this.toastService.error('Failed to update order status');
-        }
+        },
       })
     );
   }
@@ -374,13 +412,13 @@ const statusData: UpdateOrderStatusRequestDto ={
       this.subscriptions.add(
         this.adminApi.cancelOrder(order.id).subscribe({
           next: () => {
-                      this.toastService.success('Order cancelled successfully');
+            this.toastService.success('Order cancelled successfully');
             this.loadOrders(); // Reload orders
           },
           error: (error) => {
             console.error('Error cancelling order:', error);
-                      this.toastService.error('Failed to cancel order');
-          }
+            this.toastService.error('Failed to cancel order');
+          },
         })
       );
     }
@@ -392,12 +430,18 @@ const statusData: UpdateOrderStatusRequestDto ={
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'pending': return 'warn';
-      case 'processing': return 'accent';
-      case 'shipped': return 'primary';
-      case 'delivered': return 'primary';
-      case 'cancelled': return 'warn';
-      default: return 'primary';
+      case 'pending':
+        return 'warn';
+      case 'processing':
+        return 'accent';
+      case 'shipped':
+        return 'primary';
+      case 'delivered':
+        return 'primary';
+      case 'cancelled':
+        return 'warn';
+      default:
+        return 'primary';
     }
   }
 
@@ -475,30 +519,32 @@ const statusData: UpdateOrderStatusRequestDto ={
    */
   viewActivity(activity: any): void {
     console.log('Viewing activity:', activity);
-    
+
     // Navigate based on activity source
     switch (activity.source.toLowerCase()) {
       case 'user':
         // Navigate to user management or specific user
         if (activity.userGuid) {
-          this.router.navigate(['/admin/users', activity.userGuid]);        
+          this.router.navigate(['/admin/users', activity.userGuid]);
         } else {
-        this.toastService.error('Failed to navidate to activity.')       
+          this.toastService.error('Failed to navidate to activity.');
         }
         break;
 
       case 'product':
         if (activity.id) {
-        this.toastService.warning('In viewActivity - navigate to product');
+          this.router.navigate(['/products/details', activity.id], {
+            queryParams: { from: 'admin-dashboard' },
+          });
         } else {
-        this.toastService.error('Failed to navidate to activity.')       
+          this.toastService.error('Failed to navidate to activity.');
         }
         break;
 
       case 'order':
         if (activity.id) {
           this.router.navigate(['/admin/orders', activity.id], {
-            queryParams: { from: 'dashboard' }
+            queryParams: { from: 'dashboard' },
           });
         } else {
           this.toastService.error('Failed to navigate to activity.');
@@ -541,4 +587,4 @@ const statusData: UpdateOrderStatusRequestDto ={
         break;
     }
   }
-} 
+}

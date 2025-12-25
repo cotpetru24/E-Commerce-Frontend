@@ -1,19 +1,8 @@
 <div class="product-details-container">
   <div class="container">
     <!-- Breadcrumb -->
-    @if(!cameFromProductManagement)
-    {
-    <nav class="breadcrumb">
-      <a routerLink="/">Home</a>
-      <i class="bi bi-chevron-right"></i>
-      <a routerLink="/products">Products</a>
-      <i class="bi bi-chevron-right"></i>
-      <a routerLink="/products" [queryParams]="{gender: product?.audience}">{{ product?.audience | titlecase }}</a>
-      <i class="bi bi-chevron-right"></i>
-      <span class="current">{{ product?.name }}</span>
-    </nav>
-    }
-    @if(cameFromProductManagement)
+
+    @if(cameFromProductManagement || cameFromAdminDashboard)
     {
     <nav aria-label="breadcrumb" class="mb-3">
       <ol class="breadcrumb">
@@ -37,6 +26,18 @@
     </nav>
     }
 
+    @else{
+    <nav class="breadcrumb">
+      <a routerLink="/">Home</a>
+      <i class="bi bi-chevron-right"></i>
+      <a routerLink="/products">Products</a>
+      <i class="bi bi-chevron-right"></i>
+      <a routerLink="/products" [queryParams]="{gender: product?.audience}">{{ product?.audience | titlecase }}</a>
+      <i class="bi bi-chevron-right"></i>
+      <span class="current">{{ product?.name }}</span>
+    </nav>
+    }
+
     @if(product)
     {
     <!-- Product Details -->
@@ -44,27 +45,35 @@
       <!-- Product Images -->
       <div class="product-images">
         <div class="main-image">
+
+
           <!-- <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" /> -->
           <img [src]="'/assets/'+ selectedImage" alt="product.name" />
 
-          <div class="image-overlay">
-            <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" data-bs-toggle="modal"
+
+          <!-- <img [src]="'/assets/products/image-coming-soon.png'" alt="product.name" /> -->
+
+
+          <div class="image-overlay" (click)="openImageModal()" data-bs-toggle="modal" data-bs-target="#productImagesModal" title="Open image">
+            <!-- <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" data-bs-toggle="modal"
               data-bs-target="#productImagesModal" title="Open image">
               <i class="bi bi-zoom-in"></i>
-            </button>
+            </button> -->
           </div>
         </div>
 
 
 
-        @if (additionalProductImages && additionalProductImages.length > 0)
+        <!-- @if (additionalProductImages && additionalProductImages.length > 0) -->
+        @if((product.productImages?.length ??0) > 0)
+
         {
         <div class="image-thumbnails">
-          <div class="thumbnail" [class.active]="selectedImage === product.imagePath"
+          <!-- <div class="thumbnail" [class.active]="selectedImage === product.imagePath"
             (click)="selectImage(product.imagePath)">
             <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
-          </div>
-          @for (image of additionalProductImages; track image)
+          </div> -->
+          @for (image of product.productImages; track image)
           {
           <div class="thumbnail" [class.active]="selectedImage === image.imagePath"
             (click)="selectImage(image.imagePath)">
@@ -102,13 +111,14 @@
             </span>
           </div>
           <div class="stock-info">
-            <span class="stock-status" [class.in-stock]="product.stock > 0" [class.out-of-stock]="product.stock === 0">
-              <i [ngClass]=" product.stock > 0 ? 'bi bi-check-circle' : 'bi bi-x-circle' "></i>
-              {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
+            <span class="stock-status" [class.in-stock]="product.totalStock > 0"
+              [class.out-of-stock]="product.totalStock === 0">
+              <i [ngClass]=" product.totalStock > 0 ? 'bi bi-check-circle' : 'bi bi-x-circle' "></i>
+              {{ product.totalStock > 0 ? 'In Stock' : 'Out of Stock' }}
             </span>
-            <span class="stock-count" *ngIf="product.stock > 0">
-              {{ product.stock }} items available
-            </span>
+            <!-- <span class="stock-count" *ngIf="product.totalStock > 0">
+              {{ product.totalStock }} items available
+            </span> -->
           </div>
         </div>
 
@@ -120,36 +130,40 @@
         </div>
 
         <!-- Product Features -->
-        @if(productFeatures.length > 0)
+        @if(product.productFeatures && product.productFeatures.length > 0)
         {
         <div class="product-features">
           <h3>Features</h3>
           <ul class="features-list">
-            @for (feature of productFeatures; track feature)
+            @for (feature of product.productFeatures; track feature)
             {
             <li>
               <i class="bi bi-check"></i>
-              {{ feature }}
+              {{ feature.featureText }}
             </li>
             }
           </ul>
         </div>
         }
 
-        @if(availableSizes.length > 0)
+        @if(product.productSizes && product.productSizes.length > 0)
         {
         <!-- Size Selection -->
         <div class="size-selection">
           <h3>Select Size</h3>
-          <div class="size-options">
-            @for (size of availableSizes; track availableSizes)
+          <div class="size-options mb-3">
+            @for (size of product.productSizes; track availableSizes)
             {
             <button class="btn btn-outline-primary" [class.selected]="selectedSize === size"
-              [class.disabled]="!isSizeAvailable(size)" (click)="selectSize(size)">
-              {{ size }}
+              (click)="selectSize(size)">
+              {{ size.size }}
             </button>
             }
           </div>
+
+          <span class="stock-count" *ngIf="selectedSize">
+            {{ selectedSize?.stock }} items available
+          </span>
         </div>
         }
 
@@ -171,13 +185,13 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-          <button class="btn btn-primary add-to-cart-btn" [disabled]="product.stock === 0 || !selectedSize"
+          <button class="btn btn-primary add-to-cart-btn" [disabled]="product.totalStock === 0 || !selectedSize"
             (click)="addToCart()">
             <i class="bi bi-cart-plus"></i>
             Add to Cart
           </button>
 
-          <button class="btn btn-outline-primary buy-now-btn" [disabled]="product.stock === 0 || !selectedSize"
+          <button class="btn btn-outline-primary buy-now-btn" [disabled]="product.totalStock === 0 || !selectedSize"
             (click)="buyNow()">
             <i class="bi bi-lightning"></i>
             Buy Now
@@ -226,8 +240,23 @@
         <div class="card related-product-card" role="button" (click)="navigateToProductDetails(relatedProduct.id)">
           <div class="product-image">
 
-            <img class="card-img-top" [src]="'/assets/'+relatedProduct.imagePath" [alt]="relatedProduct.name"
+            <!-- <img class="card-img-top" [src]="'/assets/'+relatedProduct.imagePath" [alt]="relatedProduct.name"
+              title="Product image" /> -->
+
+            @for (image of relatedProduct.productImages; track image)  {
+              @if (image.isPrimary) {
+
+            <img class="card-img-top" [src]="'/assets/'+image.imagePath" [alt]="relatedProduct.name"
               title="Product image" />
+
+              break;
+              }
+            }
+
+
+
+
+
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ relatedProduct.name }}</h3>
@@ -259,7 +288,7 @@
                 <img class="carousel-image" [src]="'/assets/'+ selectedImage" alt="product.name" />
               </div>
             </div>
-            @for (image of additionalProductImages; track image)
+            @for (image of product?.productImages; track image)
             {
             <div class="carousel-item">
               <div class="carousel-image-wrapper">

@@ -31,6 +31,7 @@ export interface AdminStats {
   totalRevenue: number;
   totalProducts: number;
   lowStockProducts: number;
+  outOfStockProducts: number;
   pendingOrders: number;
   newUsersToday: number;
   newOrdersToday: number;
@@ -319,50 +320,50 @@ export class AdminApiService extends BaseApiService {
     },
   ];
 
-  private mockStats: AdminStats = {
-    totalUsers: 1250,
-    totalOrders: 3420,
-    totalRevenue: 456789.5,
-    totalProducts: 156,
-    lowStockProducts: 8,
-    pendingOrders: 23,
-    newUsersToday: 45,
-    newOrdersToday: 67,
-    todayRevenue: 12345.67,
-    recentActivity: [
-      {
-        source: 'Order',
-        id: 2024005,
-        description: 'New order #ORD-2024-005 placed by Jane Smith',
-        createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 minutes ago
-      },
-      {
-        source: 'User',
-        id: 1251,
-        userGuid: 'user-guid-1251',
-        description: 'New user registration: david.brown@example.com',
-        createdAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
-      },
-      {
-        source: 'Product',
-        id: 45,
-        description: 'Product "Nike Air Max 270" stock updated',
-        createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(), // 1 hour ago
-      },
-      {
-        source: 'Shipping',
-        id: 2024003,
-        description: 'Order #ORD-2024-003 shipped to John Doe',
-        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-      },
-      {
-        source: 'Payment',
-        id: 2024002,
-        description: 'Payment received for order #ORD-2024-002',
-        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
-      },
-    ],
-  };
+  // private mockStats: AdminStats = {
+  //   totalUsers: 1250,
+  //   totalOrders: 3420,
+  //   totalRevenue: 456789.5,
+  //   totalProducts: 156,
+  //   lowStockProducts: 8,
+  //   pendingOrders: 23,
+  //   newUsersToday: 45,
+  //   newOrdersToday: 67,
+  //   todayRevenue: 12345.67,
+  //   recentActivity: [
+  //     {
+  //       source: 'Order',
+  //       id: 2024005,
+  //       description: 'New order #ORD-2024-005 placed by Jane Smith',
+  //       createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 minutes ago
+  //     },
+  //     {
+  //       source: 'User',
+  //       id: 1251,
+  //       userGuid: 'user-guid-1251',
+  //       description: 'New user registration: david.brown@example.com',
+  //       createdAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
+  //     },
+  //     {
+  //       source: 'Product',
+  //       id: 45,
+  //       description: 'Product "Nike Air Max 270" stock updated',
+  //       createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(), // 1 hour ago
+  //     },
+  //     {
+  //       source: 'Shipping',
+  //       id: 2024003,
+  //       description: 'Order #ORD-2024-003 shipped to John Doe',
+  //       createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+  //     },
+  //     {
+  //       source: 'Payment',
+  //       id: 2024002,
+  //       description: 'Payment received for order #ORD-2024-002',
+  //       createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
+  //     },
+  //   ],
+  // };
 
   constructor(protected override http: HttpClient) {
     super(http);
@@ -545,7 +546,7 @@ export class AdminApiService extends BaseApiService {
     updates.forEach((update) => {
       const index = this.mockProducts.findIndex((p) => p.id === update.id);
       if (index !== -1) {
-        this.mockProducts[index].stock = update.stock;
+        this.mockProducts[index].totalStock = update.stock;
       }
     });
 
@@ -557,7 +558,7 @@ export class AdminApiService extends BaseApiService {
    */
   getLowStockProducts(threshold: number = 10): Observable<ProductDto[]> {
     const lowStockProducts = this.mockProducts.filter(
-      (p) => p.stock <= threshold
+      (p) => p.totalStock <= threshold
     );
     return of(lowStockProducts).pipe(delay(400), catchError(this.handleError));
   }

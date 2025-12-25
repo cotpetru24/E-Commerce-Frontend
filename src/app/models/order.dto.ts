@@ -56,7 +56,7 @@ export interface PlaceOrderRequestDto {
 export interface OrderItemRequestDto {
   productId: number;
   quantity: number;
-  size?: string;
+  size?: number;
 }
 
 export interface PlaceOrderResponseDto {

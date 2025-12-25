@@ -83,11 +83,12 @@ export class ProductApiService extends BaseApiService {
 
 
 
-  /**
-   * Get featured products
-   */
-  getFeaturedProducts(): Observable<ProductDto[]> {
-    return this.get<ProductDto[]>( this.buildUrl(`/featured`))
+  getFeaturedProducts(): Observable<GetProductsDto> {
+    // let httpParams = this.createParams(params || {});
+
+    this.logRequest('GET', this.buildUrl('/api/product/featured'));
+
+    return this.get<GetProductsDto>(this.buildUrl('/api/product/featured'));
   }
 
 

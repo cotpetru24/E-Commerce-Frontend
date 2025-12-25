@@ -16,9 +16,9 @@
           <h1 class="h2 mb-0">
             <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
           </h1>
-<p class="text-muted mb-0">Welcome to your central administration hub.
-  <br> Monitor key metrics, manage products, orders, users, and content while overseeing platform activity.
-</p>
+          <p class="text-muted mb-0">Welcome to your central administration hub.
+            <br> Monitor key metrics, manage products, orders, users, and content while overseeing platform activity.
+          </p>
         </div>
         <div class="btn-group" role="group">
           <button class="btn btn-outline-info" (click)="refreshDashboard()">
@@ -53,7 +53,8 @@
                   <h4 class="mb-0">{{ formatCurrency(dashboardStats.totalRevenue) }}</h4>
                   <small>Total Revenue</small>
                   <div class="mt-1">
-                    <span class="badge bg-light text-success">+{{ formatCurrency(dashboardStats.todayRevenue) }} today</span>
+                    <span class="badge bg-light text-success">+{{ formatCurrency(dashboardStats.todayRevenue) }}
+                      today</span>
                   </div>
                 </div>
                 <i class="bi bi-currency-pound display-6"></i>
@@ -84,14 +85,35 @@
                 <div>
                   <h4 class="mb-0">{{ dashboardStats.totalProducts }}</h4>
                   <small>Total Products</small>
-                  <div class="mt-1">
-                    <span class="badge bg-light text-warning" *ngIf="dashboardStats.lowStockProducts > 0">
-                      {{ dashboardStats.lowStockProducts }} low stock
-                    </span>
-                    <span class="badge bg-light text-success" *ngIf="dashboardStats.lowStockProducts === 0">
-                      All in stock
-                    </span>
+
+                  <div class="mt-1 d-flex flex-row gap-2">
+
+                    @if (dashboardStats.lowStockProducts > 0 ) {
+                    <div class="mt-1">
+                      <span class="badge bg-light text-warning" *ngIf="dashboardStats.lowStockProducts > 0">
+                        {{ dashboardStats.lowStockProducts }} low stock
+                      </span>
+                    </div>
+                    }
+
+                    @if( dashboardStats.outOfStockProducts > 0 ) {
+                    <div class="mt-1">
+                      <span class="badge bg-danger text-da" *ngIf="dashboardStats.outOfStockProducts > 0">
+                        {{ dashboardStats.lowStockProducts }} out of stock
+                      </span>
+                    </div>
+                    }
+
+                    @if( dashboardStats.outOfStockProducts === 0 && dashboardStats.lowStockProducts === 0 ) {
+                    <div class="mt-1">
+                      <span class="badge bg-light text-success" *ngIf="dashboardStats.lowStockProducts === 0">
+                        All in stock
+                      </span>
+                    </div>
+                    }
+
                   </div>
+
                 </div>
                 <i class="bi bi-box display-6"></i>
               </div>
@@ -186,9 +208,7 @@
                         <small class="text-muted">{{ formatTimeAgo(activity.createdAt) }}</small>
                       </td>
                       <td>
-                        <button 
-                          class="btn btn-outline-primary btn-sm" 
-                          (click)="viewActivity(activity)"
+                        <button class="btn btn-outline-primary btn-sm" (click)="viewActivity(activity)"
                           [title]="'View ' + activity.source">
                           <i class="bi bi-eye"></i>
                         </button>
@@ -199,7 +219,8 @@
               </div>
 
               <!-- Empty State -->
-              <div class="text-center p-4" *ngIf="!dashboardStats.recentActivity || dashboardStats.recentActivity.length === 0">
+              <div class="text-center p-4"
+                *ngIf="!dashboardStats.recentActivity || dashboardStats.recentActivity.length === 0">
                 <i class="bi bi-clock-history display-1 text-muted"></i>
                 <h4 class="mt-3">No recent activity</h4>
                 <p class="text-muted">Activity will appear here as users interact with the platform</p>
@@ -210,4 +231,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>

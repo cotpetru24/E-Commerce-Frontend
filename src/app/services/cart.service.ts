@@ -5,7 +5,7 @@ import { ProductDto } from '../models/product.dto';
 export interface CartItem {
   product: ProductDto;
   quantity: number;
-  size?: string;
+  size?: number;
 }
 
 @Injectable({
@@ -45,7 +45,7 @@ export class CartService {
     return this.cartItemsSubject.value.reduce((total, item) => total + item.quantity, 0);
   }
 
-  addToCart(product: ProductDto, quantity: number = 1, size?: string): void {
+  addToCart(product: ProductDto, quantity: number = 1, size?: number): void {
     const currentCart = this.cartItemsSubject.value;
     const itemKey = size ? `${product.id}-${size}` : product.id;
     
@@ -61,8 +61,8 @@ export class CartService {
       updatedCart[existingItemIndex].quantity += quantity;
       
       // Ensure quantity doesn't exceed stock
-      if (updatedCart[existingItemIndex].quantity > product.stock) {
-        updatedCart[existingItemIndex].quantity = product.stock;
+      if (updatedCart[existingItemIndex].quantity > product.totalStock) {
+        updatedCart[existingItemIndex].quantity = product.totalStock;
       }
       
       this.cartItemsSubject.next(updatedCart);
@@ -71,7 +71,7 @@ export class CartService {
       // Add new item to cart
       const newItem: CartItem = {
         product,
-        quantity: Math.min(quantity, product.stock),
+        quantity: Math.min(quantity, product.totalStock),
         ...(size !== undefined && { size })
       };
       
@@ -81,7 +81,7 @@ export class CartService {
     }
   }
 
-  updateQuantity(productId: number, size: string | undefined, quantity: number): void {
+  updateQuantity(productId: number, size: number | undefined, quantity: number): void {
     const currentCart = this.cartItemsSubject.value;
     const itemKey = size ? `${productId}-${size}` : productId;
     
@@ -98,7 +98,7 @@ export class CartService {
         updatedCart.splice(existingItemIndex, 1);
       } else {
         // Update quantity
-        updatedCart[existingItemIndex].quantity = Math.min(quantity, updatedCart[existingItemIndex].product.stock);
+        updatedCart[existingItemIndex].quantity = Math.min(quantity, updatedCart[existingItemIndex].product.totalStock);
       }
       
       this.cartItemsSubject.next(updatedCart);
@@ -106,7 +106,7 @@ export class CartService {
     }
   }
 
-  removeFromCart(productId: number, size?: string): void {
+  removeFromCart(productId: number, size?: number): void {
     const currentCart = this.cartItemsSubject.value;
     const itemKey = size ? `${productId}-${size}` : productId;
     
