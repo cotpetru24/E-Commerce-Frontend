@@ -34,7 +34,7 @@
           <div class="cart-items">
             <div class="cart-item" *ngFor="let item of cartItems; trackBy: trackByItem">
               <div class="item-image">
-                <img [src]="'/assets/' + item.product.imagePath" [alt]="item.product.name">
+                <!-- <img [src]="'/assets/' + item.product.imagePath" [alt]="item.product.name"> -->
               </div>
               
               <div class="item-details">
@@ -57,8 +57,8 @@
                     </button>
                     <span class="quantity">{{ item.quantity }}</span>
                     <button class="btn btn-outline-secondary btn-sm" type="button" 
-                            (click)="increaseQuantity(item)" 
-                            [disabled]="item.quantity >= item.product.stock">
+                            (click)="increaseQuantity(item)" >
+                            <!-- [disabled]="item.quantity >= item.product.stock"> -->
                       <i class="bi bi-plus"></i>
                     </button>
                   </div>
