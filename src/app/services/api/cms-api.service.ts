@@ -17,7 +17,7 @@ export class CmsApiService extends BaseApiService {
   getCmsProfilesAsync(): Observable<CmsStoredProfileDto[]> {
     this.logRequest('GET', this.buildUrl(this.baseUrl + '/profiles'));
 
-    return this.get<CmsStoredProfileDto[]>(
+    return this.get(
       this.buildUrl(this.baseUrl + '/profiles')
     );
   }
