@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { CmsApiService } from './services/api/cms-api.service';
+import { CmsStateService } from './services/cmsStateService';
 
 @Component({
   selector: 'app-root',
@@ -14,18 +15,22 @@ import { CmsApiService } from './services/api/cms-api.service';
 export class AppComponent {
   title = 'ecommerce-app';
 
-  constructor(private cmsService: CmsApiService) {}
+  constructor(private cmsService: CmsApiService,
+    private cmsStateService : CmsStateService
+  ) {}
 
   ngOnInit(): void {
     const cached = localStorage.getItem('cmsProfile');
 
     if (cached && cached != null) {
       const cms = JSON.parse(cached);
+      this.cmsStateService.setProfile(cms);
       this.applyTheme(cms);
     }
 
     this.cmsService.GetCmsNavAndFooterAsync().subscribe((cms) => {
       localStorage.setItem('cmsProfile', JSON.stringify(cms));
+      this.cmsStateService.setProfile(cms);
       this.applyTheme(cms);
     });
   }

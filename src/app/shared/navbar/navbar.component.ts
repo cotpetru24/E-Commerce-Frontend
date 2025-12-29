@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthApiService } from '../../services/auth-api.service';
+import { CmsStateService } from '../../services/cmsStateService';
 
 @Component({
   selector: 'app-navbar',
@@ -20,12 +21,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   showAccountDropdown = false;
   cartItemCount = 0;
   websiteName ='';
+  private sub!: Subscription;
   private cartSubscription!: Subscription;
 
   constructor(
     private cartService: CartService,
     private toastService: ToastService,
-    private authApiService: AuthApiService
+    private authApiService: AuthApiService,
+    private cmsStateService: CmsStateService,
   ) {
     // Check screen size on initialization
     this.checkScreenSize();
@@ -38,11 +41,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.cartItemCount = this.cartService.getCartItemCount();
     });
 
-    const rawJson = localStorage.getItem('cmsProfile');
+    // const rawJson = localStorage.getItem('cmsProfile');
 
-    if(rawJson){
-      this.websiteName = (JSON.parse(rawJson)).websiteName
-    }
+    // if(rawJson){
+    //   this.websiteName = (JSON.parse(rawJson)).websiteName
+    // }
+
+        this.sub = this.cmsStateService.cmsProfile$.subscribe(profile => {
+      if (!profile) return;
+      this.websiteName = profile.websiteName;
+    });
 
 
   }
@@ -51,6 +59,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.cartSubscription) {
       this.cartSubscription.unsubscribe();
     }
+
+    this.sub?.unsubscribe();
+
     window.removeEventListener('resize', () => this.checkScreenSize());
   }
 

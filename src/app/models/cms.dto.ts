@@ -26,9 +26,9 @@ export interface CmsProfileDto {
   heroSecondaryButtonText: string;
   heroBackgroundImageBase64?: string;
 
-  newsletterTitle?:string;
-  newsletterDescription?: string;
-  newsletterButtonText?: string;
+  // newsletterTitle?:string;
+  // newsletterDescription?: string;
+  // newsletterButtonText?: string;
 
   features: CmsFeature[];
   categories: CmsCategory[];

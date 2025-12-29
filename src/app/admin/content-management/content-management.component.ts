@@ -9,6 +9,7 @@ import { CmsProfileDto, CmsStoredProfileDto } from '../../models/cms.dto';
 import { finalize } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { CmsStateService } from '../../services/cmsStateService';
 
 @Component({
   selector: 'app-content-management',
@@ -64,7 +65,8 @@ export class ContentManagementComponent implements OnInit {
   constructor(
     private toastService: ToastService,
     private cmsApiService: CmsApiService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private cmsStateService:CmsStateService
   ) {}
 
   ngOnInit() {
@@ -115,41 +117,9 @@ export class ContentManagementComponent implements OnInit {
 
   populateContentFromProfile(profile: CmsProfileDto) {
 this.profile = profile;
+// this.profile.categories = [...this.profile.categories];
 
-// this.profile = {
-//   id:profile.id,
-//   profileName:profile.profileName,
-//   createdAt: profile.createdAt,
-//   isActive:profile.isActive,
 
-//   lastUpdated:profile.lastUpdated,
-//   websiteName: profile.websiteName,
-//     tagline: profile.tagline,
-//     logoBase64: profile.logoBase64,
-//     faviconBase64: profile.faviconBase64,
-
-//     navbarBgColor: profile.navbarBgColor,
-//     navbarTextColor: profile.navbarTextColor,
-//     navbarLinkColor: profile.navbarLinkColor,
-
-//     footerBgColor: profile.footerBgColor,
-//     footerTextColor: profile.footerTextColor,
-//     footerLinkColor: profile.footerLinkColor,
-
-//     heroTitle: profile.heroTitle,
-//     heroSubtitle: profile.heroSubtitle,
-//     heroDescription: profile.heroDescription,
-//     heroPrimaryButtonText: profile.heroPrimaryButtonText,
-//     heroSecondaryButtonText: profile.heroSecondaryButtonText,
-//     heroBackgroundImageBase64: profile.heroBackgroundImageBase64,
-
-//     newsletterTitle: profile.newsletterTitle,
-//     newsletterDescription: profile.newsletterDescription,
-//     newsletterButtonText: profile.newsletterButtonText,
-
-//     features: profile.features,
-//     categories: profile.categories,
-// }
 
 
     // Populate categories
@@ -157,8 +127,8 @@ this.profile = profile;
       id: cat.id,
       title: cat.title,
       description: cat.description,
-      image: cat.imageBase64 || '',
-      itemCount: cat.itemTagline || '',
+      imageBase64: cat.imageBase64 || '',
+      itemTagline: cat.itemTagline || '',
       sortOrder: cat.sortOrder,
     }));
 
@@ -205,91 +175,6 @@ this.profile = profile;
       });
   }
 
-  // buildProfileFromContent(): boolean {
-  //   const profileName =
-  //     this.profileName || this.brandingContent.websiteName || 'New Profile';
-
-  //   if (!this.profile) {
-  //     // Create a new profile object
-  //     this.profile = {
-  //       id: 0,
-  //       profileName: profileName,
-  //       isActive: false,
-  //       websiteName: this.brandingContent.websiteName,
-  //       tagline: this.brandingContent.tagline,
-  //       logoBase64: this.brandingContent.logoUrl || '',
-  //       faviconBase64: this.brandingContent.faviconUrl || '',
-  //       navbarBgColor: this.colorScheme.navbarBackground,
-  //       navbarTextColor: this.colorScheme.navbarText,
-  //       navbarLinkColor: this.colorScheme.navbarLink,
-  //       footerBgColor: this.colorScheme.footerBackground,
-  //       footerTextColor: this.colorScheme.footerText,
-  //       footerLinkColor: this.colorScheme.footerLink,
-  //       heroTitle: this.heroContent.mainTitle,
-  //       heroSubtitle: this.heroContent.subtitle,
-  //       heroDescription: this.heroContent.description,
-  //       heroPrimaryButtonText: this.heroContent.primaryButtonText,
-  //       heroSecondaryButtonText: this.heroContent.secondaryButtonText,
-  //       heroBackgroundImageBase64: this.heroContent.backgroundImage || '',
-  //       features: this.featuresContent.map((feat, index) => ({
-  //         id: (feat as any).id || 0,
-  //         iconClass: feat.icon,
-  //         title: feat.title,
-  //         description: feat.description,
-  //         sortOrder: (feat as any).sortOrder || index,
-  //       })),
-  //       categories: this.categoriesContent.map((cat, index) => ({
-  //         id: (cat as any).id || 0,
-  //         title: cat.title,
-  //         description: cat.description,
-  //         imageBase64: cat.image || '',
-  //         itemCountText: cat.itemCount,
-  //         sortOrder: (cat as any).sortOrder || index,
-  //       })),
-  //       lastUpdated: new Date(),
-  //       createdAt: new Date(),
-  //     };
-  //   } else {
-  //     // Update existing profile
-  //     this.profile.profileName = profileName;
-  //     this.profile.websiteName = this.brandingContent.websiteName;
-  //     this.profile.tagline = this.brandingContent.tagline;
-  //     this.profile.logoBase64 = this.brandingContent.logoUrl || '';
-  //     this.profile.faviconBase64 = this.brandingContent.faviconUrl || '';
-  //     this.profile.navbarBgColor = this.colorScheme.navbarBackground;
-  //     this.profile.navbarTextColor = this.colorScheme.navbarText;
-  //     this.profile.navbarLinkColor = this.colorScheme.navbarLink;
-  //     this.profile.footerBgColor = this.colorScheme.footerBackground;
-  //     this.profile.footerTextColor = this.colorScheme.footerText;
-  //     this.profile.footerLinkColor = this.colorScheme.footerLink;
-  //     this.profile.heroTitle = this.heroContent.mainTitle;
-  //     this.profile.heroSubtitle = this.heroContent.subtitle;
-  //     this.profile.heroDescription = this.heroContent.description;
-  //     this.profile.heroPrimaryButtonText = this.heroContent.primaryButtonText;
-  //     this.profile.heroSecondaryButtonText =
-  //       this.heroContent.secondaryButtonText;
-  //     this.profile.heroBackgroundImageBase64 =
-  //       this.heroContent.backgroundImage || '';
-  //     this.profile.features = this.featuresContent.map((feat, index) => ({
-  //       id: (feat as any).id || 0,
-  //       iconClass: feat.icon,
-  //       title: feat.title,
-  //       description: feat.description,
-  //       sortOrder: (feat as any).sortOrder || index,
-  //     }));
-  //     this.profile.categories = this.categoriesContent.map((cat, index) => ({
-  //       id: (cat as any).id || 0,
-  //       title: cat.title,
-  //       description: cat.description,
-  //       imageBase64: cat.image || '',
-  //       itemCountText: cat.itemCount,
-  //       sortOrder: (cat as any).sortOrder || index,
-  //     }));
-  //     this.profile.lastUpdated = new Date();
-  //   }
-  //   return true;
-  // }
-
   activateCmsProfile(profile: CmsStoredProfileDto) {
     this.isLoading = true;
     this.cmsApiService
@@ -299,6 +184,13 @@ this.profile = profile;
         next: (response) => {
           try {
             this.profile = response;
+    this.cmsApiService.GetCmsNavAndFooterAsync().subscribe((cms) => {
+      localStorage.removeItem('cmsProfile')
+      localStorage.setItem('cmsProfile', JSON.stringify(cms));
+          this.cmsStateService.setProfile(cms);
+      this.applyTheme(cms);
+    });
+
 
             //update localStorage.cmsProfile then
             this.toastService.success('CMS profile activated successfully');
@@ -309,6 +201,18 @@ this.profile = profile;
           }
         },
       });
+  }
+
+    private applyTheme(cms: any): void {
+    const root = document.documentElement;
+
+    root.style.setProperty('--navbar-bg-color', cms.navbarBgColor);
+    root.style.setProperty('--navbar-link-color', cms.navbarLinkColor);
+    root.style.setProperty('--navbar-text-color', cms.navbarTextColor);
+
+    root.style.setProperty('--footer-bg-color', cms.footerBgColor);
+    root.style.setProperty('--footer-link-color', cms.footerLinkColor);
+    root.style.setProperty('--footer-text-color', cms.footerTextColor);
   }
 
   updateCmsProfile() {
@@ -327,7 +231,14 @@ this.profile = profile;
         next: (response) => {
           try {
             this.profile = response;
+
+                          this.profile = this.createEmptyCmsProfileDto();
+              this.isEditingMode = false;
+                  this.isProfilesCardCollapsed = false;
+
             this.toastService.success('CMS profile updated successfully');
+
+
             this.loadStoredProfiles();
           } catch (err) {
             console.error('Validation failed', err);
@@ -336,6 +247,117 @@ this.profile = profile;
         },
       });
   }
+
+
+  saveCmsProfileAs() {
+    if (!this.profile || !this.selectedProfileId) {
+      this.toastService.error('Please select a profile to update');
+      return;
+    }
+    // if (!this.buildProfileFromContent()) {
+    //   return;
+    // }
+        this.isLoading = true;
+
+
+this.profile.id=0;
+
+    this.profile!.categories = this.profile.categories.map((cat) => ({
+      id: 0,
+      title: cat.title,
+      description: cat.description,
+      imageBase64: cat.imageBase64 || '',
+      itemTagline: cat.itemTagline || '',
+      sortOrder: cat.sortOrder,
+    }));
+
+    // Populate features
+    this.profile!.features = this.profile.features.map((feat) => ({
+      id: 0,
+      iconClass: feat.iconClass,
+      title: feat.title,
+      description: feat.description,
+      sortOrder: feat.sortOrder,
+    }));
+
+    this.cmsApiService
+      .createCmsProfileAsync(this.profile!)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (response) => {
+          try {
+            this.profile = response;
+            this.selectedProfileId = response.id;
+              this.isEditingMode = false;
+                  this.isProfilesCardCollapsed = false;
+                              this.toastService.success('CMS profile created successfully');
+            this.loadStoredProfiles();
+          } catch (err) {
+            console.error('Validation failed', err);
+            this.toastService.error('CMS profile data is invalid');
+          }
+        },
+      });
+
+  }
+
+
+//   trackByCategoryId(index: number, category: any) {
+//   return category.id;
+// }
+
+
+private fileToBase64(
+  event: Event,
+  assign: (base64: string) => void
+) {
+  const input = event.target as HTMLInputElement;
+  if (!input.files?.length) return;
+
+  const reader = new FileReader();
+  reader.onload = () =>
+    assign((reader.result as string).split(',')[1]);
+  // reader.onload = () =>
+  // assign(reader.result as string);
+
+
+  reader.readAsDataURL(input.files[0]);
+}
+
+
+
+onLogoSelected(event: Event) {
+  this.fileToBase64(event, b64 =>
+    this.profile!.logoBase64 = b64
+  );
+}
+
+onFaviconSelected(event: Event) {
+  this.fileToBase64(event, b64 =>
+    this.profile!.faviconBase64 = b64
+  );
+}
+
+onCategoryImageSelected(event: Event, index: number) {
+  this.fileToBase64(event, b64 =>
+    this.profile!.categories[index].imageBase64 = b64
+  );
+}
+
+  onHeroImageSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (!input.files || input.files.length === 0) return;
+
+  const file = input.files[0];
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    const base64 = (reader.result as string).split(',')[1];
+    this.profile!.heroBackgroundImageBase64 = base64;
+  };
+
+  reader.readAsDataURL(file);
+}
 
   canDeleteProfile(profile: CmsStoredProfileDto): boolean {
     // Cannot delete if it's the last profile
@@ -536,9 +558,9 @@ createEmptyCmsProfileDto(): CmsProfileDto {
     heroSecondaryButtonText: '',
     heroBackgroundImageBase64: '',
 
-    newsletterTitle: '',
-    newsletterDescription: '',
-    newsletterButtonText: '',
+    // newsletterTitle: '',
+    // newsletterDescription: '',
+    // newsletterButtonText: '',
 
     showLogoInHeader:false,
 

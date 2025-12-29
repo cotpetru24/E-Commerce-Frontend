@@ -3,26 +3,33 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../services/toast.service';
+import { Subscription } from 'rxjs';
+import { CmsStateService } from '../../services/cmsStateService';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-
-  ],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
 })
 export class FooterComponent implements OnInit {
   newsletterEmail: string = '';
   showBackToTop: boolean = false;
+  websiteName = '';
+private sub!: Subscription;
 
-  constructor(private toastService: ToastService) {}
+  constructor(
+    private toastService: ToastService,
+    private cmsStateService: CmsStateService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    this.sub = this.cmsStateService.cmsProfile$.subscribe((profile) => {
+      if (!profile) return;
+      this.websiteName = profile.websiteName;
+    });
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

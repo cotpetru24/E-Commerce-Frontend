@@ -48,7 +48,7 @@
                 [class.table-success]="profile.isActive">
                 <td>
                   <strong>{{ profile.profileName }}</strong>
-                  <span class="badge bg-success ms-2" *ngIf="profile.isActive">Active</span>
+                  <span class="badge bg-info ms-2" *ngIf="profile.isDefault">Default profile</span>
                 </td>
                 <td>
                   <span class="badge" [ngClass]="profile.isActive ? 'bg-success' : 'bg-secondary'">
@@ -60,14 +60,14 @@
                 <td>
                   <div class="btn-group btn-group-sm" role="group">
                     <button class="btn btn-outline-primary" (click)="selectProfile(profile)" [disabled]="isLoading">
-                      <i class="bi bi-eye me-1"></i>Select
+                      <i class="bi bi-eye me-1"></i>View
                     </button>
                     <button class="btn btn-outline-success" (click)="activateCmsProfile(profile)"
                       [disabled]="isLoading || profile.isActive">
                       <i class="bi bi-check-circle me-1"></i>Activate
                     </button>
                     <button class="btn btn-outline-danger" (click)="deleteProfile(profile)"
-                      [disabled]="isLoading || !canDeleteProfile(profile)"
+                      [disabled]="isLoading || !canDeleteProfile(profile) || profile.isDefault"
                       [title]="!canDeleteProfile(profile) ? (profile.isActive ? 'Cannot delete active profile' : 'Cannot delete last profile') : 'Delete profile'">
                       <i class="bi bi-trash me-1"></i>Delete
                     </button>
@@ -109,13 +109,13 @@
                 <div class="mb-3" *ngIf="profile.logoBase64">
                   <i class="bi bi-image display-4 text-muted"></i>
                 </div>
-                <img *ngIf="profile.logoBase64" [src]="profile.logoBase64" alt="Website Logo"
+                <img *ngIf="profile.logoBase64" [src]="'data:image/png;base64,' + profile.logoBase64" alt="Website Logo"
                   class="img-fluid mb-3" style="max-height: 100px;">
                 <p class="text-muted mb-2">Upload your website logo</p>
                 <button class="btn btn-outline-primary btn-sm" (click)="logoInput.click()">
                   <i class="bi bi-upload me-2"></i>Choose Logo
                 </button>
-                <input #logoInput type="file" class="d-none" accept="image/*" (change)="onLogoUpload($event)">
+                <input #logoInput type="file" class="d-none" accept="image/*" (change)="onLogoSelected($event)">
               </div>
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="useLogo" [(ngModel)]="profile.showLogoInHeader">
@@ -131,13 +131,13 @@
                 <div class="mb-3" *ngIf="profile!.faviconBase64">
                   <i class="bi bi-image display-4 text-muted"></i>
                 </div>
-                <img *ngIf="profile!.faviconBase64" [src]="profile!.faviconBase64" alt="Favicon" class="img-fluid mb-3"
-                  style="max-height: 32px;">
+                <img *ngIf="profile!.faviconBase64" [src]="'data:image/png;base64,' + profile.faviconBase64"
+                  alt="Favicon" class="img-fluid mb-3" style="max-height: 32px;">
                 <p class="text-muted mb-2">Upload favicon (32x32px recommended)</p>
                 <button class="btn btn-outline-primary btn-sm" (click)="faviconInput.click()">
                   <i class="bi bi-upload me-2"></i>Choose Favicon
                 </button>
-                <input #faviconInput type="file" class="d-none" accept="image/*" (change)="onFaviconUpload($event)">
+                <input #faviconInput type="file" class="d-none" accept="image/*" (change)="onFaviconSelected($event)">
               </div>
             </div>
           </div>
@@ -145,7 +145,8 @@
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label">Profile Name <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" [(ngModel)]="profileName" placeholder="Enter profile name">
+              <input type="text" class="form-control" [(ngModel)]="profile.profileName"
+                placeholder="Enter profile name">
               <small class="form-text text-muted">Unique name for this profile</small>
             </div>
             <div class="col-md-4 mb-3">
@@ -289,7 +290,11 @@
             </div>
             <div class="col-md-4 mb-3">
               <label class="form-label">Background Image</label>
-              <input type="file" class="form-control" (change)="onImageUpload($event, 'hero')" accept="image/*">
+              <input type="file" class="form-control" (change)="onHeroImageSelected($event)" accept="image/*">
+
+              <img *ngIf="profile.heroBackgroundImageBase64"
+                [src]="'data:image/png;base64,' + profile.heroBackgroundImageBase64" alt="Website Logo"
+                class="img-fluid mb-3" style="max-height: 100px;">
             </div>
           </div>
         </div>
@@ -327,10 +332,19 @@
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Image</label>
-                    <input type="file" class="form-control" (change)="onImageUpload($event, 'category', i)"
+                    <input type="file" class="form-control" (change)="onCategoryImageSelected($event, i)"
                       accept="image/*">
-                    <img *ngIf="category.imageBase64" [src]="category.imageBase64" alt="Category Image"
-                      class="img-thumbnail mt-2" style="max-height: 100px;">
+
+
+
+                    <img *ngIf="category.imageBase64" [src]="'data:image/png;base64,' + category.imageBase64"
+                      class="img-fluid mb-3" style="max-height:100px">
+
+
+
+                    <!-- <img *ngIf="category.imageBase64" [src]="'data:image/png;base64,' + category.imageBase64" alt="Category Image"
+                  class="img-fluid mb-3" style="max-height: 100px;"> -->
+
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Tagline</label>
@@ -391,115 +405,6 @@
         </div>
       </div>
 
-      <!-- Testimonials Editor -->
-      <!-- <div class="card shadow-sm" *ngIf="activeSection === 'testimonials'">
-        <div class="card-header bg-warning text-dark">
-          <h5 class="mb-0">
-            <i class="bi bi-chat-quote me-2"></i>Testimonials
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6 mb-3" *ngFor="let testimonial of testimonialsContent; let i = index">
-              <div class="card">
-                <div class="card-header">
-                  <h6 class="mb-0">Testimonial {{ i + 1 }}</h6>
-                </div>
-                <div class="card-body">
-                  <div class="mb-3">
-                    <label class="form-label">Customer Name</label>
-                    <input type="text" class="form-control" 
-                           [(ngModel)]="testimonial.name">
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Location</label>
-                    <input type="text" class="form-control" 
-                           [(ngModel)]="testimonial.location">
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Rating</label>
-                    <select class="form-select" [(ngModel)]="testimonial.rating">
-                      <option value="5">5 Stars</option>
-                      <option value="4">4 Stars</option>
-                      <option value="3">3 Stars</option>
-                      <option value="2">2 Stars</option>
-                      <option value="1">1 Star</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Review Text</label>
-                    <textarea class="form-control" rows="3" 
-                              [(ngModel)]="testimonial.text"></textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Avatar</label>
-                    <input type="file" class="form-control" 
-                           (change)="onImageUpload($event, 'testimonial', i)"
-                           accept="image/*">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- Brands Editor -->
-      <!-- <div class="card shadow-sm" *ngIf="activeSection === 'brands'">
-        <div class="card-header bg-secondary text-white">
-          <h5 class="mb-0">
-            <i class="bi bi-award me-2"></i>Brands
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-4 mb-3" *ngFor="let brand of brandsContent; let i = index">
-              <div class="card">
-                <div class="card-header">
-                  <h6 class="mb-0">Brand {{ i + 1 }}</h6>
-                </div>
-                <div class="card-body">
-                  <div class="mb-3">
-                    <label class="form-label">Brand Name</label>
-                    <input type="text" class="form-control" 
-                           [(ngModel)]="brand.name">
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Icon Class</label>
-                    <input type="text" class="form-control" 
-                           [(ngModel)]="brand.icon"
-                           placeholder="bi-nike">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- Newsletter Editor -->
-      <div class="card shadow-sm" *ngIf="activeSection === 'newsletter'">
-        <div class="card-header bg-danger text-white">
-          <h5 class="mb-0">
-            <i class="bi bi-envelope me-2"></i>Newsletter
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="mb-3">
-            <label class="form-label">Title</label>
-            <input type="text" class="form-control" [(ngModel)]="profile.newsletterTitle">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea class="form-control" rows="3" [(ngModel)]="profile.newsletterDescription"></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Button Text</label>
-            <input type="text" class="form-control" [(ngModel)]="profile.newsletterButtonText"/>
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <!-- Navigation Sidebar (Right Side) -->
@@ -542,10 +447,10 @@
              (click)="setActiveSection('brands')">
             <i class="bi bi-award me-2"></i>Brands
           </a> -->
-          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'newsletter'}"
+          <!-- <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'newsletter'}"
             (click)="setActiveSection('newsletter')">
             <i class="bi bi-envelope me-2"></i>Newsletter
-          </a>
+          </a> -->
         </div>
       </div>
 
@@ -563,6 +468,10 @@
             <button class="btn btn-success" (click)="updateCmsProfile()"
               [disabled]="isLoading || !profile || profile.id === 0" *ngIf="profile && profile.id !== 0">
               <i class="bi bi-save me-1"></i>Update Profile
+            </button>
+            <button class="btn btn-info" (click)="saveCmsProfileAs()"
+              [disabled]="isLoading || !profile || profile.id === 0" *ngIf="profile && profile.id !== 0">
+              <i class="bi bi-save me-1"></i>Save Profile as
             </button>
           </div>
           <small class="text-muted d-block mt-2 text-center">
