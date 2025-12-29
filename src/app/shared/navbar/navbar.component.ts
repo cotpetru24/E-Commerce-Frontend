@@ -19,6 +19,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   showShopDropdown = false;
   showAccountDropdown = false;
   cartItemCount = 0;
+  websiteName ='';
   private cartSubscription!: Subscription;
 
   constructor(
@@ -36,6 +37,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.cartSubscription = this.cartService.cartItems$.subscribe((items) => {
       this.cartItemCount = this.cartService.getCartItemCount();
     });
+
+    const rawJson = localStorage.getItem('cmsProfile');
+
+    if(rawJson){
+      this.websiteName = (JSON.parse(rawJson)).websiteName
+    }
+
+
   }
 
   ngOnDestroy() {

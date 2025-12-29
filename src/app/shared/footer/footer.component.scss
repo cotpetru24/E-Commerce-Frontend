@@ -1,6 +1,6 @@
 footer {
-  background: #1a1a1a !important; // Strong override to match navbar background color
-  color: #ffffff;
+  background: var(--footer-bg-color) !important; // Strong override to match navbar background color
+color: var(--footer-link-color);
   position: relative;
   margin-top: auto;
   padding: 3rem 0 1rem;
@@ -8,7 +8,7 @@ footer {
 
   // Override Bootstrap's bg-dark class
   &.bg-dark {
-    background: #1a1a1a !important;
+    background: var(--footer-bg-color) !important;
   }
 
   .container {
@@ -25,17 +25,17 @@ footer {
     i {
       font-size: 2rem;
       margin-right: 0.75rem;
-      color: #ffffff !important;
+      color: var(--footer-link-color) !important;
     }
 
     .bi-bag-heart {
-      color: #ffffff !important;
+      color: var(--footer-link-color) !important;
     }
 
     h3 {
       font-size: 1.75rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--footer-link-color);
       margin: 0;
     }
   }
@@ -68,7 +68,7 @@ footer {
   }
 
   h4 {
-    color: #ffffff;
+    color: var(--footer-link-color);
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
@@ -111,7 +111,7 @@ footer {
         }
 
         &:hover {
-          color: #ffffff;
+          color: var(--footer-link-color);
           padding-left: 1rem;
 
           &::before {
@@ -157,7 +157,7 @@ footer {
       transition: color 0.3s ease;
 
       &:hover {
-        color: #ffffff !important;
+        color: var(--footer-link-color) !important;
       }
     }
   }

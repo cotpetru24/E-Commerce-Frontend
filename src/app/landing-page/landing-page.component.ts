@@ -8,6 +8,8 @@ import { ToastService } from '../services/toast.service';
 import { Audience } from '../models/audience.enum';
 import { ProductApiService } from '../services/api';
 import { finalize } from 'rxjs';
+import { CmsApiService } from '../services/api/cms-api.service';
+import { CmsLandingPageDto } from '../models/cms.dto';
 
 // ============================================================================
 // HTTP REQUEST EXAMPLES - ANGULAR HTTP CLIENT
@@ -191,7 +193,7 @@ export class LandingPageComponent implements OnInit {
   // ============================================================================
   public featuredProducts: ProductDto[] = [];
   public availableBrands: string[] = [];
-
+  public landingDto?: CmsLandingPageDto | null;
 
   testimonials = [
     {
@@ -223,13 +225,34 @@ export class LandingPageComponent implements OnInit {
     private cartService: CartService,
     private toastService: ToastService,
     private productApi: ProductApiService,
+    private cmsService: CmsApiService,
     private router: Router
   ) {}
 
-  ngOnInit()  {
+  ngOnInit() {
+    this.getFeaturedProducts();
+    this.getCmsLandingDto();
+  }
 
-this.getFeaturedProducts();
-
+  getCmsLandingDto() {
+    this.isLoading = true;
+    this.cmsService
+      .getCmsLandingPageAsync()
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (response) => {
+          try {
+            this.landingDto = response;
+          } catch (err) {
+            console.error('Validation failed', err);
+            this.toastService.error('Product data is invalid');
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load landing:', err);
+          this.toastService.error('Error loading landing');
+        },
+      });
   }
 
   getFeaturedProducts() {
@@ -265,8 +288,7 @@ this.getFeaturedProducts();
   // Once the Product details section is implemented, redirect to the product details page
   // ============================================================================
   viewProduct(product: ProductDto) {
-        this.router.navigate(['/products/details', product.id]);
-
+    this.router.navigate(['/products/details', product.id]);
   }
 
   addToCart(product: ProductDto) {

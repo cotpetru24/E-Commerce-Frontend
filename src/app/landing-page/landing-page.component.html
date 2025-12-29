@@ -9,23 +9,29 @@
       <div class="container">
         <div class="hero-text">
           <h1 class="hero-title">
-            Step into
+            <!-- Step into
             <span class="accent-text">Style</span>
             <br>Walk with
-            <span class="accent-text">Confidence</span>
+            <span class="accent-text">Confidence</span> -->
+            <span class="accent-text">
+              {{landingDto?.heroTitle}}
+            </span>
+            <br>
+            <span class="accent-text">
+              {{landingDto?.heroSubtitle}}
+            </span>
           </h1>
           <p class="hero-subtitle">
-            Discover the perfect blend of comfort and fashion. From casual sneakers to elegant formal wear,
-            we have the shoes that match your lifestyle and personality.
+            {{landingDto?.heroDescription}}
           </p>
           <div class="hero-actions">
             <button class="btn btn-primary btn-lg cta-button" routerLink="/products">
               <i class="bi bi-bag"></i>
-              Shop Now
+              {{landingDto?.heroPrimaryButtonText}}
             </button>
             <button class="btn btn-outline-primary btn-lg secondary-button" (click)="scrollToCategories()">
               <i class="bi bi-compass"></i>
-              Explore Categories
+              {{landingDto?.heroSecondaryButtonText}}
             </button>
           </div>
           <div class="hero-stats">
@@ -47,7 +53,8 @@
         <div class="hero-visual">
           <div class="hero-shoe-showcase">
             <div class="hero-image">
-              <img src="/assets/content/hero_section.png" alt="Premium Running Shoe">
+              <img [src]="'data:image/png;base64,' + landingDto?.heroBackgroundImageBase64" alt="Premium Running Shoe">
+
             </div>
           </div>
         </div>
@@ -62,62 +69,43 @@
         <h2 class="section-title">Shop by Category</h2>
         <p class="section-subtitle">Find your perfect fit across our diverse collection</p>
       </div>
-
       <div class="categories-grid">
+
+        @for (category of landingDto?.categories; track $index) {
+
+
         <div class="category-card" [routerLink]="['/products', 'men']">
           <div class="category-image">
-            <img src="/assets/products/running-shoe.png" alt="Men's Shoes">
+            <!-- <img src="/assets/products/running-shoe.png" alt="Men's Shoes"> -->
+
+            <img [src]="'data:image/png;base64,' + category.imageBase64 " alt="Premium Running Shoe">
+
             <div class="category-overlay">
-              <i class="bi bi-person"></i>
+              <!-- <i class=""></i> -->
             </div>
           </div>
           <div class="category-content">
-            <h3>Men's Collection</h3>
-            <p>From athletic performance to business casual</p>
-            <span class="category-count">200+ Styles</span>
+            <h3>{{category.title}}</h3>
+            <p>{{category.description}}</p>
+            <span class="category-count">{{category.itemTagline}}</span>
           </div>
         </div>
 
-        <div class="category-card" [routerLink]="['/products', 'women']">
-          <div class="category-image">
-            <img src="/assets/products/casual-sneaker.png" alt="Women's Shoes">
-            <div class="category-overlay">
-              <i class="bi bi-person-heart"></i>
-            </div>
-          </div>
-          <div class="category-content">
-            <h3>Women's Collection</h3>
-            <p>Elegant designs that empower your style</p>
-            <span class="category-count">250+ Styles</span>
-          </div>
-        </div>
+        }
 
-        <div class="category-card" routerLink="/products/children">
-          <div class="category-image">
-            <img src="/assets/products/retro-sneaker.png" alt="Children's Shoes">
-            <div class="category-overlay">
-              <i class="bi bi-emoji-smile"></i>
-            </div>
-          </div>
-          <div class="category-content">
-            <h3>Children's Collection</h3>
-            <p>Comfortable and durable for active kids</p>
-            <span class="category-count">100+ Styles</span>
-          </div>
-        </div>
       </div>
     </div>
   </section>
 
   <!-- Featured Products Section -->
   <section class="featured-section">
-      @if (isLoading)
-      {
-      <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
-        <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
-        <span>Loading...</span>
-      </div>
-      }
+    @if (isLoading)
+    {
+    <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
+      <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
+      <span>Loading...</span>
+    </div>
+    }
 
 
 
@@ -128,17 +116,17 @@
       </div>
 
       <div class="featured-grid">
-        <div class="featured-product"  (click)="viewProduct(product)" *ngFor="let product of featuredProducts">
+        <div class="featured-product" (click)="viewProduct(product)" *ngFor="let product of featuredProducts">
           <div class="product-image" title="View product">
 
-            @for (image of product.productImages; track image)  {
-              @if (image.isPrimary) {
+            @for (image of product.productImages; track image) {
+            @if (image.isPrimary) {
 
             <img [src]="'/assets/'+image.imagePath" [alt]="product.name" title="product.name">
 
 
-              break;
-              }
+            break;
+            }
             }
             <div class="product-badge" *ngIf="product.isNew">New</div>
             <!-- <div class="product-badge sale" *ngIf="product.discount">-{{product.discount}}%</div> -->
@@ -172,37 +160,18 @@
   <section class="features-section">
     <div class="container">
       <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="bi bi-truck"></i>
-          </div>
-          <h3>Free Shipping</h3>
-          <p>Free standard shipping on orders over $50</p>
-        </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="bi bi-shield-check"></i>
-          </div>
-          <h3>Secure Payment</h3>
-          <p>100% secure payment processing</p>
-        </div>
 
+        @for (feature of landingDto?.features; track $index){
         <div class="feature-card">
           <div class="feature-icon">
-            <i class="bi bi-arrow-repeat"></i>
+            <i class="bi {{feature.iconClass}}"></i>
           </div>
-          <h3>Easy Returns</h3>
-          <p>30-day return policy</p>
+          <h3>{{feature.title}}</h3>
+          <p>{{feature.description}}</p>
         </div>
+        }
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="bi bi-headset"></i>
-          </div>
-          <h3>24/7 Support</h3>
-          <p>Round-the-clock customer support</p>
-        </div>
       </div>
     </div>
   </section>

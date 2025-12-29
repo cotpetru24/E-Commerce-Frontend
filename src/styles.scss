@@ -3,5 +3,18 @@
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
 
+:root {
+  --navbar-bg-color: #1a1a1a;
+  --navbar-link-color: #ffffff;
+  --navbar-text-color: #ffffff;
+
+  --footer-bg-color: #1a1a1a;
+  --footer-link-color: #ffffff;
+  --footer-text-color: #ffffff;
+
+}
+
+
+
 html, body { height: 100%; min-height: vh100; }
 body { min-height: vh100; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }

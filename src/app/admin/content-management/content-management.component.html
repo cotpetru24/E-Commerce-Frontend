@@ -13,67 +13,86 @@
     </ol>
   </nav>
 
-  <div class="row mb-5">
-    <div class="col-lg-3">
-      <!-- Navigation Sidebar -->
-      <div class="card shadow-sm">
-                <div class="list-group list-group-flush">
-          <!-- <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'branding'}"
-             (click)="setActiveSection('branding')"> -->
-            <i class="bi bi-bookmarks me-2"></i>Saved Profiles
-          <!-- </a> -->
-          </div>
-        <div class="card-header bg-light">
-          <h6 class="mb-0">
-            <i class="bi bi-list me-2"></i>Content Sections
-          </h6>
+  <!-- Profiles Table -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+      style="cursor: pointer;" (click)="isProfilesCardCollapsed = !isProfilesCardCollapsed">
+      <h5 class="mb-0">
+        <i class="bi" [ngClass]="isProfilesCardCollapsed ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+        <i class="bi bi-folder me-2"></i>Available Profiles
+      </h5>
+      <div class="d-flex gap-2" (click)="$event.stopPropagation()">
+        <button class="btn btn-light btn-sm" (click)="createNewProfile()" *ngIf="!isProfilesCardCollapsed">
+          <i class="bi bi-plus-circle me-1"></i>New Profile
+        </button>
+        <button class="btn btn-light btn-sm" (click)="expandProfilesCard()" *ngIf="isProfilesCardCollapsed">
+          <i class="bi bi-chevron-down me-1"></i>Show Profiles
+        </button>
+      </div>
+    </div>
+    <div class="collapse" [class.show]="!isProfilesCardCollapsed">
+      <div class="card-body">
+        <div class="table-responsive" *ngIf="!isLoading">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Profile Name</th>
+                <th>Status</th>
+                <th>Last Modified</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let profile of storedProfiles" [class.table-active]="selectedProfileId === profile.id"
+                [class.table-success]="profile.isActive">
+                <td>
+                  <strong>{{ profile.profileName }}</strong>
+                  <span class="badge bg-success ms-2" *ngIf="profile.isActive">Active</span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="profile.isActive ? 'bg-success' : 'bg-secondary'">
+                    {{ profile.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>{{ profile.lastModified | date:'short' }}</td>
+                <td>{{ profile.createdAt | date:'short' }}</td>
+                <td>
+                  <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-outline-primary" (click)="selectProfile(profile)" [disabled]="isLoading">
+                      <i class="bi bi-eye me-1"></i>Select
+                    </button>
+                    <button class="btn btn-outline-success" (click)="activateCmsProfile(profile)"
+                      [disabled]="isLoading || profile.isActive">
+                      <i class="bi bi-check-circle me-1"></i>Activate
+                    </button>
+                    <button class="btn btn-outline-danger" (click)="deleteProfile(profile)"
+                      [disabled]="isLoading || !canDeleteProfile(profile)"
+                      [title]="!canDeleteProfile(profile) ? (profile.isActive ? 'Cannot delete active profile' : 'Cannot delete last profile') : 'Delete profile'">
+                      <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="storedProfiles.length === 0">
+                <td colspan="5" class="text-center text-muted">
+                  No profiles available. Click "New Profile" to create one.
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="list-group list-group-flush">
-          <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'branding'}"
-             (click)="setActiveSection('branding')">
-            <i class="bi bi-palette me-2"></i>Branding & Logo
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'colors'}"
-             (click)="setActiveSection('colors')">
-            <i class="bi bi-palette2 me-2"></i>Color Scheme
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'hero'}"
-             (click)="setActiveSection('hero')">
-            <i class="bi bi-stars me-2"></i>Hero Section
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'categories'}"
-             (click)="setActiveSection('categories')">
-            <i class="bi bi-grid me-2"></i>Categories
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'features'}"
-             (click)="setActiveSection('features')">
-            <i class="bi bi-star me-2"></i>Features
-          </a>
-          <!-- <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'testimonials'}"
-             (click)="setActiveSection('testimonials')">
-            <i class="bi bi-chat-quote me-2"></i>Testimonials
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'brands'}"
-             (click)="setActiveSection('brands')">
-            <i class="bi bi-award me-2"></i>Brands
-          </a> -->
-          <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'newsletter'}"
-             (click)="setActiveSection('newsletter')">
-            <i class="bi bi-envelope me-2"></i>Newsletter
-          </a>
+        <div *ngIf="isLoading" class="text-center py-3">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
+  <div class="row mb-5" *ngIf="isEditingMode">
+    <!-- Main Content (Left Side) -->
     <div class="col-lg-9">
       <!-- Branding & Logo Editor -->
       <div class="card shadow-sm" *ngIf="activeSection === 'branding'">
@@ -87,69 +106,56 @@
             <div class="col-md-6 mb-4">
               <h6 class="mb-3">Website Logo</h6>
               <div class="border rounded p-3 text-center mb-3">
-                <div class="mb-3" *ngIf="!brandingContent.logoUrl">
+                <div class="mb-3" *ngIf="profile.logoBase64">
                   <i class="bi bi-image display-4 text-muted"></i>
                 </div>
-                <img *ngIf="brandingContent.logoUrl" 
-                     [src]="brandingContent.logoUrl" 
-                     alt="Website Logo" 
-                     class="img-fluid mb-3" 
-                     style="max-height: 100px;">
+                <img *ngIf="profile.logoBase64" [src]="profile.logoBase64" alt="Website Logo"
+                  class="img-fluid mb-3" style="max-height: 100px;">
                 <p class="text-muted mb-2">Upload your website logo</p>
                 <button class="btn btn-outline-primary btn-sm" (click)="logoInput.click()">
                   <i class="bi bi-upload me-2"></i>Choose Logo
                 </button>
-                <input #logoInput type="file" 
-                       class="d-none" 
-                       accept="image/*" 
-                       (change)="onLogoUpload($event)">
+                <input #logoInput type="file" class="d-none" accept="image/*" (change)="onLogoUpload($event)">
               </div>
               <div class="form-check">
-                <input class="form-check-input" 
-                       type="checkbox" 
-                       id="useLogo" 
-                       [(ngModel)]="brandingContent.useLogo">
+                <input class="form-check-input" type="checkbox" id="useLogo" [(ngModel)]="profile.showLogoInHeader">
                 <label class="form-check-label" for="useLogo">
                   Display logo in header
                 </label>
               </div>
             </div>
-            
+
             <div class="col-md-6 mb-4">
               <h6 class="mb-3">Favicon</h6>
               <div class="border rounded p-3 text-center mb-3">
-                <div class="mb-3" *ngIf="!brandingContent.faviconUrl">
+                <div class="mb-3" *ngIf="profile!.faviconBase64">
                   <i class="bi bi-image display-4 text-muted"></i>
                 </div>
-                <img *ngIf="brandingContent.faviconUrl" 
-                     [src]="brandingContent.faviconUrl" 
-                     alt="Favicon" 
-                     class="img-fluid mb-3" 
-                     style="max-height: 32px;">
+                <img *ngIf="profile!.faviconBase64" [src]="profile!.faviconBase64" alt="Favicon" class="img-fluid mb-3"
+                  style="max-height: 32px;">
                 <p class="text-muted mb-2">Upload favicon (32x32px recommended)</p>
                 <button class="btn btn-outline-primary btn-sm" (click)="faviconInput.click()">
                   <i class="bi bi-upload me-2"></i>Choose Favicon
                 </button>
-                <input #faviconInput type="file" 
-                       class="d-none" 
-                       accept="image/*" 
-                       (change)="onFaviconUpload($event)">
+                <input #faviconInput type="file" class="d-none" accept="image/*" (change)="onFaviconUpload($event)">
               </div>
             </div>
           </div>
-          
+
           <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Website Name</label>
-              <input type="text" class="form-control" 
-                     [(ngModel)]="brandingContent.websiteName"
-                     placeholder="Enter website name">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Profile Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" [(ngModel)]="profileName" placeholder="Enter profile name">
+              <small class="form-text text-muted">Unique name for this profile</small>
             </div>
-            <div class="col-md-6 mb-3">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Website Name</label>
+              <input type="text" class="form-control" [(ngModel)]="profile!.websiteName"
+                placeholder="Enter website name">
+            </div>
+            <div class="col-md-4 mb-3">
               <label class="form-label">Tagline</label>
-              <input type="text" class="form-control" 
-                     [(ngModel)]="brandingContent.tagline"
-                     placeholder="Enter tagline">
+              <input type="text" class="form-control" [(ngModel)]="profile!.tagline" placeholder="Enter tagline">
             </div>
           </div>
         </div>
@@ -169,131 +175,83 @@
               <div class="mb-3">
                 <label class="form-label">Background Color</label>
                 <div class="input-group">
-                  <input type="color" 
-                         class="form-control form-control-color" 
-                         [(ngModel)]="colorScheme.navbarBackground"
-                         title="Choose navbar background color">
-                  <input type="text" 
-                         class="form-control" 
-                         [(ngModel)]="colorScheme.navbarBackground"
-                         placeholder="#ffffff">
+                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarBgColor"
+                    title="Choose navbar background color">
+                  <input type="text" class="form-control" [(ngModel)]="profile.navbarBgColor" placeholder="#ffffff">
                 </div>
               </div>
               <div class="mb-3">
                 <label class="form-label">Text Color</label>
                 <div class="input-group">
-                  <input type="color" 
-                         class="form-control form-control-color" 
-                         [(ngModel)]="colorScheme.navbarText"
-                         title="Choose navbar text color">
-                  <input type="text" 
-                         class="form-control" 
-                         [(ngModel)]="colorScheme.navbarText"
-                         placeholder="#000000">
+                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarTextColor"
+                    title="Choose navbar text color">
+                  <input type="text" class="form-control" [(ngModel)]="profile.navbarTextColor" placeholder="#000000">
                 </div>
               </div>
               <div class="mb-3">
                 <label class="form-label">Link Color</label>
                 <div class="input-group">
-                  <input type="color" 
-                         class="form-control form-control-color" 
-                         [(ngModel)]="colorScheme.navbarLink"
-                         title="Choose navbar link color">
-                  <input type="text" 
-                         class="form-control" 
-                         [(ngModel)]="colorScheme.navbarLink"
-                         placeholder="#007bff">
+                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarLinkColor"
+                    title="Choose navbar link color">
+                  <input type="text" class="form-control" [(ngModel)]="profile.navbarLinkColor" placeholder="#007bff">
                 </div>
               </div>
             </div>
-            
+
             <div class="col-md-6 mb-4">
               <h6 class="mb-3">Footer Colors</h6>
               <div class="mb-3">
                 <label class="form-label">Background Color</label>
                 <div class="input-group">
-                  <input type="color" 
-                         class="form-control form-control-color" 
-                         [(ngModel)]="colorScheme.footerBackground"
-                         title="Choose footer background color">
-                  <input type="text" 
-                         class="form-control" 
-                         [(ngModel)]="colorScheme.footerBackground"
-                         placeholder="#343a40">
+                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerBgColor"
+                    title="Choose footer background color">
+                  <input type="text" class="form-control" [(ngModel)]="profile.footerBgColor" placeholder="#343a40">
                 </div>
               </div>
               <div class="mb-3">
                 <label class="form-label">Text Color</label>
                 <div class="input-group">
-                  <input type="color" 
-                         class="form-control form-control-color" 
-                         [(ngModel)]="colorScheme.footerText"
-                         title="Choose footer text color">
-                  <input type="text" 
-                         class="form-control" 
-                         [(ngModel)]="colorScheme.footerText"
-                         placeholder="#ffffff">
+                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerTextColor"
+                    title="Choose footer text color">
+                  <input type="text" class="form-control" [(ngModel)]="profile.footerTextColor" placeholder="#ffffff">
                 </div>
               </div>
               <div class="mb-3">
                 <label class="form-label">Link Color</label>
                 <div class="input-group">
-                  <input type="color" 
-                         class="form-control form-control-color" 
-                         [(ngModel)]="colorScheme.footerLink"
-                         title="Choose footer link color">
-                  <input type="text" 
-                         class="form-control" 
-                         [(ngModel)]="colorScheme.footerLink"
-                         placeholder="#17a2b8">
+                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerLinkColor"
+                    title="Choose footer link color">
+                  <input type="text" class="form-control" [(ngModel)]="profile.footerLinkColor" placeholder="#17a2b8">
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-12">
               <h6 class="mb-3">Preview</h6>
               <div class="border rounded p-3">
-                <div class="mb-3" 
-                     [style.background-color]="colorScheme.navbarBackground"
-                     [style.color]="colorScheme.navbarText"
-                     style="padding: 10px; border-radius: 4px;">
+                <div class="mb-3" [style.background-color]="profile.navbarBgColor"
+                  [style.color]="profile.navbarTextColor" style="padding: 10px; border-radius: 4px;">
                   <strong>Navbar Preview</strong>
-                  <a href="#" 
-                     [style.color]="colorScheme.navbarLink" 
-                     style="margin-left: 15px; text-decoration: none;">Home</a>
-                  <a href="#" 
-                     [style.color]="colorScheme.navbarLink" 
-                     style="margin-left: 15px; text-decoration: none;">Products</a>
+                  <a href="#" [style.color]="profile.navbarBgColor"
+                    style="margin-left: 15px; text-decoration: none;">Home</a>
+                  <a href="#" [style.color]="profile.navbarBgColor"
+                    style="margin-left: 15px; text-decoration: none;">Products</a>
                 </div>
-                <div [style.background-color]="colorScheme.footerBackground"
-                     [style.color]="colorScheme.footerText"
-                     style="padding: 10px; border-radius: 4px;">
+                <div [style.background-color]="profile.footerBgColor" [style.color]="profile.footerTextColor"
+                  style="padding: 10px; border-radius: 4px;">
                   <strong>Footer Preview</strong>
-                  <a href="#" 
-                     [style.color]="colorScheme.footerLink" 
-                     style="margin-left: 15px; text-decoration: none;">About</a>
-                  <a href="#" 
-                     [style.color]="colorScheme.footerLink" 
-                     style="margin-left: 15px; text-decoration: none;">Contact</a>
+                  <a href="#" [style.color]="profile.footerLinkColor"
+                    style="margin-left: 15px; text-decoration: none;">About</a>
+                  <a href="#" [style.color]="profile.footerLinkColor"
+                    style="margin-left: 15px; text-decoration: none;">Contact</a>
                 </div>
               </div>
             </div>
           </div>
-          
-          <div class="row mt-4">
-            <div class="col-12">
-              <div class="d-flex gap-2">
-                <!-- <button class="btn btn-primary" (click)="applyColorScheme()">
-                  <i class="bi bi-check-circle me-2"></i>Apply Color Scheme
-                </button>
-                <button class="btn btn-outline-secondary" (click)="exportBrandingAssets()">
-                  <i class="bi bi-download me-2"></i>Export Assets
-                </button> -->
-              </div>
-            </div>
-          </div>
+
+
         </div>
       </div>
 
@@ -308,39 +266,30 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Main Title</label>
-              <input type="text" class="form-control" 
-                     [(ngModel)]="heroContent.mainTitle"
-                     placeholder="Enter main title">
+              <input type="text" class="form-control" [(ngModel)]="profile.heroTitle" placeholder="Enter main title">
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Subtitle</label>
-              <input type="text" class="form-control" 
-                     [(ngModel)]="heroContent.subtitle"
-                     placeholder="Enter subtitle">
+              <input type="text" class="form-control" [(ngModel)]="profile.heroSubtitle" placeholder="Enter subtitle">
             </div>
           </div>
           <div class="mb-3">
             <label class="form-label">Description</label>
-            <textarea class="form-control" rows="3" 
-                      [(ngModel)]="heroContent.description"
-                      placeholder="Enter description"></textarea>
+            <textarea class="form-control" rows="3" [(ngModel)]="profile.heroDescription"
+              placeholder="Enter description"></textarea>
           </div>
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label">Primary Button Text</label>
-              <input type="text" class="form-control" 
-                     [(ngModel)]="heroContent.primaryButtonText">
+              <input type="text" class="form-control" [(ngModel)]="profile.heroPrimaryButtonText">
             </div>
             <div class="col-md-4 mb-3">
               <label class="form-label">Secondary Button Text</label>
-              <input type="text" class="form-control" 
-                     [(ngModel)]="heroContent.secondaryButtonText">
+              <input type="text" class="form-control" [(ngModel)]="profile.heroSecondaryButtonText">
             </div>
             <div class="col-md-4 mb-3">
               <label class="form-label">Background Image</label>
-              <input type="file" class="form-control" 
-                     (change)="onImageUpload($event, 'hero')"
-                     accept="image/*">
+              <input type="file" class="form-control" (change)="onImageUpload($event, 'hero')" accept="image/*">
             </div>
           </div>
         </div>
@@ -348,42 +297,50 @@
 
       <!-- Categories Editor -->
       <div class="card shadow-sm" *ngIf="activeSection === 'categories'">
-        <div class="card-header bg-success text-white">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
             <i class="bi bi-grid me-2"></i>Categories
           </h5>
+          <button class="btn btn-light btn-sm" (click)="addCategory()">
+            <i class="bi bi-plus-circle me-1"></i>Add Category
+          </button>
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6 mb-3" *ngFor="let category of categoriesContent; let i = index">
+            <div class="col-md-6 mb-3" *ngFor="let category of profile.categories; let i = index">
               <div class="card">
-                <div class="card-header">
-                  <h6 class="mb-0">Category {{ i + 1 }}</h6>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0">Category order:</h6>
+                  <input type="text" class="form-control" [(ngModel)]="category.sortOrder" />
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </div>
                 <div class="card-body">
                   <div class="mb-3">
                     <label class="form-label">Title</label>
-                    <input type="text" class="form-control" 
-                           [(ngModel)]="category.title">
+                    <input type="text" class="form-control" [(ngModel)]="category.title">
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control" rows="2" 
-                              [(ngModel)]="category.description"></textarea>
+                    <textarea class="form-control" rows="2" [(ngModel)]="category.description"></textarea>
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Image</label>
-                    <input type="file" class="form-control" 
-                           (change)="onImageUpload($event, 'category', i)"
-                           accept="image/*">
+                    <input type="file" class="form-control" (change)="onImageUpload($event, 'category', i)"
+                      accept="image/*">
+                    <img *ngIf="category.imageBase64" [src]="category.imageBase64" alt="Category Image"
+                      class="img-thumbnail mt-2" style="max-height: 100px;">
                   </div>
                   <div class="mb-3">
-                    <label class="form-label">Item Count</label>
-                    <input type="text" class="form-control" 
-                           [(ngModel)]="category.itemCount">
+                    <label class="form-label">Tagline</label>
+                    <input type="text" class="form-control" [(ngModel)]="category.itemTagline">
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="col-12" *ngIf="profile.categories.length === 0">
+              <p class="text-muted text-center">No categories added yet. Click "Add Category" to create one.</p>
             </div>
           </div>
         </div>
@@ -391,37 +348,44 @@
 
       <!-- Features Editor -->
       <div class="card shadow-sm" *ngIf="activeSection === 'features'">
-        <div class="card-header bg-info text-white">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
             <i class="bi bi-star me-2"></i>Features
           </h5>
+          <button class="btn btn-light btn-sm" (click)="addFeature()">
+            <i class="bi bi-plus-circle me-1"></i>Add Feature
+          </button>
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6 mb-3" *ngFor="let feature of featuresContent; let i = index">
+            <div class="col-md-6 mb-3" *ngFor="let feature of profile.features; let i = index">
               <div class="card">
-                <div class="card-header">
-                  <h6 class="mb-0">Feature {{ i + 1 }}</h6>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0">Feature order:</h6>
+                  <input type="text" class="form-control" [(ngModel)]="feature.sortOrder" />
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteFeature(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </div>
                 <div class="card-body">
                   <div class="mb-3">
                     <label class="form-label">Icon Class</label>
-                    <input type="text" class="form-control" 
-                           [(ngModel)]="feature.icon"
-                           placeholder="bi-truck">
+                    <input type="text" class="form-control" [(ngModel)]="feature.iconClass" placeholder="bi-truck">
+                    <small class="form-text text-muted">Bootstrap icon class (e.g., bi-truck, bi-shield-check)</small>
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Title</label>
-                    <input type="text" class="form-control" 
-                           [(ngModel)]="feature.title">
+                    <input type="text" class="form-control" [(ngModel)]="feature.title">
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control" rows="2" 
-                              [(ngModel)]="feature.description"></textarea>
+                    <textarea class="form-control" rows="2" [(ngModel)]="feature.description"></textarea>
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="col-12" *ngIf="profile.features.length === 0">
+              <p class="text-muted text-center">No features added yet. Click "Add Feature" to create one.</p>
             </div>
           </div>
         </div>
@@ -523,21 +487,91 @@
         <div class="card-body">
           <div class="mb-3">
             <label class="form-label">Title</label>
-            <input type="text" class="form-control" 
-                   [(ngModel)]="newsletterContent.title">
+            <input type="text" class="form-control" [(ngModel)]="profile.newsletterTitle">
           </div>
           <div class="mb-3">
             <label class="form-label">Description</label>
-            <textarea class="form-control" rows="3" 
-                      [(ngModel)]="newsletterContent.description"></textarea>
+            <textarea class="form-control" rows="3" [(ngModel)]="profile.newsletterDescription"></textarea>
           </div>
           <div class="mb-3">
             <label class="form-label">Button Text</label>
-            <input type="text" class="form-control" 
-                   [(ngModel)]="newsletterContent.buttonText">
+            <input type="text" class="form-control" [(ngModel)]="profile.newsletterButtonText"/>
           </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Navigation Sidebar (Right Side) -->
+    <div class="col-lg-3">
+      <!-- Navigation Sidebar -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-list me-2"></i>Content Sections
+          </h6>
+        </div>
+        <div class="list-group list-group-flush">
+          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'branding'}"
+            (click)="setActiveSection('branding')">
+            <i class="bi bi-palette me-2"></i>Branding & Logo
+          </a>
+          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'colors'}"
+            (click)="setActiveSection('colors')">
+            <i class="bi bi-palette2 me-2"></i>Color Scheme
+          </a>
+          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'hero'}"
+            (click)="setActiveSection('hero')">
+            <i class="bi bi-stars me-2"></i>Hero Section
+          </a>
+          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'categories'}"
+            (click)="setActiveSection('categories')">
+            <i class="bi bi-grid me-2"></i>Categories
+          </a>
+          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'features'}"
+            (click)="setActiveSection('features')">
+            <i class="bi bi-star me-2"></i>Features
+          </a>
+          <!-- <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'testimonials'}"
+             (click)="setActiveSection('testimonials')">
+            <i class="bi bi-chat-quote me-2"></i>Testimonials
+          </a>
+          <a class="list-group-item list-group-item-action" 
+             [ngClass]="{'active': activeSection === 'brands'}"
+             (click)="setActiveSection('brands')">
+            <i class="bi bi-award me-2"></i>Brands
+          </a> -->
+          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'newsletter'}"
+            (click)="setActiveSection('newsletter')">
+            <i class="bi bi-envelope me-2"></i>Newsletter
+          </a>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="card shadow-sm mt-3" *ngIf="activeSection !== 'newsletter'">
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <button class="btn btn-secondary" (click)="cancelEditing()" [disabled]="isLoading">
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+            <button class="btn btn-primary" (click)="createCmsProfile()"
+              [disabled]="isLoading || (profile && profile.id !== 0)" *ngIf="!profile || profile.id === 0">
+              <i class="bi bi-plus-circle me-1"></i>Create New Profile
+            </button>
+            <button class="btn btn-success" (click)="updateCmsProfile()"
+              [disabled]="isLoading || !profile || profile.id === 0" *ngIf="profile && profile.id !== 0">
+              <i class="bi bi-save me-1"></i>Update Profile
+            </button>
+          </div>
+          <small class="text-muted d-block mt-2 text-center">
+            <span *ngIf="profile && profile.id !== 0">Editing: {{ profile.profileName }}</span>
+            <span *ngIf="!profile || profile.id === 0">Creating new profile</span>
+          </small>
         </div>
       </div>
     </div>
   </div>
-</div> 
+
+</div>

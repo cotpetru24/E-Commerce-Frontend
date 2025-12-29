@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
-import { CmsProfileDto, CmsStoredProfileDto } from '../../models/cms.dto';
+import { CmsLandingPageDto, CmsNavAndFooterDto, CmsProfileDto, CmsStoredProfileDto } from '../../models/cms.dto';
 import { Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -22,6 +22,25 @@ export class CmsApiService extends BaseApiService {
     );
   }
 
+  GetCmsNavAndFooterAsync(): Observable<CmsNavAndFooterDto> {
+    const url = this.buildUrl(this.baseUrl + '/navAndFooter');
+    this.logRequest('GET', url);
+
+    return this.get<CmsNavAndFooterDto>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response))
+    );
+  }
+
+  getCmsLandingPageAsync(): Observable<CmsLandingPageDto> {
+    const url = this.buildUrl(this.baseUrl + '/landing');
+    this.logRequest('GET', url);
+
+    return this.get<CmsLandingPageDto>(url).pipe(
+      tap((response) => this.logResponse('GET', url, response))
+    );
+  }
+
+
   getCmsActiveProfilesAsync(): Observable<CmsProfileDto> {
     const url = this.buildUrl(this.baseUrl + '/active');
     this.logRequest('GET', url);
@@ -30,6 +49,12 @@ export class CmsApiService extends BaseApiService {
       tap((response) => this.logResponse('GET', url, response))
     );
   }
+
+
+
+
+
+
 
   getCmsProfileByIdAsync(profileId: number): Observable<CmsProfileDto> {
     const url = this.buildUrl(`${this.baseUrl}/${profileId}`);
