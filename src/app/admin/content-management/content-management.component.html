@@ -153,6 +153,18 @@
               <input type="text" class="form-control" [(ngModel)]="profile!.tagline" placeholder="Enter tagline">
             </div>
           </div>
+
+          <div class="row">
+            <div class="col-12 mb-3">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="showLogoInHeader" [(ngModel)]="profile.showLogoInHeader">
+                <label class="form-check-label" for="showLogoInHeader">
+                  <i class="bi bi-eye me-2"></i>Show Logo in Header
+                </label>
+                <small class="form-text text-muted d-block">Display the website logo in the navigation header</small>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

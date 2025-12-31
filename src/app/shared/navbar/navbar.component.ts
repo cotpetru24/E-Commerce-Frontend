@@ -20,7 +20,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   showShopDropdown = false;
   showAccountDropdown = false;
   cartItemCount = 0;
-  websiteName ='';
+  websiteName = '';
+  websiteLogo?: String | null = null;
+  showLogo: boolean = false;
   private sub!: Subscription;
   private cartSubscription!: Subscription;
 
@@ -28,7 +30,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private toastService: ToastService,
     private authApiService: AuthApiService,
-    private cmsStateService: CmsStateService,
+    private cmsStateService: CmsStateService
   ) {
     // Check screen size on initialization
     this.checkScreenSize();
@@ -41,13 +43,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.cartItemCount = this.cartService.getCartItemCount();
     });
 
-
-        this.sub = this.cmsStateService.cmsProfile$.subscribe(profile => {
+    this.sub = this.cmsStateService.cmsProfile$.subscribe((profile) => {
       if (!profile) return;
       this.websiteName = profile.websiteName;
+      this.websiteLogo = profile.websiteLogo;
+      this.showLogo = profile.showLogo;
     });
-
-
   }
 
   ngOnDestroy() {
@@ -84,11 +85,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  isAdmin():boolean{
+  isAdmin(): boolean {
     return this.authApiService.isAdmin();
   }
 
-  isLoggedIn():boolean{
-    return  this.authApiService.isLoggedIn();
+  isLoggedIn(): boolean {
+    return this.authApiService.isLoggedIn();
   }
 }

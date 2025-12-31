@@ -7,6 +7,7 @@ export interface CmsProfileDto {
   tagline?: string;
   logoBase64?: string;
   faviconBase64?: string;
+  showLogoInHeader?: boolean;
 
   navbarBgColor: string;
   navbarTextColor: string;
@@ -84,4 +85,8 @@ export interface CmsNavAndFooterDto {
   footerLinkColor: string;
 
   websiteName:string;
+  websiteLogo:string;
+  showLogo:boolean;
+
+  favicon:string;
 }

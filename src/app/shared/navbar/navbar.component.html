@@ -2,8 +2,13 @@
   <div class="container">
     <!-- Brand -->
     <a class="navbar-brand" routerLink="/">
+      @if(!showLogo){
       <i class="bi bi-bag-heart"></i>
       <span>{{websiteName}}</span>
+      }
+      @else {
+      <img [src]="'data:image/png;base64,' +websiteLogo" class="img-fluid logo" alt="Website Logo" />
+      }
     </a>
 
     <!-- Mobile Toggle Button -->
@@ -40,30 +45,29 @@
           <a class="nav-link position-relative" routerLink="/cart/view" routerLinkActive="active">
             <i class="bi bi-cart3"></i> Cart
             @if (cartItemCount > 0) {
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{ cartItemCount }}
-              </span>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {{ cartItemCount }}
+            </span>
             }
           </a>
         </li>
 
         @if (!isLoggedIn()) {
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/auth/login" routerLinkActive="active">
-              <i class="bi bi-person"></i> Login
-            </a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/auth/login" routerLinkActive="active">
+            <i class="bi bi-person"></i> Login
+          </a>
+        </li>
         }
 
         @if (isLoggedIn()) {
-          <li class="nav-item">
-            <a class="nav-link" href="/" role="button" (click)="logout()">
-              <i class="bi bi-box-arrow-right"></i>
-              Logout</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/" role="button" (click)="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+            Logout</a>
+        </li>
 
-          <li class="nav-item dropdown" (mouseenter)="showAccountDropdown=true"
-            (mouseleave)="showAccountDropdown=false">
+        <li class="nav-item dropdown" (mouseenter)="showAccountDropdown=true" (mouseleave)="showAccountDropdown=false">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class=" bi bi-person-circle"></i>Account
           </a>
@@ -75,15 +79,15 @@
             </li>
             }
           </ul>
-          </li>
+        </li>
         }
 
         @if (isAdmin() && isLoggedIn()) {
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/admin" routerLinkActive="active">
-              <i class="bi bi-gear"></i> Admin
-            </a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/admin" routerLinkActive="active">
+            <i class="bi bi-gear"></i> Admin
+          </a>
+        </li>
         }
       </ul>
     </div>

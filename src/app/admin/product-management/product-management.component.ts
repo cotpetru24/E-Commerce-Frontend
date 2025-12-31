@@ -18,6 +18,7 @@ import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { Audience } from '../../models';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -181,14 +182,6 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     return pages;
   }
 
-  //   getCategoryClass(category: Audience): string {
-  //   if (category.toLowerCase() === Audience.Men) return 'bg-primary';
-  //   if (category.toLowerCase() === Audience.Women) return 'bg-pink';
-  //   if (category.toLowerCase() === Audience.Children) return 'bg-yellow';
-  //   if (category.toLowerCase() === Audience.Unisex) return 'bg-yellowgreen';
-  //   return 'text-success';
-  // }
-
   getCategoryClass(category: string): string {
     switch (category.toLowerCase()) {
       case Audience.Men:
@@ -203,12 +196,6 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
         return 'bg-success';
     }
   }
-
-  // getStockBadgeClass(stock: number): string {
-  //   if (stock <= 0) return 'badge bg-danger';
-  //   if (stock < 10) return 'badge bg-warning';
-  //   return 'badge bg-success';
-  // }
 
   getStockBadgeClass(stock: number): string {
     if (stock <= 0) return 'bg-danger';
@@ -282,5 +269,26 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       );
 
     }}))
+  }
 
-}}
+  openBarcodeScannerForSearch() {
+    const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
+      size: 'lg',
+      centered: true
+    });
+
+    modalRef.result.then(
+      (barcode: string) => {
+        if (barcode) {
+          this.searchTerm = barcode;
+          this.currentPage = 1;
+          this.loadProducts();
+          this.toastService.success(`Searching for barcode: ${barcode}`);
+        }
+      },
+      () => {
+        // Modal dismissed
+      }
+    );
+  }
+}

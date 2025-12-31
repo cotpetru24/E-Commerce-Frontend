@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
+import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import {
   AdminBrandDto,
   AdminProductAudienceDto,
@@ -48,6 +49,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private toastService: ToastService,
     private adminApiService: AdminApiService,
     private modalService: NgbModal,
@@ -57,6 +59,13 @@ export class AddProductComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getProductBrands();
     this.getProductAudience();
+    
+    // Check for barcode in query params
+    this.route.queryParams.subscribe(params => {
+      if (params['barcode']) {
+        this.newSize.barcode = params['barcode'];
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -134,6 +143,44 @@ export class AddProductComponent implements OnInit, OnDestroy {
 
   removeSize(index: number) {
     this.productData?.productSizes?.splice(index, 1);
+  }
+
+  openBarcodeScanner() {
+    const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
+      size: 'lg',
+      centered: true
+    });
+
+    modalRef.result.then(
+      (barcode: string) => {
+        if (barcode) {
+          this.newSize.barcode = barcode;
+          this.toastService.success(`Barcode scanned: ${barcode}`);
+        }
+      },
+      () => {
+        // Modal dismissed
+      }
+    );
+  }
+
+  openBarcodeScannerForSize(index: number) {
+    const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
+      size: 'lg',
+      centered: true
+    });
+
+    modalRef.result.then(
+      (barcode: string) => {
+        if (barcode && this.productData?.productSizes && this.productData.productSizes[index]) {
+          this.productData.productSizes[index].barcode = barcode;
+          this.toastService.success(`Barcode scanned: ${barcode}`);
+        }
+      },
+      () => {
+        // Modal dismissed
+      }
+    );
   }
 
   allowDecimalOnly(event: KeyboardEvent): void {

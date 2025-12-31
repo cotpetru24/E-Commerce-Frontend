@@ -17,7 +17,9 @@ export class FooterComponent implements OnInit {
   newsletterEmail: string = '';
   showBackToTop: boolean = false;
   websiteName = '';
-private sub!: Subscription;
+  websiteLogo?: String | null = null;
+  showLogo: boolean = false;
+  private sub!: Subscription;
 
   constructor(
     private toastService: ToastService,
@@ -28,6 +30,8 @@ private sub!: Subscription;
     this.sub = this.cmsStateService.cmsProfile$.subscribe((profile) => {
       if (!profile) return;
       this.websiteName = profile.websiteName;
+      this.websiteLogo = profile.websiteLogo;
+      this.showLogo = profile.showLogo;
     });
   }
 

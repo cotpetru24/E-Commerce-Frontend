@@ -127,6 +127,11 @@ color: var(--footer-link-color);
     border-color: rgba(255, 255, 255, 0.1) !important;
   }
 
+.logo{
+  max-width: 200px;
+  max-height: 50px;
+}
+
   .payment-methods {
     .text-muted {
       color: #b0b0b0 !important;

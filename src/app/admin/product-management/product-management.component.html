@@ -92,14 +92,17 @@
                             <label for="searchInput" class="form-label">Search Products</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="searchInput" [(ngModel)]="searchTerm"
-                                (keyup.enter)="onFilterChange()" placeholder="Search by name, description...">
+                                (keyup.enter)="onFilterChange()" placeholder="Search by name, description, barcode...">
+                                <button class="btn btn-outline-primary" type="button" (click)="openBarcodeScannerForSearch()" title="Scan Barcode">
+                                    <i class="bi bi-upc-scan"></i>
+                                </button>
 
 
 
 
 
                                 <span class="input-group-text">
-                                <button class="btn page-link" (click)="onFilterChange()" title="Search Orders">
+                                <button class="btn page-link" (click)="onFilterChange()" title="Search Products">
                                     <i class="bi bi-search"></i>
                                 </button>
                                 </span>

@@ -316,7 +316,10 @@
                           <td>
                             <div class="input-group input-group-sm">
                               <input type="text" class="form-control form-control-sm border-0"
-                                [(ngModel)]="size.barcode" name="barcode{{$index}}" placeholder="Barcode" disabled>
+                                [(ngModel)]="size.barcode" name="barcode{{$index}}" placeholder="Barcode" readonly>
+                              <button type="button" class="btn btn-outline-primary btn-sm" (click)="openBarcodeScannerForSize($index)" title="Scan Barcode">
+                                <i class="bi bi-upc-scan"></i>
+                              </button>
                             </div>
                           </td>
                           <td class="text-center align-middle">
@@ -350,8 +353,13 @@
                               [(ngModel)]="newSize.stock" name="newStock" min="0" placeholder="Stock">
                           </td>
                           <td>
-                            <input type="text" class="form-control form-control-sm border-0"
-                              [(ngModel)]="newSize.barcode" name="newBarcode" placeholder="Barcode...">
+                            <div class="input-group input-group-sm">
+                              <input type="text" class="form-control form-control-sm border-0"
+                                [(ngModel)]="newSize.barcode" name="newBarcode" placeholder="Barcode...">
+                              <button type="button" class="btn btn-outline-primary btn-sm" (click)="openBarcodeScanner()" title="Scan Barcode">
+                                <i class="bi bi-upc-scan"></i>
+                              </button>
+                            </div>
                           </td>
                           <td class="text-center align-middle">
                             <button type="button" class="btn btn-outline-primary btn-sm" (click)="addSize()">

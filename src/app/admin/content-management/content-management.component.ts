@@ -5,7 +5,11 @@ import { RouterModule } from '@angular/router';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { CmsApiService } from '../../services/api/cms-api.service';
 import { ToastService } from '../../services/toast.service';
-import { CmsProfileDto, CmsStoredProfileDto, CmsNavAndFooterDto } from '../../models/cms.dto';
+import {
+  CmsProfileDto,
+  CmsStoredProfileDto,
+  CmsNavAndFooterDto,
+} from '../../models/cms.dto';
 import { finalize } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
@@ -28,8 +32,6 @@ export class ContentManagementComponent implements OnInit {
   profileName: string = '';
   isProfilesCardCollapsed: boolean = false;
   isEditingMode: boolean = false;
-
-
 
   testimonialsContent = [
     {
@@ -55,14 +57,11 @@ export class ContentManagementComponent implements OnInit {
     },
   ];
 
-
-
-
   constructor(
     private toastService: ToastService,
     private cmsApiService: CmsApiService,
     private modalService: NgbModal,
-    private cmsStateService:CmsStateService
+    private cmsStateService: CmsStateService
   ) {}
 
   ngOnInit() {
@@ -118,11 +117,8 @@ export class ContentManagementComponent implements OnInit {
   }
 
   populateContentFromProfile(profile: CmsProfileDto) {
-this.profile = profile;
-// this.profile.categories = [...this.profile.categories];
-
-
-
+    this.profile = profile;
+    // this.profile.categories = [...this.profile.categories];
 
     // Populate categories
     this.profile!.categories = profile.categories.map((cat) => ({
@@ -151,7 +147,7 @@ this.profile = profile;
     this.isEditingMode = true;
     this.isProfilesCardCollapsed = true;
     this.profile = this.createEmptyCmsProfileDto();
-  } 
+  }
 
   createCmsProfile() {
     this.isLoading = true;
@@ -192,6 +188,9 @@ this.profile = profile;
                 localStorage.setItem('cmsProfile', JSON.stringify(cms));
                 this.cmsStateService.setProfile(cms);
                 this.applyTheme(cms);
+
+                this.cmsStateService.setPageTitle(cms.websiteName);
+                this.cmsStateService.setFavicon(cms.favicon);
               },
               error: (error: any) => {
                 console.error('Failed to load CMS nav and footer', error);
@@ -210,7 +209,7 @@ this.profile = profile;
       });
   }
 
-    private applyTheme(cms: CmsNavAndFooterDto): void {
+  private applyTheme(cms: CmsNavAndFooterDto): void {
     const root = document.documentElement;
 
     root.style.setProperty('--navbar-bg-color', cms.navbarBgColor);
@@ -235,6 +234,24 @@ this.profile = profile;
         next: (response: CmsProfileDto) => {
           try {
             this.profile = response;
+
+            if (response.isActive) {
+              this.cmsApiService.GetCmsNavAndFooterAsync().subscribe({
+                next: (cms: CmsNavAndFooterDto) => {
+                  localStorage.removeItem('cmsProfile');
+                  localStorage.setItem('cmsProfile', JSON.stringify(cms));
+                  this.cmsStateService.setProfile(cms);
+                  this.applyTheme(cms);
+
+                  this.cmsStateService.setPageTitle(cms.websiteName);
+                  this.cmsStateService.setFavicon(cms.favicon);
+                },
+                error: (error: any) => {
+                  console.error('Failed to load CMS nav and footer', error);
+                },
+              });
+            }
+
             this.profile = this.createEmptyCmsProfileDto();
             this.isEditingMode = false;
             this.isProfilesCardCollapsed = false;
@@ -250,7 +267,6 @@ this.profile = profile;
         },
       });
   }
-
 
   saveCmsProfileAs() {
     if (!this.profile || !this.selectedProfileId) {
@@ -301,63 +317,51 @@ this.profile = profile;
       });
   }
 
+  //   trackByCategoryId(index: number, category: any) {
+  //   return category.id;
+  // }
 
-//   trackByCategoryId(index: number, category: any) {
-//   return category.id;
-// }
+  private fileToBase64(event: Event, assign: (base64: string) => void) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
 
+    const reader = new FileReader();
+    reader.onload = () => assign((reader.result as string).split(',')[1]);
+    // reader.onload = () =>
+    // assign(reader.result as string);
 
-private fileToBase64(
-  event: Event,
-  assign: (base64: string) => void
-) {
-  const input = event.target as HTMLInputElement;
-  if (!input.files?.length) return;
+    reader.readAsDataURL(input.files[0]);
+  }
 
-  const reader = new FileReader();
-  reader.onload = () =>
-    assign((reader.result as string).split(',')[1]);
-  // reader.onload = () =>
-  // assign(reader.result as string);
+  onLogoSelected(event: Event) {
+    this.fileToBase64(event, (b64) => (this.profile!.logoBase64 = b64));
+  }
 
+  onFaviconSelected(event: Event) {
+    this.fileToBase64(event, (b64) => (this.profile!.faviconBase64 = b64));
+  }
 
-  reader.readAsDataURL(input.files[0]);
-}
-
-
-
-onLogoSelected(event: Event) {
-  this.fileToBase64(event, b64 =>
-    this.profile!.logoBase64 = b64
-  );
-}
-
-onFaviconSelected(event: Event) {
-  this.fileToBase64(event, b64 =>
-    this.profile!.faviconBase64 = b64
-  );
-}
-
-onCategoryImageSelected(event: Event, index: number) {
-  this.fileToBase64(event, b64 =>
-    this.profile!.categories[index].imageBase64 = b64
-  );
-}
+  onCategoryImageSelected(event: Event, index: number) {
+    this.fileToBase64(
+      event,
+      (b64) => (this.profile!.categories[index].imageBase64 = b64)
+    );
+  }
 
   onHeroImageSelected(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (!input.files || input.files.length === 0) return;
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
 
-  const file = input.files[0];
-  const reader = new FileReader();
+    const file = input.files[0];
+    const reader = new FileReader();
 
-  reader.onload = () => {
-    const base64 = (reader.result as string).split(',')[1];
-    this.profile!.heroBackgroundImageBase64 = base64;
-  };
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1];
+      this.profile!.heroBackgroundImageBase64 = base64;
+    };
 
-  reader.readAsDataURL(file);
-}
+    reader.readAsDataURL(file);
+  }
 
   canDeleteProfile(profile: CmsStoredProfileDto): boolean {
     // Cannot delete if it's the last profile
@@ -482,12 +486,12 @@ onCategoryImageSelected(event: Event, index: number) {
 
   addCategory() {
     this.profile?.categories.push({
-      id:0,
+      id: 0,
       title: 'New Category',
       description: '',
       imageBase64: '',
       itemTagline: '',
-      sortOrder:0
+      sortOrder: 0,
     });
   }
 
@@ -499,11 +503,11 @@ onCategoryImageSelected(event: Event, index: number) {
 
   addFeature() {
     this.profile?.features.push({
-      id:0,
+      id: 0,
       iconClass: 'bi-star',
       title: 'New Feature',
       description: '',
-      sortOrder:0
+      sortOrder: 0,
     });
   }
 
@@ -519,7 +523,7 @@ onCategoryImageSelected(event: Event, index: number) {
     // this.profile = null;
     this.profileName = '';
     this.isProfilesCardCollapsed = false;
-    this.profile = this.createEmptyCmsProfileDto()
+    this.profile = this.createEmptyCmsProfileDto();
   }
 
   previewChanges() {
@@ -527,41 +531,35 @@ onCategoryImageSelected(event: Event, index: number) {
     this.toastService.info('Preview functionality coming soon!');
   }
 
+  createEmptyCmsProfileDto(): CmsProfileDto {
+    return {
+      id: 0,
+      profileName: '',
+      isActive: false,
 
+      websiteName: '',
+      tagline: '',
+      logoBase64: '',
+      faviconBase64: '',
+      showLogoInHeader: false,
 
+      navbarBgColor: '',
+      navbarTextColor: '',
+      navbarLinkColor: '',
 
-createEmptyCmsProfileDto(): CmsProfileDto {
-  return {
-    id: 0,
-    profileName: '',
-    isActive: false,
+      footerBgColor: '',
+      footerTextColor: '',
+      footerLinkColor: '',
 
-    websiteName: '',
-    tagline: '',
-    logoBase64: '',
-    faviconBase64: '',
+      heroTitle: '',
+      heroSubtitle: '',
+      heroDescription: '',
+      heroPrimaryButtonText: '',
+      heroSecondaryButtonText: '',
+      heroBackgroundImageBase64: '',
 
-    navbarBgColor: '',
-    navbarTextColor: '',
-    navbarLinkColor: '',
-
-    footerBgColor: '',
-    footerTextColor: '',
-    footerLinkColor: '',
-
-    heroTitle: '',
-    heroSubtitle: '',
-    heroDescription: '',
-    heroPrimaryButtonText: '',
-    heroSecondaryButtonText: '',
-    heroBackgroundImageBase64: '',
-
-    features: [],
-    categories: [],
-  };
-}
-
-
-
-
+      features: [],
+      categories: [],
+    };
+  }
 }

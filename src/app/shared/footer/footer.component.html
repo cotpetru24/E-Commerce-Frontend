@@ -5,11 +5,17 @@
       <!-- Company Info -->
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="footer-brand mb-3">
+          @if(!showLogo){
           <i class="bi bi-bag-heart fs-2 text-primary"></i>
           <h3 class="d-inline ms-2">{{websiteName}}</h3>
+          }
+          @else {
+          <img [src]="'data:image/png;base64,' +websiteLogo" class="img-fluid logo" alt="Website Logo" />
+          }
         </div>
         <p class="company-description">
-          Your premier destination for stylish and comfortable footwear. We offer the latest trends in shoes for men, women, and children with exceptional quality and service.
+          Your premier destination for stylish and comfortable footwear. We offer the latest trends in shoes for men,
+          women, and children with exceptional quality and service.
         </p>
         <div class="social-links">
           <a href="#" class="btn btn-outline-light btn-sm me-2" aria-label="Facebook">
@@ -34,8 +40,10 @@
           <li class="mb-2"><a routerLink="/" class="text-light text-decoration-none">Home</a></li>
           <li class="mb-2"><a routerLink="/products" class="text-light text-decoration-none">All Products</a></li>
           <li class="mb-2"><a routerLink="/products/men" class="text-light text-decoration-none">Men's Shoes</a></li>
-          <li class="mb-2"><a routerLink="/products/women" class="text-light text-decoration-none">Women's Shoes</a></li>
-          <li class="mb-2"><a routerLink="/products/children" class="text-light text-decoration-none">Children's Shoes</a></li>
+          <li class="mb-2"><a routerLink="/products/women" class="text-light text-decoration-none">Women's Shoes</a>
+          </li>
+          <li class="mb-2"><a routerLink="/products/children" class="text-light text-decoration-none">Children's
+              Shoes</a></li>
           <li class="mb-2"><a routerLink="/cart/view" class="text-light text-decoration-none">Shopping Cart</a></li>
         </ul>
       </div>
@@ -44,12 +52,18 @@
       <div class="col-lg-3 col-md-6 mb-4">
         <h4>Customer Service</h4>
         <ul class="list-unstyled">
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openContactModal()">Contact Us</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openHelpModal()">Help & FAQ</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openShippingModal()">Shipping Info</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openReturnsModal()">Returns & Exchanges</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openSizeGuideModal()">Size Guide</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openTrackOrderModal()">Track Order</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openContactModal()">Contact
+              Us</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openHelpModal()">Help & FAQ</a>
+          </li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openShippingModal()">Shipping
+              Info</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openReturnsModal()">Returns &
+              Exchanges</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openSizeGuideModal()">Size
+              Guide</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openTrackOrderModal()">Track
+              Order</a></li>
         </ul>
       </div>
 
@@ -57,12 +71,17 @@
       <div class="col-lg-3 col-md-6 mb-4">
         <h4>Company</h4>
         <ul class="list-unstyled">
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openAboutModal()">About Us</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openCareersModal()">Careers</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openAboutModal()">About Us</a>
+          </li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openCareersModal()">Careers</a>
+          </li>
           <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openPressModal()">Press</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openPartnersModal()">Partners</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openSustainabilityModal()">Sustainability</a></li>
-          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openPrivacyModal()">Privacy Policy</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none"
+              (click)="openPartnersModal()">Partners</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none"
+              (click)="openSustainabilityModal()">Sustainability</a></li>
+          <li class="mb-2"><a href="#" class="text-light text-decoration-none" (click)="openPrivacyModal()">Privacy
+              Policy</a></li>
         </ul>
       </div>
     </div>
@@ -82,7 +101,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-md-4 text-center">
         <div class="footer-legal">
           <a href="#" class="text-muted text-decoration-none me-3" (click)="openTermsModal()">Terms of Service</a>
@@ -90,24 +109,19 @@
           <a href="#" class="text-muted text-decoration-none" (click)="openCookiesModal()">Cookie Policy</a>
         </div>
       </div>
-      
+
       <div class="col-md-4 text-end">
         <div class="copyright">
-          <p class="text-muted mb-0">&copy; 2025 ShoeStore. All rights reserved.</p>
+          <p class="text-muted mb-0">&copy; 2025 {{websiteName}}. All rights reserved.</p>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Back to Top Button -->
-  <button 
-    class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4" 
-    style="width: 50px; height: 50px; z-index: 1000;"
-    (click)="scrollToTop()"
-    [class.d-none]="!showBackToTop"
-    aria-label="Back to top"
-    title="Scroll to top"
-  >
+  <button class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4"
+    style="width: 50px; height: 50px; z-index: 1000;" (click)="scrollToTop()" [class.d-none]="!showBackToTop"
+    aria-label="Back to top" title="Scroll to top">
     <i class="bi bi-arrow-up"></i>
   </button>
 </footer>

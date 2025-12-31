@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import {
   AdminBrandDto,
   AdminProductAudienceDto,
@@ -155,6 +156,44 @@ export class EditProductComponent implements OnInit, OnDestroy {
 
   removeSize(index: number): void {
     this.productData?.productSizes?.splice(index, 1);
+  }
+
+  openBarcodeScanner() {
+    const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
+      size: 'lg',
+      centered: true
+    });
+
+    modalRef.result.then(
+      (barcode: string) => {
+        if (barcode) {
+          this.newSize.barcode = barcode;
+          this.toastService.success(`Barcode scanned: ${barcode}`);
+        }
+      },
+      () => {
+        // Modal dismissed
+      }
+    );
+  }
+
+  openBarcodeScannerForSize(index: number) {
+    const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
+      size: 'lg',
+      centered: true
+    });
+
+    modalRef.result.then(
+      (barcode: string) => {
+        if (barcode && this.productData?.productSizes && this.productData.productSizes[index]) {
+          this.productData.productSizes[index].barcode = barcode;
+          this.toastService.success(`Barcode scanned: ${barcode}`);
+        }
+      },
+      () => {
+        // Modal dismissed
+      }
+    );
   }
 
   allowDecimalOnly(event: KeyboardEvent): void {

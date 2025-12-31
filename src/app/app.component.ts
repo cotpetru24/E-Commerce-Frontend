@@ -27,25 +27,16 @@ export class AppComponent {
 
     if (cached) {
       this.cmsStateService.setProfile(cached);
-      this.applyTheme(cached);
+      this.cmsStateService.applyTheme(cached);
+      this.cmsStateService.setPageTitle(cached.websiteName);
     }
 
     this.cmsService.GetCmsNavAndFooterAsync().subscribe((cms) => {
       this.storageService.setLocalObject('cmsProfile', cms);
       this.cmsStateService.setProfile(cms);
-      this.applyTheme(cms);
+      this.cmsStateService.applyTheme(cms);
+      this.cmsStateService.setFavicon(cms.favicon);
+      this.cmsStateService.setPageTitle(cms.websiteName);
     });
-  }
-
-  private applyTheme(cms: any): void {
-    const root = document.documentElement;
-
-    root.style.setProperty('--navbar-bg-color', cms.navbarBgColor);
-    root.style.setProperty('--navbar-link-color', cms.navbarLinkColor);
-    root.style.setProperty('--navbar-text-color', cms.navbarTextColor);
-
-    root.style.setProperty('--footer-bg-color', cms.footerBgColor);
-    root.style.setProperty('--footer-link-color', cms.footerLinkColor);
-    root.style.setProperty('--footer-text-color', cms.footerTextColor);
   }
 }
