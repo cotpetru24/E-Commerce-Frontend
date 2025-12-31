@@ -1,81 +1,171 @@
-# ShoeStore – Full Stack E-Commerce Demo (Angular + ASP.NET Core)
+# ShoeStore – Angular Frontend (Admin + Customer)
 
-A portfolio full-stack e-commerce web app built with **Angular** (frontend) and **ASP.NET Core Web API** + **PostgreSQL** (backend).  
-Includes product management with **sizes**, inventory stock tracking, **Stripe payments**, admin dashboard stats, and a simple **CMS** for landing page configuration.
+Angular frontend for a **full-stack e-commerce and admin platform**, built as a **portfolio / CV project**.
 
-> This is a CV/portfolio project focused on clean architecture, consistency, and real-world workflows.
+This application is designed to demonstrate **real-world frontend engineering practices**, including strict typing, admin-driven workflows, and consistent frontend–backend contracts.
+It is not a UI mock or demo app.
+
+The backend (ASP.NET Core Web API + PostgreSQL) is implemented in a separate repository.
 
 ---
 
-## Features
+## Overview
 
-### Customer
-- Browse products
-- Product details
-- Cart + checkout flow
+This frontend consumes a real REST API and implements both **customer-facing** and **admin-facing** functionality.
+
+The focus of this project is:
+- correctness
+- consistency
+- maintainability
+- realistic workflows
+
+rather than feature bloat or visual experimentation.
+
+---
+
+## Customer Features
+
+- Product browsing
+- Product details with size availability
+- Cart management
+- Checkout flow
 - Stripe payment integration
-- View orders
+- Order history
 
-### Admin
+---
+
+## Admin Features
+
+### User Management
+- View users
+- Role-based access (admin vs customer)
+- Admin-only routes and guards
+
+### Product Management
 - Product CRUD
-- Product images (supports “image coming soon” fallback)
-- Size-based stock management (UK size model)
-- Barcode + SKU per size
-- Inventory signals (low stock / out of stock)
-- Revenue stats + date filtering
-- CMS: landing page content + colors + feature/category lists
-- Save/activate CMS profiles (e.g. Christmas / Default theme)
+- Size-based variants (UK shoe sizes)
+- Stock tracked per size
+- Barcode per size
+- Derived SKU generation
+- Product images with fallback (“image coming soon”)
+- Active / inactive products
+
+### Inventory & Insights
+- Aggregated stock per product
+- Low-stock and out-of-stock indicators
+- Revenue statistics with date filtering
+
+### Order Management
+- View all orders
+- Order details (items, sizes, totals)
+- Order status lifecycle handling
+
+### CMS (Landing Page Management)
+- Hero content configuration
+- Feature list management
+- Category list management
+- Theme colors (navbar & footer)
+- Multiple CMS profiles (e.g. Default / Seasonal)
+- Activate CMS profiles at runtime without redeploy
+
+---
+
+## Key Frontend Design Decisions
+
+- **Strict TypeScript configuration**
+  - DTO mismatches are surfaced at compile time
+  - No silent `any` or unsafe casts
+
+- **Explicit frontend contracts**
+  - Frontend DTOs mirror backend responses
+  - No hidden mapping layers
+
+- **Standalone Angular components**
+  - Clear ownership per feature
+  - No monolithic NgModules
+
+- **No fake UI data**
+  - Admin and customer flows use real API responses
 
 ---
 
 ## Tech Stack
 
-**Frontend**
 - Angular (standalone components)
-- Bootstrap + icons
-- Stripe JS (client)
-
-**Backend**
-- ASP.NET Core Web API
-- Entity Framework Core
-- PostgreSQL
-- ASP.NET Identity + JWT auth
-- Stripe (server integration)
+- TypeScript (strict mode)
+- Bootstrap + Bootstrap Icons
+- RxJS
+- Stripe JS
 
 ---
 
-## Repo Layout
+## Project Structure
 
-- `ShoeStore` / `ShoeStore.DataContext.PostgreSQL` – backend API + EF/Postgres context
-- `src/` – Angular frontend
+src/
+  app/
+    admin/
+      user-management/
+      product-management/
+      order-management/
+      content-management/
+    customer/
+    shared/
+    services/
+    models/
 
-(If you keep them as separate repos, update this section accordingly.)
+Admin and customer concerns are intentionally separated.
 
 ---
 
-## Getting Started (Local)
+## Running Locally
 
 ### Prerequisites
 - Node.js (LTS recommended)
 - Angular CLI (optional)
-- .NET SDK (matching your solution version)
-- PostgreSQL
+
+### Install & Run
+
+npm install
+ng serve
+
+The application expects the backend API to be running and reachable.
+Refer to the backend repository for API and database setup.
 
 ---
 
-## Backend Setup (ASP.NET Core)
+## Testing
 
-1. Configure your connection string and secrets
-   - Use `appsettings.Development.json` (recommended)
-   - Or environment variables
+- Angular TestBed
+- HttpClientTestingModule
+- Focused component and service tests
 
-2. Create database + run migrations (example)
-   - If using EF migrations, run:
-     ```bash
-     dotnet restore
-     dotnet ef database update
-     ```
+Tests target **business-critical paths**, not snapshot or boilerplate coverage.
 
-3. Run the API:
-   ```bash
-   dotnet run --project ShoeStore/ShoeStore.csproj
+---
+
+## Scope & Intent
+
+This project intentionally avoids:
+- over-abstracted state management
+- unnecessary UI frameworks
+- mock-only demo data
+
+The focus is on:
+- maintainable frontend architecture
+- realistic admin tooling
+- clean contracts with the backend
+
+---
+
+## Status
+
+- Feature-complete for portfolio use
+- Codebase cleaned and aligned after refactoring
+- Suitable for mid-to-senior level technical review
+
+---
+
+## Notes
+
+This repository contains **frontend code only**.
+Backend API, authentication, and database logic are implemented in a separate repository.
