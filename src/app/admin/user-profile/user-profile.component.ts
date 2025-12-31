@@ -5,28 +5,12 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
+import { UtilsService } from '../../services/utils.service';
 import { AdminOrderDto } from '../../models/order.dto';
 import { AdminUser } from '../../services/api/admin-api.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserRole } from '../../models';
-
-// Interface matching backend AdminUserDto
-// interface AdminUserDto {
-//   id: string;
-//   email: string;
-//   firstName?: string;
-//   lastName?: string;
-//   emailConfirmed: boolean;
-//   lockoutEnabled: boolean;
-//   lockoutEnd?: Date;
-//   accessFailedCount: number;
-//   createdAt?: Date;
-//   lastLoginAt?: Date;
-//   totalOrders: number;
-//   totalSpent: number;
-//   roles: UserRole[];
-// }
 
 @Component({
   selector: 'app-user-profile',
@@ -75,17 +59,20 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private adminApiService: AdminApiService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private utilsService: UtilsService
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.userId = params['id'];
-      if (this.userId) {
-        this.loadUserData();
-        this.loadUserOrders();
-      }
-    });
+    this.subscriptions.add(
+      this.route.params.subscribe(params => {
+        this.userId = params['id'];
+        if (this.userId) {
+          this.loadUserData();
+          this.loadUserOrders();
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
@@ -115,8 +102,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           };
           this.isLoading = false;
         },
-        error: (error) => {
-          console.error('Error loading user:', error);
+        error: () => {
           this.toastService.error('Failed to load user data');
           this.isLoading = false;
         }
@@ -138,8 +124,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           this.filterOrders(this.currentFilter);
           this.ordersLoading = false;
         },
-        error: (error) => {
-          console.error('Error loading user orders:', error);
+        error: () => {
           this.toastService.error('Failed to load user orders');
           this.ordersLoading = false;
         }
@@ -181,8 +166,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           this.isEditing = false;
           this.loadUserData();
         },
-        error: (error) => {
-          console.error('Error updating user:', error);
+        error: () => {
           this.toastService.error('Failed to update user profile');
         }
       })
@@ -232,8 +216,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             confirmPassword: ''
           };
         },
-        error: (error) => {
-          console.error('Error updating password:', error);
+        error: () => {
           this.toastService.error('Failed to update password');
         }
       })
@@ -303,7 +286,18 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  getStatusBadgeClass(status: string): string {
+  formatDate(date: string | Date): string {
+    return this.utilsService.formatDate(date);
+  }
+
+  getTimeAgo(date: string | Date): string {
+    return this.utilsService.getTimeAgo(date);
+  }
+
+  getStatusBadgeClass(status?: string): string {
+    if (!status) {
+      return 'badge bg-secondary';
+    }
     switch (status) {
       case 'Pending':
       case 'pending':
@@ -357,23 +351,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     return userRole;
   }
 
-  formatDate(date: Date | string): string {
-    return new Date(date).toLocaleDateString();
-  }
-
-  getTimeAgo(date: Date | string): string {
-    const now = new Date();
-    const past = new Date(date);
-    const diffInMs = now.getTime() - past.getTime();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
-    if (diffInDays === 0) return 'Today';
-    if (diffInDays === 1) return 'Yesterday';
-    if (diffInDays < 7) return `${diffInDays} days ago`;
-    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
-    if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
-    return `${Math.floor(diffInDays / 365)} years ago`;
-  }
 
   goBack(): void {
     this.router.navigate(['/admin/users']);

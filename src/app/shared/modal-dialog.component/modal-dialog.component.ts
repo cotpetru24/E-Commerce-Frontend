@@ -20,35 +20,47 @@ import { OrderStatus } from '../../models';
 
     <div class="modal-body">
       <!-- Default message -->
-      <p *ngIf="modalType === 'confirm'">{{ message }}</p>
+      @if (modalType === 'confirm') {
+        <p>{{ message }}</p>
+      }
 
-      <p *ngIf="modalType === 'updateOrderStatus'">{{ message }}</p>
+      @if (modalType === 'updateOrderStatus') {
+        <p>{{ message }}</p>
+      }
 
-      <div *ngIf="modalType === 'updateOrderStatus'">
-        <div *ngFor="let option of options" class="form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            [checked]="option.checked"
-            (change)="option.checked = !option.checked"
-            [id]="'option-' + option.value"
-          />
-          <label class="form-check-label" [for]="'option-' + option.value">
-            {{ option.label }}
-          </label>
+      @if (modalType === 'updateOrderStatus') {
+        <div>
+          @for (option of options; track option.value) {
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                [checked]="option.checked"
+                (change)="option.checked = !option.checked"
+                [id]="'option-' + option.value"
+              />
+              <label class="form-check-label" [for]="'option-' + option.value">
+                {{ option.label }}
+              </label>
+            </div>
+          }
         </div>
+      }
+    </div>
+
+    @if (modalType === 'confirm') {
+      <div class="modal-footer">
+        <button class="btn btn-danger" (click)="onConfirm()">Yes</button>
+        <button class="btn btn-secondary" (click)="activeModal.dismiss()">No</button>
       </div>
-    </div>
+    }
 
-    <div *ngIf="modalType === 'confirm'" class="modal-footer">
-      <button class="btn btn-danger" (click)="onConfirm()">Yes</button>
-      <button class="btn btn-secondary" (click)="activeModal.dismiss()">No</button>
-    </div>
-
-    <div *ngIf="modalType === 'updateOrderStatus'" class="modal-footer">
-      <button class="btn btn-danger" (click)="onConfirm()">Update</button>
-      <button class="btn btn-secondary" (click)="activeModal.dismiss()">Cancel</button>
-    </div>
+    @if (modalType === 'updateOrderStatus') {
+      <div class="modal-footer">
+        <button class="btn btn-danger" (click)="onConfirm()">Update</button>
+        <button class="btn btn-secondary" (click)="activeModal.dismiss()">Cancel</button>
+      </div>
+    }
   `,
 })
 export class ModalDialogComponent {

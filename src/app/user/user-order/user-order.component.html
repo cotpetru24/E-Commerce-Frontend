@@ -44,24 +44,30 @@
               <h3 class="section-title">
                 <i class="bi bi-bag me-2"></i>Order Items
               </h3>
-              <div class="order-items" *ngIf="orderItems.length > 0">
-                <div class="order-item" *ngFor="let item of orderItems" (click)="goToItem(item.productId!)">
+              @if (orderItems.length > 0) {
+                <div class="order-items">
+                  @for (item of orderItems; track item.productId) {
+                    <div class="order-item" (click)="goToItem(item.productId!)">
                   <div class="item-image">
                     <img [src]="'/assets/'+item.imagePath" [alt]="item.productName" title="productName">
                   </div>
                   <div class="item-details">
                     <h4 class="item-name">{{ item.productName }}</h4>
                     <p class="item-brand">{{ item.brandName }}</p>
-                    <div class="item-meta">
-                      <span class="item-size" *ngIf="item.size">Size: {{ item.size }}</span>
-                      <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                      <div class="item-meta">
+                        @if (item.size) {
+                          <span class="item-size">Size: {{ item.size }}</span>
+                        }
+                        <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="item-price">
-                    <span class="price">£{{ getItemTotal(item) }}</span>
-                  </div>
+                    <div class="item-price">
+                      <span class="price">£{{ getItemTotal(item) }}</span>
+                    </div>
+                    </div>
+                  }
                 </div>
-              </div>
+              }
             </div>
 
             <!-- Shipping Address -->
@@ -100,7 +106,8 @@
                   <div class="payment-content">
 
                     <div class="payment-info">
-                      <div *ngIf="order?.payment?.paymentMethod === 'Credit/Debit Card'">
+                      @if (order?.payment?.paymentMethod === 'Credit/Debit Card') {
+                        <div>
                         <div class="d-flex justify-content-between mb-2">
                           <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
                           <span class="badge badge-compact" [ngClass]="{
@@ -119,14 +126,14 @@
                             Receipt
                           </a>
                         </p>
-                        
-
-
-                      </div>
-                      <div *ngIf="order?.payment?.paymentMethod === 'paypal'">
-                        <p class="payment-type"><strong>PayPal</strong></p>
-                        <p class="payment-details">{{ order?.payment?.billingEmail }}</p>
-                      </div>
+                        </div>
+                      }
+                      @if (order?.payment?.paymentMethod === 'paypal') {
+                        <div>
+                          <p class="payment-type"><strong>PayPal</strong></p>
+                          <p class="payment-details">{{ order?.payment?.billingEmail }}</p>
+                        </div>
+                      }
                     </div>
                   </div>
                 </div>
@@ -135,7 +142,8 @@
 
 
             <!-- Shipping Information -->
-            <div class="review-section" *ngIf="shippingInfo">
+            @if (shippingInfo) {
+              <div class="review-section">
               <h3 class="section-title">
                 <i class="bi bi-truck me-2"></i>Shipping Information
               </h3>
@@ -148,7 +156,8 @@
                   </div>
                 </div>
               </div>
-            </div>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -170,10 +179,12 @@
               <span>Shipping</span>
               <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
             </div>
-            <div class="summary-item discount" *ngIf="getDiscount() > 0">
-              <span>Discount</span>
-              <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
-            </div>
+            @if (getDiscount() > 0) {
+              <div class="summary-item discount">
+                <span>Discount</span>
+                <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
+              </div>
+            }
             <div class="summary-item total">
               <span>Total</span>
               <span>£{{ getTotal() | number:'1.2-2' }}</span>
@@ -185,19 +196,27 @@
         <!-- Place Order Button -->
         <div class="order-actions">
           @if(isNewOrder)
-          { <button class="btn btn-primary btn-lg w-100" (click)="navMyOrders()" [disabled]="isLoading">
-            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-            <i class="bi bi-list-check me-2" *ngIf="!isLoading"></i>
-            My Orders
-          </button>
+          { 
+            <button class="btn btn-primary btn-lg w-100" (click)="navMyOrders()" [disabled]="isLoading">
+              @if (isLoading) {
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              }
+              @if (!isLoading) {
+                <i class="bi bi-list-check me-2"></i>
+              }
+              My Orders
+            </button>
           }
-          @if (canCancel)
-          {
-          <button class="btn btn-warning btn-lg w-100 mt-2" (click)="cancelOrder()" [disabled]="isLoading">
-            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-            <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
-            {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}
-          </button>
+          @if (canCancel) {
+            <button class="btn btn-warning btn-lg w-100 mt-2" (click)="cancelOrder()" [disabled]="isLoading">
+              @if (isLoading) {
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              }
+              @if (!isLoading) {
+                <i class="bi bi-x-circle me-2"></i>
+              }
+              {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}
+            </button>
           }
 
           @if(!isNewOrder)

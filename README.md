@@ -1,59 +1,81 @@
-# EcommerceApp
+# ShoeStore – Full Stack E-Commerce Demo (Angular + ASP.NET Core)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.5.
+A portfolio full-stack e-commerce web app built with **Angular** (frontend) and **ASP.NET Core Web API** + **PostgreSQL** (backend).  
+Includes product management with **sizes**, inventory stock tracking, **Stripe payments**, admin dashboard stats, and a simple **CMS** for landing page configuration.
 
-## Development server
+> This is a CV/portfolio project focused on clean architecture, consistency, and real-world workflows.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## Features
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Customer
+- Browse products
+- Product details
+- Cart + checkout flow
+- Stripe payment integration
+- View orders
 
-## Code scaffolding
+### Admin
+- Product CRUD
+- Product images (supports “image coming soon” fallback)
+- Size-based stock management (UK size model)
+- Barcode + SKU per size
+- Inventory signals (low stock / out of stock)
+- Revenue stats + date filtering
+- CMS: landing page content + colors + feature/category lists
+- Save/activate CMS profiles (e.g. Christmas / Default theme)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
-```
+## Tech Stack
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+**Frontend**
+- Angular (standalone components)
+- Bootstrap + icons
+- Stripe JS (client)
 
-```bash
-ng generate --help
-```
+**Backend**
+- ASP.NET Core Web API
+- Entity Framework Core
+- PostgreSQL
+- ASP.NET Identity + JWT auth
+- Stripe (server integration)
 
-## Building
+---
 
-To build the project run:
+## Repo Layout
 
-```bash
-ng build
-```
+- `ShoeStore` / `ShoeStore.DataContext.PostgreSQL` – backend API + EF/Postgres context
+- `src/` – Angular frontend
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+(If you keep them as separate repos, update this section accordingly.)
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Getting Started (Local)
 
-```bash
-ng test
-```
+### Prerequisites
+- Node.js (LTS recommended)
+- Angular CLI (optional)
+- .NET SDK (matching your solution version)
+- PostgreSQL
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## Backend Setup (ASP.NET Core)
 
-```bash
-ng e2e
-```
+1. Configure your connection string and secrets
+   - Use `appsettings.Development.json` (recommended)
+   - Or environment variables
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+2. Create database + run migrations (example)
+   - If using EF migrations, run:
+     ```bash
+     dotnet restore
+     dotnet ef database update
+     ```
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+3. Run the API:
+   ```bash
+   dotnet run --project ShoeStore/ShoeStore.csproj

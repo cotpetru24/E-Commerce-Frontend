@@ -19,8 +19,6 @@ import { ToastService } from '../../services/toast.service';
 import { Audience } from '../../models';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import is from 'zod/v4/locales/is.cjs';
-import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 
 @Component({
   selector: 'app-product-management',
@@ -132,8 +130,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
           // this.totalQueryCount = response.totalQueryCount;
           this.isLoading = false;
         },
-        error: (error) => {
-          console.error('Error loading products:', error);
+        error: () => {
           this.isLoading = false;
           this.toastService.error('Failed to load products');
         },
@@ -150,29 +147,6 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.loadProducts();
   }
-
-    openBarcodeScanner() {
-      const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
-        size: 'lg',
-        centered: true,
-      });
-  
-      modalRef.result.then(
-        (scannedBarcode: string) => {
-          // Store in temp variable
-          this.searchTerm = scannedBarcode;
-  
- 
-this.onFilterChange();
-
-
-          this.toastService.success(`Barcode scanned: ${scannedBarcode}`);
-        },
-        (dismissed) => {
-          // Modal was dismissed
-        }
-      );
-    }
 
   updatePagination(): void {
     if (!this.isLoading) {
@@ -300,9 +274,8 @@ this.onFilterChange();
             this.isLoading = false;
             this.loadProducts();
           },
-          error: (error) => {
+          error: () => {
             this.isLoading = false;
-            console.error('Error deleting product:', error);
             this.toastService.error('Failed to delete product');
           },
         })

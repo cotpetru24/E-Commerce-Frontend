@@ -123,45 +123,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    // this.filteredUsers = this.users.filter((user) => {
-    //   const matchesSearch =
-    //     !this.searchTerm ||
-    //     user.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-    //     user.firstName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-    //     user.lastName.toLowerCase().includes(this.searchTerm.toLowerCase());
-    //   const matchesStatus =
-    //     !this.selectedStatus ||
-    //     this.getStatusText(user.isBlocked) === this.selectedStatus;
-    //   // const matchesRole = !this.selectedRole || user.roles === this.selectedRole;
-    //   // return matchesSearch && matchesStatus && matchesRole;
-    // });
-    // this.sortUsers();
-    // this.updatePagination();
   }
 
   sortUsers(): void {
-    // this.filteredUsers.sort((a, b) => {
-    //   switch (this.sortBy) {
-    //     case 'date-desc':
-    //       return (
-    //         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    //       );
-    //     case 'date-asc':
-    //       return (
-    //         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    //       );
-    //     case 'name-asc':
-    //       return `${a.firstName} ${a.lastName}`.localeCompare(
-    //         `${b.firstName} ${b.lastName}`
-    //       );
-    //     case 'name-desc':
-    //       return `${b.firstName} ${b.lastName}`.localeCompare(
-    //         `${a.firstName} ${a.lastName}`
-    //       );
-    //     default:
-    //       return 0;
-    //   }
-    // });
   }
 
   updatePagination(): void {
@@ -194,19 +158,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     return pages;
   }
 
-  // calculateStats(): void {
-  //   const now = new Date();
-  //   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-  //   this.userStats = {
-  //     total: this.users.length,
-  //     active: this.users.filter((u) => !u.isBlocked).length,
-  //     blocked: this.users.filter((u) => u.isBlocked).length,
-  //     newThisMonth: this.users.filter(
-  //       (u) => new Date(u.createdAt) >= startOfMonth
-  //     ).length,
-  //   };
-  // }
 
   getRoleClass(roles: UserRole[] | string[]): string {
     let userRole = '';

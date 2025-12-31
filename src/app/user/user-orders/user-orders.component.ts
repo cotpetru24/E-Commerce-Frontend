@@ -10,6 +10,7 @@ import {
 } from '../../models/order.dto';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-user-orders',
@@ -35,7 +36,8 @@ export class UserOrdersComponent implements OnInit {
     private router: Router,
     private toastService: ToastService,
     private orderApiService: OrderApiService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private storageService: StorageService
   ) {}
 
   ngOnInit() {
@@ -44,9 +46,8 @@ export class UserOrdersComponent implements OnInit {
 
   loadOrders() {
     // Check if user is logged in before making API call
-    const token = sessionStorage.getItem('accessToken');
+    const token = this.storageService.getSessionItem('accessToken');
     if (!token) {
-      console.warn('No access token found, user may not be logged in');
       this.toastService.error('Please log in to view your orders');
       this.isLoading = false;
       return;
@@ -75,8 +76,7 @@ export class UserOrdersComponent implements OnInit {
         this.filterCachedOrders(); // Apply current filter
         this.isLoading = false;
       },
-      error: (error) => {
-        console.error('Error loading orders:', error);
+      error: () => {
         this.toastService.error('Failed to load orders');
         this.isLoading = false;
       },

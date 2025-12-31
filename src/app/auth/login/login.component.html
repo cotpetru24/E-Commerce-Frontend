@@ -25,9 +25,11 @@
                 placeholder="Enter your email"
                 [ngClass]="{'is-invalid': loginForm.submitted && !loginData.email}"
               >
-              <div class="invalid-feedback" *ngIf="loginForm.submitted && !loginData.email">
-                Please enter a valid email address.
-              </div>
+              @if (loginForm.submitted && !loginData.email) {
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+              }
             </div>
 
             <div class="mb-3">
@@ -53,9 +55,11 @@
                   <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
                 </button>
               </div>
-              <div class="invalid-feedback" *ngIf="loginForm.submitted && !loginData.password">
-                Please enter your password.
-              </div>
+              @if (loginForm.submitted && !loginData.password) {
+                <div class="invalid-feedback">
+                  Please enter your password.
+                </div>
+              }
             </div>
 
             <div class="mb-3 form-check">
@@ -77,8 +81,12 @@
                 class="btn btn-primary btn-lg"
                 [disabled]="isLoading"
               >
-                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2 text-primary" role="status"></span>
-                <i class="bi bi-box-arrow-in-right me-2" *ngIf="!isLoading"></i>
+                @if (isLoading) {
+                  <span class="spinner-border spinner-border-sm me-2 text-primary" role="status"></span>
+                }
+                @if (!isLoading) {
+                  <i class="bi bi-box-arrow-in-right me-2"></i>
+                }
                 {{ isLoading ? 'Signing in...' : 'Sign In' }}
               </button>
             </div>
@@ -96,8 +104,12 @@
                   (click)="signInWithGoogle()"
                   [disabled]="isGoogleLoading"
                 >
-                  <span *ngIf="isGoogleLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i class="bi bi-google me-2" *ngIf="!isGoogleLoading"></i>
+                  @if (isGoogleLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  }
+                  @if (!isGoogleLoading) {
+                    <i class="bi bi-google me-2"></i>
+                  }
                   {{ isGoogleLoading ? 'Signing in...' : 'Continue with Google' }}
                 </button>
                 
@@ -107,8 +119,12 @@
                   (click)="signInWithGitHub()"
                   [disabled]="isGitHubLoading"
                 >
-                  <span *ngIf="isGitHubLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i class="bi bi-github me-2" *ngIf="!isGitHubLoading"></i>
+                  @if (isGitHubLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  }
+                  @if (!isGitHubLoading) {
+                    <i class="bi bi-github me-2"></i>
+                  }
                   {{ isGitHubLoading ? 'Signing in...' : 'Continue with GitHub' }}
                 </button>
                 
@@ -118,8 +134,12 @@
                   (click)="signInWithFacebook()"
                   [disabled]="isFacebookLoading"
                 >
-                  <span *ngIf="isFacebookLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i class="bi bi-facebook me-2" *ngIf="!isFacebookLoading"></i>
+                  @if (isFacebookLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  }
+                  @if (!isFacebookLoading) {
+                    <i class="bi bi-facebook me-2"></i>
+                  }
                   {{ isFacebookLoading ? 'Signing in...' : 'Continue with Facebook' }}
                 </button>
               </div>

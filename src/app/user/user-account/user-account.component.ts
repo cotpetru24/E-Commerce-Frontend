@@ -5,6 +5,7 @@ import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { UserApiService } from '../../services/api/user-api.service';
 import { UserProfileDto, UpdateUserProfileRequestDto, ChangePasswordRequestDto, UserStatsDto } from '../../models/user.dto';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-user-account',
@@ -36,7 +37,8 @@ export class UserAccountComponent implements OnInit {
   constructor(
     private router: Router,
     private toastService: ToastService,
-    private userApiService: UserApiService
+    private userApiService: UserApiService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit() {
@@ -47,7 +49,7 @@ export class UserAccountComponent implements OnInit {
     this.isLoading = true;
     
     // Check if user is logged in
-    const token = sessionStorage.getItem('accessToken');
+    const token = this.storageService.getSessionItem('accessToken');
     if (!token) {
       this.toastService.error('Please log in to view your account');
       this.router.navigate(['/auth/login']);
@@ -65,8 +67,7 @@ export class UserAccountComponent implements OnInit {
         };
         this.isLoading = false;
       },
-      error: (error) => {
-        console.error('Error loading user profile:', error);
+      error: () => {
         this.toastService.error('Failed to load user profile');
         this.isLoading = false;
       }
@@ -76,9 +77,8 @@ export class UserAccountComponent implements OnInit {
       next: (stats) => {
         this.userStats = stats;
       },
-      error: (error) => {
-        console.error('Error loading user stats:', error);
-        // Don't show error for stats as it's not critical
+      error: () => {
+        // Silently fail - stats are not critical
       }
     });
 
@@ -117,8 +117,7 @@ export class UserAccountComponent implements OnInit {
         this.isEditing = true;
         this.loadUserData(); // Reload to get updated data
       },
-      error: (error) => {
-        console.error('Error updating profile:', error);
+      error: () => {
         this.toastService.error('Failed to update profile');
       }
     });
@@ -166,8 +165,7 @@ export class UserAccountComponent implements OnInit {
           confirmPassword: ''
         };
       },
-      error: (error) => {
-        console.error('Error changing password:', error);
+      error: () => {
         this.toastService.error('Failed to change password');
       }
     });

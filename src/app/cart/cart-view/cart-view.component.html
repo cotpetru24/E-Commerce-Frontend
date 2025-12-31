@@ -5,17 +5,22 @@
       <h1 class="page-title">
         <i class="bi bi-cart me-2"></i>Shopping Cart
       </h1>
-      <p class="page-subtitle" *ngIf="cartItems.length > 0">
-        {{ cartItems.length }} item(s) in your cart
-      </p>
-      <p class="page-subtitle" *ngIf="cartItems.length === 0">
-        Your cart is empty
-      </p>
+      @if (cartItems.length > 0) {
+        <p class="page-subtitle">
+          {{ cartItems.length }} item(s) in your cart
+        </p>
+      }
+      @if (cartItems.length === 0) {
+        <p class="page-subtitle">
+          Your cart is empty
+        </p>
+      }
     </div>
   </div>
 
   <div class="container">
-    <div class="checkout-layout" *ngIf="cartItems.length > 0">
+    @if (cartItems.length > 0) {
+      <div class="checkout-layout">
       <!-- Main Content -->
       <div class="checkout-main">
         <div class="form-card">
@@ -32,7 +37,8 @@
           </div>
 
           <div class="cart-items">
-            <div class="cart-item" *ngFor="let item of cartItems; trackBy: trackByItem">
+            @for (item of cartItems; track trackByItem($index, item)) {
+              <div class="cart-item">
               <div class="item-image">
                 <!-- <img [src]="'/assets/' + item.product.imagePath" [alt]="item.product.name"> -->
               </div>
@@ -42,7 +48,9 @@
                   <h4 class="item-name">{{ item.product.name }}</h4>
                   <p class="item-brand">{{ item.product.brandName }}</p>
                   <p class="item-category">{{ item.product.audience | titlecase }}</p>
-                  <span class="item-size" *ngIf="item.size">Size: {{ item.size }}</span>
+                  @if (item.size) {
+                    <span class="item-size">Size: {{ item.size }}</span>
+                  }
                 </div>
 
                 <div class="item-price">
@@ -75,7 +83,8 @@
                   </button>
                 </div>
               </div>
-            </div>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -99,10 +108,12 @@
               <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
             </div>
 
-            <div class="summary-item discount" *ngIf="getDiscount() > 0">
-              <span>Discount</span>
-              <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
-            </div>
+            @if (getDiscount() > 0) {
+              <div class="summary-item discount">
+                <span>Discount</span>
+                <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
+              </div>
+            }
 
             <div class="summary-item total">
               <span>Total</span>
@@ -112,7 +123,8 @@
         </div>
 
         <!-- Shipping Notice -->
-        <div class="shipping-notice" *ngIf="getSubtotal() < 50">
+        @if (getSubtotal() < 50) {
+          <div class="shipping-notice">
           <div class="shipping-icon">
             <i class="bi bi-truck"></i>
           </div>
@@ -120,7 +132,8 @@
             <h4>Free Shipping</h4>
             <p>Add £{{ 50 - getSubtotal() | number:'1.2-2' }} more for free shipping</p>
           </div>
-        </div>
+          </div>
+        }
 
         <!-- Trust Badges -->
         <div class="trust-badges">
@@ -151,10 +164,12 @@
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    }
 
     <!-- Empty Cart -->
-    <div class="empty-cart-container" *ngIf="cartItems.length === 0">
+    @if (cartItems.length === 0) {
+      <div class="empty-cart-container">
       <div class="empty-cart-card">
         <div class="empty-cart-content">
           <div class="empty-cart-icon-container">
@@ -171,6 +186,7 @@
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    }
   </div>
 </div>

@@ -20,8 +20,8 @@ export interface OrderItemDto {
   quantity: number;
   size?: string;
   createdAt?: Date;
-  imagePath: string;
-  brandName: string;
+  imagePath?: string;
+  brandName?: string;
 }
 
 export interface OrderDto {
@@ -35,7 +35,7 @@ export interface OrderDto {
   total: number;
   shippingAddress: ShippingAddressDto;
   billingAddress: BillingAddressDto;
-  payment: PaymentDto;
+  payment?: PaymentDto;
   notes?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -124,41 +124,30 @@ export enum SortDirection {
 // ============================================================================
 // Admin-specific order interfaces for enhanced order management
 
-export interface AdminOrderItemDto {
-  id: number;
-  orderId: number;
-  productId: number;
-  productName: string;
-  brandName: string;
-  unitPrice: number;
-  quantity: number;
-  size?: string;
-  imagePath: string;
-  createdAt: Date;
-}
-
 export interface AdminShippingAddressDto {
   id: number;
-  userId: string;
+  firstName: string;
+  lastName: string;
   addressLine1: string;
+  addressLine2?: string;
   city: string;
-  county: string;
-  postcode: string;
+  state: string;
+  postalCode: string;
   country: string;
-  createdAt: Date;
-  updatedAt: Date;
+  phoneNumber?: string;
 }
 
 export interface AdminBillingAddressDto {
   id: number;
-  userId: string;
+  firstName: string;
+  lastName: string;
   addressLine1: string;
+  addressLine2?: string;
   city: string;
-  county: string;
-  postcode: string;
+  state: string;
+  postalCode: string;
   country: string;
-  createdAt: Date;
-  updatedAt: Date;
+  phoneNumber?: string;
 }
 
 export interface AdminPaymentDto {
@@ -176,41 +165,21 @@ export interface AdminPaymentDto {
   receiptUrl?: string;
 }
 
-// export interface AdminOrderDto {
-//   id: number;
-//   userId: string;
-//   orderNumber: string;
-//   orderStatusId: number;
-//   orderStatusName: string;
-//   subtotal: number;
-//   shippingCost: number;
-//   discount: number;
-//   total: number;
-//   shippingAddress: AdminShippingAddressDto;
-//   billingAddress: AdminBillingAddressDto;
-//   payment: AdminPaymentDto;
-//   orderItems: OrderItemDto[];
-//   notes?: string;
-//   createdAt: Date;
-//   updatedAt: Date;
-//   userName: string;
-// }
-
 export interface AdminOrderDto {
   id: number;
   userId: string;
   userEmail: string;
   userName: string;
-  orderStatusName: string;
+  orderStatusName?: string;
   orderStatusCode?: string;
   subtotal: number;
   shippingCost: number;
   discount: number;
   total: number;
   notes?: string;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
-  shippingAddress: AdminShippingAddressDto;
+  shippingAddress?: AdminShippingAddressDto;
   billingAddress?: AdminBillingAddressDto;
   orderItems: OrderItemDto[];
   payment: AdminPaymentDto;

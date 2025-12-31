@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
+import { StorageService } from '../storage.service';
 import {
   ShippingAddressDto,
   CreateShippingAddressRequestDto,
@@ -14,6 +16,13 @@ import {
 })
 export class ShippingAddressApiService extends BaseApiService {
   private readonly shippingAddressEndpoint = '/api/order/shipping-addresses';
+
+  constructor(
+    protected override http: HttpClient,
+    protected override storageService: StorageService
+  ) {
+    super(http, storageService);
+  }
 
   // ============================================================================
   // SHIPPING ADDRESS METHODS

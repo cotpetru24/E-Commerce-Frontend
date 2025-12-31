@@ -1,7 +1,5 @@
-// import { z } from 'zod';
 import { Audience } from './audience.enum';
 import { ProductImageDto } from './product-image.dto';
-// import is from 'zod/v4/locales/is.cjs';
 
 export interface ProductDto {
   id: number;
@@ -26,18 +24,19 @@ export interface ProductDto {
 export interface AdminProductDto {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   price: number;
   originalPrice?: number | undefined;
-  totalStock?: number;
-  audience?: Audience;
-  audienceId: number;
-  brandName: string;
-  brandId: number;
+  imagePath?: string;
+  totalStock: number;
+  brandId?: number;
+  brandName?: string;
+  audienceId?: number;
+  audience?: string;
   rating?: number | undefined;
   reviewCount?: number | undefined;
   productSizes: ProductSizeDto[];
-  productFeatures?: AdminProductFeatureDto[] | undefined;
+  productFeatures: AdminProductFeatureDto[];
   productImages: ProductImageDto[];
   isNew?: boolean | undefined;
   discountPercentage?: number;
@@ -64,7 +63,7 @@ export interface AdminProductFeatureDto {
 }
 
 export interface ProductSizeDto {
-  id?: number;
+  id: number;
   size: number;
   stock: number;
   sku?: string;
@@ -99,30 +98,6 @@ export interface AdminProductsStatsDto {
   totalOutOfStockProductsCount: number;
   totalActiveProductsCount: number;
 }
-
-// const ProductDtoSchema = z.object({
-//   id: z.number(),
-//   name: z.string(),
-//   description: z.string(),
-//   price: z.number(),
-//   originalPrice: z.number().optional(),
-//   imagePath: z.string(),
-//   stock: z.number(),
-//   audience: z.nativeEnum(Audience),
-//   brandName: z.string(),
-//   rating: z.number().optional(),
-//   reviewCount: z.number().optional(),
-//   sizes: z.array(z.string()).optional(),
-//   isNew: z.boolean().optional(),
-//   discountPercentage: z.number().optional(),
-//   isActive: z.boolean(),
-// });
-
-// type ProductDtoValidated = z.infer<typeof ProductDtoSchema>
-
-// export type { ProductDto, ProductDtoValidated };
-
-// export{ProductDtoSchema}
 
 export enum ProductsSortBy {
   DateCreated = 'createdAt',

@@ -14,7 +14,6 @@ import {
 import { ToastService } from '../../services/toast.service';
 import { OrderApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
-import { number } from 'zod';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { switchMap } from 'rxjs';
@@ -102,8 +101,7 @@ export class UserOrderComponent implements OnInit {
         this.billingAddress.country = this.billingAddress.country =
           this.countryMap.getName(this.order.billingAddress.country);
       },
-      error: (err) => {
-        console.error('Error loading order or shipping address:', err);
+      error: () => {
         this.toastService.error('Failed to load order details');
       },
     });

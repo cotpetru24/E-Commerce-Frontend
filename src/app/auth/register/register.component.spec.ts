@@ -1,18 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { Register } from './register.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { RegisterComponent } from './register.component';
+import { ToastService } from '../../services/toast.service';
+import { AuthApiService } from '../../services/auth-api.service';
 
 describe('Register', () => {
-  let component: Register;
-  let fixture: ComponentFixture<Register>;
+  let component: RegisterComponent;
+  let fixture: ComponentFixture<RegisterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Register]
+      imports: [RegisterComponent],
+      providers: [
+        provideHttpClient(),
+        provideRouter([]),
+        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) },
+        { provide: AuthApiService, useValue: jasmine.createSpyObj('AuthApiService', ['register']) }
+      ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Register);
+    fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

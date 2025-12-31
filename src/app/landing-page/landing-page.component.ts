@@ -11,173 +11,6 @@ import { finalize } from 'rxjs';
 import { CmsApiService } from '../services/api/cms-api.service';
 import { CmsLandingPageDto } from '../models/cms.dto';
 
-// ============================================================================
-// HTTP REQUEST EXAMPLES - ANGULAR HTTP CLIENT
-// ============================================================================
-
-// Import statements needed for HTTP requests:
-// import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
-// import { Observable, throwError, catchError, retry, tap, map, switchMap, of } from 'rxjs';
-
-// Example API service class (would typically be in a separate file):
-/*
-@Injectable({
-  providedIn: 'root'
-})
-export class ApiService {
-  // Base URL for your API
-  private apiUrl = 'https://your-api.com/api';
-  
-  // Inject HttpClient in constructor
-  constructor(private http: HttpClient) {}
-  
-  // ============================================================================
-  // BASIC HTTP METHODS
-  // ============================================================================
-  
-  // GET request - fetch data from server
-  getProducts(): Observable<ProductDto[]> {
-    // GET /api/products
-    return this.http.get<ProductDto[]>(`${this.apiUrl}/products`);
-  }
-  
-  // GET request with query parameters
-  getProductsByCategory(category: string): Observable<ProductDto[]> {
-    // GET /api/products?category=men
-    const params = new HttpParams().set('category', category);
-    return this.http.get<ProductDto[]>(`${this.apiUrl}/products`, { params });
-  }
-  
-  // GET request with headers (e.g., for authentication)
-  getProductsWithAuth(): Observable<ProductDto[]> {
-    const headers = new HttpHeaders({
-      'Authorization': 'Bearer your-token-here',
-      'Content-Type': 'application/json'
-    });
-    
-    return this.http.get<ProductDto[]>(`${this.apiUrl}/products`, { headers });
-  }
-  
-  // POST request - create new data
-  createProduct(product: ProductDto): Observable<ProductDto> {
-    // POST /api/products
-    return this.http.post<ProductDto>(`${this.apiUrl}/products`, product);
-  }
-  
-  // PUT request - update existing data
-  updateProduct(id: number, product: ProductDto): Observable<ProductDto> {
-    // PUT /api/products/1
-    return this.http.put<ProductDto>(`${this.apiUrl}/products/${id}`, product);
-  }
-  
-  // PATCH request - partial update
-  updateProductPrice(id: number, price: number): Observable<ProductDto> {
-    // PATCH /api/products/1
-    return this.http.patch<ProductDto>(`${this.apiUrl}/products/${id}`, { price });
-  }
-  
-  // DELETE request - remove data
-  deleteProduct(id: number): Observable<void> {
-    // DELETE /api/products/1
-    return this.http.delete<void>(`${this.apiUrl}/products/${id}`);
-  }
-  
-  // ============================================================================
-  // ERROR HANDLING EXAMPLES
-  // ============================================================================
-  
-  // GET with error handling
-  getProductsWithErrorHandling(): Observable<ProductDto[]> {
-    return this.http.get<ProductDto[]>(`${this.apiUrl}/products`).pipe(
-      // Retry failed requests up to 3 times
-      retry(3),
-      // Handle errors
-      catchError(this.handleError)
-    );
-  }
-  
-  // Custom error handler
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An error occurred';
-    
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error (network, etc.)
-      errorMessage = `Client Error: ${error.error.message}`;
-    } else {
-      // Server-side error
-      errorMessage = `Server Error: ${error.status} - ${error.message}`;
-    }
-    
-    console.error(errorMessage);
-    return throwError(() => new Error(errorMessage));
-  }
-  
-  // ============================================================================
-  // RXJS OPERATORS EXAMPLES
-  // ============================================================================
-  
-  // Using map to transform data
-  getProductNames(): Observable<string[]> {
-    return this.http.get<ProductDto[]>(`${this.apiUrl}/products`).pipe(
-      map(products => products.map(product => product.name))
-    );
-  }
-  
-  // Using tap for side effects (logging, etc.)
-  getProductsWithLogging(): Observable<ProductDto[]> {
-    return this.http.get<ProductDto[]>(`${this.apiUrl}/products`).pipe(
-      tap(products => console.log(`Fetched ${products.length} products`)),
-      tap(products => {
-        // You could also dispatch actions, update other services, etc.
-        // this.store.dispatch(loadProductsSuccess({ products }));
-      })
-    );
-  }
-  
-  // Using switchMap for dependent requests
-  getProductWithDetails(id: number): Observable<any> {
-    return this.http.get<ProductDto>(`${this.apiUrl}/products/${id}`).pipe(
-      switchMap(product => {
-        // After getting product, fetch its reviews
-        return this.http.get<any[]>(`${this.apiUrl}/products/${id}/reviews`).pipe(
-          map(reviews => ({ product, reviews }))
-        );
-      })
-    );
-  }
-  
-  // ============================================================================
-  // ADVANCED PATTERNS
-  // ============================================================================
-  
-  // Caching with shareReplay
-  private productsCache$ = this.http.get<ProductDto[]>(`${this.apiUrl}/products`).pipe(
-    shareReplay(1) // Cache the result and share with multiple subscribers
-  );
-  
-  getProductsCached(): Observable<ProductDto[]> {
-    return this.productsCache$;
-  }
-  
-  // Request with timeout
-  getProductsWithTimeout(): Observable<ProductDto[]> {
-    return this.http.get<ProductDto[]>(`${this.apiUrl}/products`).pipe(
-      timeout(5000), // 5 second timeout
-      catchError(error => {
-        if (error.name === 'TimeoutError') {
-          return throwError(() => new Error('Request timed out'));
-        }
-        return throwError(() => error);
-      })
-    );
-  }
-}
-*/
-
-// ============================================================================
-// HOW TO USE HTTP IN COMPONENTS
-// ============================================================================
-
 @Component({
   selector: 'app-landing-page',
   standalone: true,
@@ -243,13 +76,11 @@ export class LandingPageComponent implements OnInit {
         next: (response) => {
           try {
             this.landingDto = response;
-          } catch (err) {
-            console.error('Validation failed', err);
+          } catch {
             this.toastService.error('Product data is invalid');
           }
         },
-        error: (err) => {
-          console.error('Failed to load landing:', err);
+        error: () => {
           this.toastService.error('Error loading landing');
         },
       });
@@ -265,13 +96,11 @@ export class LandingPageComponent implements OnInit {
           try {
             this.featuredProducts = response.products;
             this.availableBrands = response.brands;
-          } catch (err) {
-            console.error('Validation failed', err);
+          } catch {
             this.toastService.error('Product data is invalid');
           }
         },
-        error: (err) => {
-          console.error('Failed to load products:', err);
+        error: () => {
           this.toastService.error('Error loading products');
         },
       });

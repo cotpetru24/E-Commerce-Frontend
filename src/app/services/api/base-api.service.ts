@@ -8,6 +8,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { StorageService } from '../storage.service';
 
 // ============================================================================
 // BASE API SERVICE
@@ -22,7 +23,10 @@ export abstract class BaseApiService {
   // Base URL for the API - should be configured in environment files
   protected readonly apiBaseUrl = environment.apiBaseUrl;
 
-  constructor(protected http: HttpClient) {}
+  constructor(
+    protected http: HttpClient,
+    protected storageService: StorageService
+  ) {}
 
   // ============================================================================
   // COMMON HTTP METHODS WITH ERROR HANDLING
@@ -118,14 +122,7 @@ export abstract class BaseApiService {
    * Create HTTP headers with authentication token
    */
   protected getAuthHeaders(): HttpHeaders {
-    const token = sessionStorage.getItem('accessToken');
-    
-    // Debug logging to help identify authentication issues
-    if (!token) {
-      console.warn('No access token found in sessionStorage');
-    } else {
-      console.log('Access token found, length:', token.length);
-    }
+    const token = this.storageService.getSessionItem('accessToken');
     
     return new HttpHeaders({
       'Content-Type': 'application/json',
@@ -202,13 +199,6 @@ export abstract class BaseApiService {
       }
     }
 
-    console.error('API Error:', {
-      message: errorMessage,
-      status: error.status,
-      url: error.url,
-      error: error.error,
-    });
-
     return throwError(() => new Error(errorMessage));
   }
 
@@ -216,25 +206,13 @@ export abstract class BaseApiService {
    * Log API request for debugging
    */
   protected logRequest(method: string, url: string, data?: any): void {
-    if (environment.production) return; // Only log in development
-
-    console.log(`API ${method}:`, {
-      url,
-      data,
-      timestamp: new Date().toISOString(),
-    });
+    // Logging removed per cleanup requirements
   }
 
   /**
    * Log API response for debugging
    */
   protected logResponse(method: string, url: string, data: any): void {
-    if (environment.production) return; // Only log in development
-
-    console.log(`API ${method} Response:`, {
-      url,
-      data,
-      timestamp: new Date().toISOString(),
-    });
+    // Logging removed per cleanup requirements
   }
 }

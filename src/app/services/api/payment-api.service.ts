@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
+import { StorageService } from '../storage.service';
 
 
 @Injectable({
@@ -11,8 +12,11 @@ export class PaymentApiService extends BaseApiService {
 
     protected readonly baseUrl = '/api/Payment';
 
-  constructor(protected override http: HttpClient) {
-    super(http);
+  constructor(
+    protected override http: HttpClient,
+    protected override storageService: StorageService
+  ) {
+    super(http, storageService);
   }
 
 

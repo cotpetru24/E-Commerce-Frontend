@@ -191,9 +191,9 @@
                   </td>
                   <td>
                     <div>
-                      <strong>{{ formatDate(order.createdAt) }}</strong>
+                      <strong>{{ order.createdAt ? formatDate(order.createdAt) : '—' }}</strong>
                       <br>
-                      <small class="text-muted">{{ formatTime(order.createdAt) }}</small>
+                      <small class="text-muted">{{ order.createdAt ? formatTime(order.createdAt) : '—' }}</small>
                     </div>
                   </td>
                   <td>

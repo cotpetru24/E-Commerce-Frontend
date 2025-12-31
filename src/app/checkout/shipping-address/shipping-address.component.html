@@ -46,15 +46,16 @@
             </div>
 
             <!-- Existing Addresses -->
-            <div class="form-section" *ngIf="useExistingAddress && savedAddresses.length > 0">
-              <h3 class="section-title">
-                <i class="bi bi-bookmark me-2"></i>Select Address
-              </h3>
-              <div class="address-list">
-                <div class="address-card" 
-                     *ngFor="let address of savedAddresses" 
-                     [class.selected]="selectedAddressId === address.id"
-                     (click)="selectExistingAddress(address.id)">
+            @if (useExistingAddress && savedAddresses.length > 0) {
+              <div class="form-section">
+                <h3 class="section-title">
+                  <i class="bi bi-bookmark me-2"></i>Select Address
+                </h3>
+                <div class="address-list">
+                  @for (address of savedAddresses; track address.id) {
+                    <div class="address-card" 
+                         [class.selected]="selectedAddressId === address.id"
+                         (click)="selectExistingAddress(address.id)">
                   <div class="address-header">
                     <div class="form-check">
 <input type="radio" class="form-check-input"
@@ -69,14 +70,17 @@
                   </div>
                   <div class="address-details">
                     <p>{{ address.city }}, {{ address.county }} {{ address.postcode }}</p>
-                    <p>{{ address.country }}</p>
-                  </div>
+                      <p>{{ address.country }}</p>
+                    </div>
+                    </div>
+                  }
                 </div>
               </div>
-            </div>
+            }
 
             <!-- New Address Form -->
-            <div class="form-section" *ngIf="!useExistingAddress">
+            @if (!useExistingAddress) {
+              <div class="form-section">
               <h3 class="section-title">
                 <i class="bi bi-truck me-2"></i>Shipping Address
               </h3>
@@ -86,9 +90,11 @@
                 <input type="text" class="form-control" id="addressLine1" name="addressLine1" [(ngModel)]="addressData.addressLine1"
                   required placeholder="Enter your street address"
                   [ngClass]="{'is-invalid': addressForm.submitted && !addressData.addressLine1}">
-                <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.addressLine1">
-                  Street address is required.
-                </div>
+                @if (addressForm.submitted && !addressData.addressLine1) {
+                  <div class="invalid-feedback">
+                    Street address is required.
+                  </div>
+                }
               </div>
 
               <div class="row">
@@ -97,9 +103,11 @@
                   <input type="text" class="form-control" id="city" name="city" [(ngModel)]="addressData.city" required
                     placeholder="Enter your city"
                     [ngClass]="{'is-invalid': addressForm.submitted && !addressData.city}">
-                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.city">
-                    City is required.
-                  </div>
+                  @if (addressForm.submitted && !addressData.city) {
+                    <div class="invalid-feedback">
+                      City is required.
+                    </div>
+                  }
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -107,9 +115,11 @@
                   <input type="text" class="form-control" id="state" name="state" [(ngModel)]="addressData.state"
                     required placeholder="State/County"
                     [ngClass]="{'is-invalid': addressForm.submitted && !addressData.state}">
-                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.state">
-                    State/County is required.
-                  </div>
+                  @if (addressForm.submitted && !addressData.state) {
+                    <div class="invalid-feedback">
+                      State/County is required.
+                    </div>
+                  }
                 </div>
               </div>
 
@@ -119,9 +129,11 @@
                   <input type="text" class="form-control" id="postcode" name="postcode" [(ngModel)]="addressData.postcode"
                     required placeholder="Postcode"
                     [ngClass]="{'is-invalid': addressForm.submitted && !addressData.postcode}">
-                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.postcode">
-                    Postcode is required.
-                  </div>
+                  @if (addressForm.submitted && !addressData.postcode) {
+                    <div class="invalid-feedback">
+                      Postcode is required.
+                    </div>
+                  }
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -149,12 +161,15 @@
                     <option value="IE">Ireland</option>
                     <option value="NZ">New Zealand</option>
                   </select>
-                  <div class="invalid-feedback" *ngIf="addressForm.submitted && !addressData.country">
-                    Country is required.
-                  </div>
+                  @if (addressForm.submitted && !addressData.country) {
+                    <div class="invalid-feedback">
+                      Country is required.
+                    </div>
+                  }
                 </div>
               </div>
-            </div>
+              </div>
+            }
 
             <!-- Additional Information -->
             <div class="form-section">
@@ -169,13 +184,15 @@
                   placeholder="Any special delivery instructions, building access codes, or notes for the delivery person..."></textarea>
               </div>
 
-              <div class="form-check" *ngIf="!useExistingAddress">
-                <input type="checkbox" class="form-check-input" id="saveAddress" [(ngModel)]="addressData.saveAddress"
-                  name="saveAddress">
-                <label class="form-check-label" for="saveAddress">
-                  Save this address for future orders
-                </label>
-              </div>
+              @if (!useExistingAddress) {
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="saveAddress" [(ngModel)]="addressData.saveAddress"
+                    name="saveAddress">
+                  <label class="form-check-label" for="saveAddress">
+                    Save this address for future orders
+                  </label>
+                </div>
+              }
             </div>
 
             <!-- Form Actions -->
@@ -184,8 +201,12 @@
                 <i class="bi bi-arrow-left me-2"></i>Back to Cart
               </button>
               <button type="submit" class="btn btn-primary" [disabled]="isLoading">
-                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                <i class="bi bi-arrow-right me-2" *ngIf="!isLoading"></i>
+                @if (isLoading) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                }
+                @if (!isLoading) {
+                  <i class="bi bi-arrow-right me-2"></i>
+                }
                 {{ isLoading ? 'Processing...' : 'Continue to Payment' }}
               </button>
             </div>

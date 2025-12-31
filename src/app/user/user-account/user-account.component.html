@@ -1,6 +1,7 @@
 <div class="checkout-container pb-5">
   <!-- Page Header -->
-  <div class="page-header mb-5" *ngIf="!isLoading && userProfile">
+  @if (!isLoading && userProfile) {
+    <div class="page-header mb-5">
     <div class="container">
       <div class="header-content">
         <div class="header-main">
@@ -11,26 +12,31 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  }
 
   <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="container">
+  @if (isLoading) {
+    <div class="container">
     <div class="loading-container">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
       <p class="mt-2">Loading your account...</p>
     </div>
-  </div>
+    </div>
+  }
 
   <!-- Main Content -->
-  <div *ngIf="!isLoading && userProfile" class="container">
+  @if (!isLoading && userProfile) {
+    <div class="container">
     <div class="account-layout">
       <!-- Main Content -->
       <div class="account-main">
 
         <!-- Profile Edit Form -->
-        <div class="form-card" *ngIf="isEditing">
+        @if (isEditing) {
+          <div class="form-card">
           <div class="card-header">
             <h3 class="card-title">
               <i class="bi bi-pencil me-2"></i>Edit Profile
@@ -63,10 +69,12 @@
               </div>
             </form>
           </div>
-        </div>
+          </div>
+        }
 
         <!-- Change Password Form -->
-        <div class="form-card" *ngIf="isChangingPassword">
+        @if (isChangingPassword) {
+          <div class="form-card">
           <div class="card-header">
             <h3 class="card-title">
               <i class="bi bi-shield-lock me-2"></i>Change Password
@@ -97,7 +105,8 @@
               </div>
             </form>
           </div>
-        </div>
+          </div>
+        }
       </div>
 
       <!-- Account Sidebar -->
@@ -139,5 +148,6 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  }
 </div> 

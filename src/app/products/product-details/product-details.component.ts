@@ -103,7 +103,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   openImageModal() {
-    console.log('Open image modal');
+    // Image modal functionality can be implemented here
   }
 
   navigateToProductDetails(productId: number) {
@@ -162,7 +162,7 @@ export class ProductDetailsComponent implements OnInit {
     this.toastService.info('Proceeding to checkout...');
 
     // Navigate to checkout
-    console.log('Navigate to checkout');
+    this.router.navigate(['/checkout/shipping']);
   }
 
   toggleWishlist() {

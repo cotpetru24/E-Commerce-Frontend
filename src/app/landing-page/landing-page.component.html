@@ -116,7 +116,8 @@
       </div>
 
       <div class="featured-grid">
-        <div class="featured-product" (click)="viewProduct(product)" *ngFor="let product of featuredProducts">
+        @for (product of featuredProducts; track product.id) {
+          <div class="featured-product" (click)="viewProduct(product)">
           <div class="product-image" title="View product">
 
             @for (image of product.productImages; track image) {
@@ -128,23 +129,31 @@
             break;
             }
             }
-            <div class="product-badge" *ngIf="product.isNew">New</div>
-            <!-- <div class="product-badge sale" *ngIf="product.discount">-{{product.discount}}%</div> -->
+            @if (product.isNew) {
+              <div class="product-badge">New</div>
+            }
           </div>
           <div class="product-info">
             <h4>{{product.name}}</h4>
             <p class="product-category">{{product.audience}} • {{product.brandName}}</p>
             <div class="product-price">
               <span class="current-price">${{product.price}}</span>
-              <span class="original-price" *ngIf="product.originalPrice">${{product.originalPrice}}</span>
+              @if (product.originalPrice) {
+                <span class="original-price">${{product.originalPrice}}</span>
+              }
             </div>
             <div class="product-rating">
-              <i *ngFor="let star of getStars(product.rating || 0)" class="bi bi-star-fill star filled"></i>
-              <i *ngFor="let star of getEmptyStars(product.rating || 0)" class="bi bi-star star"></i>
+              @for (star of getStars(product.rating || 0); track star) {
+                <i class="bi bi-star-fill star filled"></i>
+              }
+              @for (star of getEmptyStars(product.rating || 0); track star) {
+                <i class="bi bi-star star"></i>
+              }
               <span class="rating-count">({{product.reviewCount}})</span>
             </div>
           </div>
-        </div>
+          </div>
+        }
       </div>
 
       <div class="view-all-container">
@@ -185,11 +194,14 @@
       </div>
 
       <div class="testimonials-grid">
-        <div class="testimonial-card" *ngFor="let testimonial of testimonials">
-          <div class="testimonial-content">
-            <div class="testimonial-rating">
-              <i *ngFor="let star of getStars(testimonial.rating)" class="bi bi-star-fill star filled"></i>
-            </div>
+        @for (testimonial of testimonials; track $index) {
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <div class="testimonial-rating">
+                @for (star of getStars(testimonial.rating); track star) {
+                  <i class="bi bi-star-fill star filled"></i>
+                }
+              </div>
             <p class="testimonial-text">"{{testimonial.text}}"</p>
             <div class="testimonial-author">
               <div class="author-info">
@@ -198,7 +210,8 @@
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        }
       </div>
     </div>
   </section>
@@ -212,11 +225,13 @@
       </div>
 
       <div class="brands-grid">
-        <div class="brand-item" *ngFor="let brand of availableBrands">
+        @for (brand of availableBrands; track brand) {
+          <div class="brand-item">
           <div class="brand-logo">
             <span class="brand-name">{{brand}}</span>
           </div>
-        </div>
+          </div>
+        }
       </div>
     </div>
   </section>

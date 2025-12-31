@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ProductDto } from '../models/product.dto';
+import { StorageService } from './storage.service';
 
 export interface CartItem {
   product: ProductDto;
@@ -26,8 +27,7 @@ export class CartService {
       try {
         const cartItems = JSON.parse(storedCart);
         this.cartItemsSubject.next(cartItems);
-      } catch (error) {
-        console.error('Error loading cart from storage:', error);
+      } catch {
         this.cartItemsSubject.next([]);
       }
     }

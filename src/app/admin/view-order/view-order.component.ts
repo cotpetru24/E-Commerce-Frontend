@@ -1,9 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import {
   AdminOrderDto,
+  AdminShippingAddressDto,
+  AdminBillingAddressDto,
   OrderDto,
   OrderItem,
   OrderItemDto,
@@ -28,28 +32,11 @@ import { CountryMapService } from '../../services/country-map.service';
   templateUrl: './view-order.component.html',
   styleUrl: './view-order.component.scss',
 })
-export class ViewOrderComponent implements OnInit {
+export class ViewOrderComponent implements OnInit, OnDestroy {
   order: AdminOrderDto | null = null;
   orderItems: OrderItemDto[] = [];
-  shippingAddress: ShippingAddressDto = {
-    addressLine1: '',
-    city: '',
-    county: '',
-    postcode: '',
-    country: '',
-    id: 0,
-    userId: '',
-  };
-
-  billingAddress: ShippingAddressDto = {
-    addressLine1: '',
-    city: '',
-    county: '',
-    postcode: '',
-    country: '',
-    id: 0,
-    userId: '',
-  };
+  shippingAddress: AdminShippingAddressDto | null = null;
+  billingAddress: AdminBillingAddressDto | null = null;
 
   shippingInfo: ShippingInfo = {
     method: 'Standard Shipping',
@@ -62,6 +49,7 @@ export class ViewOrderComponent implements OnInit {
   cameFromDashboard: boolean = false;
   cameFromUserProfile: boolean = false;
 
+  private subscriptions = new Subscription();
 
   constructor(
     private router: Router,
@@ -76,11 +64,12 @@ export class ViewOrderComponent implements OnInit {
     this.orderId = Number(this.route.snapshot.paramMap.get('id'));
 
     // Check if we came from dashboard
-    this.route.queryParams.subscribe((params) => {
-      this.cameFromDashboard = params['from'] === 'dashboard';
-      this.cameFromUserProfile = params['from'] === 'user-profile';
-
-    });
+    this.subscriptions.add(
+      this.route.queryParams.subscribe((params) => {
+        this.cameFromDashboard = params['from'] === 'dashboard';
+        this.cameFromUserProfile = params['from'] === 'user-profile';
+      })
+    );
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -92,37 +81,56 @@ export class ViewOrderComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
   loadOrderData(): void {
     this.isLoading = true;
 
-    this.adminApiService.getOrder(this.orderId!).subscribe({
-      next: (order) => {
-        this.order = order;
-        this.orderItems = order.orderItems;
-        this.orderStatus = order.orderStatusName!;
-        this.canUpdateStatus = true;
-          // order.orderStatusName !== 'Cancelled' &&
-          // order.orderStatusName !== 'Refunded' &&
-          // order.orderStatusName !== 'Returned';
-        this.shippingAddress = order.shippingAddress;
-        this.shippingAddress.country = this.countryMap.getName(
-          order.shippingAddress.country
-        );
+    this.subscriptions.add(
+      this.adminApiService.getOrder(this.orderId!)
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
+          next: (order) => {
+            this.order = order;
+            this.orderItems = order.orderItems;
+            this.orderStatus = order.orderStatusName!;
+            this.canUpdateStatus = true;
+            this.shippingAddress = order.shippingAddress ?? null;
+            if (this.shippingAddress) {
+              this.shippingAddress.country = this.countryMap.getName(
+                this.shippingAddress.country
+              );
+            }
 
-        this.billingAddress = order.billingAddress ?? this.shippingAddress;
-        this.billingAddress.country = this.countryMap.getName(
-          order.billingAddress?.country?? order.shippingAddress.country
-        );
-
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading order:', err);
-        this.toastService.error('Failed to load order details');
-        this.isLoading = false;
-        this.router.navigate(['/admin/orders']);
-      },
-    });
+            this.billingAddress = order.billingAddress ?? null;
+            if (this.billingAddress) {
+              this.billingAddress.country = this.countryMap.getName(
+                this.billingAddress.country
+              );
+            } else if (this.shippingAddress) {
+              // Fallback to shipping address if billing address is not provided
+              this.billingAddress = {
+                id: this.shippingAddress.id,
+                firstName: this.shippingAddress.firstName,
+                lastName: this.shippingAddress.lastName,
+                addressLine1: this.shippingAddress.addressLine1,
+                ...(this.shippingAddress.addressLine2 ? { addressLine2: this.shippingAddress.addressLine2 } : {}),
+                city: this.shippingAddress.city,
+                state: this.shippingAddress.state,
+                postalCode: this.shippingAddress.postalCode,
+                country: this.shippingAddress.country,
+                ...(this.shippingAddress.phoneNumber ? { phoneNumber: this.shippingAddress.phoneNumber } : {}),
+              };
+            }
+          },
+          error: () => {
+            this.toastService.error('Failed to load order details');
+            this.router.navigate(['/admin/orders']);
+          },
+        })
+    );
   }
 
   getItemTotal(item: OrderItemDto): number {
@@ -184,26 +192,27 @@ export class ViewOrderComponent implements OnInit {
           notes: 'testing the notes',
         };
 
-        this.adminApiService
-          .updateOrderStatus(this.orderId!, statusData)
-          .subscribe({
-            next: () => {
-              this.orderStatus = OrderStatus[selectedStatus];
-              this.canUpdateStatus = true;
-              this.toastService.success('Order status updated successfully!');
-              this.isLoading = false;
-            },
-            error: (err) => {
-              if (err.status === 404) {
-                this.toastService.warning(
-                  'Order not found or cannot be updated.'
-                );
-              } else {
-                this.toastService.error('Failed to update order status.');
-              }
-              this.isLoading = false;
-            },
-          });
+        this.subscriptions.add(
+          this.adminApiService
+            .updateOrderStatus(this.orderId!, statusData)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+              next: () => {
+                this.orderStatus = OrderStatus[selectedStatus];
+                this.canUpdateStatus = true;
+                this.toastService.success('Order status updated successfully!');
+              },
+              error: (err) => {
+                if (err.status === 404) {
+                  this.toastService.warning(
+                    'Order not found or cannot be updated.'
+                  );
+                } else {
+                  this.toastService.error('Failed to update order status.');
+                }
+              },
+            })
+        );
       }
     });
   }
@@ -224,26 +233,27 @@ export class ViewOrderComponent implements OnInit {
           notes: 'Order cancelled by admin',
         };
 
-        this.adminApiService
-          .updateOrderStatus(this.orderId!, statusData)
-          .subscribe({
-            next: (response) => {
-              this.orderStatus = 'Cancelled';
-              this.canUpdateStatus = false;
-              this.toastService.success('Order cancelled successfully!');
-              this.isLoading = false;
-            },
-            error: (err) => {
-              if (err.status === 404) {
-                this.toastService.warning(
-                  'Order not found or cannot be cancelled.'
-                );
-              } else {
-                this.toastService.error('Failed to cancel order.');
-              }
-              this.isLoading = false;
-            },
-          });
+        this.subscriptions.add(
+          this.adminApiService
+            .updateOrderStatus(this.orderId!, statusData)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+              next: () => {
+                this.orderStatus = 'Cancelled';
+                this.canUpdateStatus = false;
+                this.toastService.success('Order cancelled successfully!');
+              },
+              error: (err) => {
+                if (err.status === 404) {
+                  this.toastService.warning(
+                    'Order not found or cannot be cancelled.'
+                  );
+                } else {
+                  this.toastService.error('Failed to cancel order.');
+                }
+              },
+            })
+        );
       }
     });
   }

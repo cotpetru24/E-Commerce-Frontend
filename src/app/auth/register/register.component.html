@@ -25,9 +25,11 @@
                   placeholder="Enter your first name"
                   [ngClass]="{'is-invalid': registerForm.submitted && !registerData.firstName}"
                 >
-                <div class="invalid-feedback" *ngIf="registerForm.submitted && !registerData.firstName">
-                  First name is required.
-                </div>
+                @if (registerForm.submitted && !registerData.firstName) {
+                  <div class="invalid-feedback">
+                    First name is required.
+                  </div>
+                }
               </div>
 
               <div class="col-md-6 mb-3">
@@ -44,9 +46,11 @@
                   placeholder="Enter your last name"
                   [ngClass]="{'is-invalid': registerForm.submitted && !registerData.lastName}"
                 >
-                <div class="invalid-feedback" *ngIf="registerForm.submitted && !registerData.lastName">
-                  Last name is required.
-                </div>
+                @if (registerForm.submitted && !registerData.lastName) {
+                  <div class="invalid-feedback">
+                    Last name is required.
+                  </div>
+                }
               </div>
             </div>
 
@@ -65,9 +69,11 @@
                 placeholder="Enter your email"
                 [ngClass]="{'is-invalid': registerForm.submitted && !registerData.email}"
               >
-              <div class="invalid-feedback" *ngIf="registerForm.submitted && !registerData.email">
-                Please enter a valid email address.
-              </div>
+              @if (registerForm.submitted && !registerData.email) {
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+              }
             </div>
 
             <div class="mb-3">
@@ -93,9 +99,11 @@
                   <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
                 </button>
               </div>
-              <div class="invalid-feedback" *ngIf="registerForm.submitted && !registerData.password">
-                Password is required.
-              </div>
+              @if (registerForm.submitted && !registerData.password) {
+                <div class="invalid-feedback">
+                  Password is required.
+                </div>
+              }
               <div class="form-text">
                 Password must be at least 8 characters long.
               </div>
@@ -115,9 +123,11 @@
                   placeholder="Confirm your password"
                   [ngClass]="{'is-invalid': registerForm.submitted && registerData.password !== registerData.confirmPassword}"
                 >
-              <div class="invalid-feedback" *ngIf="registerForm.submitted && registerData.password !== registerData.confirmPassword">
-                Passwords do not match.
-              </div>
+              @if (registerForm.submitted && registerData.password !== registerData.confirmPassword) {
+                <div class="invalid-feedback">
+                  Passwords do not match.
+                </div>
+              }
             </div>
 
             <div class="mb-3 form-check">
@@ -133,9 +143,11 @@
               <label class="form-check-label" for="terms">
                 I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
               </label>
-              <div class="invalid-feedback" *ngIf="registerForm.submitted && !registerData.acceptTerms">
-                You must agree to the terms and conditions.
-              </div>
+              @if (registerForm.submitted && !registerData.acceptTerms) {
+                <div class="invalid-feedback">
+                  You must agree to the terms and conditions.
+                </div>
+              }
             </div>
 
             <div class="mb-3 form-check">
@@ -157,8 +169,12 @@
                 class="btn btn-success btn-lg"
                 [disabled]="isLoading"
               >
-                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2 text-primary " role="status"></span>
-                <i class="bi bi-person-plus me-2" *ngIf="!isLoading"></i>
+                @if (isLoading) {
+                  <span class="spinner-border spinner-border-sm me-2 text-primary" role="status"></span>
+                }
+                @if (!isLoading) {
+                  <i class="bi bi-person-plus me-2"></i>
+                }
                 {{ isLoading ? 'Creating Account...' : 'Create Account' }}
               </button>
             </div>
@@ -176,8 +192,12 @@
                   (click)="signUpWithGoogle()"
                   [disabled]="isGoogleLoading"
                 >
-                  <span *ngIf="isGoogleLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i class="bi bi-google me-2" *ngIf="!isGoogleLoading"></i>
+                  @if (isGoogleLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  }
+                  @if (!isGoogleLoading) {
+                    <i class="bi bi-google me-2"></i>
+                  }
                   {{ isGoogleLoading ? 'Creating Account...' : 'Sign up with Google' }}
                 </button>
                 
@@ -187,8 +207,12 @@
                   (click)="signUpWithGitHub()"
                   [disabled]="isGitHubLoading"
                 >
-                  <span *ngIf="isGitHubLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i class="bi bi-github me-2" *ngIf="!isGitHubLoading"></i>
+                  @if (isGitHubLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  }
+                  @if (!isGitHubLoading) {
+                    <i class="bi bi-github me-2"></i>
+                  }
                   {{ isGitHubLoading ? 'Creating Account...' : 'Sign up with GitHub' }}
                 </button>
                 
@@ -198,8 +222,12 @@
                   (click)="signUpWithFacebook()"
                   [disabled]="isFacebookLoading"
                 >
-                  <span *ngIf="isFacebookLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i class="bi bi-facebook me-2" *ngIf="!isFacebookLoading"></i>
+                  @if (isFacebookLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  }
+                  @if (!isFacebookLoading) {
+                    <i class="bi bi-facebook me-2"></i>
+                  }
                   {{ isFacebookLoading ? 'Creating Account...' : 'Sign up with Facebook' }}
                 </button>
               </div>

@@ -61,8 +61,10 @@
           </div>
           
           <div class="orders-content">
-            <div class="orders-list" *ngIf="filteredOrders.length > 0">
-              <div class="order-item" *ngFor="let order of filteredOrders">
+            @if (filteredOrders.length > 0) {
+              <div class="orders-list">
+                @for (order of filteredOrders; track order.id) {
+                  <div class="order-item">
                 <div class="order-header">
                   <div class="order-info">
                     <h4 class="order-id">Order #{{ order.id }}</h4>
@@ -99,27 +101,33 @@
                   <button class="btn btn-primary btn-sm" (click)="viewOrderDetails(order.id)" title="View Details">
                     <i class="bi bi-eye me-1"></i>View Details
                   </button>
-                  <button class="btn btn-outline-success btn-sm" (click)="reorder(order)" title="Reorder"
-                    *ngIf="order.orderStatusName === 'Delivered'">
-                    <i class="bi bi-arrow-clockwise me-1"></i>Reorder
-                  </button>
-                  <button class="btn btn-outline-warning btn-sm" (click)="cancelOrder(order)" title="Cancel Order"
-                    *ngIf="order.orderStatusName !== 'Completed' && order.orderStatusName !== 'Cancelled'">
-                    <i class="bi bi-x-circle me-1"></i>Cancel
-                  </button>
+                  @if (order.orderStatusName === 'Delivered') {
+                    <button class="btn btn-outline-success btn-sm" (click)="reorder(order)" title="Reorder">
+                      <i class="bi bi-arrow-clockwise me-1"></i>Reorder
+                    </button>
+                  }
+                  @if (order.orderStatusName !== 'Completed' && order.orderStatusName !== 'Cancelled') {
+                    <button class="btn btn-outline-warning btn-sm" (click)="cancelOrder(order)" title="Cancel Order">
+                      <i class="bi bi-x-circle me-1"></i>Cancel
+                    </button>
+                  }
                 </div>
+                  </div>
+                }
               </div>
-            </div>
+            }
             
             <!-- Empty State -->
-            <div class="empty-orders" *ngIf="filteredOrders.length === 0">
+            @if (filteredOrders.length === 0) {
+              <div class="empty-orders">
               <i class="bi bi-bag-x empty-icon"></i>
               <h3>No orders found</h3>
               <p>You haven't placed any orders yet.</p>
               <button class="btn btn-primary" routerLink="/products">
                 <i class="bi bi-cart-plus me-2"></i>Start Shopping
               </button>
-            </div>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -138,7 +146,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div *ngIf="selectedOrder">
+        @if (selectedOrder) {
+          <div>
           <div class="row mb-3">
             <div class="col-md-6">
               <strong>Order ID:</strong> #{{ selectedOrder.id }}
@@ -148,30 +157,12 @@
             </div>
           </div>
 
-          <!-- Tracking Timeline -->
-          <!-- <div class="tracking-timeline">
-            <div class="timeline-item" *ngFor="let event of selectedOrder.trackingEvents; let i = index">
-              <div class="timeline-marker" [ngClass]="{'completed': i <= selectedOrder.currentStep}">
-                <i class="bi" [ngClass]="getTimelineIcon(event.status)"></i>
-              </div>
-              <div class="timeline-content">
-                <h6 class="mb-1">{{ event.title }}</h6>
-                <p class="text-muted mb-1">{{ event.description }}</p>
-                <small class="text-muted">{{ event.timestamp | date:'MMM dd, yyyy HH:mm' }}</small>
-              </div>
-            </div>
-          </div> -->
-
-          <!-- Estimated Delivery -->
-          <!-- <div class="alert alert-info mt-3" *ngIf="selectedOrder.estimatedDelivery">
-            <i class="bi bi-calendar-event me-2"></i>
-            <strong>Estimated Delivery:</strong> {{ selectedOrder.estimatedDelivery | date:'EEEE, MMMM dd, yyyy' }}
-          </div> -->
           <div class="alert alert-info mt-3">
             <i class="bi bi-calendar-event me-2"></i>
             <strong>Estimated Delivery:</strong> {{'EEEE, MMMM dd, yyyy' }}
           </div>
-        </div>
+          </div>
+        }
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

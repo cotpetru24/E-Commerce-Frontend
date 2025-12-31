@@ -85,13 +85,11 @@ export class ProductListComponent implements OnInit {
           try {
             this.products = response.products
             this.availableBrands = response.brands;
-          } catch (err) {
-            console.error('Validation failed', err);
+          } catch {
             this.toastService.error('Product data is invalid');
           }
         },
-        error: (err) => {
-          console.error('Failed to load products:', err);
+        error: () => {
           this.toastService.error('Error loading products');
         },
       });

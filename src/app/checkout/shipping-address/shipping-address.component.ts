@@ -2,17 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AddressData, OrderSummary, CreateShippingAddressRequestDto, ShippingAddressDto } from '../../models';
+import {
+  AddressData,
+  OrderSummary,
+  CreateShippingAddressRequestDto,
+  ShippingAddressDto,
+} from '../../models';
 import { CartService } from '../../services/cart.service';
 import { ShippingAddressApiService } from '../../services/api/shipping-address-api.service';
 import { ToastService } from '../../services/toast.service';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'shipping-address',
   templateUrl: './shipping-address.component.html',
   styleUrls: ['./shipping-address.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule],
 })
 export class ShippingAddressComponent implements OnInit {
   addressData: AddressData = {
@@ -22,14 +28,14 @@ export class ShippingAddressComponent implements OnInit {
     postcode: '',
     country: '',
     instructions: '',
-    saveAddress: false
+    saveAddress: false,
   };
-  
+
   orderSummary: OrderSummary = {
     subtotal: 0,
     discount: 0,
     shipping: 0,
-    total: 0
+    total: 0,
   };
 
   savedAddresses: ShippingAddressDto[] = [];
@@ -41,11 +47,12 @@ export class ShippingAddressComponent implements OnInit {
     private router: Router,
     private cartService: CartService,
     private shippingAddressService: ShippingAddressApiService,
-    private toastService: ToastService) {
-  }
+    private toastService: ToastService,
+    private storageService: StorageService
+  ) {}
 
   ngOnInit(): void {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     this.loadSavedAddresses();
     this.loadOrderSummary();
@@ -53,9 +60,8 @@ export class ShippingAddressComponent implements OnInit {
 
   loadSavedAddresses(): void {
     // Check if user is logged in before making API call
-    const token = sessionStorage.getItem('accessToken');
+    const token = this.storageService.getSessionItem('accessToken');
     if (!token) {
-      console.warn('No access token found, falling back to localStorage');
       this.loadSavedAddressFromLocalStorage();
       return;
     }
@@ -69,18 +75,18 @@ export class ShippingAddressComponent implements OnInit {
           this.useExistingAddress = true;
         }
       },
-      error: (error) => {
-        console.error('Error loading saved addresses:', error);
-        // Fallback to localStorage
+      error: () => {
         this.loadSavedAddressFromLocalStorage();
-      }
+      },
     });
   }
 
   loadSavedAddressFromLocalStorage(): void {
-    const savedAddress = localStorage.getItem('savedShippingAddress');
+    const savedAddress = this.storageService.getLocalObject<any>(
+      'savedShippingAddress'
+    );
     if (savedAddress) {
-      this.addressData = { ...this.addressData, ...JSON.parse(savedAddress) };
+      this.addressData = { ...this.addressData, ...savedAddress };
     }
   }
 
@@ -89,7 +95,7 @@ export class ShippingAddressComponent implements OnInit {
       subtotal: this.cartService.getSubtotal(),
       discount: this.cartService.getDiscount(),
       shipping: 0, // Free shipping
-      total: this.cartService.getTotal()
+      total: this.cartService.getTotal(),
     };
   }
 
@@ -121,18 +127,19 @@ export class ShippingAddressComponent implements OnInit {
         country: this.addressData.country,
       };
 
-      this.shippingAddressService.createShippingAddress(addressRequest).subscribe({
-        next: (response) => {
-          this.toastService.success('Address saved successfully');
-          this.selectedAddressId = response.id;
-          this.proceedToPayment();
-        },
-        error: (error) => {
-          console.error('Error saving address:', error);
-          this.toastService.error('Failed to save address');
-          this.isLoading = false;
-        }
-      });
+      this.shippingAddressService
+        .createShippingAddress(addressRequest)
+        .subscribe({
+          next: (response) => {
+            this.toastService.success('Address saved successfully');
+            this.selectedAddressId = response.id;
+            this.proceedToPayment();
+          },
+          error: () => {
+            this.toastService.error('Failed to save address');
+            this.isLoading = false;
+          },
+        });
     } else {
       // Just proceed without saving
       this.proceedToPayment();
@@ -142,12 +149,18 @@ export class ShippingAddressComponent implements OnInit {
   proceedToPayment(): void {
     // Store selected address ID for use in payment/order creation
     if (this.selectedAddressId) {
-      localStorage.setItem('selectedShippingAddressId', this.selectedAddressId.toString());
+      this.storageService.setLocalItem(
+        'selectedShippingAddressId',
+        this.selectedAddressId.toString()
+      );
     }
-    
+
     // Store delivery instructions
     if (this.addressData.instructions) {
-      localStorage.setItem('deliveryInstructions', this.addressData.instructions);
+      this.storageService.setLocalItem(
+        'deliveryInstructions',
+        this.addressData.instructions
+      );
     }
 
     this.isLoading = false;
@@ -161,17 +174,19 @@ export class ShippingAddressComponent implements OnInit {
   toggleAddressMode(): void {
     this.useExistingAddress = !this.useExistingAddress;
     if (this.useExistingAddress) {
-      this.selectedAddressId = this.savedAddresses.length > 0 ? this.savedAddresses[0].id : null;
+      this.selectedAddressId =
+        this.savedAddresses.length > 0 ? this.savedAddresses[0].id : null;
     }
   }
 
   validateForm(): boolean {
     return !!(
-              this.addressData.addressLine1 && 
-              this.addressData.city && 
-              this.addressData.state && 
-              this.addressData.postcode && 
-              this.addressData.country);
+      this.addressData.addressLine1 &&
+      this.addressData.city &&
+      this.addressData.state &&
+      this.addressData.postcode &&
+      this.addressData.country
+    );
   }
 
   goBack(): void {

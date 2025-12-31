@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
+import { StorageService } from '../storage.service';
 import { UserProfileDto, UpdateUserProfileRequestDto, ChangePasswordRequestDto, UserStatsDto } from '../../models/user.dto';
 
 @Injectable({
@@ -8,6 +10,13 @@ import { UserProfileDto, UpdateUserProfileRequestDto, ChangePasswordRequestDto, 
 })
 export class UserApiService extends BaseApiService {
   private readonly userEndpoint = '/api/User';
+
+  constructor(
+    protected override http: HttpClient,
+    protected override storageService: StorageService
+  ) {
+    super(http, storageService);
+  }
 
   getUserProfile(): Observable<UserProfileDto> {
     const url = this.buildUrl(this.userEndpoint + '/profile');

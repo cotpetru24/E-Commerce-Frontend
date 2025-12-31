@@ -1,13 +1,16 @@
 <div class="checkout-container pb-5">
   <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+  @if (isLoading) {
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
+  }
 
   <!-- Order Content -->
-  <div *ngIf="!isLoading && order">
+  @if (!isLoading && order) {
+  <div>
     <!-- Page Header -->
     <div class="page-header mb-5">
       <div class="container">
@@ -21,10 +24,12 @@
               <small class="text-white-50">
                 <i class="bi bi-person me-1"></i>
                 Customer: {{ order?.userName || 'N/A' }}
-                <span class="ms-3" *ngIf="order?.userId">
+                @if (order?.userId) {
+                <span class="ms-3">
                   <i class="bi bi-envelope me-1"></i>
                   ID: {{ order.userId }}
                 </span>
+                }
               </small>
             </div>
           </div>
@@ -54,8 +59,10 @@
                 <h3 class="section-title">
                   <i class="bi bi-bag me-2"></i>Order Items
                 </h3>
-                <div class="order-items" *ngIf="orderItems.length > 0">
-                  <div class="order-item" *ngFor="let item of orderItems" (click)="goToItem(item.productId!)">
+                @if (orderItems.length > 0) {
+                <div class="order-items">
+                  @for (item of orderItems; track item.productId) {
+                  <div class="order-item" (click)="goToItem(item.productId!)">
                     <div class="item-image">
                       <img [src]="'/assets/'+item.imagePath" [alt]="item.productName" title="productName">
                     </div>
@@ -63,7 +70,9 @@
                       <h4 class="item-name">{{ item.productName }}</h4>
                       <p class="item-brand">{{ item.brandName }}</p>
                       <div class="item-meta">
-                        <span class="item-size" *ngIf="item.size">Size: {{ item.size }}</span>
+                        @if (item.size) {
+                        <span class="item-size">Size: {{ item.size }}</span>
+                        }
                         <span class="item-quantity">Qty: {{ item.quantity }}</span>
                       </div>
                     </div>
@@ -71,7 +80,9 @@
                       <span class="price">£{{ getItemTotal(item) }}</span>
                     </div>
                   </div>
+                  }
                 </div>
+                }
               </div>
 
               <!-- Shipping Address -->
@@ -79,36 +90,54 @@
                 <h3 class="section-title">
                   <i class="bi bi-geo-alt me-2"></i>Shipping Details
                 </h3>
+                @if (shippingAddress) {
                 <div class="address-card">
                   <div class="address-content">
                     <div class="address-info">
-                      <p class="address-name"><strong>{{ order?.userName }}</strong></p>
+                      <p class="address-name"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName
+                          }}</strong></p>
                       <p class="address-line">{{ shippingAddress.addressLine1 }}</p>
-                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }} {{
-                        shippingAddress.postcode }}</p>
+                      @if (shippingAddress.addressLine2) {
+                      <p class="address-line">{{ shippingAddress.addressLine2 }}</p>
+                      }
+                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.state }} {{
+                        shippingAddress.postalCode }}</p>
                       <p class="address-line">{{ shippingAddress.country }}</p>
+                      @if (shippingAddress.phoneNumber) {
+                      <p class="address-line">{{ shippingAddress.phoneNumber }}</p>
+                      }
                     </div>
                   </div>
                 </div>
+                }
               </div>
 
               <!-- Billing Address -->
-              <div class="review-section" *ngIf="billingAddress.addressLine1">
+              @if (billingAddress) {
+              <div class="review-section">
                 <h3 class="section-title">
                   <i class="bi bi-house me-2"></i>Billing Details
                 </h3>
                 <div class="address-card">
                   <div class="address-content">
                     <div class="address-info">
-                      <p class="address-name"><strong>{{ order?.payment?.billingName }}</strong></p>
+                      <p class="address-name"><strong>{{ billingAddress.firstName }} {{ billingAddress.lastName
+                          }}</strong></p>
                       <p class="address-line">{{ billingAddress.addressLine1 }}</p>
-                      <p class="address-line">{{ billingAddress.city }}, {{ billingAddress.county }} {{
-                        billingAddress.postcode }}</p>
+                      @if (billingAddress.addressLine2) {
+                      <p class="address-line">{{ billingAddress.addressLine2 }}</p>
+                      }
+                      <p class="address-line">{{ billingAddress.city }}, {{ billingAddress.state }} {{
+                        billingAddress.postalCode }}</p>
                       <p class="address-line">{{ billingAddress.country }}</p>
+                      @if (billingAddress.phoneNumber) {
+                      <p class="address-line">{{ billingAddress.phoneNumber }}</p>
+                      }
                     </div>
                   </div>
                 </div>
               </div>
+              }
 
               <!-- Payment Method -->
               <div class="review-section">
@@ -119,7 +148,8 @@
                   <div class="payment-content">
 
                     <div class="payment-info">
-                      <div *ngIf="order.payment.paymentMethod === 'Credit/Debit Card'">
+                      @if (order.payment.paymentMethod === 'Credit/Debit Card') {
+                      <div>
                         <div class="d-flex justify-content-between mb-2">
                           <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
                           <span class="badge badge-compact" [ngClass]="{
@@ -132,28 +162,31 @@
                           </span>
                         </div>
                         <p class="payment-details text-capitalize">Card brand: {{ order?.payment?.cardBrand || '' }}</p>
-                        <p class="payment-details">Card number: **** **** **** {{ order?.payment?.cardLast4 || '****' }}</p>
+                        <p class="payment-details">Card number: **** **** **** {{ order?.payment?.cardLast4 || '****' }}
+                        </p>
                         <p class="payment-details">
                           <a [href]="order?.payment?.receiptUrl || ''" target="_blank" rel="noopener noreferrer">
                             Receipt
                           </a>
                         </p>
-                        
+
                         <p class="payment-details">Transaction ID: {{ order?.payment?.transactionId || 'Unknown' }}</p>
-
-
                       </div>
-                      <div *ngIf="order?.payment?.paymentMethod === 'paypal'">
+                      }
+                      @if (order?.payment?.paymentMethod === 'paypal') {
+                      <div>
                         <p class="payment-type"><strong>PayPal</strong></p>
                         <p class="payment-details">{{ order?.payment?.billingEmail }}</p>
                       </div>
+                      }
                     </div>
                   </div>
                 </div>
               </div>
 
               <!-- Shipping Information -->
-              <div class="review-section" *ngIf="shippingInfo">
+              @if (shippingInfo) {
+              <div class="review-section">
                 <h3 class="section-title">
                   <i class="bi bi-truck me-2"></i>Shipping Information
                 </h3>
@@ -167,6 +200,7 @@
                   </div>
                 </div>
               </div>
+              }
             </div>
           </div>
         </div>
@@ -186,14 +220,16 @@
               </div>
               <div class="summary-item">
                 <span>Shipping</span>
-                  <span>
-                    {{ getShippingCost() === 0 ? 'Free' : ('£' + (getShippingCost() | number:'1.2-2')) }}
-                  </span>
+                <span>
+                  {{ getShippingCost() === 0 ? 'Free' : ('£' + (getShippingCost() | number:'1.2-2')) }}
+                </span>
               </div>
-              <div class="summary-item discount" *ngIf="getDiscount() > 0">
+              @if (getDiscount() > 0) {
+              <div class="summary-item discount">
                 <span>Discount</span>
                 <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
               </div>
+              }
               <div class="summary-item total">
                 <span>Total</span>
                 <span>£{{ getTotal() | number:'1.2-2' }}</span>
@@ -203,22 +239,32 @@
 
           <!-- Admin Actions -->
           <div class="order-actions">
-            <button class="btn btn-primary btn-lg w-100" (click)="goToUserProfile()" *ngIf="order?.userId">
+            @if (order?.userId) {
+            <button class="btn btn-primary btn-lg w-100" (click)="goToUserProfile()">
               <i class="bi bi-person me-2"></i>
               View Customer Profile
             </button>
+            }
 
             <button class="btn btn-warning btn-lg w-100 mt-2" (click)="updateOrderStatus()"
               [disabled]="isLoading || !canUpdateStatus">
-              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              <i class="bi bi-arrow-repeat me-2" *ngIf="!isLoading"></i>
+              @if (isLoading) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              }
+              @if (!isLoading) {
+              <i class="bi bi-arrow-repeat me-2"></i>
+              }
               {{ isLoading ? 'Updating...' : 'Update Status' }}
             </button>
 
             <button class="btn btn-danger btn-lg w-100 mt-2" (click)="cancelOrder()"
               [disabled]="isLoading || !canUpdateStatus">
-              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              <i class="bi bi-x-circle me-2" *ngIf="!isLoading"></i>
+              @if (isLoading) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              }
+              @if (!isLoading) {
+              <i class="bi bi-x-circle me-2"></i>
+              }
               {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}
             </button>
 
@@ -246,27 +292,32 @@
                 <span class="info-label">Order ID:</span>
                 <span class="info-value">{{ orderId }}</span>
               </div>
-              <div class="info-item" *ngIf="order?.userId">
+              @if (order?.userId) {
+              <div class="info-item">
                 <span class="info-label">Customer ID:</span>
                 <span class="info-value">{{ order.userId }}</span>
               </div>
+              }
               <div class="info-item">
                 <span class="info-label">Created:</span>
                 <span class="info-value">{{ order?.createdAt | date:'short' }}</span>
               </div>
-              <div class="info-item" *ngIf="order?.updatedAt">
+              @if (order?.updatedAt) {
+              <div class="info-item">
                 <span class="info-label">Last Updated:</span>
                 <span class="info-value">{{ order.updatedAt | date:'short' }}</span>
               </div>
+              }
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
+  }
   <!-- Error State -->
-  <div *ngIf="!isLoading && !order" class="container">
+  @if (!isLoading && !order) {
+  <div class="container">
     <div class="text-center py-5">
       <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
       <h3 class="mt-3">Order Not Found</h3>
@@ -276,4 +327,5 @@
       </button>
     </div>
   </div>
+  }
 </div>

@@ -41,11 +41,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.cartItemCount = this.cartService.getCartItemCount();
     });
 
-    // const rawJson = localStorage.getItem('cmsProfile');
-
-    // if(rawJson){
-    //   this.websiteName = (JSON.parse(rawJson)).websiteName
-    // }
 
         this.sub = this.cmsStateService.cmsProfile$.subscribe(profile => {
       if (!profile) return;

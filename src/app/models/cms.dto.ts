@@ -1,5 +1,3 @@
-import { string } from "zod";
-
 export interface CmsProfileDto {
   id: number;
   profileName: string;
@@ -9,7 +7,6 @@ export interface CmsProfileDto {
   tagline?: string;
   logoBase64?: string;
   faviconBase64?: string;
-  showLogoInHeader:boolean;
 
   navbarBgColor: string;
   navbarTextColor: string;
@@ -26,15 +23,8 @@ export interface CmsProfileDto {
   heroSecondaryButtonText: string;
   heroBackgroundImageBase64?: string;
 
-  // newsletterTitle?:string;
-  // newsletterDescription?: string;
-  // newsletterButtonText?: string;
-
   features: CmsFeature[];
   categories: CmsCategory[];
-
-  lastUpdated: Date;
-  createdAt: Date;
 }
 
 export interface CmsFeature {
@@ -76,6 +66,8 @@ export interface CmsLandingPageDto {
   heroPrimaryButtonText: string;
   heroSecondaryButtonText: string;
   heroBackgroundImageBase64?: string;
+
+  showLogoInHeader: boolean;
 
   features: CmsFeature[];
   categories: CmsCategory[];

@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ProductFiltersComponent } from './product-filters.component';
 
 describe('ProductFilters', () => {

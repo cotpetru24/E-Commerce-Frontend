@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { AdminProductDto, ProductDto } from '../../models/product.dto';
 import {
   AdminApiService,
@@ -11,6 +12,7 @@ import {
   Order,
 } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
+import { UtilsService } from '../../services/utils.service';
 import { UserDto } from '../../models/user.dto';
 import {
   AdminOrderDto,
@@ -107,10 +109,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private adminApi: AdminApiService,
     private toastService: ToastService,
-    private router: Router
-  ) // private productApi: ProductApiService,
-  // private userApi: UserApiService,
-  {}
+    private router: Router,
+    private utilsService: UtilsService
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -127,17 +128,18 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   loadDashboardData(): void {
     this.isLoadingStats = true;
 
-    this.adminApi.getDashboardStats().subscribe({
-      next: (stats) => {
-        this.dashboardStats = stats;
-        this.isLoadingStats = false;
-      },
-      error: (error) => {
-        console.error('Error loading dashboard stats:', error);
-        this.isLoadingStats = false;
-        this.toastService.error('Failed to load dashboard statistics');
-      },
-    });
+    this.subscriptions.add(
+      this.adminApi.getDashboardStats()
+        .pipe(finalize(() => (this.isLoadingStats = false)))
+        .subscribe({
+          next: (stats) => {
+            this.dashboardStats = stats;
+          },
+          error: () => {
+            this.toastService.error('Failed to load dashboard statistics');
+          },
+        })
+    );
   }
 
   // ============================================================================
@@ -154,8 +156,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           this.filteredProducts = response.products;
           this.isLoadingProducts = false;
         },
-        error: (error) => {
-          console.error('Error loading products:', error);
+        error: () => {
           this.isLoadingProducts = false;
           this.toastService.error('Failed to load products');
         },
@@ -170,7 +171,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         product.name
           .toLowerCase()
           .includes(this.productSearchTerm.toLowerCase()) ||
-        product.brandName
+        (product.brandName ?? '')
           .toLowerCase()
           .includes(this.productSearchTerm.toLowerCase());
 
@@ -180,7 +181,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
       const matchesBrand =
         !this.selectedProductBrand ||
-        product.brandName === this.selectedProductBrand;
+        (product.brandName ?? '') === this.selectedProductBrand;
 
       return matchesSearch && matchesCategory && matchesBrand;
     });
@@ -195,9 +196,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   editProduct(product: ProductDto): void {
-    // Navigate to edit product page
-    console.log('Edit product:', product);
-    // this.router.navigate(['/admin/products/edit', product.id]);
+    this.router.navigate(['/admin/products/edit', product.id]);
   }
 
   deleteProduct(product: ProductDto): void {
@@ -208,8 +207,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.toastService.success('Product deleted successfully');
             this.loadProducts(); // Reload products
           },
-          error: (error) => {
-            console.error('Error deleting product:', error);
+          error: () => {
             this.toastService.error('Failed to delete product');
           },
         })
@@ -217,25 +215,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateProductStock(product: AdminProductDto, newStock: number): void {
-    // this.subscriptions.add(
-    //   this.adminApi.updateProductStock(product.id, newStock).subscribe({
-    //     next: (updatedProduct) => {
-    //       // Update local product
-    //       const index = this.products.findIndex(p => p.id === product.id);
-    //       if (index !== -1) {
-    //         this.products[index] = updatedProduct;
-    //         this.filterProducts();
-    //       }
-    //       this.toastService.success('Product stock updated successfully');
-    //     },
-    //     error: (error) => {
-    //       console.error('Error updating product stock:', error);
-    //       this.toastService.error('Failed to update product stock');
-    //     }
-    //   })
-    // );
-  }
 
   // ============================================================================
   // USER MANAGEMENT METHODS
@@ -247,14 +226,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     const getAllUsersRequest: GetAllUsersRequestDto = {
       pageNumber: 1,
       pageSize: 10,
-      // searchTerm: this.searchTerm,
       userStatus: null,
       sortBy: null,
-      // sortByField === 'name'
-      // ? UsersSortBy.Name
-      // UsersSortBy.DateCreated,
       sortDirection: null,
-      // : UsersSortDirection.Descending,
     };
 
     this.subscriptions.add(
@@ -265,8 +239,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           this.totalItems = response.totalQueryCount;
           this.isLoadingUsers = false;
         },
-        error: (error) => {
-          console.error('Error loading users:', error);
+        error: () => {
           this.isLoadingUsers = false;
           this.toastService.error('Failed to load users');
         },
@@ -292,8 +265,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   editUser(user: UserDto): void {
-    console.log('Edit user:', user);
-    // this.router.navigate(['/admin/users/edit', user.id]);
+    this.router.navigate(['/admin/users/edit', user.id]);
   }
 
   deleteUser(user: UserDto): void {
@@ -304,8 +276,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.toastService.success('User deleted successfully');
             this.loadUsers(); // Reload users
           },
-          error: (error) => {
-            console.error('Error deleting user:', error);
+          error: () => {
             this.toastService.error('Failed to delete user');
           },
         })
@@ -332,8 +303,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
               `User ${newStatus ? 'blocked' : 'unblocked'} successfully`
             );
           },
-          error: (error: any) => {
-            console.error('Error updating user status:', error);
+          error: () => {
             this.toastService.error('Failed to update user status');
           },
         })
@@ -355,8 +325,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           this.totalItems = response.totalQueryCount;
           this.isLoadingOrders = false;
         },
-        error: (error) => {
-          console.error('Error loading orders:', error);
+        error: () => {
           this.isLoadingOrders = false;
           this.toastService.error('Failed to load orders');
         },
@@ -378,8 +347,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   viewOrder(order: Order): void {
-    console.log('View order:', order);
-    // this.router.navigate(['/admin/orders', order.id]);
+    this.router.navigate(['/admin/orders', order.id]);
   }
 
   updateOrderStatus(order: Order, newStatus: Order['status']): void {
@@ -399,8 +367,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
           this.toastService.success('Order status updated successfully');
         },
-        error: (error) => {
-          console.error('Error updating order status:', error);
+        error: () => {
           this.toastService.error('Failed to update order status');
         },
       })
@@ -415,8 +382,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
             this.toastService.success('Order cancelled successfully');
             this.loadOrders(); // Reload orders
           },
-          error: (error) => {
-            console.error('Error cancelling order:', error);
+          error: () => {
             this.toastService.error('Failed to cancel order');
           },
         })
@@ -453,13 +419,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     return user.isBlocked ? 'Blocked' : 'Active';
   }
 
-  formatDate(date: Date | string): string {
-    return new Date(date).toLocaleDateString();
-  }
-
-  formatCurrency(amount: number): string {
-    return `£${amount.toFixed(2)}`;
-  }
 
   // Utility method for Math.max to use in template
   getMaxValue(a: number, b: number): number {
@@ -491,35 +450,23 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Format currency amount
+   */
+  formatCurrency(value: number): string {
+    return this.utilsService.formatCurrency(value);
+  }
+
+  /**
    * Format time ago for activity timestamps
    */
   formatTimeAgo(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (diffInSeconds < 60) {
-      return 'Just now';
-    } else if (diffInSeconds < 3600) {
-      const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (diffInSeconds < 86400) {
-      const hours = Math.floor(diffInSeconds / 3600);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else if (diffInSeconds < 2592000) {
-      const days = Math.floor(diffInSeconds / 86400);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
+    return this.utilsService.formatTimeAgo(dateString);
   }
 
   /**
    * View specific activity item
    */
   viewActivity(activity: any): void {
-    console.log('Viewing activity:', activity);
-
     // Navigate based on activity source
     switch (activity.source.toLowerCase()) {
       case 'user':
@@ -552,7 +499,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         break;
 
       default:
-        console.log('Unknown activity source:', activity.source);
+        this.toastService.error('Unknown activity source');
     }
   }
 

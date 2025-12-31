@@ -42,10 +42,6 @@ const routes: Routes = [
     path: 'content-management', 
     loadComponent: () => import('./content-management/content-management.component').then(m => m.ContentManagementComponent) 
   },
-  { 
-    path: 'barcode-scanner', 
-    loadComponent: () => import('./barcode-scanner/barcode-scanner.component').then(m => m.BarcodeScannerComponent) 
-  },
 ];
 
 @NgModule({

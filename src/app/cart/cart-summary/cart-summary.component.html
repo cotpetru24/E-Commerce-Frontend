@@ -15,10 +15,12 @@
       <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
     </div>
 
-    <div class="d-flex justify-content-between mb-2 text-success" *ngIf="getDiscount() > 0">
-      <span>Discount</span>
-      <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
-    </div>
+    @if (getDiscount() > 0) {
+      <div class="d-flex justify-content-between mb-2 text-success">
+        <span>Discount</span>
+        <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
+      </div>
+    }
 
     <hr>
 
@@ -27,10 +29,12 @@
       <span class="h5 mb-0 text-primary">£{{ getTotal() | number:'1.2-2' }}</span>
     </div>
 
-    <div class="alert alert-info" *ngIf="getSubtotal() < 50">
-      <i class="bi bi-info-circle me-2"></i>
-      Add £{{ 50 - getSubtotal() | number:'1.2-2' }} more for free shipping
-    </div>
+    @if (getSubtotal() < 50) {
+      <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        Add £{{ 50 - getSubtotal() | number:'1.2-2' }} more for free shipping
+      </div>
+    }
 
     <div class="d-grid gap-2">
       <button class="btn btn-primary" (click)="proceedToCheckout()" [disabled]="cartItems.length === 0">

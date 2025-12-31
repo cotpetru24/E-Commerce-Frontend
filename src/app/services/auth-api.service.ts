@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { defaultUrlMatcher, Router } from '@angular/router';
 import { ToastService } from './toast.service';
 import { BaseApiService } from './api';
-import { readonly } from 'zod';
+import { StorageService } from './storage.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs';
@@ -24,9 +24,10 @@ export class AuthApiService extends BaseApiService {
   constructor(
     protected override http: HttpClient,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    protected override storageService: StorageService
   ) {
-    super(http);
+    super(http, storageService);
   }
 
   // Traditional email/password login
@@ -52,178 +53,26 @@ export class AuthApiService extends BaseApiService {
     );
   }
 
-  // /**
-  //  * Forgot password
-  //  */
-  // forgotPassword(email: string): Observable<void> {
-  //   return this.http
-  //     .post<void>(`${this.authUrl}/forgot-password`, { email })
-  //     .pipe(catchError(this.handleError));
-  // }
-
-  // /**
-  //  * Reset password
-  //  */
-  // resetPassword(token: string, newPassword: string): Observable<void> {
-  //   return this.http
-  //     .post<void>(`${this.authUrl}/reset-password`, {
-  //       token,
-  //       newPassword,
-  //     })
-  //     .pipe(catchError(this.handleError));
-  // }
-
-
   logout(): void {
     this.clearAuthData();
   }
 
-  // // SSO Authentication methods
-  // signInWithGoogle(): Promise<UserDto> {
-  //   return new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       const user: UserInFo = {
-  //         id: 'google-' + Date.now(),
-  //         email: 'user@gmail.com',
-  //         name: 'John Doe',
-  //         firstName: 'John',
-  //         lastName: 'Doe',
-  //         picture: 'https://via.placeholder.com/150',
-  //         provider: 'google',
-  //         loginMethod: 'sso',
-  //         loginTime: new Date().toISOString(),
-  //       };
-  //       this.setCurrentUser(user);
-  //       resolve(user);
-  //     }, 2000);
-  //   });
-  // }
-
-  // signInWithGitHub(): Promise<UserDto> {
-  //   return new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       const user: User = {
-  //         id: 'github-' + Date.now(),
-  //         email: 'user@github.com',
-  //         name: 'Jane Smith',
-  //         firstName: 'Jane',
-  //         lastName: 'Smith',
-  //         picture: 'https://via.placeholder.com/150',
-  //         provider: 'github',
-  //         loginMethod: 'sso',
-  //         loginTime: new Date().toISOString(),
-  //       };
-  //       this.setCurrentUser(user);
-  //       resolve(user);
-  //     }, 2000);
-  //   });
-  // }
-
-  // signInWithFacebook(): Promise<UserDto> {
-  //   return new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       const user: User = {
-  //         id: 'facebook-' + Date.now(),
-  //         email: 'user@facebook.com',
-  //         name: 'Mike Johnson',
-  //         firstName: 'Mike',
-  //         lastName: 'Johnson',
-  //         picture: 'https://via.placeholder.com/150',
-  //         provider: 'facebook',
-  //         loginMethod: 'sso',
-  //         loginTime: new Date().toISOString(),
-  //       };
-  //       this.setCurrentUser(user);
-  //       resolve(user);
-  //     }, 2000);
-  //   });
-  // }
-
-  // Registration methods
-
-  // // SSO Registration methods
-  // signUpWithGoogle(): Promise<UserDto> {
-  //   return new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       const user: User = {
-  //         id: 'google-' + Date.now(),
-  //         email: 'newuser@gmail.com',
-  //         name: 'New User',
-  //         firstName: 'New',
-  //         lastName: 'User',
-  //         picture: 'https://via.placeholder.com/150',
-  //         provider: 'google',
-  //         loginMethod: 'sso',
-  //         registrationTime: new Date().toISOString(),
-  //       };
-  //       this.setCurrentUser(user);
-  //       resolve(user);
-  //     }, 2000);
-  //   });
-  // }
-
-  // signUpWithGitHub(): Promise<UserDto> {
-  //   return new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       const user: User = {
-  //         id: 'github-' + Date.now(),
-  //         email: 'newuser@github.com',
-  //         name: 'GitHub User',
-  //         firstName: 'GitHub',
-  //         lastName: 'User',
-  //         picture: 'https://via.placeholder.com/150',
-  //         provider: 'github',
-  //         loginMethod: 'sso',
-  //         registrationTime: new Date().toISOString(),
-  //       };
-  //       this.setCurrentUser(user);
-  //       resolve(user);
-  //     }, 2000);
-  //   });
-  // }
-
-  // signUpWithFacebook(): Promise<UserDto> {
-  //   return new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       const user: User = {
-  //         id: 'facebook-' + Date.now(),
-  //         email: 'newuser@facebook.com',
-  //         name: 'Facebook User',
-  //         firstName: 'Facebook',
-  //         lastName: 'User',
-  //         picture: 'https://via.placeholder.com/150',
-  //         provider: 'facebook',
-  //         loginMethod: 'sso',
-  //         registrationTime: new Date().toISOString(),
-  //       };
-  //       this.setCurrentUser(user);
-  //       resolve(user);
-  //     }, 2000);
-  //   });
-  // }
-
   // User management
   getCurrentUser(): UserInfoDto | null {
-    try {
-      const userInfo = localStorage.getItem('currentUser');
-      if (!userInfo) return null;
+    const userInfo = this.storageService.getLocalObject<UserInfoDto>('currentUser');
+    if (!userInfo) return null;
 
-      const parsedUser: UserInfoDto = JSON.parse(userInfo);
-      return {
-        Id: parsedUser.Id,
-        Email: parsedUser.Email,
-        FirstName: parsedUser.FirstName,
-        role: this.validateRole(parsedUser.role),
-      };
-    } catch (err) {
-      console.error('Failed to get current user:', err);
-      return null;
-    }
+    return {
+      Id: userInfo.Id,
+      Email: userInfo.Email,
+      FirstName: userInfo.FirstName,
+      role: this.validateRole(userInfo.role),
+    };
   }
 
   isLoggedIn(): boolean {
-    const token = sessionStorage.getItem('accessToken');
-    const currentUser = localStorage.getItem('currentUser');
+    const token = this.storageService.getSessionItem('accessToken');
+    const currentUser = this.storageService.getLocalItem('currentUser');
     return !!(token && currentUser && this.isTokenValid());
   }
 
@@ -233,15 +82,8 @@ export class AuthApiService extends BaseApiService {
   }
 
   getUserRole(): string | null {
-    try {
-      const currentUser = localStorage.getItem('currentUser');
-      if (!currentUser) return null;
-      const parsedUser = JSON.parse(currentUser);
-      return parsedUser.role || null;
-    } catch {
-      console.log('Failed to get user role');
-      return null;
-    }
+    const currentUser = this.storageService.getLocalObject<any>('currentUser');
+    return currentUser?.role || null;
   }
 
   private setCurrentUser(response: { token: string }): void {
@@ -250,7 +92,7 @@ export class AuthApiService extends BaseApiService {
     }
 
     try {
-      sessionStorage.setItem('accessToken', response.token);
+      this.storageService.setSessionItem('accessToken', response.token);
 
       const token = jwtDecode<UserInfoDto>(response.token);
 
@@ -265,7 +107,7 @@ export class AuthApiService extends BaseApiService {
         role: this.validateRole(token.role),
       };
 
-      localStorage.setItem('currentUser', JSON.stringify(userInfo));
+      this.storageService.setLocalObject('currentUser', userInfo);
     } catch (err) {
       this.clearAuthData();
       throw new Error('Failed to store user data');
@@ -287,18 +129,14 @@ export class AuthApiService extends BaseApiService {
   }
 
   private clearAuthData(): void {
-    try {
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('refreshToken');
-      localStorage.removeItem('currentUser');
-    } catch (error) {
-      console.error('Failed to clear auth data:', error);
-    }
+    this.storageService.removeSessionItem('accessToken');
+    this.storageService.removeSessionItem('refreshToken');
+    this.storageService.removeLocalItem('currentUser');
   }
 
   isTokenValid(): boolean {
     try {
-      const token = sessionStorage.getItem('accessToken');
+      const token = this.storageService.getSessionItem('accessToken');
       if (!token) return false;
 
       const decodedToken = jwtDecode(token);

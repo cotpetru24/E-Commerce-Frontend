@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { CmsApiService } from '../../services/api/cms-api.service';
 import { ToastService } from '../../services/toast.service';
-import { CmsProfileDto, CmsStoredProfileDto } from '../../models/cms.dto';
+import { CmsProfileDto, CmsStoredProfileDto, CmsNavAndFooterDto } from '../../models/cms.dto';
 import { finalize } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
@@ -30,10 +30,6 @@ export class ContentManagementComponent implements OnInit {
   isEditingMode: boolean = false;
 
 
-  // Branding content
-  // brandingContent = {
-  //   useLogo: true,
-  // };
 
   testimonialsContent = [
     {
@@ -79,13 +75,16 @@ export class ContentManagementComponent implements OnInit {
       .getCmsProfilesAsync()
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response) => {
+        next: (response: CmsStoredProfileDto[]) => {
           try {
             this.storedProfiles = response;
           } catch (err) {
             console.error('Validation failed', err);
             this.toastService.error('CMS profile data is invalid');
           }
+        },
+        error: (error: any) => {
+          this.toastService.error('Failed to load CMS profiles');
         },
       });
   }
@@ -103,7 +102,7 @@ export class ContentManagementComponent implements OnInit {
       .getCmsProfileByIdAsync(profile.id)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response) => {
+        next: (response: CmsProfileDto) => {
           try {
             this.profile = response;
             this.populateContentFromProfile(response);
@@ -111,6 +110,9 @@ export class ContentManagementComponent implements OnInit {
             console.error('Validation failed', err);
             this.toastService.error('CMS profile data is invalid');
           }
+        },
+        error: (error: any) => {
+          this.toastService.error('Failed to load CMS profile');
         },
       });
   }
@@ -152,15 +154,12 @@ this.profile = profile;
   } 
 
   createCmsProfile() {
-    // if (!this.buildProfileFromContent()) {
-    //   return;
-    // }
     this.isLoading = true;
     this.cmsApiService
       .createCmsProfileAsync(this.profile!)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response) => {
+        next: (response: CmsProfileDto) => {
           try {
             this.profile = response;
             this.selectedProfileId = response.id;
@@ -172,6 +171,9 @@ this.profile = profile;
             this.toastService.error('CMS profile data is invalid');
           }
         },
+        error: (error: any) => {
+          this.toastService.error('Failed to create CMS profile');
+        },
       });
   }
 
@@ -181,18 +183,20 @@ this.profile = profile;
       .activateCmsProfileAsync(profile.id)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response) => {
+        next: (response: CmsProfileDto) => {
           try {
             this.profile = response;
-    this.cmsApiService.GetCmsNavAndFooterAsync().subscribe((cms) => {
-      localStorage.removeItem('cmsProfile')
-      localStorage.setItem('cmsProfile', JSON.stringify(cms));
-          this.cmsStateService.setProfile(cms);
-      this.applyTheme(cms);
-    });
-
-
-            //update localStorage.cmsProfile then
+            this.cmsApiService.GetCmsNavAndFooterAsync().subscribe({
+              next: (cms: CmsNavAndFooterDto) => {
+                localStorage.removeItem('cmsProfile');
+                localStorage.setItem('cmsProfile', JSON.stringify(cms));
+                this.cmsStateService.setProfile(cms);
+                this.applyTheme(cms);
+              },
+              error: (error: any) => {
+                console.error('Failed to load CMS nav and footer', error);
+              },
+            });
             this.toastService.success('CMS profile activated successfully');
             this.loadStoredProfiles();
           } catch (err) {
@@ -200,10 +204,13 @@ this.profile = profile;
             this.toastService.error('CMS profile data is invalid');
           }
         },
+        error: (error: any) => {
+          this.toastService.error('Failed to activate CMS profile');
+        },
       });
   }
 
-    private applyTheme(cms: any): void {
+    private applyTheme(cms: CmsNavAndFooterDto): void {
     const root = document.documentElement;
 
     root.style.setProperty('--navbar-bg-color', cms.navbarBgColor);
@@ -220,30 +227,26 @@ this.profile = profile;
       this.toastService.error('Please select a profile to update');
       return;
     }
-    // if (!this.buildProfileFromContent()) {
-    //   return;
-    // }
     this.isLoading = true;
     this.cmsApiService
       .updateCmsProfileAsync(this.profile!)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response) => {
+        next: (response: CmsProfileDto) => {
           try {
             this.profile = response;
-
-                          this.profile = this.createEmptyCmsProfileDto();
-              this.isEditingMode = false;
-                  this.isProfilesCardCollapsed = false;
-
+            this.profile = this.createEmptyCmsProfileDto();
+            this.isEditingMode = false;
+            this.isProfilesCardCollapsed = false;
             this.toastService.success('CMS profile updated successfully');
-
-
             this.loadStoredProfiles();
           } catch (err) {
             console.error('Validation failed', err);
             this.toastService.error('CMS profile data is invalid');
           }
+        },
+        error: (error: any) => {
+          this.toastService.error('Failed to update CMS profile');
         },
       });
   }
@@ -254,13 +257,9 @@ this.profile = profile;
       this.toastService.error('Please select a profile to update');
       return;
     }
-    // if (!this.buildProfileFromContent()) {
-    //   return;
-    // }
-        this.isLoading = true;
+    this.isLoading = true;
 
-
-this.profile.id=0;
+    this.profile.id = 0;
 
     this.profile!.categories = this.profile.categories.map((cat) => ({
       id: 0,
@@ -271,7 +270,6 @@ this.profile.id=0;
       sortOrder: cat.sortOrder,
     }));
 
-    // Populate features
     this.profile!.features = this.profile.features.map((feat) => ({
       id: 0,
       iconClass: feat.iconClass,
@@ -284,21 +282,23 @@ this.profile.id=0;
       .createCmsProfileAsync(this.profile!)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response) => {
+        next: (response: CmsProfileDto) => {
           try {
             this.profile = response;
             this.selectedProfileId = response.id;
-              this.isEditingMode = false;
-                  this.isProfilesCardCollapsed = false;
-                              this.toastService.success('CMS profile created successfully');
+            this.isEditingMode = false;
+            this.isProfilesCardCollapsed = false;
+            this.toastService.success('CMS profile created successfully');
             this.loadStoredProfiles();
           } catch (err) {
             console.error('Validation failed', err);
             this.toastService.error('CMS profile data is invalid');
           }
         },
+        error: (error: any) => {
+          this.toastService.error('Failed to save CMS profile');
+        },
       });
-
   }
 
 
@@ -395,7 +395,7 @@ onCategoryImageSelected(event: Event, index: number) {
         this.isLoading = true;
 
         this.cmsApiService.deleteCmsProfileAsync(profile.id).subscribe({
-          next: () => {
+          next: (response: boolean) => {
             this.toastService.success('Profile deleted successfully');
             this.isLoading = false;
             if (this.selectedProfileId === profile.id) {
@@ -405,7 +405,7 @@ onCategoryImageSelected(event: Event, index: number) {
             }
             this.loadStoredProfiles();
           },
-          error: (error) => {
+          error: (error: any) => {
             this.isLoading = false;
             console.error('Error deleting profile:', error);
             this.toastService.error('Failed to delete profile');
@@ -531,8 +531,6 @@ onCategoryImageSelected(event: Event, index: number) {
 
 
 createEmptyCmsProfileDto(): CmsProfileDto {
-  const now = new Date();
-
   return {
     id: 0,
     profileName: '',
@@ -558,17 +556,8 @@ createEmptyCmsProfileDto(): CmsProfileDto {
     heroSecondaryButtonText: '',
     heroBackgroundImageBase64: '',
 
-    // newsletterTitle: '',
-    // newsletterDescription: '',
-    // newsletterButtonText: '',
-
-    showLogoInHeader:false,
-
     features: [],
     categories: [],
-
-    lastUpdated: now,
-    createdAt: now,
   };
 }
 

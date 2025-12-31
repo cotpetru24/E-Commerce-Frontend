@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { BaseApiService } from './base-api.service';
+import { StorageService } from '../storage.service';
 import {
   OrderDto,
   PlaceOrderRequestDto,
@@ -16,6 +18,13 @@ import {
 })
 export class OrderApiService extends BaseApiService {
   private readonly orderEndpoint = '/api/Order';
+
+  constructor(
+    protected override http: HttpClient,
+    protected override storageService: StorageService
+  ) {
+    super(http, storageService);
+  }
 
   // ============================================================================
   // ORDER METHODS

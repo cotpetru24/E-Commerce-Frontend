@@ -94,14 +94,6 @@
                                 <input type="text" class="form-control" id="searchInput" [(ngModel)]="searchTerm"
                                 (keyup.enter)="onFilterChange()" placeholder="Search by name, description...">
 
-                                <span class="input-group-text">
-
-                              <button class="btn page-link"
-                                (click)="openBarcodeScanner()" title="Scan Barcode">
-                                <i class="bi bi-upc-scan"></i>
-                              </button>
-                                </span>
-
 
 
 
@@ -118,9 +110,11 @@
                             <select class="form-select" id="categoryFilter" [(ngModel)]="selectedCategory"
                                 (change)="onFilterChange()">
                                 <option value="null">All Categories</option>
-                                <option *ngFor="let a of audienceOptions" [ngValue]="a">
+                                @for (a of audienceOptions; track a) {
+                                  <option [ngValue]="a">
                                     {{ a | titlecase }}
-                                </option>
+                                  </option>
+                                }
 
                             </select>
                         </div>
@@ -129,8 +123,11 @@
                             <select class="form-select" id="brandFilter" [(ngModel)]="selectedBrand"
                                 (change)="onFilterChange()">
                                 <option [ngValue]="null">All Brands</option>
-                                <option *ngFor="let b of response?.allBrands" [ngValue]="b">
+                                @for (b of response?.allBrands || []; track b) {
+                                  <option [ngValue]="b">
                                     {{ b | titlecase }}
+                                  </option>
+                                }
                             </select>
                         </div>
                         <div class="col-md-1 mb-3">
@@ -151,9 +148,11 @@
                             <select class="form-select" id="statusFilter" [(ngModel)]="selectedStock"
                                 (change)="onFilterChange()">
                                 <option value="null">All Stock</option>
-                                <option *ngFor="let ss of productStockStatus" [ngValue]="ss">
-                                    {{ ss | titlecase }}
-                                </option>
+                                @for (ss of productStockStatus; track ss) {
+                                    <option [ngValue]="ss">
+                                        {{ ss | titlecase }}
+                                    </option>
+                                }
                             </select>
                         </div>
                         <div class="col-md-2 mb-3">
@@ -200,7 +199,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let product of response?.products">
+                                @for (product of response?.products || []; track product.id) {
+                                  <tr>
                                     <td>
                                         <!-- <img [src]="'/assets/'+product.imagePath" [alt]="product.name"
                                             class="product-thumbnail img-thumbnail" title="Product image"> -->
@@ -224,14 +224,12 @@
                                         <strong >£{{ product.price | number:'1.2-2' }}</strong>
                                     </td>
                                     <td>
-                                    <!-- <div class="d-flex align-items-center gap-2"> -->
                                         <span class="badge stock-badge" [ngClass]="getStockBadgeClass(product.totalStock ?? 0)">
                                         {{ getStockText(product?.totalStock ?? 0) }}
                                         </span>
                                         <small class="text-muted">
                                         ({{ product.totalStock }})
                                         </small>
-                                    <!-- </div> -->
                                     </td>
                                     <td>
                                         <span
@@ -256,7 +254,8 @@
                                             </button>
                                         </div>
                                     </td>
-                                </tr>
+                                  </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -272,16 +271,18 @@
 
 
                     <!-- Empty State -->
-                    <div class="text-center p-4" *ngIf="!isLoading && response?.products?.length === 0">
+                    @if (!isLoading && response?.products?.length === 0) {
+                      <div class="text-center p-4">
                         <i class="bi bi-box display-1 text-muted"></i>
                         <h4 class="mt-3">No products found</h4>
                         <p class="text-muted">Try adjusting your search or filters</p>
-
-                    </div>
+                      </div>
+                    }
                 </div>
 
                 <!-- Pagination -->
-                <div class="card-footer" *ngIf="(response?.products?.length??0) > 0">
+                @if ((response?.products?.length ?? 0) > 0) {
+                  <div class="card-footer">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             Showing {{ ((response?.pageNumber?? 1) - 1) * itemsPerPage + 1 }} to {{ Math.min((response?.pageNumber?? 1) *
@@ -294,19 +295,20 @@
                                 <li class="page-item" [class.disabled]="response?.pageNumber === 1">
                                     <button class="page-link" (click)="changePage((response?.pageNumber?? 1) - 1)">Previous</button>
                                 </li>
-                                <li class="page-item" *ngFor="let page of getPageNumbers()"
-                                    [class.active]="page === currentPage">
+                                @for (page of getPageNumbers(); track page) {
+                                  <li class="page-item" [class.active]="page === currentPage">
                                     <button class="page-link" (click)="changePage(page)"
-                                        [class.disabled]="(response?.pageNumber?? 1) === page">{{ page
-                                        }}</button>
-                                </li>
+                                        [class.disabled]="(response?.pageNumber ?? 1) === page">{{ page }}</button>
+                                  </li>
+                                }
                                 <li class="page-item" [class.disabled]="response?.pageNumber === response?.totalPages">
                                     <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
                                 </li>
                             </ul>
                         </nav>
                     </div>
-                </div>
+                  </div>
+                }
             </div>
         </div>
     </div>

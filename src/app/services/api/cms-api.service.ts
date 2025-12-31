@@ -3,6 +3,7 @@ import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
 import { CmsLandingPageDto, CmsNavAndFooterDto, CmsProfileDto, CmsStoredProfileDto } from '../../models/cms.dto';
 import { Observable, tap } from 'rxjs';
+import { StorageService } from '../storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +11,8 @@ import { Observable, tap } from 'rxjs';
 export class CmsApiService extends BaseApiService {
   protected readonly baseUrl = '/api/Cms';
 
-  constructor(protected override http: HttpClient) {
-    super(http);
+  constructor(protected override http: HttpClient, protected override storageService: StorageService) {
+    super(http, storageService);
   }
 
   getCmsProfilesAsync(): Observable<CmsStoredProfileDto[]> {

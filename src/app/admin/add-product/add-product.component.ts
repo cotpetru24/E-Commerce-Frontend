@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
-import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
+import { StorageService } from '../../services/storage.service';
 import {
   AdminBrandDto,
   AdminProductAudienceDto,
@@ -15,6 +15,7 @@ import {
   ProductSizeDto,
 } from '../../models';
 import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-product',
@@ -23,39 +24,34 @@ import { Subscription } from 'rxjs';
   templateUrl: './add-product.component.html',
   styleUrls: ['./add-product.component.scss'],
 })
-export class AddProductComponent {
+export class AddProductComponent implements OnInit, OnDestroy {
   productData: AdminProductDto = this.createEmptyProduct();
-
   discountText = '';
   priceText = '';
-
   brands: AdminBrandDto[] = [];
   productAudience: AdminProductAudienceDto[] = [];
-
   newSpec: AdminProductFeatureDto = {
     id: 0,
     sortOrder: 0,
     featureText: '',
   };
-
   newSize: ProductSizeDto = {
+    id: 0,
     size: 0,
     stock: 0,
     barcode: '',
     sku: '',
   };
-
-  // Temp variable to store scanned barcode
-  scannedBarcodeTemp: string = '';
-
   isLoading = false;
+
   private subscriptions = new Subscription();
 
   constructor(
     private router: Router,
     private toastService: ToastService,
     private adminApiService: AdminApiService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -63,37 +59,14 @@ export class AddProductComponent {
     this.getProductAudience();
   }
 
-  getProductBrands() {
-    this.isLoading = true;
-    this.subscriptions.add(
-      this.adminApiService.getProductBrands().subscribe({
-        next: (response) => {
-          this.brands = response;
-          this.isLoading = false;
-          // this.loadProductData();
-        },
-      })
-    );
-  }
-
-  getProductAudience() {
-    this.isLoading = true;
-    this.subscriptions.add(
-      this.adminApiService.getProductAudience().subscribe({
-        next: (response) => {
-          this.productAudience = response;
-          this.isLoading = false;
-          // this.loadProductData();
-        },
-      })
-    );
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   onSubmit() {
     if (
       !this.productData.name ||
       !this.productData.price ||
-      // !this.productData.stock ||
       !this.productData.audienceId ||
       !this.productData.brandId ||
       !this.productData.description ||
@@ -104,23 +77,21 @@ export class AddProductComponent {
     }
 
     this.isLoading = true;
-
     this.productData.price = Number(this.priceText);
     this.productData.discountPercentage = Number(this.discountText);
 
     this.subscriptions.add(
-      this.adminApiService.createProduct(this.productData).subscribe({
-        next: (response) => {
-          this.isLoading = false;
-          this.toastService.success('Product added successfully!');
-          this.router.navigate(['/admin/products']);
-        },
-        error: (error) => {
-          console.error('Error fetching product data:', error);
-          this.toastService.error('Failed to load product data.');
-          this.isLoading = false;
-        },
-      })
+      this.adminApiService.createProduct(this.productData)
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
+          next: () => {
+            this.toastService.success('Product added successfully!');
+            this.router.navigate(['/admin/products']);
+          },
+          error: () => {
+            this.toastService.error('Failed to create product.');
+          },
+        })
     );
   }
 
@@ -136,16 +107,43 @@ export class AddProductComponent {
     }
   }
 
-  allowDecimalOnly(event: KeyboardEvent) {
+  removeSpecification(index: number) {
+    this.productData?.productFeatures?.splice(index, 1);
+  }
+
+  addSize() {
+    if (this.newSize.size && this.newSize.barcode) {
+      if (!this.productData?.productSizes) {
+        this.productData!.productSizes = [];
+      }
+      this.productData?.productSizes?.push({
+        id: 0,
+        size: this.newSize.size,
+        stock: this.newSize.stock || 0,
+        barcode: this.newSize.barcode,
+      });
+      this.newSize = {
+        id: 0,
+        size: 0,
+        stock: 0,
+        barcode: '',
+        sku: '',
+      };
+    }
+  }
+
+  removeSize(index: number) {
+    this.productData?.productSizes?.splice(index, 1);
+  }
+
+  allowDecimalOnly(event: KeyboardEvent): void {
     const allowed = /[0-9.]/;
     if (!allowed.test(event.key)) {
       event.preventDefault();
+      return;
     }
 
-    if (
-      event.key === '.' &&
-      (event.target as HTMLInputElement).value.includes('.')
-    ) {
+    if (event.key === '.' && (event.target as HTMLInputElement).value.includes('.')) {
       event.preventDefault();
     }
   }
@@ -170,61 +168,6 @@ export class AddProductComponent {
     }
   }
 
-  removeSpecification(index: number) {
-    this.productData?.productFeatures?.splice(index, 1);
-  }
-
-  addSize() {
-    if (this.newSize.size && this.newSize.barcode) {
-      if (!this.productData?.productSizes) {
-        this.productData!.productSizes = [];
-      }
-      this.productData?.productSizes?.push({
-        id: 0,
-        size: this.newSize.size,
-        stock: this.newSize.stock || 0,
-        barcode: this.newSize.barcode,
-      });
-      this.newSize = {
-        size: 0,
-        stock: 0,
-        barcode: '',
-        sku: '',
-      };
-    }
-  }
-
-  removeSize(index: number) {
-    this.productData?.productSizes?.splice(index, 1);
-  }
-
-  openBarcodeScanner(sizeIndex?: number) {
-    const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
-      size: 'lg',
-      centered: true,
-    });
-
-    modalRef.result.then(
-      (scannedBarcode: string) => {
-        // Store in temp variable
-        this.scannedBarcodeTemp = scannedBarcode;
-
-        // If sizeIndex is provided, update that specific size's barcode
-        if (sizeIndex !== undefined && this.productData?.productSizes) {
-          this.productData.productSizes[sizeIndex].barcode = scannedBarcode;
-        } else {
-          // Otherwise, update the newSize barcode
-          this.newSize.barcode = scannedBarcode;
-        }
-
-        this.toastService.success(`Barcode scanned: ${scannedBarcode}`);
-      },
-      (dismissed) => {
-        // Modal was dismissed
-      }
-    );
-  }
-
   onFileSelected(event: any) {
     // const files = event.target.files;
     // if (files) {
@@ -244,9 +187,34 @@ export class AddProductComponent {
   }
 
   saveDraft() {
-    // Save form data to localStorage or send to API
-    localStorage.setItem('productDraft', JSON.stringify(this.productData));
+    this.storageService.setLocalObject('productDraft', this.productData);
     this.toastService.info('Draft saved successfully!');
+  }
+
+  private getProductBrands() {
+    this.isLoading = true;
+    this.subscriptions.add(
+      this.adminApiService.getProductBrands()
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
+          next: (response) => {
+            this.brands = response;
+          },
+        })
+    );
+  }
+
+  private getProductAudience() {
+    this.isLoading = true;
+    this.subscriptions.add(
+      this.adminApiService.getProductAudience()
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
+          next: (response) => {
+            this.productAudience = response;
+          },
+        })
+    );
   }
 
   private createEmptyProduct(): AdminProductDto {
@@ -255,13 +223,9 @@ export class AddProductComponent {
       name: '',
       description: '',
       price: 0,
-      // originalPrice: undefined,
-      // totalStock: 0,
       audienceId: 0,
       brandName: '',
       brandId: 0,
-      // rating: undefined,
-      // reviewCount: undefined,
       productSizes: [] as ProductSizeDto[],
       productFeatures: [],
       productImages: [],
@@ -269,6 +233,7 @@ export class AddProductComponent {
       discountPercentage: 0,
       selected: false,
       isActive: true,
+      totalStock: 0,
     };
   }
 }

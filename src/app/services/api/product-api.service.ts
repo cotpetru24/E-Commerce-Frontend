@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ProductDto } from '../../models/product.dto';
 import { BaseApiService } from './base-api.service';
+import { StorageService } from '../storage.service';
 import { GetProductsDto } from '../../models/get-products.dto';
 import { ProductFilterDto } from '../../models/product-filter.dto';
 import { GetSingleProductDto } from '../../models/get-single-product.dto';
@@ -21,8 +22,11 @@ export class ProductApiService extends BaseApiService {
   // Base URL for product endpoints
   protected readonly baseUrl = '/api/product';
 
-  constructor(protected override http: HttpClient) {
-    super(http);
+  constructor(
+    protected override http: HttpClient,
+    protected override storageService: StorageService
+  ) {
+    super(http, storageService);
   }
 
   // ============================================================================
@@ -111,9 +115,7 @@ export class ProductApiService extends BaseApiService {
 
     //check on server if jwt contains role = admin
 
-    return this.post<ProductDto>(this.buildUrl(''), product).pipe(
-      tap((newProduct) => console.log('Product created:', newProduct))
-    );
+    return this.post<ProductDto>(this.buildUrl(''), product);
   }
 
   /**
@@ -137,9 +139,7 @@ export class ProductApiService extends BaseApiService {
 
     //check on server if jwt contains role = admin
 
-    return this.put<ProductDto>(this.buildUrl(`${id}`), product).pipe(
-      tap((updatedProduct) => console.log('Product updated:', updatedProduct)),
-    );
+    return this.put<ProductDto>(this.buildUrl(`${id}`), product);
   }
 
   /**
@@ -173,8 +173,7 @@ export class ProductApiService extends BaseApiService {
 
     //check on server if jwt contains role = admin
 
-    return this.delete<void>((`${id}`)).pipe(
-      tap(() => console.log('Product deleted:', id)));
+    return this.delete<void>((`${id}`));
   }
 
   /**

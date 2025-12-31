@@ -39,11 +39,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   isLoading = false;
   initialInit: boolean = true;
 
-  // Search and filters
-  // searchTerm = '';
   searchTerm: string | null = null;
-
-  // selectedStatus = '';
   selectedStatus: OrderStatus | null = null;
 
   selectedDateRange = '';
@@ -87,9 +83,6 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   }
 
   loadOrders(): void {
-    // if (this.isLoading) {
-    //   return;
-    // }
     this.isLoading = true;
 
     const now = new Date();
@@ -144,7 +137,6 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           this.currentPage = response.pageNumber;
           this.totalPages = response.totalPages;
           this.itemsPerPage = response.pageSize;
-          // this.calculateStats();
           this.totalQueryCount = response.totalQueryCount;
           this.isLoading = false;
         },
@@ -223,7 +215,10 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     return pages;
   }
 
-  getStatusClass(status: string): string {
+  getStatusClass(status?: string): string {
+    if (!status) {
+      return 'badge bg-secondary';
+    }
     switch (status) {
       case 'Pending':
       case 'pending':
@@ -302,15 +297,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           .updateOrderStatus(order.id, statusData)
             .subscribe({
               next: () => {
-            // const target = this.orders.find((o) => o.id === order.id);
-            // if (target) {
-            //   target.orderStatusName = OrderStatus[selectedStatus];
-
-            //   this.orders = [...this.orders];
-            // }
-
             this.toastService.success('Order status updated successfully!');
-
             this.loadOrders();
             this.isLoading = false;
           },
@@ -348,16 +335,8 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
 
         this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
           next: () => {
-            // const target = this.orders.find((o) => o.id === order.id);
-            // if (target) {
-            //   target.orderStatusName = 'Shipped';
-
-            //   this.orders = [...this.orders];
-            // }
-
             this.toastService.success('Order marked as shipped successfully!');
-
-            this.loadOrders()
+            this.loadOrders();
             this.isLoading = false;
           },
           error: (err) => {

@@ -22,8 +22,8 @@ import { environment } from '../../../environments/environment';
 import { PaymentApiService } from '../../services/api/payment-api.service';
 import { OrderApiService } from '../../services/api/order-api.service';
 import { ToastService } from '../../services/toast.service';
+import { StorageService } from '../../services/storage.service';
 import { firstValueFrom } from 'rxjs';
-import { th } from 'zod/v4/locales/index.cjs';
 
 @Component({
   selector: 'payment',
@@ -85,7 +85,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     private cartService: CartService,
     private paymentApiService: PaymentApiService,
     private orderApiService: OrderApiService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -103,25 +104,19 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public async initializeStripe(): Promise<void> {
     try {
-      console.log('Initializing Stripe...');
       this.stripeError = null;
 
       const publishableKey = environment.stripePublishableKey;
-      // const publishableKey = 'environment.stripePublishableKey';
       if (!publishableKey) {
         this.stripeError = 'Stripe publishable key is missing';
-        console.error('Stripe publishable key is missing');
         return;
       }
 
       this.stripe = await loadStripe(publishableKey);
       if (!this.stripe) {
         this.stripeError = 'Stripe failed to load';
-        console.error('Stripe failed to load');
         return;
       }
-
-      console.log('Stripe loaded successfully');
 
       // Create payment intent
       const { clientSecret } = await firstValueFrom(
@@ -131,30 +126,18 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       );
 
       if (!clientSecret) {
-        this.stripeError =
-          'Missing clientSecret from /api/create-payment-intent response';
-        console.error(
-          'Missing clientSecret from /api/create-payment-intent response'
-        );
+        this.stripeError = 'Missing clientSecret from /api/create-payment-intent response';
         return;
       }
 
-      console.log('Payment intent created, client secret received');
-
-      // Ensure the mount point exists (it's inside *ngIf)
       const mountEl = document.querySelector('#payment-element');
       if (!mountEl) {
         this.stripeError = 'Payment element mount point not found';
-        console.error('Payment element mount point not found');
         return;
       }
 
-      console.log('Mount point found, creating Stripe Elements');
-
       this.elements = this.stripe.elements({ clientSecret });
       this.paymentElement = this.elements.create('payment');
-
-      console.log('Payment element created, mounting...');
       this.paymentElement.mount('#payment-element');
 
       // Remove loading text after mounting
@@ -166,19 +149,9 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
 
-      console.log(
-        'Mount element found:',
-        document.querySelector('#payment-element')
-      );
-      console.log('Stripe Elements object:', this.elements);
-      console.log('Payment Element object:', this.paymentElement);
-      console.log('Container dimensions:', mountEl.getBoundingClientRect());
-
-      console.log('Stripe Elements mounted successfully');
       this.isStripeInitialized = true;
     } catch (e) {
       this.stripeError = `Error initializing Stripe: ${e}`;
-      console.error('Error initializing Stripe:', e);
     }
   }
 
@@ -206,7 +179,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       this.toastService.success('Order placed successfully!');
 
       // Store order ID for confirmation page
-      localStorage.setItem(
+      this.storageService.setLocalItem(
         'lastOrderId',
         this.orderResponse.orderId.toString()
       );
@@ -229,7 +202,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
             .storePaymentDetails(this.orderResponse.orderId, paymentIntent.id)
             .subscribe({
               next: () => {
-                console.log('Payment details stored successfully');
                 this.cartService.clearCart();
                 this.isLoading = false;
                 this.router.navigate(
@@ -242,7 +214,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         } else if (error) {
           {
-            console.error('Payment error:', error.message);
             this.toastService.error('Payment failed: ' + error.message);
             this.isLoading = false;
             return;
@@ -254,8 +225,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
           queryParams: { isNewOrder: true },
         });
       }
-    } catch (error) {
-      console.error('Error placing order:', error);
+    } catch {
       this.toastService.error('Failed to place order. Please try again.');
       this.isLoading = false;
     }
@@ -270,10 +240,10 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
 
     const shippingAddressId = parseInt(
-      localStorage.getItem('selectedShippingAddressId') || '0'
+      this.storageService.getLocalItem('selectedShippingAddressId') || '0'
     );
     const deliveryInstructions =
-      localStorage.getItem('deliveryInstructions') || '';
+      this.storageService.getLocalItem('deliveryInstructions') || '';
 
     return {
       orderItems,
