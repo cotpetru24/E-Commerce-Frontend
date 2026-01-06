@@ -1,34 +1,60 @@
 name: CI
+
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   pull_request:
+
 jobs:
-  frontend:
+  smoke:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps
+
+      - run: npx ng build --configuration production
+
+      - run: |
+          npx http-server dist/e-commerce-frontend/browser -p 4200 &
+          npx wait-on http://localhost:4200
+
+      - run: npx playwright test --grep smoke
+
+
+
+  frontend:
+    needs: smoke
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install dependencies
         run: npm ci
+
       - name: Lint
         run: npm run lint
+
       - name: Unit tests
         run: npm run test -- --watch=false --browsers=ChromeHeadless
+
       - name: Install Playwright browsers
         run: npm run e2e:install
 
-      - name: Start app
-        run: npm run start -- --host 0.0.0.0 --port 4200 &
-      
-      - name: Wait for app
-        run: npx wait-on http://localhost:4200
-
       - name: E2E tests
-        run: npm run e2e
+        run: npx playwright test --grep-invert smoke
+
       - name: Format check
         run: npm run format

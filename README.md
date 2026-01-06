@@ -7,8 +7,8 @@ It is not a UI mock or demo app.
 
 The backend (ASP.NET Core Web API + PostgreSQL) is implemented in a separate repository.
 
-## Resume/Interview Context
-These projects were built in limited personal time alongside full time work and studies. I intentionally prioritized delivering complete end to end functionality (e.g., admin workflows, Stripe payments, CMS theming) over polish, and I can walk through how I would harden or scale each system with more time (testing, CI/CD, stronger typing, performance).
+## Context
+This project was built in limited personal time alongside full time work and studies. I intentionally prioritized delivering complete end to end functionality (e.g., admin workflows, Stripe payments, CMS theming) over polish, and I can walk through how I would harden or scale each system with more time (testing, CI/CD, stronger typing, performance).
 
 ---
 
@@ -34,13 +34,14 @@ rather than feature bloat or visual experimentation.
 - Checkout flow
 - Stripe payment integration
 - Order history
+- User account management
 
 ---
 
 ## Admin Features
 
 ### User Management
-- View users
+- View and edit users
 - Role-based access (admin vs customer)
 - Admin-only routes and guards
 
@@ -111,12 +112,16 @@ src/
       product-management/
       order-management/
       content-management/
-    customer/
+    user/
     shared/
     services/
     models/
+e2e/
+docs/
+.github/
+  workflows/
 
-Admin and customer concerns are intentionally separated.
+Admin and user/customer concerns are intentionally separated.
 
 ---
 
@@ -140,6 +145,7 @@ Refer to the backend repository for API and database setup.
 
 - Angular TestBed
 - HttpClientTestingModule
+- Playwright smoke test (homepage loads)
 - Focused component and service tests
 
 Tests target **business-critical paths**, not snapshot or boilerplate coverage.
@@ -168,7 +174,6 @@ The focus is on:
 
 - Feature-complete for portfolio use
 - Codebase cleaned and aligned after refactoring
-- Suitable for mid-to-senior level technical review
 
 ---
 
