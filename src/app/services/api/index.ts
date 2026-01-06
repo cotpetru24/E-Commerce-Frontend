@@ -8,6 +8,10 @@ export { BaseApiService } from './base-api.service';
 export { ProductApiService } from './product-api.service';
 export { UserApiService } from './user-api.service';
 export { AdminApiService } from './admin-api.service';
+export { AdminDashboardApiService } from './admin-dashboard-api.service';
+export { AdminUserApiService } from './admin-user-api.service';
+export { AdminOrderApiService } from './admin-order-api.service';
+export { AdminProductApiService } from './admin-product-api.service';
 export { OrderApiService } from './order-api.service';
 export { ShippingAddressApiService } from './shipping-address-api.service';
 

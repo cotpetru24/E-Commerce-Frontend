@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { CmsNavAndFooterDto } from "../models/cms.dto";
+import { CmsNavAndFooterDto, CmsProfileDto } from "../models/cms.dto";
 
 @Injectable({ providedIn: 'root' })
 export class CmsStateService {
-  private cmsProfileSubject = new BehaviorSubject<any>(null);
+  private cmsProfileSubject = new BehaviorSubject<CmsProfileDto | null>(null);
   cmsProfile$ = this.cmsProfileSubject.asObservable();
 
-  setProfile(profile: any) {
+  setProfile(profile: CmsProfileDto | null) {
     this.cmsProfileSubject.next(profile);
   }
     setPageTitle(websiteName: string): void {

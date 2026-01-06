@@ -7,6 +7,9 @@ It is not a UI mock or demo app.
 
 The backend (ASP.NET Core Web API + PostgreSQL) is implemented in a separate repository.
 
+## Resume/Interview Context
+These projects were built in limited personal time alongside full time work and studies. I intentionally prioritized delivering complete end to end functionality (e.g., admin workflows, Stripe payments, CMS theming) over polish, and I can walk through how I would harden or scale each system with more time (testing, CI/CD, stronger typing, performance).
+
 ---
 
 ## Overview
@@ -140,6 +143,10 @@ Refer to the backend repository for API and database setup.
 - Focused component and service tests
 
 Tests target **business-critical paths**, not snapshot or boilerplate coverage.
+
+## Testing & Quality
+- `npm run lint`
+- `npm run format`
 
 ---
 
