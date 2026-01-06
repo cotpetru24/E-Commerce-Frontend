@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { ProductDto } from '../models/product.dto';
 import { CartService } from '../services/cart.service';
 import { ToastService } from '../services/toast.service';
-import { Audience } from '../models/audience.enum';
 import { ProductApiService } from '../services/api';
 import { finalize } from 'rxjs';
 import { CmsApiService } from '../services/api/cms-api.service';
@@ -21,9 +20,6 @@ import { CmsLandingPageDto } from '../models/cms.dto';
 export class LandingPageComponent implements OnInit {
   newsletterEmail: string = '';
 
-  // ============================================================================
-  // FEATURED PRODUCTS DATA
-  // ============================================================================
   public featuredProducts: ProductDto[] = [];
   public availableBrands: string[] = [];
   public landingDto?: CmsLandingPageDto | null;
@@ -77,7 +73,7 @@ export class LandingPageComponent implements OnInit {
           try {
             this.landingDto = response;
           } catch {
-            this.toastService.error('Product data is invalid');
+            this.toastService.error('Invalid data');
           }
         },
         error: () => {
@@ -97,7 +93,7 @@ export class LandingPageComponent implements OnInit {
             this.featuredProducts = response.products;
             this.availableBrands = response.brands;
           } catch {
-            this.toastService.error('Product data is invalid');
+            this.toastService.error('Invalid data');
           }
         },
         error: () => {
@@ -113,9 +109,6 @@ export class LandingPageComponent implements OnInit {
     }
   }
 
-  // ============================================================================
-  // Once the Product details section is implemented, redirect to the product details page
-  // ============================================================================
   viewProduct(product: ProductDto) {
     this.router.navigate(['/products/details', product.id]);
   }

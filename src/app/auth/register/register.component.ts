@@ -79,54 +79,6 @@ export class RegisterComponent {
     });
   }
 
-
-  signUpWithGoogle() {
-    this.isGoogleLoading = true;
-
-    // this.authService.signUpWithGoogle()
-    //   .then((user) => {
-    //     this.toastService.success('Successfully signed up with Google! Welcome to our platform.');
-    //     this.router.navigate(['/products']);
-    //   })
-    //   .catch((error) => {
-    //     this.toastService.error('Google sign-up failed. Please try again.');
-    //   })
-    //   .finally(() => {
-    //     this.isGoogleLoading = false;
-    //   });
-  }
-
-  signUpWithGitHub() {
-    // this.isGitHubLoading = true;
-    // this.authService.signUpWithGitHub()
-    //   .then((user) => {
-    //     this.toastService.success('Successfully signed up with GitHub! Welcome to our platform.');
-    //     this.router.navigate(['/products']);
-    //   })
-    //   .catch((error) => {
-    //     this.toastService.error('GitHub sign-up failed. Please try again.');
-    //   })
-    //   .finally(() => {
-    //     this.isGitHubLoading = false;
-    //   });
-  }
-
-  signUpWithFacebook() {
-    this.isFacebookLoading = true;
-
-    // this.authService.signUpWithFacebook()
-    //   .then((user) => {
-    //     this.toastService.success('Successfully signed up with Facebook! Welcome to our platform.');
-    //     this.router.navigate(['/products']);
-    //   })
-    //   .catch((error) => {
-    //     this.toastService.error('Facebook sign-up failed. Please try again.');
-    //   })
-    //   .finally(() => {
-    //     this.isFacebookLoading = false;
-    //   });
-  }
-
   togglePassword() {
     this.showPassword = !this.showPassword;
   }

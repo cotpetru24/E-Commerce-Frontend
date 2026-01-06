@@ -4,15 +4,10 @@
     <div class="hero-background">
       <div class="hero-overlay"></div>
     </div>
-
     <div class="hero-content">
       <div class="container">
         <div class="hero-text">
           <h1 class="hero-title">
-            <!-- Step into
-            <span class="accent-text">Style</span>
-            <br>Walk with
-            <span class="accent-text">Confidence</span> -->
             <span class="accent-text">
               {{landingDto?.heroTitle}}
             </span>
@@ -49,12 +44,10 @@
             </div>
           </div>
         </div>
-
         <div class="hero-visual">
           <div class="hero-shoe-showcase">
             <div class="hero-image">
               <img [src]="'data:image/png;base64,' + landingDto?.heroBackgroundImageBase64" alt="Premium Running Shoe">
-
             </div>
           </div>
         </div>
@@ -70,18 +63,11 @@
         <p class="section-subtitle">Find your perfect fit across our diverse collection</p>
       </div>
       <div class="categories-grid">
-
         @for (category of landingDto?.categories; track $index) {
-
-
         <div class="category-card" [routerLink]="['/products', 'men']">
           <div class="category-image">
-            <!-- <img src="/assets/products/running-shoe.png" alt="Men's Shoes"> -->
-
             <img [src]="'data:image/png;base64,' + category.imageBase64 " alt="Premium Running Shoe">
-
             <div class="category-overlay">
-              <!-- <i class=""></i> -->
             </div>
           </div>
           <div class="category-content">
@@ -90,47 +76,36 @@
             <span class="category-count">{{category.itemTagline}}</span>
           </div>
         </div>
-
         }
-
       </div>
     </div>
   </section>
 
   <!-- Featured Products Section -->
   <section class="featured-section">
-    @if (isLoading)
-    {
+    @if (isLoading) {
     <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
       <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
       <span>Loading...</span>
     </div>
     }
-
-
-
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Featured Products</h2>
         <p class="section-subtitle">Our most popular and trending styles</p>
       </div>
-
       <div class="featured-grid">
         @for (product of featuredProducts; track product.id) {
-          <div class="featured-product" (click)="viewProduct(product)">
+        <div class="featured-product" (click)="viewProduct(product)">
           <div class="product-image" title="View product">
-
             @for (image of product.productImages; track image) {
             @if (image.isPrimary) {
-
             <img [src]="'/assets/'+image.imagePath" [alt]="product.name" title="product.name">
-
-
             break;
             }
             }
             @if (product.isNew) {
-              <div class="product-badge">New</div>
+            <div class="product-badge">New</div>
             }
           </div>
           <div class="product-info">
@@ -139,23 +114,22 @@
             <div class="product-price">
               <span class="current-price">${{product.price}}</span>
               @if (product.originalPrice) {
-                <span class="original-price">${{product.originalPrice}}</span>
+              <span class="original-price">${{product.originalPrice}}</span>
               }
             </div>
             <div class="product-rating">
               @for (star of getStars(product.rating || 0); track star) {
-                <i class="bi bi-star-fill star filled"></i>
+              <i class="bi bi-star-fill star filled"></i>
               }
               @for (star of getEmptyStars(product.rating || 0); track star) {
-                <i class="bi bi-star star"></i>
+              <i class="bi bi-star star"></i>
               }
               <span class="rating-count">({{product.reviewCount}})</span>
             </div>
           </div>
-          </div>
+        </div>
         }
       </div>
-
       <div class="view-all-container">
         <button class="btn btn-outline-primary view-all-button" routerLink="/products">
           View All Products
@@ -169,8 +143,6 @@
   <section class="features-section">
     <div class="container">
       <div class="features-grid">
-
-
         @for (feature of landingDto?.features; track $index){
         <div class="feature-card">
           <div class="feature-icon">
@@ -180,7 +152,6 @@
           <p>{{feature.description}}</p>
         </div>
         }
-
       </div>
     </div>
   </section>
@@ -192,16 +163,15 @@
         <h2 class="section-title">What Our Customers Say</h2>
         <p class="section-subtitle">Real reviews from satisfied customers</p>
       </div>
-
       <div class="testimonials-grid">
         @for (testimonial of testimonials; track $index) {
-          <div class="testimonial-card">
-            <div class="testimonial-content">
-              <div class="testimonial-rating">
-                @for (star of getStars(testimonial.rating); track star) {
-                  <i class="bi bi-star-fill star filled"></i>
-                }
-              </div>
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <div class="testimonial-rating">
+              @for (star of getStars(testimonial.rating); track star) {
+              <i class="bi bi-star-fill star filled"></i>
+              }
+            </div>
             <p class="testimonial-text">"{{testimonial.text}}"</p>
             <div class="testimonial-author">
               <div class="author-info">
@@ -210,7 +180,7 @@
               </div>
             </div>
           </div>
-          </div>
+        </div>
         }
       </div>
     </div>
@@ -223,14 +193,13 @@
         <h2 class="section-title">Trusted Brands</h2>
         <p class="section-subtitle">We partner with the world's leading footwear brands</p>
       </div>
-
       <div class="brands-grid">
         @for (brand of availableBrands; track brand) {
-          <div class="brand-item">
+        <div class="brand-item">
           <div class="brand-logo">
             <span class="brand-name">{{brand}}</span>
           </div>
-          </div>
+        </div>
         }
       </div>
     </div>
@@ -267,7 +236,6 @@
             <i class="bi bi-graph-up-arrow"></i>
           </button>
         </div>
-
         <div class="trends-visual">
           <div class="trends-image">
             <img src="/assets/products/casual-sneaker.png" alt="Latest Trends">
@@ -289,7 +257,6 @@
           <p>Be the first to know about new arrivals, exclusive offers, and style tips.
             Join our community of fashion-forward individuals.</p>
         </div>
-
         <div class="newsletter-form">
           <div class="input-group">
             <input type="email" name="newsletterEmail" id="newsletterEmail" class="form-control"

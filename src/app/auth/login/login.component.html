@@ -14,137 +14,51 @@
               <label for="email" class="form-label">
                 <i class="bi bi-envelope me-2"></i>Email Address
               </label>
-              <input 
-                type="email" 
-                class="form-control" 
-                id="email" 
-                name="email"
-                [(ngModel)]="loginData.email"
-                required
-                email
-                placeholder="Enter your email"
-                [ngClass]="{'is-invalid': loginForm.submitted && !loginData.email}"
-              >
+              <input type="email" class="form-control" id="email" name="email" [(ngModel)]="loginData.email" required
+                email placeholder="Enter your email"
+                [ngClass]="{'is-invalid': loginForm.submitted && !loginData.email}">
               @if (loginForm.submitted && !loginData.email) {
-                <div class="invalid-feedback">
-                  Please enter a valid email address.
-                </div>
+              <div class="invalid-feedback">
+                Please enter a valid email address.
+              </div>
               }
             </div>
-
             <div class="mb-3">
               <label for="password" class="form-label">
                 <i class="bi bi-lock me-2"></i>Password
               </label>
               <div class="input-group">
-                <input 
-                  [type]="showPassword ? 'text' : 'password'" 
-                  class="form-control" 
-                  id="password" 
-                  name="password"
-                  [(ngModel)]="loginData.password"
-                  required
-                  placeholder="Enter your password"
-                  [ngClass]="{'is-invalid': loginForm.submitted && !loginData.password}"
-                >
-                <button 
-                  class="btn btn-outline-secondary" 
-                  type="button"
-                  (click)="togglePassword()"
-                >
+                <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password" name="password"
+                  [(ngModel)]="loginData.password" required placeholder="Enter your password"
+                  [ngClass]="{'is-invalid': loginForm.submitted && !loginData.password}">
+                <button class="btn btn-outline-secondary" type="button" (click)="togglePassword()">
                   <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
                 </button>
               </div>
               @if (loginForm.submitted && !loginData.password) {
-                <div class="invalid-feedback">
-                  Please enter your password.
-                </div>
+              <div class="invalid-feedback">
+                Please enter your password.
+              </div>
               }
             </div>
-
             <div class="mb-3 form-check">
-              <input 
-                type="checkbox" 
-                class="form-check-input" 
-                id="rememberMe"
-                [(ngModel)]="loginData.rememberMe"
-                name="rememberMe"
-              >
+              <input type="checkbox" class="form-check-input" id="rememberMe" [(ngModel)]="loginData.rememberMe"
+                name="rememberMe">
               <label class="form-check-label" for="rememberMe">
                 Remember me
               </label>
             </div>
-
             <div class="d-grid gap-2">
-              <button 
-                type="submit" 
-                class="btn btn-primary btn-lg"
-                [disabled]="isLoading"
-              >
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="isLoading">
                 @if (isLoading) {
-                  <span class="spinner-border spinner-border-sm me-2 text-primary" role="status"></span>
+                <span class="spinner-border spinner-border-sm me-2 text-primary" role="status"></span>
                 }
                 @if (!isLoading) {
-                  <i class="bi bi-box-arrow-in-right me-2"></i>
+                <i class="bi bi-box-arrow-in-right me-2"></i>
                 }
                 {{ isLoading ? 'Signing in...' : 'Sign In' }}
               </button>
             </div>
-
-            <!-- SSO Section -->
-            <div class="mt-4">
-              <div class="text-center mb-3">
-                <span class="text-muted">or continue with</span>
-              </div>
-              
-              <div class="d-grid gap-2">
-                <button 
-                  type="button" 
-                  class="btn btn-outline-danger"
-                  (click)="signInWithGoogle()"
-                  [disabled]="isGoogleLoading"
-                >
-                  @if (isGoogleLoading) {
-                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  }
-                  @if (!isGoogleLoading) {
-                    <i class="bi bi-google me-2"></i>
-                  }
-                  {{ isGoogleLoading ? 'Signing in...' : 'Continue with Google' }}
-                </button>
-                
-                <button 
-                  type="button" 
-                  class="btn btn-outline-dark"
-                  (click)="signInWithGitHub()"
-                  [disabled]="isGitHubLoading"
-                >
-                  @if (isGitHubLoading) {
-                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  }
-                  @if (!isGitHubLoading) {
-                    <i class="bi bi-github me-2"></i>
-                  }
-                  {{ isGitHubLoading ? 'Signing in...' : 'Continue with GitHub' }}
-                </button>
-                
-                <button 
-                  type="button" 
-                  class="btn btn-outline-primary"
-                  (click)="signInWithFacebook()"
-                  [disabled]="isFacebookLoading"
-                >
-                  @if (isFacebookLoading) {
-                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  }
-                  @if (!isFacebookLoading) {
-                    <i class="bi bi-facebook me-2"></i>
-                  }
-                  {{ isFacebookLoading ? 'Signing in...' : 'Continue with Facebook' }}
-                </button>
-              </div>
-            </div>
-
             <div class="text-center mt-3">
               <a href="#" class="text-decoration-none">Forgot Password?</a>
             </div>
@@ -152,7 +66,7 @@
         </div>
         <div class="card-footer text-center">
           <p class="mb-0">
-            Don't have an account? 
+            Don't have an account?
             <a routerLink="/auth/register" class="text-decoration-none">Sign up here</a>
           </p>
         </div>
