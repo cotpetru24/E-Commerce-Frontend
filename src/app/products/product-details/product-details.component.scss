@@ -1,4 +1,3 @@
-/* Product Details Container */
 .product-details-container {
   min-height: 100vh;
   background-color: #f8f9fa;
@@ -11,7 +10,6 @@
   padding: 0 20px;
 }
 
-/* Breadcrumb */
 .breadcrumb {
   display: flex;
   align-items: center;
@@ -43,7 +41,6 @@
   height: 1rem;
 }
 
-/* Product Details Layout */
 .product-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -51,7 +48,6 @@
   margin-bottom: 3rem;
 }
 
-/* Product Images */
 .product-images {
   display: flex;
   flex-direction: column;
@@ -129,7 +125,6 @@
   object-fit: cover;
 }
 
-/* Product Info */
 .product-info {
   display: flex;
   flex-direction: column;
@@ -214,7 +209,6 @@
   font-size: 0.9rem;
 }
 
-/* Price Section */
 .product-price-section {
   display: flex;
   justify-content: space-between;
@@ -290,7 +284,6 @@
   color: #666;
 }
 
-/* Product Description */
 .product-description h3 {
   font-size: 1.2rem;
   font-weight: 600;
@@ -304,7 +297,6 @@
   margin: 0;
 }
 
-/* Product Features */
 .product-features h3 {
   font-size: 1.2rem;
   font-weight: 600;
@@ -335,7 +327,6 @@
   height: 1rem;
 }
 
-/* Size Selection */
 .size-selection h3 {
   font-size: 1.2rem;
   font-weight: 600;
@@ -367,7 +358,6 @@
   cursor: not-allowed;
 }
 
-/* Quantity Selection */
 .quantity-selection h3 {
   font-size: 1.2rem;
   font-weight: 600;
@@ -393,7 +383,6 @@
   text-align: center;
 }
 
-/* Action Buttons */
 .action-buttons {
   display: flex;
   gap: 1rem;
@@ -422,7 +411,6 @@
   color: #e91e63;
 }
 
-/* Button Styles - Matching Landing Page Colors */
 .btn-primary {
   background: #1a1a1a !important;
   color: #ffffff !important;
@@ -478,7 +466,6 @@
   color: #1a1a1a !important;
 }
 
-/* Product Meta */
 .product-meta {
   display: flex;
   flex-direction: column;
@@ -503,7 +490,6 @@
   height: 1.2rem;
 }
 
-/* Loading State */
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -518,7 +504,6 @@
   color: #666;
 }
 
-/* Related Products */
 .related-products {
   margin-top: 3rem;
 }
@@ -591,14 +576,13 @@
 }
 
 .carousel-control-prev-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%231a1a1a'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%231a1a1a'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/%3e%3c/svg%3e");
 }
 
 .carousel-control-next-icon {
-background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%231a1a1a'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%231a1a1a'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/%3e%3c/svg%3e");
 }
 
-/* Carousel Modal Styles */
 #productImagesModal .modal-content {
   background-color: #f8f9fa;
   border: none;
@@ -633,9 +617,6 @@ background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/s
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-
-
-/* Responsive Design */
 @media (max-width: 1024px) {
   .product-details {
     grid-template-columns: 1fr;
