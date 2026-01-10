@@ -1,6 +1,5 @@
 <div class="product-details-container">
   <div class="container">
-    <!-- Breadcrumb -->
     @if(cameFromProductManagement || cameFromAdminDashboard) {
     <nav aria-label="breadcrumb" class="mb-3">
       <ol class="breadcrumb">
@@ -31,18 +30,23 @@
       <span class="current">{{ product?.name }}</span>
     </nav>
     }
-
-    @if(product) {
-    <!-- Product Details -->
+    @if(product){
     <div class="product-details">
       <!-- Product Images -->
       <div class="product-images">
         <div class="main-image">
+          <!-- <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" /> -->
           <img [src]="'/assets/'+ selectedImage" alt="product.name" />
+          <!-- <img [src]="'/assets/products/image-coming-soon.png'" alt="product.name" /> -->
           <div class="image-overlay" (click)="openImageModal()" data-bs-toggle="modal"
             data-bs-target="#productImagesModal" title="Open image">
+            <!-- <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" data-bs-toggle="modal"
+              data-bs-target="#productImagesModal" title="Open image">
+              <i class="bi bi-zoom-in"></i>
+            </button> -->
           </div>
         </div>
+        <!-- @if (additionalProductImages && additionalProductImages.length > 0) -->
         @if((product.productImages?.length ??0) > 0) {
         <div class="image-thumbnails">
           @for (image of product.productImages; track image) {
@@ -54,8 +58,6 @@
         </div>
         }
       </div>
-
-      <!-- Product Info -->
       <div class="product-info">
         <div class="product-header">
           <div class="product-badges">
@@ -72,7 +74,6 @@
             <span class="rating-text">{{ rating }}/5 ({{ reviewCount }} reviews)</span>
           </div>
         </div>
-
         <div class="product-price-section">
           <div class="price-info">
             <span class="current-price">£{{ product.price }}</span>
@@ -91,17 +92,11 @@
             </span>
           </div>
         </div>
-
-
-
         <div class="product-description">
           <h3>Description</h3>
           <p>{{ product.description }}</p>
         </div>
-
-        <!-- Product Features -->
-        @if(product.productFeatures && product.productFeatures.length > 0)
-        {
+        @if(product.productFeatures && product.productFeatures.length > 0) {
         <div class="product-features">
           <h3>Features</h3>
           <ul class="features-list">
@@ -115,10 +110,7 @@
           </ul>
         </div>
         }
-
-        @if(product.productSizes && product.productSizes.length > 0)
-        {
-        <!-- Size Selection -->
+        @if(product.productSizes && product.productSizes.length > 0) {
         <div class="size-selection">
           <h3>Select Size</h3>
           <div class="size-options mb-3">
@@ -129,7 +121,6 @@
             </button>
             }
           </div>
-
           @if (selectedSize) {
           <span class="stock-count">
             {{ selectedSize?.stock }} items available
@@ -137,8 +128,6 @@
           }
         </div>
         }
-
-        <!-- Quantity Selection -->
         <div class="quantity-selection">
           <h3>Quantity</h3>
           <div class="quantity-controls">
@@ -153,27 +142,21 @@
             </button>
           </div>
         </div>
-
-        <!-- Action Buttons -->
         <div class="action-buttons">
           <button class="btn btn-primary add-to-cart-btn" [disabled]="product.totalStock === 0 || !selectedSize"
             (click)="addToCart()">
             <i class="bi bi-cart-plus"></i>
             Add to Cart
           </button>
-
           <button class="btn btn-outline-primary buy-now-btn" [disabled]="product.totalStock === 0 || !selectedSize"
             (click)="buyNow()">
             <i class="bi bi-lightning"></i>
             Buy Now
           </button>
-
           <button class="btn btn-outline-danger wishlist-btn" (click)="toggleWishlist()" title="Add to wishlist.">
             <i [class]="isInWishlist ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
           </button>
         </div>
-
-        <!-- Product Meta -->
         <div class="product-meta">
           <div class="meta-item">
             <i class="bi bi-truck"></i>
@@ -192,42 +175,29 @@
     </div>
     }
 
-    @if(!product)
-    {
     <!-- Loading State -->
+    @if(!product) {
     <div class="loading-state">
       <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
     </div>
     }
 
-    <!-- Related Products -->
-    @if (relatedProducts && relatedProducts.length>0)
-    {
+    @if (relatedProducts && relatedProducts.length>0) {
     <section class="related-products">
       <h2>Related Products</h2>
       <div class="related-products-grid">
-        @for (relatedProduct of relatedProducts; track relatedProduct)
-        {
+        @for (relatedProduct of relatedProducts; track relatedProduct) {
         <div class="card related-product-card" role="button" (click)="navigateToProductDetails(relatedProduct.id)">
           <div class="product-image">
-
             <!-- <img class="card-img-top" [src]="'/assets/'+relatedProduct.imagePath" [alt]="relatedProduct.name"
               title="Product image" /> -->
-
             @for (image of relatedProduct.productImages; track image) {
             @if (image.isPrimary) {
-
             <img class="card-img-top" [src]="'/assets/'+image.imagePath" [alt]="relatedProduct.name"
               title="Product image" />
-
             break;
             }
             }
-
-
-
-
-
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ relatedProduct.name }}</h3>
@@ -241,7 +211,6 @@
     }
   </div>
 </div>
-
 
 <!-- Modal Body -->
 <div class="modal fade" id="productImagesModal" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
@@ -259,8 +228,7 @@
                 <img class="carousel-image" [src]="'/assets/'+ selectedImage" alt="product.name" />
               </div>
             </div>
-            @for (image of product?.productImages; track image)
-            {
+            @for (image of product?.productImages; track image) {
             <div class="carousel-item">
               <div class="carousel-image-wrapper">
                 <img class="carousel-image" [src]="'/assets/'+ image.imagePath" alt="product.name" />
@@ -284,8 +252,6 @@
   </div>
 </div>
 
-
-<!-- In your component HTML -->
 <div #errorToast class="toast position-fixed bottom-0 start-50 translate-middle-x text-bg-danger" role="alert"
   aria-live="assertive" aria-atomic="true">
   <div class="d-flex">
