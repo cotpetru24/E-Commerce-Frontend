@@ -4,6 +4,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -23,7 +25,7 @@
     "noImplicitThis": true,
     "alwaysStrict": true,
     "exactOptionalPropertyTypes": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

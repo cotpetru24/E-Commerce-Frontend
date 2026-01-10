@@ -14,8 +14,12 @@ describe('ProductDetails', () => {
   let productApiService: jasmine.SpyObj<ProductApiService>;
 
   beforeEach(async () => {
-    productApiService = jasmine.createSpyObj('ProductApiService', ['getProductById']);
-    productApiService.getProductById.and.returnValue(of({ product: null, relatedProducts: [] }));
+    productApiService = jasmine.createSpyObj('ProductApiService', [
+      'getProductById',
+    ]);
+    productApiService.getProductById.and.returnValue(
+      of({ product: null, relatedProducts: [] })
+    );
 
     await TestBed.configureTestingModule({
       imports: [ProductDetailsComponent],
@@ -27,26 +31,34 @@ describe('ProductDetails', () => {
           useValue: {
             snapshot: {
               paramMap: {
-                get: jasmine.createSpy().and.returnValue('1')
-              }
+                get: jasmine.createSpy().and.returnValue('1'),
+              },
             },
             params: of({ id: '1' }),
-            queryParams: of({})
-          }
+            queryParams: of({}),
+          },
         },
-        { provide: CartService, useValue: jasmine.createSpyObj('CartService', ['addToCart']) },
-        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) },
-        { provide: ProductApiService, useValue: productApiService }
-      ]
-    })
-    .compileComponents();
+        {
+          provide: CartService,
+          useValue: jasmine.createSpyObj('CartService', ['addToCart']),
+        },
+        {
+          provide: ToastService,
+          useValue: jasmine.createSpyObj('ToastService', [
+            'error',
+            'success',
+            'info',
+          ]),
+        },
+        { provide: ProductApiService, useValue: productApiService },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProductDetailsComponent);
     component = fixture.componentInstance;
-    
-    // Spy on component template methods before detectChanges
+
     spyOn(component, 'getDiscountPercentage').and.returnValue(0);
-    
+
     fixture.detectChanges();
   });
 

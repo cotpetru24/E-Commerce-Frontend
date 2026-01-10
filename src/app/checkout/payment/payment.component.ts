@@ -37,16 +37,17 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   private elements: StripeElements | null = null;
   private paymentElement: StripePaymentElement | null = null;
   private orderResponse: PlaceOrderResponseDto | null = null;
+
   paymentData: PaymentDto = {
-  orderId: 0,
-  amount: 0,
-  currency: "",
-  cardBrand: "",
-  cardLast4: "",
-  billingName: "",
-  billingEmail: "",
-  status: "",
-  paymentMethod: ""
+    orderId: 0,
+    amount: 0,
+    currency: '',
+    cardBrand: '',
+    cardLast4: '',
+    billingName: '',
+    billingEmail: '',
+    status: '',
+    paymentMethod: '',
   };
 
   billingAddressData: AddressData = {
@@ -66,10 +67,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     total: 0,
   };
 
-  isLoading: boolean = false;
-  isStripeInitialized: boolean = false;
-  stripeError: string | null = null;
-  acceptTerms: boolean = false;
   billingAddress: CreateBillingAddressRequestDto = {
     addressLine1: '',
     city: '',
@@ -77,7 +74,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     postcode: '',
     country: '',
   };
-  //
+
+  isLoading: boolean = false;
+  isStripeInitialized: boolean = false;
+  stripeError: string | null = null;
+  acceptTerms: boolean = false;
   billigngAddressSameAsShipping: boolean = true;
 
   constructor(
@@ -91,12 +92,10 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadOrderSummary();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async ngAfterViewInit(): Promise<void> {
-    // Wait for the next tick to ensure DOM is fully rendered
     setTimeout(() => {
       this.initializeStripe();
     }, 0);
@@ -105,8 +104,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   public async initializeStripe(): Promise<void> {
     try {
       this.stripeError = null;
-
       const publishableKey = environment.stripePublishableKey;
+
       if (!publishableKey) {
         this.stripeError = 'Stripe publishable key is missing';
         return;
@@ -118,7 +117,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
-      // Create payment intent
       const { clientSecret } = await firstValueFrom(
         this.paymentApiService.createPaymentIntent(
           Math.round(this.orderSummary.total * 100)
@@ -126,7 +124,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       );
 
       if (!clientSecret) {
-        this.stripeError = 'Missing clientSecret from /api/create-payment-intent response';
+        this.stripeError = 'Missing clientSecret from response';
         return;
       }
 
@@ -140,7 +138,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paymentElement = this.elements.create('payment');
       this.paymentElement.mount('#payment-element');
 
-      // Remove loading text after mounting
       const mountEl2 = document.querySelector('#payment-element');
       if (mountEl2) {
         const loadingEl = mountEl2.querySelector('.stripe-loading');
@@ -156,11 +153,10 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadOrderSummary(): void {
-    // Mock data - replace with actual service call
     this.orderSummary = {
       subtotal: this.cartService.getSubtotal(),
       discount: this.cartService.getDiscount(),
-      shipping: 0, // Free shipping
+      shipping: 0,
       total: this.cartService.getTotal(),
     };
   }
@@ -170,15 +166,12 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
 
     try {
-      // First, place the order
       const orderRequest = this.createOrderRequest();
       this.orderResponse = await firstValueFrom(
         this.orderApiService.placeOrder(orderRequest)
       );
 
       this.toastService.success('Order placed successfully!');
-
-      // Store order ID for confirmation page
       this.storageService.setLocalItem(
         'lastOrderId',
         this.orderResponse.orderId.toString()
@@ -190,7 +183,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
           return;
         }
 
-        // Process payment with Stripe
         const { error, paymentIntent } = await this.stripe.confirmPayment({
           elements: this.elements,
           confirmParams: {},
@@ -220,7 +212,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       } else {
-        // For non-card payments, redirect to confirmation
         this.router.navigate(['/user/order', this.orderResponse.orderId], {
           queryParams: { isNewOrder: true },
         });
@@ -236,7 +227,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     const orderItems: OrderItemRequestDto[] = cartItems.map((item) => ({
       productId: item.product.id,
       quantity: item.quantity,
-      ...(item.size && { size: item.size }), // Only include size if it's defined
+      ...(item.size && { size: item.size }),
     }));
 
     const shippingAddressId = parseInt(
@@ -266,14 +257,14 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   validateForm(): boolean {
     if (this.paymentData.paymentMethod === 'card') {
-      // if (
-      //   !this.paymentData.cardNumber ||
-      //   !this.paymentData.expiryDate ||
-      //   !this.paymentData.cvv ||
-      //   !this.paymentData.cardholderName
-      // ) {
-      //   return false;
-      // }
+      if (
+        !this.paymentData.cardLast4 ||
+        !this.paymentData.amount ||
+        !this.paymentData.paymentMethod ||
+        !this.paymentData.billingName
+      ) {
+        return false;
+      }
     } else if (this.paymentData.paymentMethod === 'paypal') {
       if (!this.paymentData.billingEmail) {
         return false;
@@ -282,16 +273,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (!this.acceptTerms) {
       return false;
-    }
-
-    if (!this.billingAddressData.saveAddress) {
-      // if (
-      //   !this.paymentData.billingName 
-      //   // || !this.paymentData.billingLastName ||
-      //   // !this.paymentData.billingAddress
-      // ) {
-      //   return false;
-      // }
     }
 
     return true;
@@ -312,9 +293,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onPaymentMethodChange(): void {
-    // If switching to card payment, initialize Stripe Elements
     if (this.paymentData.paymentMethod === 'card') {
-      // Clear any existing elements
       if (this.paymentElement) {
         this.paymentElement.destroy();
         this.paymentElement = null;
@@ -323,7 +302,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.elements = null;
       }
 
-      // Re-initialize Stripe Elements
       setTimeout(() => {
         this.initializeStripe();
       }, 100);
@@ -331,7 +309,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Clean up Stripe Elements when component is destroyed
     if (this.paymentElement) {
       this.paymentElement.destroy();
       this.paymentElement = null;
@@ -353,12 +330,4 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     value = value.replace(/(\d{4})/g, '$1 ').trim();
     this.paymentData.cardLast4 = value;
   }
-
-  // formatExpiryDate(event: any): void {
-  //   let value = event.target.value.replace(/\D/g, '');
-  //   if (value.length >= 2) {
-  //     value = value.substring(0, 2) + '/' + value.substring(2, 4);
-  //   }
-  //   this.paymentData = value;
-  // }
 }

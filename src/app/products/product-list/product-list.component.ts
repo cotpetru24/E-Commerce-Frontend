@@ -13,7 +13,6 @@ import {
 } from '../../models/product-filter.dto';
 import { finalize } from 'rxjs';
 
-
 @Component({
   selector: 'app-product-list',
   standalone: true,
@@ -22,19 +21,20 @@ import { finalize } from 'rxjs';
   styleUrl: './product-list.component.scss',
 })
 
-
 export class ProductListComponent implements OnInit {
-  
-  public products: ProductDto[] = [];
+  products: ProductDto[] = [];
+  availableBrands: string[] = [];
+  isLoading: boolean = false;
+  viewMode: 'grid' | 'list' = 'grid';
 
-  public audienceOptions: Audience[] = [
+  audienceOptions: Audience[] = [
     Audience.Men,
     Audience.Women,
     Audience.Children,
     Audience.Unisex,
   ];
 
-  public sortByOptions: { value: SortByOption; label: string }[] = [
+  sortByOptions: { value: SortByOption; label: string }[] = [
     { value: SortByOption.NameAsc, label: 'Name A-Z' },
     { value: SortByOption.NameDesc, label: 'Name Z-A' },
     { value: SortByOption.PriceAsc, label: 'Price Low to High' },
@@ -43,18 +43,12 @@ export class ProductListComponent implements OnInit {
     { value: SortByOption.BrandDesc, label: 'Brand Z-A' },
   ];
 
-  public productFilterDto: ProductFilterDto = {
-    Brand:null,
+  productFilterDto: ProductFilterDto = {
+    Brand: null,
     Size: null,
     Audience: null,
     SortBy: null,
   };
-
-  public availableBrands: string[] = [];
-
-  public isLoading: boolean = false;
-
-  public viewMode: 'grid' | 'list' = 'grid';
 
   constructor(
     private route: ActivatedRoute,
@@ -83,7 +77,7 @@ export class ProductListComponent implements OnInit {
       .subscribe({
         next: (response) => {
           try {
-            this.products = response.products
+            this.products = response.products;
             this.availableBrands = response.brands;
           } catch {
             this.toastService.error('Product data is invalid');
@@ -134,7 +128,6 @@ export class ProductListComponent implements OnInit {
   }
 
   addToCart(product: ProductDto) {
-    // For product list, add with default size and quantity
     this.cartService.addToCart(product, 1);
     this.toastService.success(`${product.name} added to cart!`);
   }

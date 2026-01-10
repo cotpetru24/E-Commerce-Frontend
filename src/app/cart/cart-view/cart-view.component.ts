@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-
 import { Subscription } from 'rxjs';
 import { CartService, CartItem } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
@@ -14,6 +13,7 @@ import { AuthApiService } from '../../services/auth-api.service';
   templateUrl: './cart-view.component.html',
   styleUrls: ['./cart-view.component.scss'],
 })
+
 export class CartViewComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
   private cartSubscription: Subscription;
@@ -29,9 +29,7 @@ export class CartViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-    // Cart is already loaded from service
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
     if (this.cartSubscription) {
@@ -55,18 +53,6 @@ export class CartViewComponent implements OnInit, OnDestroy {
 
   removeItem(item: CartItem): void {
     this.cartService.removeFromCart(item.product.id, item.size);
-
-    // this.snackBar
-    //   .open(`${item.product.name} removed from cart`, 'Undo', {
-    //     duration: 3000,
-    //     horizontalPosition: 'center',
-    //     verticalPosition: 'bottom',
-    //   })
-    //   .onAction()
-    //   .subscribe(() => {
-    //     // Add back to cart
-    //     this.cartService.addToCart(item.product, item.quantity, item.size);
-    //   });
   }
 
   getItemTotal(item: CartItem): number {
@@ -110,10 +96,5 @@ export class CartViewComponent implements OnInit, OnDestroy {
 
   clearCart(): void {
     this.cartService.clearCart();
-    // this.snackBar.open('Cart cleared', 'Close', {
-    //   duration: 2000,
-    //   horizontalPosition: 'center',
-    //   verticalPosition: 'bottom',
-    // });
   }
 }

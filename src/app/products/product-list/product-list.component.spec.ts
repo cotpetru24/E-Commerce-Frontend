@@ -13,8 +13,13 @@ describe('ProductList', () => {
   let fixture: ComponentFixture<ProductListComponent>;
 
   beforeEach(async () => {
-    const productApiService = jasmine.createSpyObj('ProductApiService', ['getProducts', 'getFeaturedProducts']);
-    productApiService.getProducts.and.returnValue(of({ products: [], brands: [] }));
+    const productApiService = jasmine.createSpyObj('ProductApiService', [
+      'getProducts',
+      'getFeaturedProducts',
+    ]);
+    productApiService.getProducts.and.returnValue(
+      of({ products: [], brands: [] })
+    );
 
     await TestBed.configureTestingModule({
       imports: [ProductListComponent],
@@ -26,19 +31,31 @@ describe('ProductList', () => {
           useValue: {
             snapshot: {
               paramMap: {
-                get: jasmine.createSpy().and.returnValue('1')
-              }
+                get: jasmine.createSpy().and.returnValue('1'),
+              },
             },
             params: of({}),
-            queryParams: of({})
-          }
+            queryParams: of({}),
+          },
         },
-        { provide: CartService, useValue: jasmine.createSpyObj('CartService', ['addToCart', 'getCartItems']) },
-        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) },
-        { provide: ProductApiService, useValue: productApiService }
-      ]
-    })
-    .compileComponents();
+        {
+          provide: CartService,
+          useValue: jasmine.createSpyObj('CartService', [
+            'addToCart',
+            'getCartItems',
+          ]),
+        },
+        {
+          provide: ToastService,
+          useValue: jasmine.createSpyObj('ToastService', [
+            'error',
+            'success',
+            'info',
+          ]),
+        },
+        { provide: ProductApiService, useValue: productApiService },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProductListComponent);
     component = fixture.componentInstance;

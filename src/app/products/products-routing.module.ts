@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductCardComponent } from './product-card/product-card.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
@@ -11,12 +10,11 @@ const routes: Routes = [
     path: '',
     children: [
       { path: '', component: ProductListComponent },
-      { path: ':audience', component: ProductListComponent }, // default /products
-      // default /products
+      { path: ':audience', component: ProductListComponent },
     ],
   },
   { path: 'card', component: ProductCardComponent },
-  { path: 'details/:id', component: ProductDetailsComponent }, // assuming product has ID
+  { path: 'details/:id', component: ProductDetailsComponent },
   { path: 'filters', component: ProductFiltersComponent },
 ];
 
@@ -24,4 +22,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
+
 export class ProductsRoutingModule {}

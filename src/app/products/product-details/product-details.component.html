@@ -1,9 +1,7 @@
 <div class="product-details-container">
   <div class="container">
     <!-- Breadcrumb -->
-
-    @if(cameFromProductManagement || cameFromAdminDashboard)
-    {
+    @if(cameFromProductManagement || cameFromAdminDashboard) {
     <nav aria-label="breadcrumb" class="mb-3">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
@@ -11,21 +9,17 @@
             <i class="bi bi-house me-1"></i>Admin Dashboard
           </a>
         </li>
-
         <li class="breadcrumb-item ">
           <a routerLink="/admin/products" class="text-decoration-none">
             <i class="bi bi-box me-1"></i>Product Management
           </a>
         </li>
-
         <li class="breadcrumb-item active" aria-current="page">
           <i class="bi bi-eye me-1"></i>View Product
         </li>
-
       </ol>
     </nav>
     }
-
     @else{
     <nav class="breadcrumb">
       <a routerLink="/">Home</a>
@@ -38,43 +32,20 @@
     </nav>
     }
 
-    @if(product)
-    {
+    @if(product) {
     <!-- Product Details -->
     <div class="product-details">
       <!-- Product Images -->
       <div class="product-images">
         <div class="main-image">
-
-
-          <!-- <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" /> -->
           <img [src]="'/assets/'+ selectedImage" alt="product.name" />
-
-
-          <!-- <img [src]="'/assets/products/image-coming-soon.png'" alt="product.name" /> -->
-
-
-          <div class="image-overlay" (click)="openImageModal()" data-bs-toggle="modal" data-bs-target="#productImagesModal" title="Open image">
-            <!-- <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" data-bs-toggle="modal"
-              data-bs-target="#productImagesModal" title="Open image">
-              <i class="bi bi-zoom-in"></i>
-            </button> -->
+          <div class="image-overlay" (click)="openImageModal()" data-bs-toggle="modal"
+            data-bs-target="#productImagesModal" title="Open image">
           </div>
         </div>
-
-
-
-        <!-- @if (additionalProductImages && additionalProductImages.length > 0) -->
-        @if((product.productImages?.length ??0) > 0)
-
-        {
+        @if((product.productImages?.length ??0) > 0) {
         <div class="image-thumbnails">
-          <!-- <div class="thumbnail" [class.active]="selectedImage === product.imagePath"
-            (click)="selectImage(product.imagePath)">
-            <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" />
-          </div> -->
-          @for (image of product.productImages; track image)
-          {
+          @for (image of product.productImages; track image) {
           <div class="thumbnail" [class.active]="selectedImage === image.imagePath"
             (click)="selectImage(image.imagePath)">
             <img [src]="'/assets/'+image.imagePath" [alt]="product.name" title="Product image" />
@@ -95,7 +66,7 @@
           <div class="product-rating">
             <div class="stars">
               @for (star of [1, 2, 3, 4, 5]; track star) {
-                <i [ngClass]="star <= rating ? 'bi bi-star-fill' : 'bi bi-star'" class="me-1"></i>
+              <i [ngClass]="star <= rating ? 'bi bi-star-fill' : 'bi bi-star'" class="me-1"></i>
               }
             </div>
             <span class="rating-text">{{ rating }}/5 ({{ reviewCount }} reviews)</span>
@@ -106,10 +77,10 @@
           <div class="price-info">
             <span class="current-price">£{{ product.price }}</span>
             @if (product.originalPrice) {
-              <span class="original-price">£{{ product.originalPrice }}</span>
-              <span class="discount-badge">
-                -{{ getDiscountPercentage() }}%
-              </span>
+            <span class="original-price">£{{ product.originalPrice }}</span>
+            <span class="discount-badge">
+              -{{ getDiscountPercentage() }}%
+            </span>
             }
           </div>
           <div class="stock-info">
@@ -153,17 +124,16 @@
           <div class="size-options mb-3">
             @for (size of product.productSizes; track availableSizes)
             {
-            <button class="btn btn-outline-primary" [class.selected]="selectedSize === size"
-              (click)="selectSize(size)">
+            <button class="btn btn-outline-primary" [class.selected]="selectedSize === size" (click)="selectSize(size)">
               {{ size.size }}
             </button>
             }
           </div>
 
           @if (selectedSize) {
-            <span class="stock-count">
-              {{ selectedSize?.stock }} items available
-            </span>
+          <span class="stock-count">
+            {{ selectedSize?.stock }} items available
+          </span>
           }
         </div>
         }
@@ -244,14 +214,14 @@
             <!-- <img class="card-img-top" [src]="'/assets/'+relatedProduct.imagePath" [alt]="relatedProduct.name"
               title="Product image" /> -->
 
-            @for (image of relatedProduct.productImages; track image)  {
-              @if (image.isPrimary) {
+            @for (image of relatedProduct.productImages; track image) {
+            @if (image.isPrimary) {
 
             <img class="card-img-top" [src]="'/assets/'+image.imagePath" [alt]="relatedProduct.name"
               title="Product image" />
 
-              break;
-              }
+            break;
+            }
             }
 
 

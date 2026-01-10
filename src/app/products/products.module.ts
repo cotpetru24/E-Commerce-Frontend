@@ -17,4 +17,5 @@ import { ProductFiltersComponent } from './product-filters/product-filters.compo
     ProductFiltersComponent,
   ],
 })
+
 export class ProductsModule {}

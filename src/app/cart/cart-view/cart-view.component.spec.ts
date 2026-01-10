@@ -12,7 +12,16 @@ describe('CartView', () => {
   let fixture: ComponentFixture<CartViewComponent>;
 
   beforeEach(async () => {
-    const cartServiceSpy = jasmine.createSpyObj('CartService', ['removeFromCart', 'updateQuantity', 'clearCart', 'getCartItemCount', 'getSubtotal', 'getShippingCost', 'getDiscount', 'getTotal']);
+    const cartServiceSpy = jasmine.createSpyObj('CartService', [
+      'removeFromCart',
+      'updateQuantity',
+      'clearCart',
+      'getCartItemCount',
+      'getSubtotal',
+      'getShippingCost',
+      'getDiscount',
+      'getTotal',
+    ]);
     cartServiceSpy.cartItems$ = of([]);
     cartServiceSpy.getCartItemCount.and.returnValue(0);
     cartServiceSpy.getSubtotal.and.returnValue(0);
@@ -26,23 +35,31 @@ describe('CartView', () => {
         provideHttpClient(),
         provideRouter([]),
         { provide: CartService, useValue: cartServiceSpy },
-        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) },
-        { provide: AuthApiService, useValue: jasmine.createSpyObj('AuthApiService', ['isAuthenticated']) }
-      ]
-    })
-    .compileComponents();
+        {
+          provide: ToastService,
+          useValue: jasmine.createSpyObj('ToastService', [
+            'error',
+            'success',
+            'info',
+          ]),
+        },
+        {
+          provide: AuthApiService,
+          useValue: jasmine.createSpyObj('AuthApiService', ['isAuthenticated']),
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CartViewComponent);
     component = fixture.componentInstance;
-    
-    // Spy on component template methods before detectChanges
+
     spyOn(component, 'getItemTotal').and.returnValue(0);
     spyOn(component, 'getTotalItems').and.returnValue(0);
     spyOn(component, 'getSubtotal').and.returnValue(0);
     spyOn(component, 'getShippingCost').and.returnValue(0);
     spyOn(component, 'getDiscount').and.returnValue(0);
     spyOn(component, 'getTotal').and.returnValue(0);
-    
+
     fixture.detectChanges();
   });
 

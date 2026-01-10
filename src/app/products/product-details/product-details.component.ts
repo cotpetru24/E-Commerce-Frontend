@@ -1,12 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { ProductDto, ProductSizeDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
-import { Audience } from '../../models/audience.enum';
 import { ProductApiService } from '../../services/api';
-import { firstValueFrom } from 'rxjs';
 import { ProductImageDto } from '../../models/product-image.dto';
 
 @Component({
@@ -16,25 +14,20 @@ import { ProductImageDto } from '../../models/product-image.dto';
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.scss',
 })
+
 export class ProductDetailsComponent implements OnInit {
-  public product: ProductDto | null = null;
-
-  public cameFromProductManagement: boolean = false;
-  public cameFromAdminDashboard: boolean = false;
-
-  public relatedProducts: ProductDto[] = [];
-
-  public additionalProductImages: ProductImageDto[] = [];
-
+  product: ProductDto | null = null;
+  cameFromProductManagement: boolean = false;
+  cameFromAdminDashboard: boolean = false;
+  relatedProducts: ProductDto[] = [];
+  additionalProductImages: ProductImageDto[] = [];
   selectedImage: string = '';
   rating: number = 4.5;
   reviewCount: number = 128;
   selectedSize?: ProductSizeDto;
   quantity: number = 1;
-  maxQuantity: number = 10;
   isInWishlist: boolean = false;
   productFeatures: string[] = [];
-  availableSizes: string[] = ['7', '8', '9', '10', '11', '12'];
 
   constructor(
     private route: ActivatedRoute,
@@ -47,7 +40,6 @@ export class ProductDetailsComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params) => {
       const productId: number = Number(params['id']);
-
       if (productId !== undefined || productId !== null) {
         this.getProduct(productId);
       }
@@ -64,7 +56,6 @@ export class ProductDetailsComponent implements OnInit {
       next: (response) => {
         this.product = response.product;
         this.relatedProducts = response.relatedProducts || [];
-        // this.additionalProductImages = response.additionalImages || [];
 
         if (this.product) {
           this.initializeProductData();
@@ -84,26 +75,10 @@ export class ProductDetailsComponent implements OnInit {
     } else {
       this.selectedImage = 'products/image-coming-soon.png';
     }
-
-    // Set up product features
-    this.productFeatures = [
-      'Breathable mesh upper',
-      'Cushioned midsole for comfort',
-      'Durable rubber outsole',
-      'Lightweight construction',
-      'Available in multiple colors',
-    ];
-
-    // Set max quantity based on stock
-    this.maxQuantity = Math.min(this.product.totalStock, 10);
   }
 
   selectImage(image: string) {
     this.selectedImage = image;
-  }
-
-  openImageModal() {
-    // Image modal functionality can be implemented here
   }
 
   navigateToProductDetails(productId: number) {
@@ -114,11 +89,6 @@ export class ProductDetailsComponent implements OnInit {
   selectSize(size: ProductSizeDto) {
     this.selectedSize = size;
     this.quantity = 1;
-  }
-
-  isSizeAvailable(size: string): boolean {
-    size = size.toLowerCase();
-    return Math.random() > 0.3; // 70% chance of being available
   }
 
   increaseQuantity() {
@@ -145,37 +115,6 @@ export class ProductDetailsComponent implements OnInit {
       this.selectedSize.size
     );
     this.toastService.success(`${this.product.name} added to cart!`);
-  }
-
-  buyNow() {
-    if (!this.product || !this.selectedSize) {
-      this.toastService.warning('Please select a size before purchasing');
-      return;
-    }
-
-    // Add to cart and proceed to checkout
-    this.cartService.addToCart(
-      this.product,
-      this.quantity,
-      this.selectedSize.size
-    );
-    this.toastService.info('Proceeding to checkout...');
-
-    // Navigate to checkout
-    this.router.navigate(['/checkout/shipping']);
-  }
-
-  toggleWishlist() {
-    this.isInWishlist = !this.isInWishlist;
-    // const message = this.isInWishlist
-    //   ? 'Added to wishlist'
-    //   : 'Removed from wishlist';
-
-    // // this.toast.open(message, 'Close', {
-    // //   duration: 2000,
-    // //   horizontalPosition: 'center',
-    // //   verticalPosition: 'bottom',
-    // // });
   }
 
   getDiscountPercentage(): number {
