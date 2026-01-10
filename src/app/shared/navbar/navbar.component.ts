@@ -46,8 +46,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.sub = this.cmsStateService.cmsProfile$.subscribe((profile) => {
       if (!profile) return;
       this.websiteName = profile.websiteName;
-      this.websiteLogo = profile.websiteLogo;
-      this.showLogo = profile.showLogo;
+      this.websiteLogo = profile.websiteLogo || null;
+      this.showLogo = profile.showLogo || false;
     });
   }
 

@@ -38,7 +38,7 @@
           <!-- <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" /> -->
           <img [src]="'/assets/'+ selectedImage" alt="product.name" />
           <!-- <img [src]="'/assets/products/image-coming-soon.png'" alt="product.name" /> -->
-          <div class="image-overlay" (click)="openImageModal()" data-bs-toggle="modal"
+          <div class="image-overlay" data-bs-toggle="modal"
             data-bs-target="#productImagesModal" title="Open image">
             <!-- <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" data-bs-toggle="modal"
               data-bs-target="#productImagesModal" title="Open image">
@@ -114,7 +114,7 @@
         <div class="size-selection">
           <h3>Select Size</h3>
           <div class="size-options mb-3">
-            @for (size of product.productSizes; track availableSizes)
+            @for (size of product.productSizes; track size)
             {
             <button class="btn btn-outline-primary" [class.selected]="selectedSize === size" (click)="selectSize(size)">
               {{ size.size }}
@@ -136,7 +136,7 @@
               <i class="bi bi-dash"></i>
             </button>
             <span class="quantity-display">{{ quantity }}</span>
-            <button class="btn btn-outline-secondary" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity"
+            <button class="btn btn-outline-secondary" (click)="increaseQuantity()" [disabled]="quantity >= (selectedSize?.stock ?? 0)"
               title="Increase quantity">
               <i class="bi bi-plus"></i>
             </button>
@@ -149,11 +149,11 @@
             Add to Cart
           </button>
           <button class="btn btn-outline-primary buy-now-btn" [disabled]="product.totalStock === 0 || !selectedSize"
-            (click)="buyNow()">
+            >
             <i class="bi bi-lightning"></i>
             Buy Now
           </button>
-          <button class="btn btn-outline-danger wishlist-btn" (click)="toggleWishlist()" title="Add to wishlist.">
+          <button class="btn btn-outline-danger wishlist-btn" title="Add to wishlist.">
             <i [class]="isInWishlist ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
           </button>
         </div>

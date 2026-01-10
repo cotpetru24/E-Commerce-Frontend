@@ -4,10 +4,10 @@ import { CmsNavAndFooterDto, CmsProfileDto } from "../models/cms.dto";
 
 @Injectable({ providedIn: 'root' })
 export class CmsStateService {
-  private cmsProfileSubject = new BehaviorSubject<CmsProfileDto | null>(null);
+  private cmsProfileSubject = new BehaviorSubject<CmsNavAndFooterDto | null>(null);
   cmsProfile$ = this.cmsProfileSubject.asObservable();
 
-  setProfile(profile: CmsProfileDto | null) {
+  setProfile(profile: CmsNavAndFooterDto | null) {
     this.cmsProfileSubject.next(profile);
   }
     setPageTitle(websiteName: string): void {
