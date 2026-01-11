@@ -20,7 +20,13 @@ import { StorageService } from '../../services/storage.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
 })
+
 export class ShippingAddressComponent implements OnInit {
+  savedAddresses: ShippingAddressDto[] = [];
+  selectedAddressId: number | null = null;
+  useExistingAddress: boolean = false;
+  isLoading: boolean = false;
+
   addressData: AddressData = {
     addressLine1: '',
     city: '',
@@ -38,11 +44,6 @@ export class ShippingAddressComponent implements OnInit {
     total: 0,
   };
 
-  savedAddresses: ShippingAddressDto[] = [];
-  selectedAddressId: number | null = null;
-  useExistingAddress: boolean = false;
-  isLoading: boolean = false;
-
   constructor(
     private router: Router,
     private cartService: CartService,
@@ -53,13 +54,11 @@ export class ShippingAddressComponent implements OnInit {
 
   ngOnInit(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
     this.loadSavedAddresses();
     this.loadOrderSummary();
   }
 
   loadSavedAddresses(): void {
-    // Check if user is logged in before making API call
     const token = this.storageService.getSessionItem('accessToken');
     if (!token) {
       this.loadSavedAddressFromLocalStorage();
@@ -69,7 +68,6 @@ export class ShippingAddressComponent implements OnInit {
     this.shippingAddressService.getShippingAddresses().subscribe({
       next: (addresses) => {
         this.savedAddresses = addresses;
-        // Select first address if available
         if (addresses.length > 0) {
           this.selectedAddressId = addresses[0].id;
           this.useExistingAddress = true;
@@ -94,7 +92,7 @@ export class ShippingAddressComponent implements OnInit {
     this.orderSummary = {
       subtotal: this.cartService.getSubtotal(),
       discount: this.cartService.getDiscount(),
-      shipping: 0, // Free shipping
+      shipping: 0,
       total: this.cartService.getTotal(),
     };
   }
@@ -118,7 +116,6 @@ export class ShippingAddressComponent implements OnInit {
     this.isLoading = true;
 
     if (this.addressData.saveAddress) {
-      // Create new shipping address
       const addressRequest: CreateShippingAddressRequestDto = {
         addressLine1: this.addressData.addressLine1,
         city: this.addressData.city,
@@ -141,13 +138,11 @@ export class ShippingAddressComponent implements OnInit {
           },
         });
     } else {
-      // Just proceed without saving
       this.proceedToPayment();
     }
   }
 
   proceedToPayment(): void {
-    // Store selected address ID for use in payment/order creation
     if (this.selectedAddressId) {
       this.storageService.setLocalItem(
         'selectedShippingAddressId',
@@ -155,7 +150,6 @@ export class ShippingAddressComponent implements OnInit {
       );
     }
 
-    // Store delivery instructions
     if (this.addressData.instructions) {
       this.storageService.setLocalItem(
         'deliveryInstructions',

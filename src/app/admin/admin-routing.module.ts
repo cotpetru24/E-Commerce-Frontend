@@ -2,50 +2,74 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { 
-    path: '', 
-    loadComponent: () => import('./admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) 
+  {
+    path: '',
+    loadComponent: () =>
+      import('./admin-dashboard/admin-dashboard.component').then(
+        (m) => m.AdminDashboardComponent
+      ),
   },
-  { 
-    path: 'dashboard', 
-    loadComponent: () => import('./admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) 
+  {
+    path: 'products',
+    loadComponent: () =>
+      import('./product-management/product-management.component').then(
+        (m) => m.ProductManagementComponent
+      ),
   },
-  { 
-    path: 'products', 
-    loadComponent: () => import('./product-management/product-management.component').then(m => m.ProductManagementComponent) 
+  {
+    path: 'add-product',
+    loadComponent: () =>
+      import('./add-product/add-product.component').then(
+        (m) => m.AddProductComponent
+      ),
   },
-  { 
-    path: 'add-product', 
-    loadComponent: () => import('./add-product/add-product.component').then(m => m.AddProductComponent) 
+  {
+    path: 'edit-product/:id',
+    loadComponent: () =>
+      import('./edit-product/edit-product.component').then(
+        (m) => m.EditProductComponent
+      ),
   },
-  { 
-    path: 'edit-product/:id', 
-    loadComponent: () => import('./edit-product/edit-product.component').then(m => m.EditProductComponent) 
+  {
+    path: 'orders',
+    loadComponent: () =>
+      import('./order-management/order-management.component').then(
+        (m) => m.OrderManagementComponent
+      ),
   },
-  { 
-    path: 'orders', 
-    loadComponent: () => import('./order-management/order-management.component').then(m => m.OrderManagementComponent) 
+  {
+    path: 'orders/:id',
+    loadComponent: () =>
+      import('./view-order/view-order.component').then(
+        (m) => m.ViewOrderComponent
+      ),
   },
-  { 
-    path: 'orders/:id', 
-    loadComponent: () => import('./view-order/view-order.component').then(m => m.ViewOrderComponent) 
+  {
+    path: 'users',
+    loadComponent: () =>
+      import('./user-management/user-management.component').then(
+        (m) => m.UserManagementComponent
+      ),
   },
-  { 
-    path: 'users', 
-    loadComponent: () => import('./user-management/user-management.component').then(m => m.UserManagementComponent) 
+  {
+    path: 'users/:id',
+    loadComponent: () =>
+      import('./user-profile/user-profile.component').then(
+        (m) => m.UserProfileComponent
+      ),
   },
-  { 
-    path: 'users/:id', 
-    loadComponent: () => import('./user-profile/user-profile.component').then(m => m.UserProfileComponent) 
-  },
-  { 
-    path: 'content-management', 
-    loadComponent: () => import('./content-management/content-management.component').then(m => m.ContentManagementComponent) 
+  {
+    path: 'content-management',
+    loadComponent: () =>
+      import('./content-management/content-management.component').then(
+        (m) => m.ContentManagementComponent
+      ),
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AdminRoutingModule { }
+
+export class AdminRoutingModule {}

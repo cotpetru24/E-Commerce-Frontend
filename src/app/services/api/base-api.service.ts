@@ -44,7 +44,9 @@ export abstract class BaseApiService {
   ): Observable<T> {
     // need to add the logic for the related products
     const headers = options.headers ?? this.getAuthHeaders();
-    return this.http.get<T>(url, {...options, headers}).pipe(catchError(this.handleError));
+    return this.http
+      .get<T>(url, { ...options, headers })
+      .pipe(catchError(this.handleError));
   }
 
   /**
@@ -123,7 +125,7 @@ export abstract class BaseApiService {
    */
   protected getAuthHeaders(): HttpHeaders {
     const token = this.storageService.getSessionItem('accessToken');
-    
+
     return new HttpHeaders({
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
@@ -202,17 +204,23 @@ export abstract class BaseApiService {
     return throwError(() => new Error(errorMessage));
   }
 
-  /**
-   * Log API request for debugging
-   */
   protected logRequest(method: string, url: string, data?: any): void {
-    // Logging removed per cleanup requirements
+    if (environment.production) return;
+
+    console.log(`API ${method}:`, {
+      url,
+      data,
+      timestamp: new Date().toISOString(),
+    });
   }
 
-  /**
-   * Log API response for debugging
-   */
   protected logResponse(method: string, url: string, data: any): void {
-    // Logging removed per cleanup requirements
+    if (environment.production) return;
+
+    console.log(`API ${method} Response:`, {
+      url,
+      data,
+      timestamp: new Date().toISOString(),
+    });
   }
 }

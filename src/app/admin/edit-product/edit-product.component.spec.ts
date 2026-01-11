@@ -14,25 +14,32 @@ describe('EditProduct', () => {
   let adminApiService: jasmine.SpyObj<AdminApiService>;
 
   beforeEach(async () => {
-    adminApiService = jasmine.createSpyObj('AdminApiService', ['getProductById', 'updateProduct', 'getProductBrands', 'getProductAudience']);
+    adminApiService = jasmine.createSpyObj('AdminApiService', [
+      'getProductById',
+      'updateProduct',
+      'getProductBrands',
+      'getProductAudience',
+    ]);
     adminApiService.getProductBrands.and.returnValue(of([]));
     adminApiService.getProductAudience.and.returnValue(of([]));
-    adminApiService.getProductById.and.returnValue(of({
-      id: 1,
-      name: 'Test Product',
-      description: 'Test',
-      price: 100,
-      brandId: 1,
-      audienceId: 1,
-      productSizes: [],
-      productFeatures: [],
-      productImages: [],
-      isNew: false,
-      discountPercentage: 0,
-      selected: false,
-      isActive: true,
-      totalStock: 0
-    }));
+    adminApiService.getProductById.and.returnValue(
+      of({
+        id: 1,
+        name: 'Test Product',
+        description: 'Test',
+        price: 100,
+        brandId: 1,
+        audienceId: 1,
+        productSizes: [],
+        productFeatures: [],
+        productImages: [],
+        isNew: false,
+        discountPercentage: 0,
+        selected: false,
+        isActive: true,
+        totalStock: 0,
+      })
+    );
 
     await TestBed.configureTestingModule({
       imports: [EditProductComponent],
@@ -44,19 +51,28 @@ describe('EditProduct', () => {
           useValue: {
             snapshot: {
               paramMap: {
-                get: jasmine.createSpy().and.returnValue('1')
-              }
+                get: jasmine.createSpy().and.returnValue('1'),
+              },
             },
             params: of({}),
-            queryParams: of({})
-          }
+            queryParams: of({}),
+          },
         },
-        { provide: NgbModal, useValue: jasmine.createSpyObj('NgbModal', ['open']) },
-        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) },
-        { provide: AdminApiService, useValue: adminApiService }
-      ]
-    })
-    .compileComponents();
+        {
+          provide: NgbModal,
+          useValue: jasmine.createSpyObj('NgbModal', ['open']),
+        },
+        {
+          provide: ToastService,
+          useValue: jasmine.createSpyObj('ToastService', [
+            'error',
+            'success',
+            'info',
+          ]),
+        },
+        { provide: AdminApiService, useValue: adminApiService },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(EditProductComponent);
     component = fixture.componentInstance;

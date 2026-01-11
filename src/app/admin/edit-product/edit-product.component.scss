@@ -1,5 +1,3 @@
-/* Edit Product Component Styles */
-
 .card {
   border: none;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
@@ -31,7 +29,6 @@
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
 
-/* Override general form-control rules for table inputs - prevent any default styling when not focused */
 .sizes-table input.form-control-sm.border-0:not(:focus),
 .features-table input.form-control-sm.border-0:not(:focus) {
   border-color: transparent !important;
@@ -57,7 +54,6 @@
   color: #6c757d;
 }
 
-/* Button styling */
 .btn {
   border-radius: 0.375rem;
   font-weight: 500;
@@ -111,7 +107,6 @@
   border-color: #6c757d;
 }
 
-/* Image upload area */
 .border.rounded {
   border: 2px dashed #dee2e6 !important;
   transition: border-color 0.15s ease-in-out;
@@ -121,7 +116,6 @@
   border-color: #0d6efd !important;
 }
 
-/* List group styling */
 .list-group-item {
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.375rem;
@@ -132,7 +126,6 @@
   margin-bottom: 0;
 }
 
-/* Form switch styling */
 .form-check-input {
   width: 2.5rem;
   height: 1.25rem;
@@ -154,7 +147,6 @@
   color: #495057;
 }
 
-/* Image preview */
 .img-fluid.rounded {
   border: 1px solid #dee2e6;
   transition: transform 0.2s ease-in-out;
@@ -164,7 +156,6 @@
   transform: scale(1.05);
 }
 
-/* Position utilities */
 .position-relative {
   position: relative;
 }
@@ -181,7 +172,6 @@
   right: 0;
 }
 
-/* Display utilities */
 .display-4 {
   font-size: 3rem;
   font-weight: 300;
@@ -194,18 +184,15 @@
   line-height: 1.2;
 }
 
-/* Text utilities */
 .text-muted {
   color: #6c757d !important;
 }
 
-/* Spinner */
 .spinner-border-sm {
   width: 1rem;
   height: 1rem;
 }
 
-/* Product stats card */
 .card.bg-light {
   background-color: #f8f9fa !important;
   border: 1px solid #dee2e6;
@@ -229,7 +216,6 @@
   color: #198754 !important;
 }
 
-/* Alert styling */
 .alert {
   border: none;
   border-radius: 0.5rem;
@@ -240,26 +226,25 @@
   color: #0c5460;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .card-body {
     padding: 1rem;
   }
-  
+
   .btn {
     width: 100%;
     margin-bottom: 0.5rem;
   }
-  
+
   .btn:last-child {
     margin-bottom: 0;
   }
-  
+
   .d-flex.justify-content-between {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .d-flex.justify-content-between > div {
     display: flex;
     flex-direction: column;
@@ -267,7 +252,6 @@
   }
 }
 
-/* Loading state */
 .btn:disabled {
   opacity: 0.65;
   cursor: not-allowed;
@@ -277,7 +261,6 @@
   transform: none;
 }
 
-/* File input styling */
 input[type="file"] {
   cursor: pointer;
 }
@@ -286,7 +269,6 @@ input[type="file"]::-webkit-file-upload-button {
   visibility: hidden;
 }
 
-/* Breadcrumb styling */
 .breadcrumb {
   background-color: transparent;
   padding: 0;
@@ -311,35 +293,29 @@ input[type="file"]::-webkit-file-upload-button {
   color: #6c757d;
 }
 
-/* Card shadow */
 .shadow {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Card styling */
 .card-body {
   padding: 1.5rem;
 }
 
-/* Hover effects */
 .btn:hover {
   transform: translateY(-1px);
   transition: transform 0.2s ease-in-out;
 }
 
-/* Form validation */
 .form-control.is-invalid:focus,
 .form-select.is-invalid:focus {
   border-color: #dc3545;
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
-
 .btn-outline-primary:hover .bi {
   color: #fff;
 }
 
-/* Sizes Table Styling */
 .sizes-table {
   margin-bottom: 0;
   background-color: #fff;
@@ -362,7 +338,6 @@ input[type="file"]::-webkit-file-upload-button {
   background-color: #f8f9fa;
 }
 
-/* Default state - no border, transparent background - override ALL possible states */
 .sizes-table input.form-control-sm.border-0,
 .sizes-table input.form-control-sm.border-0:not(:focus),
 .sizes-table input.form-control-sm.border-0:not(:focus):not(:active),
@@ -377,7 +352,6 @@ input[type="file"]::-webkit-file-upload-button {
   outline: none !important;
 }
 
-/* Focus state - blue border and white background */
 .sizes-table input.form-control-sm.border-0:focus {
   background-color: #fff !important;
   border: 1px solid #0d6efd !important;
@@ -385,7 +359,6 @@ input[type="file"]::-webkit-file-upload-button {
   outline: none !important;
 }
 
-/* Features table inputs - same behavior */
 .features-table input.form-control-sm.border-0,
 .features-table input.form-control-sm.border-0:not(:focus),
 .features-table input.form-control-sm.border-0:not(:focus):not(:active),
@@ -435,12 +408,12 @@ input[type="file"]::-webkit-file-upload-button {
 .sizes-table .input-group {
   display: flex;
   width: 100%;
-  gap: 8px; /* 8px padding between input and button */
+  gap: 8px;
 }
 
 .sizes-table .input-group .form-control-sm {
   flex: 1;
-  border-radius: 0.375rem; /* Rounded corners on all sides */
+  border-radius: 0.375rem;
 }
 
 .sizes-table .input-group input.form-control-sm.border-0:not(:focus) {
@@ -460,50 +433,46 @@ input[type="file"]::-webkit-file-upload-button {
 .sizes-table .input-group .btn {
   flex-shrink: 0;
   padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem !important; /* Rounded corners on all sides */
+  border-radius: 0.375rem !important;
   border-top-left-radius: 0.375rem !important;
   border-top-right-radius: 0.375rem !important;
   border-bottom-left-radius: 0.375rem !important;
   border-bottom-right-radius: 0.375rem !important;
 }
 
-/* Table Column Widths - Adjust these percentages as needed */
-
-/* Features Table (3 columns: Feature Order, Feature Text, Actions) */
 .features-table thead th:first-child,
 .features-table tbody td:first-child {
-  width: 15%; /* Feature Order - Adjust this value */
+  width: 15%;
 }
 
 .features-table thead th:nth-child(2),
 .features-table tbody td:nth-child(2) {
-  width: 70%; /* Feature Text - Adjust this value */
+  width: 70%;
 }
 
 .features-table thead th:nth-child(3),
 .features-table tbody td:nth-child(3) {
-  width: 15%; /* Actions - Adjust this value */
+  width: 15%;
 }
 
-/* Sizes & Stock Table (4 columns: UK Size, Stock, Barcode, Actions) */
 .sizes-stock-table thead th:first-child,
 .sizes-stock-table tbody td:first-child {
-  width: 15%; /* UK Size - Adjust this value */
+  width: 15%;
 }
 
 .sizes-stock-table thead th:nth-child(2),
 .sizes-stock-table tbody td:nth-child(2) {
-  width: 15%; /* Stock - Adjust this value */
+  width: 15%;
 }
 
 .sizes-stock-table thead th:nth-child(3),
 .sizes-stock-table tbody td:nth-child(3) {
-  width: 55%; /* Barcode - Adjust this value */
+  width: 55%;
 }
 
 .sizes-stock-table thead th:nth-child(4),
 .sizes-stock-table tbody td:nth-child(4) {
-  width: 15%; /* Actions - Adjust this value */
+  width: 15%;
 }
 
 .table-responsive {

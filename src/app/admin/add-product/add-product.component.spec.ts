@@ -14,7 +14,11 @@ describe('AddProduct', () => {
   let adminApiService: jasmine.SpyObj<AdminApiService>;
 
   beforeEach(async () => {
-    adminApiService = jasmine.createSpyObj('AdminApiService', ['createProduct', 'getProductBrands', 'getProductAudience']);
+    adminApiService = jasmine.createSpyObj('AdminApiService', [
+      'createProduct',
+      'getProductBrands',
+      'getProductAudience',
+    ]);
     adminApiService.getProductBrands.and.returnValue(of([]));
     adminApiService.getProductAudience.and.returnValue(of([]));
 
@@ -23,13 +27,28 @@ describe('AddProduct', () => {
       providers: [
         provideHttpClient(),
         provideRouter([]),
-        { provide: NgbModal, useValue: jasmine.createSpyObj('NgbModal', ['open']) },
+        {
+          provide: NgbModal,
+          useValue: jasmine.createSpyObj('NgbModal', ['open']),
+        },
         { provide: AdminApiService, useValue: adminApiService },
-        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) },
-        { provide: StorageService, useValue: jasmine.createSpyObj('StorageService', ['setLocalObject', 'getLocalObject']) }
-      ]
-    })
-    .compileComponents();
+        {
+          provide: ToastService,
+          useValue: jasmine.createSpyObj('ToastService', [
+            'error',
+            'success',
+            'info',
+          ]),
+        },
+        {
+          provide: StorageService,
+          useValue: jasmine.createSpyObj('StorageService', [
+            'setLocalObject',
+            'getLocalObject',
+          ]),
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AddProductComponent);
     component = fixture.componentInstance;

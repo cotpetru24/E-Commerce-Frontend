@@ -4,7 +4,6 @@ import { ProductsRoutingModule } from './products-routing.module';
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductCardComponent } from './product-card/product-card.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
-import { ProductFiltersComponent } from './product-filters/product-filters.component';
 
 @NgModule({
   declarations: [],
@@ -14,7 +13,6 @@ import { ProductFiltersComponent } from './product-filters/product-filters.compo
     ProductListComponent,
     ProductCardComponent,
     ProductDetailsComponent,
-    ProductFiltersComponent,
   ],
 })
 

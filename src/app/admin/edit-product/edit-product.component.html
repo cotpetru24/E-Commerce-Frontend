@@ -1,5 +1,4 @@
 <div class="container mt-4">
-  <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -17,7 +16,6 @@
       </li>
     </ol>
   </nav>
-
   <div class="row justify-content-center mb-4">
     <div class="col-lg-10">
       <div class="card shadow">
@@ -29,17 +27,15 @@
         </div>
         <div class="card-body p-4">
           @if (!productData) {
-            <div class="alert alert-info">
-              <i class="bi bi-info-circle me-2"></i>
-              Loading product data...
-            </div>
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Loading product data...
+          </div>
           }
-
           @if (productData) {
-            <form (ngSubmit)="onSubmit()" #editProductForm="ngForm">
+          <form (ngSubmit)="onSubmit()" #editProductForm="ngForm">
             <div class="row">
               <div class="col-md-8">
-                <!-- Basic Information -->
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="name" class="form-label">
@@ -49,12 +45,11 @@
                       required placeholder="Enter product name"
                       [ngClass]="{'is-invalid': editProductForm.submitted && !productData.name}">
                     @if (editProductForm.submitted && !productData.name) {
-                      <div class="invalid-feedback">
-                        Product name is required.
-                      </div>
+                    <div class="invalid-feedback">
+                      Product name is required.
+                    </div>
                     }
                   </div>
-
                   <div class="col-md-6 mb-3">
                     <label for="brand" class="form-label">
                       <i class="bi bi-award me-2"></i>Brand
@@ -62,17 +57,13 @@
                     <select class="form-select" id="brand" name="brand" [(ngModel)]="productData.brandId">
                       <option value="" disabled>Select brand</option>
                       @for (b of brands; track b.brandId) {
-                        <option [ngValue]="b.brandId">
-                          {{ b.brandName| titlecase }}
-                        </option>
+                      <option [ngValue]="b.brandId">
+                        {{ b.brandName| titlecase }}
+                      </option>
                       }
                     </select>
-
-
-
                   </div>
                 </div>
-
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="price" class="form-label">
@@ -86,48 +77,31 @@
                         [ngClass]="{'is-invalid': editProductForm.submitted && !productData.price}" />
                     </div>
                     @if (editProductForm.submitted && !productData.price) {
-                      <div class="invalid-feedback">
-                        Price is required.
-                      </div>
+                    <div class="invalid-feedback">
+                      Price is required.
+                    </div>
                     }
                   </div>
                   <div class="col-md-6 mb-3">
                     <label for="priceDiscount" class="form-label">
-                      <i class="bi bi-percent me-2"></i>Discount *
+                      <i class="bi bi-percent me-2"></i>Discount
                     </label>
                     <div class="input-group">
                       <span class="input-group-text">%</span>
                       <input type="text" class="form-control" name="priceDiscount" [(ngModel)]="discountText"
                         inputmode="decimal" pattern="^[0-9]*\.?[0-9]*$" (keypress)="allowDecimalOnly($event)"
-                        (blur)="normalizeDiscount()" placeholder="0.00"
-                        [ngClass]="{'is-invalid': editProductForm.submitted && !productData.discountPercentage}" />
+                        (blur)="normalizeDiscount()" placeholder="0.00" />
                     </div>
-                    @if (editProductForm.submitted && !productData.discountPercentage) {
-                      <div class="invalid-feedback">
-                        Price is required.
-                      </div>
-                    }
                   </div>
-
-
                 </div>
-
                 <div class="row">
-
                   <div class="col-md-6 mb-3">
                     <label for="stock" class="form-label">
-                      <i class="bi bi-box-seam me-2"></i>Stock Quantity *
+                      <i class="bi bi-box-seam me-2"></i>Stock Quantity
                     </label>
                     <input type="number" class="form-control" id="stock" name="stock"
-                      [(ngModel)]="productData.totalStock" required min="0" placeholder="0" disabled
-                      [ngClass]="{'is-invalid': editProductForm.submitted && (productData.totalStock === null || productData.totalStock === undefined)}">
-                    @if (editProductForm.submitted && (productData.totalStock === null || productData.totalStock === undefined)) {
-                      <div class="invalid-feedback">
-                        Stock quantity is required.
-                      </div>
-                    }
+                      [(ngModel)]="productData.totalStock" required min="0" placeholder="0" disabled>
                   </div>
-
                   <div class="col-md-6 mb-3">
                     <label for="audienceOptions" class="form-label">
                       <i class="bi bi-gender-ambiguous me-2"></i>Gender
@@ -136,24 +110,15 @@
                       [(ngModel)]="productData.audienceId">
                       <option value="" disabled>Select Gender</option>
                       @for (a of productAudience; track a.audienceId) {
-                        <option [value]="a.audienceId">
-                          {{ a.audienceName| titlecase }}
-                        </option>
+                      <option [value]="a.audienceId">
+                        {{ a.audienceName| titlecase }}
+                      </option>
                       }
                     </select>
-
-
-
-
                   </div>
-
-
                 </div>
               </div>
-
               <div class="col-md-4">
-
-                <!-- Status -->
                 <div class="mb-3">
                   <label class="form-label">
                     <i class="bi bi-toggle-on me-2"></i>Status
@@ -166,8 +131,6 @@
                     </label>
                   </div>
                 </div>
-
-                <!-- Product Stats -->
                 <div class="card bg-light mb-3">
                   <div class="card-body">
                     <h6 class="card-title">
@@ -183,10 +146,8 @@
                         <small class="text-muted">Rating</small>
                       </div>
                     </div>
-
                   </div>
                 </div>
-
                 <div class="mb-2">
                   <div class="row g-2">
                     <div class="col-6">
@@ -195,7 +156,6 @@
                         {{ productData.createdAt | date:'dd/MM/yy HH:mm' }}
                       </div>
                     </div>
-
                     <div class="col-6">
                       <div class="fw-semibold" style="font-size: 0.75rem;">Last updated</div>
                       <div class="text-muted" style="font-size: 0.7rem;">
@@ -204,15 +164,10 @@
                     </div>
                   </div>
                 </div>
-
-
               </div>
             </div>
-
-            <!-- Full Width Sections -->
             <div class="row">
               <div class="col-12">
-                <!-- Description -->
                 <div class="mb-3">
                   <label for="description" class="form-label">
                     <i class="bi bi-card-text me-2"></i>Description *
@@ -221,13 +176,11 @@
                     [(ngModel)]="productData.description" required rows="4" placeholder="Enter product description"
                     [ngClass]="{'is-invalid': editProductForm.submitted && !productData.description}"></textarea>
                   @if (editProductForm.submitted && !productData.description) {
-                    <div class="invalid-feedback">
-                      Description is required.
-                    </div>
+                  <div class="invalid-feedback">
+                    Description is required.
+                  </div>
                   }
                 </div>
-
-                <!-- Features -->
                 <div class="mb-3">
                   <label class="form-label">
                     <i class="bi bi-list-check me-2"></i>Features
@@ -243,38 +196,31 @@
                       </thead>
                       <tbody>
                         @for (feature of productData.productFeatures; track $index) {
-                          <tr>
-                            <td>
-                              <input type="number" class="form-control form-control-sm border-0" 
-                                [(ngModel)]="feature.sortOrder" 
-                                name="sortOrder{{$index}}"
-                                placeholder="Order">
-                            </td>
-                            <td>
-                              <input type="text" class="form-control form-control-sm border-0" 
-                                [(ngModel)]="feature.featureText" 
-                                name="featureText{{$index}}"
-                                placeholder="Feature text">
-                            </td>
-                            <td class="text-center align-middle">
-                              <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeSpecification($index)">
-                                <i class="bi bi-trash"></i>
-                              </button>
-                            </td>
-                          </tr>
+                        <tr>
+                          <td>
+                            <input type="number" class="form-control form-control-sm border-0"
+                              [(ngModel)]="feature.sortOrder" name="sortOrder{{$index}}" placeholder="Order">
+                          </td>
+                          <td>
+                            <input type="text" class="form-control form-control-sm border-0"
+                              [(ngModel)]="feature.featureText" name="featureText{{$index}}" placeholder="Feature text">
+                          </td>
+                          <td class="text-center align-middle">
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                              (click)="removeSpecification($index)">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
                         }
                         <tr class="add-size-row">
                           <td>
-                            <input type="number" class="form-control form-control-sm border-0" 
-                              [(ngModel)]="newSpec.sortOrder" 
-                              name="specName"
-                              placeholder="Order">
+                            <input type="number" class="form-control form-control-sm border-0"
+                              [(ngModel)]="newSpec.sortOrder" name="specName" placeholder="Order">
                           </td>
                           <td>
-                            <input type="text" class="form-control form-control-sm border-0" 
-                              [(ngModel)]="newSpec.featureText" 
-                              name="specValue"
-                              placeholder="Feature text...">
+                            <input type="text" class="form-control form-control-sm border-0"
+                              [(ngModel)]="newSpec.featureText" name="specValue" placeholder="Feature text...">
                           </td>
                           <td class="text-center align-middle">
                             <button type="button" class="btn btn-outline-primary btn-sm" (click)="addSpecification()">
@@ -286,8 +232,6 @@
                     </table>
                   </div>
                 </div>
-
-                <!-- Sizes & Stock -->
                 <div class="mb-3">
                   <label class="form-label">
                     <i class="bi bi-rulers me-2"></i>Sizes & Stock
@@ -317,7 +261,8 @@
                             <div class="input-group input-group-sm">
                               <input type="text" class="form-control form-control-sm border-0"
                                 [(ngModel)]="size.barcode" name="barcode{{$index}}" placeholder="Barcode" readonly>
-                              <button type="button" class="btn btn-outline-primary btn-sm" (click)="openBarcodeScannerForSize($index)" title="Scan Barcode">
+                              <button type="button" class="btn btn-outline-primary btn-sm"
+                                (click)="openBarcodeScannerForSize($index)" title="Scan Barcode">
                                 <i class="bi bi-upc-scan"></i>
                               </button>
                             </div>
@@ -329,20 +274,6 @@
                           </td>
                         </tr>
                         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         <tr class="add-size-row">
                           <td>
                             <input type="number" class="form-control form-control-sm border-0"
@@ -356,7 +287,8 @@
                             <div class="input-group input-group-sm">
                               <input type="text" class="form-control form-control-sm border-0"
                                 [(ngModel)]="newSize.barcode" name="newBarcode" placeholder="Barcode...">
-                              <button type="button" class="btn btn-outline-primary btn-sm" (click)="openBarcodeScanner()" title="Scan Barcode">
+                              <button type="button" class="btn btn-outline-primary btn-sm"
+                                (click)="openBarcodeScanner()" title="Scan Barcode">
                                 <i class="bi bi-upc-scan"></i>
                               </button>
                             </div>
@@ -373,9 +305,7 @@
                 </div>
               </div>
             </div>
-
             <hr class="my-4">
-
             <div class="d-flex justify-content-between">
               <button type="button" class="btn btn-outline-secondary" routerLink="/admin/products">
                 <i class="bi bi-arrow-left me-2"></i>Back
@@ -387,16 +317,16 @@
                 </button>
                 <button type="submit" class="btn btn-warning" [disabled]="isLoading">
                   @if (isLoading) {
-                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
                   }
                   @if (!isLoading) {
-                    <i class="bi bi-check-circle me-2"></i>
+                  <i class="bi bi-check-circle me-2"></i>
                   }
                   {{ isLoading ? 'Updating Product...' : 'Update Product' }}
                 </button>
               </div>
             </div>
-            </form>
+          </form>
           }
         </div>
       </div>

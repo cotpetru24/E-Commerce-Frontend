@@ -25,6 +25,7 @@ import {
   templateUrl: './edit-product.component.html',
   styleUrls: ['./edit-product.component.scss'],
 })
+
 export class EditProductComponent implements OnInit, OnDestroy {
   productData: AdminProductDto | null = null;
   productId!: number;
@@ -32,11 +33,14 @@ export class EditProductComponent implements OnInit, OnDestroy {
   productAudience: AdminProductAudienceDto[] = [];
   discountText = '';
   priceText = '';
+  isLoading = false;
+
   newSpec: AdminProductFeatureDto = {
     id: 0,
     sortOrder: 0,
     featureText: '',
   };
+
   newSize: ProductSizeDto = {
     id: 0,
     size: 0,
@@ -44,7 +48,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
     barcode: '',
     sku: '',
   };
-  isLoading = false;
 
   private subscriptions = new Subscription();
 
@@ -88,22 +91,28 @@ export class EditProductComponent implements OnInit, OnDestroy {
     this.productData.discountPercentage = Number(this.discountText);
 
     this.subscriptions.add(
-      this.adminApiService.updateProduct(this.productId, this.productData).subscribe({
-        next: () => {
-          this.toastService.success('Product updated successfully.');
-          this.isLoading = false;
-          this.loadProductData();
-        },
-        error: () => {
-          this.toastService.error('Failed to update product.');
-          this.isLoading = false;
-        },
-      })
+      this.adminApiService
+        .updateProduct(this.productId, this.productData)
+        .subscribe({
+          next: () => {
+            this.toastService.success('Product updated successfully.');
+            this.isLoading = false;
+            this.loadProductData();
+          },
+          error: () => {
+            this.toastService.error('Failed to update product.');
+            this.isLoading = false;
+          },
+        })
     );
   }
 
   addSpecification(): void {
-    if (!this.productData || !this.newSpec.sortOrder || !this.newSpec.featureText) {
+    if (
+      !this.productData ||
+      !this.newSpec.sortOrder ||
+      !this.newSpec.featureText
+    ) {
       return;
     }
 
@@ -161,7 +170,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
   openBarcodeScanner() {
     const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
       size: 'lg',
-      centered: true
+      centered: true,
     });
 
     modalRef.result.then(
@@ -171,28 +180,28 @@ export class EditProductComponent implements OnInit, OnDestroy {
           this.toastService.success(`Barcode scanned: ${barcode}`);
         }
       },
-      () => {
-        // Modal dismissed
-      }
+      () => {}
     );
   }
 
   openBarcodeScannerForSize(index: number) {
     const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
       size: 'lg',
-      centered: true
+      centered: true,
     });
 
     modalRef.result.then(
       (barcode: string) => {
-        if (barcode && this.productData?.productSizes && this.productData.productSizes[index]) {
+        if (
+          barcode &&
+          this.productData?.productSizes &&
+          this.productData.productSizes[index]
+        ) {
           this.productData.productSizes[index].barcode = barcode;
           this.toastService.success(`Barcode scanned: ${barcode}`);
         }
       },
-      () => {
-        // Modal dismissed
-      }
+      () => {}
     );
   }
 
@@ -203,7 +212,10 @@ export class EditProductComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (event.key === '.' && (event.target as HTMLInputElement).value.includes('.')) {
+    if (
+      event.key === '.' &&
+      (event.target as HTMLInputElement).value.includes('.')
+    ) {
       event.preventDefault();
     }
   }
@@ -293,13 +305,15 @@ export class EditProductComponent implements OnInit, OnDestroy {
   private loadProductData(): void {
     this.isLoading = true;
     this.subscriptions.add(
-      this.adminApiService.getProductById(this.productId)
+      this.adminApiService
+        .getProductById(this.productId)
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
           next: (response) => {
             this.productData = response;
             this.priceText = this.productData.price?.toFixed(2) ?? '';
-            this.discountText = this.productData.discountPercentage?.toFixed(2) ?? '';
+            this.discountText =
+              this.productData.discountPercentage?.toFixed(2) ?? '';
 
             if (!this.productData.productSizes) {
               this.productData.productSizes = [];

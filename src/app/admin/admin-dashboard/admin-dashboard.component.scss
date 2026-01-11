@@ -1,53 +1,46 @@
-// ============================================================================
-// ADMIN DASHBOARD STYLES
-// ============================================================================
-
-// Activity icon styling
-          .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   background: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #6c757d;
   font-size: 18px;
   border: 1px solid #e9ecef;
-              transition: all 0.3s ease;
+  transition: all 0.3s ease;
 
-              &:hover {
+  &:hover {
     background: #e9ecef;
     color: #495057;
   }
 
-  // Different colors for different activity types
   .bi-person-plus {
-    color: #0d6efd; // Bootstrap primary
+    color: #0d6efd;
   }
 
   .bi-box {
-    color: #198754; // Bootstrap success
+    color: #198754;
   }
 
   .bi-cart-check {
-    color: #fd7e14; // Bootstrap warning
+    color: #fd7e14;
   }
 
   .bi-currency-dollar {
-    color: #20c997; // Bootstrap info
+    color: #20c997;
   }
 
   .bi-truck {
-    color: #6f42c1; // Bootstrap purple
+    color: #6f42c1;
   }
 
   .bi-info-circle {
-    color: #6c757d; // Bootstrap secondary
+    color: #6c757d;
   }
 }
 
-// Activity content styling
 .activity-content {
   p {
     margin: 0;
@@ -56,14 +49,12 @@
   }
 }
 
-// Table styling for activity
 .table {
   .activity-icon {
     margin: 0 auto;
   }
 }
 
-// Card styling consistency
 .card {
   border: none;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
@@ -76,12 +67,11 @@
 
     h5 {
       color: #495057;
-        font-weight: 600;
+      font-weight: 600;
     }
   }
 }
 
-// Statistics cards
 .card.bg-primary,
 .card.bg-success,
 .card.bg-info,
@@ -108,30 +98,29 @@
       opacity: 0.8;
     }
 
-    // Badge styling for today indicators
     .badge {
       font-size: 0.75rem;
       font-weight: 600;
       padding: 0.375rem 0.75rem;
       border-radius: 0.375rem;
       box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
-      
+
       &.bg-light {
         background-color: rgba(255, 255, 255, 0.9) !important;
         border: 1px solid rgba(255, 255, 255, 0.2);
-        
+
         &.text-primary {
           color: #0d6efd !important;
         }
-        
+
         &.text-success {
           color: #198754 !important;
         }
-        
+
         &.text-info {
           color: #0dcaf0 !important;
         }
-        
+
         &.text-warning {
           color: #fd7e14 !important;
         }
@@ -140,7 +129,6 @@
   }
 }
 
-// Button styling consistency
 .btn {
   border-radius: 0.375rem;
   font-weight: 500;
@@ -169,13 +157,11 @@
   }
 }
 
-// Loading state
 .spinner-border {
   width: 2rem;
   height: 2rem;
 }
 
-// Empty state styling
 .text-center {
   .display-1 {
     font-size: 4rem;
@@ -193,7 +179,6 @@
   }
 }
 
-// Responsive adjustments
 @media (max-width: 768px) {
   .card-body {
     padding: 1rem;

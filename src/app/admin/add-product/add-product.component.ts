@@ -25,17 +25,21 @@ import { finalize } from 'rxjs/operators';
   templateUrl: './add-product.component.html',
   styleUrls: ['./add-product.component.scss'],
 })
+
 export class AddProductComponent implements OnInit, OnDestroy {
   productData: AdminProductDto = this.createEmptyProduct();
+  isLoading = false;
   discountText = '';
   priceText = '';
   brands: AdminBrandDto[] = [];
   productAudience: AdminProductAudienceDto[] = [];
+
   newSpec: AdminProductFeatureDto = {
     id: 0,
     sortOrder: 0,
     featureText: '',
   };
+
   newSize: ProductSizeDto = {
     id: 0,
     size: 0,
@@ -43,7 +47,6 @@ export class AddProductComponent implements OnInit, OnDestroy {
     barcode: '',
     sku: '',
   };
-  isLoading = false;
 
   private subscriptions = new Subscription();
 
@@ -59,13 +62,6 @@ export class AddProductComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getProductBrands();
     this.getProductAudience();
-    
-    // Check for barcode in query params
-    this.route.queryParams.subscribe(params => {
-      if (params['barcode']) {
-        this.newSize.barcode = params['barcode'];
-      }
-    });
   }
 
   ngOnDestroy(): void {
@@ -78,8 +74,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
       !this.productData.price ||
       !this.productData.audienceId ||
       !this.productData.brandId ||
-      !this.productData.description ||
-      this.productData.productFeatures?.length === 0
+      !this.productData.description
     ) {
       this.toastService.error('Please fill in all required fields.');
       return;
@@ -90,7 +85,8 @@ export class AddProductComponent implements OnInit, OnDestroy {
     this.productData.discountPercentage = Number(this.discountText);
 
     this.subscriptions.add(
-      this.adminApiService.createProduct(this.productData)
+      this.adminApiService
+        .createProduct(this.productData)
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
           next: () => {
@@ -148,7 +144,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
   openBarcodeScanner() {
     const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
       size: 'lg',
-      centered: true
+      centered: true,
     });
 
     modalRef.result.then(
@@ -158,28 +154,28 @@ export class AddProductComponent implements OnInit, OnDestroy {
           this.toastService.success(`Barcode scanned: ${barcode}`);
         }
       },
-      () => {
-        // Modal dismissed
-      }
+      () => {}
     );
   }
 
   openBarcodeScannerForSize(index: number) {
     const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
       size: 'lg',
-      centered: true
+      centered: true,
     });
 
     modalRef.result.then(
       (barcode: string) => {
-        if (barcode && this.productData?.productSizes && this.productData.productSizes[index]) {
+        if (
+          barcode &&
+          this.productData?.productSizes &&
+          this.productData.productSizes[index]
+        ) {
           this.productData.productSizes[index].barcode = barcode;
           this.toastService.success(`Barcode scanned: ${barcode}`);
         }
       },
-      () => {
-        // Modal dismissed
-      }
+      () => {}
     );
   }
 
@@ -190,7 +186,10 @@ export class AddProductComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (event.key === '.' && (event.target as HTMLInputElement).value.includes('.')) {
+    if (
+      event.key === '.' &&
+      (event.target as HTMLInputElement).value.includes('.')
+    ) {
       event.preventDefault();
     }
   }
@@ -215,33 +214,11 @@ export class AddProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  onFileSelected(event: any) {
-    // const files = event.target.files;
-    // if (files) {
-    //   for (let i = 0; i < files.length; i++) {
-    //     const file = files[i];
-    //     const reader = new FileReader();
-    //     reader.onload = (e: any) => {
-    //       this.productData.images.push(e.target.result);
-    //     };
-    //     reader.readAsDataURL(file);
-    //   }
-    // }
-  }
-
-  removeImage(index: number) {
-    // this.productData.images.splice(index, 1);
-  }
-
-  saveDraft() {
-    this.storageService.setLocalObject('productDraft', this.productData);
-    this.toastService.info('Draft saved successfully!');
-  }
-
   private getProductBrands() {
     this.isLoading = true;
     this.subscriptions.add(
-      this.adminApiService.getProductBrands()
+      this.adminApiService
+        .getProductBrands()
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
           next: (response) => {
@@ -254,7 +231,8 @@ export class AddProductComponent implements OnInit, OnDestroy {
   private getProductAudience() {
     this.isLoading = true;
     this.subscriptions.add(
-      this.adminApiService.getProductAudience()
+      this.adminApiService
+        .getProductAudience()
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
           next: (response) => {

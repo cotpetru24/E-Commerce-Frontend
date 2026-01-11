@@ -3,7 +3,10 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { AdminDashboardComponent } from './admin-dashboard.component';
-import { AdminApiService, AdminStats } from '../../services/api/admin-api.service';
+import {
+  AdminApiService,
+  AdminStats,
+} from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { UtilsService } from '../../services/utils.service';
 
@@ -12,7 +15,9 @@ describe('AdminDashboardComponent', () => {
   let fixture: ComponentFixture<AdminDashboardComponent>;
   let adminApiService: jasmine.SpyObj<AdminApiService>;
   let toastService: jasmine.SpyObj<ToastService>;
-  let utilsService: jasmine.SpyObj<UtilsService & { getActivityIcon: jasmine.Spy }>;
+  let utilsService: jasmine.SpyObj<
+    UtilsService & { getActivityIcon: jasmine.Spy }
+  >;
 
   const mockAdminStats: AdminStats = {
     totalOrders: 100,
@@ -26,18 +31,40 @@ describe('AdminDashboardComponent', () => {
     outOfStockProducts: 3,
     pendingOrders: 8,
     recentActivity: [
-      { id: 1, source: 'Order', description: 'Order #123 placed', createdAt: new Date().toISOString() },
-      { id: 2, source: 'User', description: 'New user registered', createdAt: new Date().toISOString() },
+      {
+        id: 1,
+        source: 'Order',
+        description: 'Order #123 placed',
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 2,
+        source: 'User',
+        description: 'New user registered',
+        createdAt: new Date().toISOString(),
+      },
     ],
   };
 
   beforeEach(async () => {
-    adminApiService = jasmine.createSpyObj('AdminApiService', ['getDashboardStats']);
-    toastService = jasmine.createSpyObj('ToastService', ['error', 'success', 'info']);
-    utilsService = jasmine.createSpyObj('UtilsService', ['formatCurrency', 'formatTimeAgo', 'getActivityIcon']);
+    adminApiService = jasmine.createSpyObj('AdminApiService', [
+      'getDashboardStats',
+    ]);
+    toastService = jasmine.createSpyObj('ToastService', [
+      'error',
+      'success',
+      'info',
+    ]);
+    utilsService = jasmine.createSpyObj('UtilsService', [
+      'formatCurrency',
+      'formatTimeAgo',
+      'getActivityIcon',
+    ]);
 
     adminApiService.getDashboardStats.and.returnValue(of(mockAdminStats));
-    utilsService.formatCurrency.and.callFake((amount: number) => `£${amount.toFixed(2)}`);
+    utilsService.formatCurrency.and.callFake(
+      (amount: number) => `£${amount.toFixed(2)}`
+    );
     utilsService.formatTimeAgo.and.returnValue('just now');
     utilsService.getActivityIcon.and.returnValue('bi-info-circle');
 
@@ -54,12 +81,12 @@ describe('AdminDashboardComponent', () => {
 
     fixture = TestBed.createComponent(AdminDashboardComponent);
     component = fixture.componentInstance;
-    
-    // Add component template methods before detectChanges
-    (component as any).formatCurrency = (amount: number) => `£${amount.toFixed(2)}`;
+
+    (component as any).formatCurrency = (amount: number) =>
+      `£${amount.toFixed(2)}`;
     spyOn(component, 'getActivityIcon').and.returnValue('bi-info-circle');
     spyOn(component, 'formatTimeAgo').and.returnValue('just now');
-    
+
     fixture.detectChanges();
   });
 
@@ -77,10 +104,14 @@ describe('AdminDashboardComponent', () => {
   });
 
   it('loadDashboardData_ShouldShowError_WhenApiCallFails', () => {
-    adminApiService.getDashboardStats.and.returnValue(throwError(() => new Error('API Error')));
-    
+    adminApiService.getDashboardStats.and.returnValue(
+      throwError(() => new Error('API Error'))
+    );
+
     component.loadDashboardData();
-    
-    expect(toastService.error).toHaveBeenCalledWith('Failed to load dashboard statistics');
+
+    expect(toastService.error).toHaveBeenCalledWith(
+      'Failed to load dashboard statistics'
+    );
   });
 });

@@ -38,8 +38,7 @@
           <!-- <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" /> -->
           <img [src]="'/assets/'+ selectedImage" alt="product.name" />
           <!-- <img [src]="'/assets/products/image-coming-soon.png'" alt="product.name" /> -->
-          <div class="image-overlay" data-bs-toggle="modal"
-            data-bs-target="#productImagesModal" title="Open image">
+          <div class="image-overlay" data-bs-toggle="modal" data-bs-target="#productImagesModal" title="Open image">
             <!-- <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" data-bs-toggle="modal"
               data-bs-target="#productImagesModal" title="Open image">
               <i class="bi bi-zoom-in"></i>
@@ -47,7 +46,7 @@
           </div>
         </div>
         <!-- @if (additionalProductImages && additionalProductImages.length > 0) -->
-        @if((product.productImages?.length ??0) > 0) {
+        @if((product.productImages.length) > 0) {
         <div class="image-thumbnails">
           @for (image of product.productImages; track image) {
           <div class="thumbnail" [class.active]="selectedImage === image.imagePath"
@@ -123,11 +122,12 @@
           </div>
           @if (selectedSize) {
           <span class="stock-count">
-            {{ selectedSize?.stock }} items available
+            {{ selectedSize.stock }} items available
           </span>
           }
         </div>
         }
+        @if (product.totalStock > 0 && selectedSize) {
         <div class="quantity-selection">
           <h3>Quantity</h3>
           <div class="quantity-controls">
@@ -136,25 +136,18 @@
               <i class="bi bi-dash"></i>
             </button>
             <span class="quantity-display">{{ quantity }}</span>
-            <button class="btn btn-outline-secondary" (click)="increaseQuantity()" [disabled]="quantity >= (selectedSize?.stock ?? 0)"
-              title="Increase quantity">
+            <button class="btn btn-outline-secondary" (click)="increaseQuantity()"
+              [disabled]="quantity >= (selectedSize.stock)" title="Increase quantity">
               <i class="bi bi-plus"></i>
             </button>
           </div>
         </div>
+        }
         <div class="action-buttons">
           <button class="btn btn-primary add-to-cart-btn" [disabled]="product.totalStock === 0 || !selectedSize"
             (click)="addToCart()">
             <i class="bi bi-cart-plus"></i>
             Add to Cart
-          </button>
-          <button class="btn btn-outline-primary buy-now-btn" [disabled]="product.totalStock === 0 || !selectedSize"
-            >
-            <i class="bi bi-lightning"></i>
-            Buy Now
-          </button>
-          <button class="btn btn-outline-danger wishlist-btn" title="Add to wishlist.">
-            <i [class]="isInWishlist ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
           </button>
         </div>
         <div class="product-meta">

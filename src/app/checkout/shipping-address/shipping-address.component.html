@@ -1,5 +1,4 @@
 <div class="checkout-container pb-5">
-  <!-- Page Header -->
   <div class="page-header mb-5">
     <div class="container">
       <h1 class="page-title">
@@ -8,10 +7,8 @@
       <p class="page-subtitle">Enter your delivery information to continue with your purchase</p>
     </div>
   </div>
-
   <div class="container">
     <div class="checkout-layout">
-      <!-- Main Form -->
       <div class="checkout-main">
         <div class="form-card">
           <div class="form-header">
@@ -23,46 +20,38 @@
               <span class="text-muted">Free Shipping</span>
             </div>
           </div>
-
           <form (ngSubmit)="onSubmit()" #addressForm="ngForm" class="checkout-form">
-            <!-- Address Selection Mode -->
             <div class="form-section">
               <div class="address-mode-toggle">
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" id="newAddress" name="addressMode" 
-                         [checked]="!useExistingAddress" (change)="toggleAddressMode()">
+                  <input type="radio" class="form-check-input" id="newAddress" name="addressMode"
+                    [checked]="!useExistingAddress" (change)="toggleAddressMode()">
                   <label class="form-check-label" for="newAddress">
                     <i class="bi bi-plus-circle me-2"></i>New Address
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" id="existingAddress" name="addressMode" 
-                         [checked]="useExistingAddress" (change)="toggleAddressMode()">
+                  <input type="radio" class="form-check-input" id="existingAddress" name="addressMode"
+                    [checked]="useExistingAddress" (change)="toggleAddressMode()">
                   <label class="form-check-label" for="existingAddress">
                     <i class="bi bi-bookmark me-2"></i>Saved Address
                   </label>
                 </div>
               </div>
             </div>
-
-            <!-- Existing Addresses -->
             @if (useExistingAddress && savedAddresses.length > 0) {
-              <div class="form-section">
-                <h3 class="section-title">
-                  <i class="bi bi-bookmark me-2"></i>Select Address
-                </h3>
-                <div class="address-list">
-                  @for (address of savedAddresses; track address.id) {
-                    <div class="address-card" 
-                         [class.selected]="selectedAddressId === address.id"
-                         (click)="selectExistingAddress(address.id)">
+            <div class="form-section">
+              <h3 class="section-title">
+                <i class="bi bi-bookmark me-2"></i>Select Address
+              </h3>
+              <div class="address-list">
+                @for (address of savedAddresses; track address.id) {
+                <div class="address-card" [class.selected]="selectedAddressId === address.id"
+                  (click)="selectExistingAddress(address.id)">
                   <div class="address-header">
                     <div class="form-check">
-<input type="radio" class="form-check-input"
-       name="selectedAddress"
-       [checked]="selectedAddressId === address.id"
-       [id]="'address-' + address.id">
-
+                      <input type="radio" class="form-check-input" name="selectedAddress"
+                        [checked]="selectedAddressId === address.id" [id]="'address-' + address.id">
                       <label class="form-check-label" [for]="'address-' + address.id">
                         <strong>{{ address.addressLine1 }}</strong>
                       </label>
@@ -70,33 +59,29 @@
                   </div>
                   <div class="address-details">
                     <p>{{ address.city }}, {{ address.county }} {{ address.postcode }}</p>
-                      <p>{{ address.country }}</p>
-                    </div>
-                    </div>
-                  }
+                    <p>{{ address.country }}</p>
+                  </div>
                 </div>
+                }
               </div>
+            </div>
             }
-
-            <!-- New Address Form -->
             @if (!useExistingAddress) {
-              <div class="form-section">
+            <div class="form-section">
               <h3 class="section-title">
                 <i class="bi bi-truck me-2"></i>Shipping Address
               </h3>
-              
               <div class="mb-3">
                 <label for="addressLine1" class="form-label">Address Line 1 *</label>
-                <input type="text" class="form-control" id="addressLine1" name="addressLine1" [(ngModel)]="addressData.addressLine1"
-                  required placeholder="Enter your street address"
+                <input type="text" class="form-control" id="addressLine1" name="addressLine1"
+                  [(ngModel)]="addressData.addressLine1" required placeholder="Enter your street address"
                   [ngClass]="{'is-invalid': addressForm.submitted && !addressData.addressLine1}">
                 @if (addressForm.submitted && !addressData.addressLine1) {
-                  <div class="invalid-feedback">
-                    Street address is required.
-                  </div>
+                <div class="invalid-feedback">
+                  Street address is required.
+                </div>
                 }
               </div>
-
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="city" class="form-label">City *</label>
@@ -104,38 +89,35 @@
                     placeholder="Enter your city"
                     [ngClass]="{'is-invalid': addressForm.submitted && !addressData.city}">
                   @if (addressForm.submitted && !addressData.city) {
-                    <div class="invalid-feedback">
-                      City is required.
-                    </div>
+                  <div class="invalid-feedback">
+                    City is required.
+                  </div>
                   }
                 </div>
-
                 <div class="col-md-6 mb-3">
                   <label for="state" class="form-label">State/County *</label>
                   <input type="text" class="form-control" id="state" name="state" [(ngModel)]="addressData.state"
                     required placeholder="State/County"
                     [ngClass]="{'is-invalid': addressForm.submitted && !addressData.state}">
                   @if (addressForm.submitted && !addressData.state) {
-                    <div class="invalid-feedback">
-                      State/County is required.
-                    </div>
+                  <div class="invalid-feedback">
+                    State/County is required.
+                  </div>
                   }
                 </div>
               </div>
-
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="postcode" class="form-label">Postcode/ZIP *</label>
-                  <input type="text" class="form-control" id="postcode" name="postcode" [(ngModel)]="addressData.postcode"
-                    required placeholder="Postcode"
+                  <input type="text" class="form-control" id="postcode" name="postcode"
+                    [(ngModel)]="addressData.postcode" required placeholder="Postcode"
                     [ngClass]="{'is-invalid': addressForm.submitted && !addressData.postcode}">
                   @if (addressForm.submitted && !addressData.postcode) {
-                    <div class="invalid-feedback">
-                      Postcode is required.
-                    </div>
+                  <div class="invalid-feedback">
+                    Postcode is required.
+                  </div>
                   }
                 </div>
-
                 <div class="col-md-6 mb-3">
                   <label for="country" class="form-label">Country *</label>
                   <select class="form-select" id="country" name="country" [(ngModel)]="addressData.country" required
@@ -162,50 +144,44 @@
                     <option value="NZ">New Zealand</option>
                   </select>
                   @if (addressForm.submitted && !addressData.country) {
-                    <div class="invalid-feedback">
-                      Country is required.
-                    </div>
+                  <div class="invalid-feedback">
+                    Country is required.
+                  </div>
                   }
                 </div>
               </div>
-              </div>
+            </div>
             }
-
-            <!-- Additional Information -->
             <div class="form-section">
               <h3 class="section-title">
                 <i class="bi bi-info-circle me-2"></i>Additional Information
               </h3>
-              
               <div class="mb-3">
                 <label for="instructions" class="form-label">Delivery Instructions (Optional)</label>
                 <textarea class="form-control" id="instructions" name="instructions"
                   [(ngModel)]="addressData.instructions" rows="3"
                   placeholder="Any special delivery instructions, building access codes, or notes for the delivery person..."></textarea>
               </div>
-
               @if (!useExistingAddress) {
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="saveAddress" [(ngModel)]="addressData.saveAddress"
-                    name="saveAddress">
-                  <label class="form-check-label" for="saveAddress">
-                    Save this address for future orders
-                  </label>
-                </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="saveAddress" [(ngModel)]="addressData.saveAddress"
+                  name="saveAddress">
+                <label class="form-check-label" for="saveAddress">
+                  Save this address for future orders
+                </label>
+              </div>
               }
             </div>
-
-            <!-- Form Actions -->
             <div class="form-actions">
               <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
                 <i class="bi bi-arrow-left me-2"></i>Back to Cart
               </button>
               <button type="submit" class="btn btn-primary" [disabled]="isLoading">
                 @if (isLoading) {
-                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
                 }
                 @if (!isLoading) {
-                  <i class="bi bi-arrow-right me-2"></i>
+                <i class="bi bi-arrow-right me-2"></i>
                 }
                 {{ isLoading ? 'Processing...' : 'Continue to Payment' }}
               </button>
@@ -213,8 +189,6 @@
           </form>
         </div>
       </div>
-
-      <!-- Order Summary Sidebar -->
       <div class="checkout-sidebar">
         <div class="summary-card">
           <div class="summary-header">
@@ -227,25 +201,24 @@
               <span>Subtotal</span>
               <span>£{{ (orderSummary?.subtotal || 0) | number:'1.2-2' }}</span>
             </div>
+            <div class="summary-item">
+              <span>Shipping</span>
+              <span>{{ (orderSummary?.shipping || 0) === 0 ? 'Free' : '£' + ((orderSummary?.shipping || 0) |
+                number:'1.2-2') }}</span>
+            </div>
             @if (orderSummary && orderSummary.discount>0)
             {
             <div class="summary-item">
               <span>Discount</span>
-              <span>£{{ (orderSummary?.discount || 0) | number:'1.2-2' }}</span>
+              <span>-£{{ (orderSummary?.discount || 0) | number:'1.2-2' }}</span>
             </div>
             }
-            <div class="summary-item">
-              <span>Shipping</span>
-              <span>{{ (orderSummary?.shipping || 0) === 0 ? 'Free' : '£' + ((orderSummary?.shipping || 0) | number:'1.2-2') }}</span>
-            </div>
             <div class="summary-item total">
               <span>Total</span>
               <span>£{{ (orderSummary?.total || 0) | number:'1.2-2' }}</span>
             </div>
           </div>
         </div>
-
-        <!-- Shipping Notice -->
         <div class="shipping-notice">
           <div class="shipping-icon">
             <i class="bi bi-truck"></i>
@@ -255,8 +228,6 @@
             <p>Standard delivery within 3-5 business days</p>
           </div>
         </div>
-
-        <!-- Trust Badges -->
         <div class="trust-badges">
           <div class="trust-badge">
             <i class="bi bi-arrow-clockwise"></i>
