@@ -1,5 +1,4 @@
 <div class="container-fluid mt-4">
-  <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -17,8 +16,6 @@
       </li>
     </ol>
   </nav>
-
-  <!-- Loading State -->
   @if (isLoading) {
   <div class="text-center p-4">
     <div class="spinner-border text-primary" role="status">
@@ -27,11 +24,8 @@
     <p class="mt-2">Loading user data...</p>
   </div>
   }
-
-  <!-- User Profile Content -->
   @if (!isLoading && user) {
   <div class="row">
-    <!-- User Details Section -->
     <div class="col-lg-4 mb-4">
       <div class="card">
         <div class="card-header">
@@ -52,17 +46,22 @@
           </div>
         </div>
         <div class="card-body">
-          <!-- User Avatar and Basic Info -->
           <div class="text-center mb-4">
             <div class="avatar mb-3">
               <i class="bi bi-person-circle display-1 text-muted"></i>
             </div>
             <h4>{{ user.firstName || 'N/A' }} {{ user.lastName || 'N/A' }}</h4>
             <p class="text-muted mb-0">ID: {{ user.id }}</p>
-            <!-- <span [class]="getRoleClass(user.roles[0] || 'customer')">{{ (user.roles[0] || 'customer') | titlecase }}</span> -->
-          </div>
 
-          <!-- User Information -->
+
+
+            <!-- <span [class]="getRoleClass(user.roles[0] || 'customer')">{{ (user.roles[0] || 'customer') | titlecase }}</span> -->
+
+
+
+
+
+          </div>
           <div class="row mb-3">
             <div class="col-12">
               @if (!isChangingPassword) {
@@ -88,7 +87,6 @@
               }
             </div>
           </div>
-
           <div class="row mb-3">
             <div class="col-6">
               @if (!isChangingPassword) {
@@ -117,8 +115,6 @@
               }
             </div>
           </div>
-
-          <!-- Password Change Form -->
           @if (isChangingPassword) {
           <div class="mb-3">
             <label class="form-label fw-bold">New Password</label>
@@ -129,7 +125,6 @@
                 <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
               </button>
             </div>
-
             <label class="form-label fw-bold">Confirm Password</label>
             <div class="input-group">
               <input [type]="showPassword ? 'text' : 'password'" class="form-control"
@@ -137,8 +132,6 @@
             </div>
           </div>
           }
-
-          <!-- User Status and Dates -->
           <div class="row mb-3">
             <div class="col-6">
               <label class="form-label fw-bold">Status</label>
@@ -157,7 +150,6 @@
                 </span>
               </div>
               }
-
               @if (isEditing) {
               <div>
                 <select class="form-select" id="role" [(ngModel)]="editForm.roles">
@@ -168,7 +160,6 @@
               }
             </div>
           </div>
-
           <div class="row mb-3">
             <div class="col-6">
               <label class="form-label fw-bold">Joined</label>
@@ -183,8 +174,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Action Buttons -->
           @if (isEditing || isChangingPassword) {
           <div class="d-grid gap-2">
             <button class="btn btn-success" (click)="isEditing ? saveProfile() : savePassword()">
@@ -195,8 +184,6 @@
             </button>
           </div>
           }
-
-          <!-- User Actions -->
           @if (!isEditing && !isChangingPassword) {
           <div class="d-grid gap-2 mt-3">
             <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)">
@@ -211,8 +198,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Orders Section -->
     <div class="col-lg-8">
       <div class="card">
         <div class="card-header">
@@ -226,7 +211,6 @@
           </div>
         </div>
         <div class="card-body p-0">
-          <!-- Order Filters -->
           <div class="p-3 border-bottom">
             <div class="btn-group" role="group">
               <button type="button" class="btn"
@@ -255,8 +239,6 @@
               </button>
             </div>
           </div>
-
-          <!-- Orders Loading State -->
           @if (ordersLoading) {
           <div class="text-center p-4">
             <div class="spinner-border text-primary" role="status">
@@ -265,8 +247,6 @@
             <p class="mt-2">Loading orders...</p>
           </div>
           }
-
-          <!-- Orders List -->
           @if (!ordersLoading) {
           <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -314,8 +294,6 @@
                 }
               </tbody>
             </table>
-
-            <!-- Empty State -->
             @if (filteredOrders.length === 0) {
             <div class="text-center p-4">
               <i class="bi bi-bag display-1 text-muted"></i>
@@ -335,8 +313,6 @@
     </div>
   </div>
   }
-
-  <!-- Error State -->
   @if (!isLoading && !user) {
   <div class="text-center p-4">
     <i class="bi bi-exclamation-triangle display-1 text-warning"></i>

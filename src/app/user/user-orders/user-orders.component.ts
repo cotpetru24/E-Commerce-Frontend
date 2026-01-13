@@ -19,12 +19,12 @@ import { StorageService } from '../../services/storage.service';
   templateUrl: './user-orders.component.html',
   styleUrl: './user-orders.component.scss',
 })
+
 export class UserOrdersComponent implements OnInit {
   currentFilter = 'all';
   selectedOrder: OrderDto | null = null;
-
   allOrders: OrderDto[] = [];
-  cachedOrders: OrderDto[] = []; // Store all orders from API
+  cachedOrders: OrderDto[] = [];
   filteredOrders: OrderDto[] = [];
   isLoading = false;
   currentPage = 1;
@@ -45,7 +45,6 @@ export class UserOrdersComponent implements OnInit {
   }
 
   loadOrders() {
-    // Check if user is logged in before making API call
     const token = this.storageService.getSessionItem('accessToken');
     if (!token) {
       this.toastService.error('Please log in to view your orders');
@@ -55,25 +54,23 @@ export class UserOrdersComponent implements OnInit {
 
     this.isLoading = true;
 
-    // If we already have cached orders, just filter them
     if (this.cachedOrders.length > 0) {
       this.filterCachedOrders();
       this.isLoading = false;
       return;
     }
 
-    // Load all orders from API (no filter, get everything)
     const request: GetOrdersRequestDto = {
       page: 1,
-      pageSize: 1000, // Get all orders
+      pageSize: this.pageSize,
     };
 
     this.orderApiService.getOrders(request).subscribe({
       next: (response: GetOrdersResponseDto) => {
-        this.cachedOrders = response.orders; // Cache all orders
+        this.cachedOrders = response.orders;
         this.allOrders = response.orders;
         this.totalCount = response.totalCount;
-        this.filterCachedOrders(); // Apply current filter
+        this.filterCachedOrders();
         this.isLoading = false;
       },
       error: () => {
@@ -85,7 +82,7 @@ export class UserOrdersComponent implements OnInit {
 
   filterOrders(filter: string) {
     this.currentFilter = filter;
-    this.currentPage = 1; // Reset to first page when filtering
+    this.currentPage = 1;
     this.filterCachedOrders();
   }
 
@@ -93,7 +90,7 @@ export class UserOrdersComponent implements OnInit {
     if (this.currentFilter === 'all') {
       this.filteredOrders = [...this.cachedOrders];
     } else {
-      this.filteredOrders = this.cachedOrders.filter(order => {
+      this.filteredOrders = this.cachedOrders.filter((order) => {
         const status = order.orderStatusName?.toLowerCase();
         switch (this.currentFilter) {
           case 'delivered':
@@ -109,14 +106,11 @@ export class UserOrdersComponent implements OnInit {
         }
       });
     }
-    this.allOrders = this.filteredOrders; // Update allOrders for display
+    this.allOrders = this.filteredOrders;
   }
 
-  loadPage(page: number) {
-    this.currentPage = page;
-    this.loadOrders();
-  }
-
+  // not sure if this is needed
+  //-------------------------------
   trackOrder(order: OrderDto) {
     this.selectedOrder = order;
     // Show tracking modal using Bootstrap
@@ -126,18 +120,14 @@ export class UserOrdersComponent implements OnInit {
     modal.show();
   }
 
+  // check which one is used
+  //--------------------------------
   viewOrderDetails(orderId: number) {
     this.router.navigate(['/account/orders', orderId]);
 
     this.router.navigate(['/user/order', orderId], {
       queryParams: { isNewOrder: false },
     });
-  }
-
-  reorder(order: OrderDto) {
-    // Implement reorder functionality
-    this.toastService.success('Items added to cart for reorder!');
-    this.router.navigate(['/cart']);
   }
 
   cancelOrder(order: OrderDto): void {
@@ -153,7 +143,7 @@ export class UserOrdersComponent implements OnInit {
         this.orderApiService.cancelOrder(order.id).subscribe({
           next: (response) => {
             order.orderStatusName = response.orderStatusName!;
-            order.orderStatusId = response.orderStatusId!; // comes from OrderDto
+            order.orderStatusId = response.orderStatusId!;
             this.toastService.success('Order cancelled successfully!');
             this.isLoading = false;
           },
@@ -170,10 +160,6 @@ export class UserOrdersComponent implements OnInit {
         });
       }
     });
-  }
-
-  getItemCount(order: OrderDto): number {
-    return order.orderItems.reduce((total, item) => total + item.quantity, 0);
   }
 
   getStatusBadgeClass(status: string | undefined): string {
@@ -195,45 +181,29 @@ export class UserOrdersComponent implements OnInit {
     }
   }
 
-  getTimelineIcon(status: string): string {
-    switch (status) {
-      case 'ordered':
-        return 'bi-cart-check';
-      case 'processing':
-        return 'bi-gear';
-      case 'shipped':
-        return 'bi-truck';
-      case 'out_for_delivery':
-        return 'bi-box-seam';
-      case 'delivered':
-        return 'bi-check-circle';
-      default:
-        return 'bi-circle';
-    }
-  }
-
   getDeliveredCount(): number {
-    return this.cachedOrders.filter(order => 
-      order.orderStatusName?.toLowerCase() === 'delivered' || 
-      order.orderStatusName?.toLowerCase() === 'completed'
+    return this.cachedOrders.filter(
+      (order) =>
+        order.orderStatusName?.toLowerCase() === 'delivered' ||
+        order.orderStatusName?.toLowerCase() === 'completed'
     ).length;
   }
 
   getShippedCount(): number {
-    return this.cachedOrders.filter(order => 
-      order.orderStatusName?.toLowerCase() === 'shipped'
+    return this.cachedOrders.filter(
+      (order) => order.orderStatusName?.toLowerCase() === 'shipped'
     ).length;
   }
 
   getProcessingCount(): number {
-    return this.cachedOrders.filter(order => 
-      order.orderStatusName?.toLowerCase() === 'processing'
+    return this.cachedOrders.filter(
+      (order) => order.orderStatusName?.toLowerCase() === 'processing'
     ).length;
   }
 
   getCancelledCount(): number {
-    return this.cachedOrders.filter(order => 
-      order.orderStatusName?.toLowerCase() === 'cancelled'
+    return this.cachedOrders.filter(
+      (order) => order.orderStatusName?.toLowerCase() === 'cancelled'
     ).length;
   }
 }

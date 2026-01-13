@@ -1,10 +1,8 @@
-/* Checkout Container */
 .checkout-container {
   min-height: 100vh;
   background-color: #f8f9fa;
 }
 
-/* Page Header */
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -114,14 +112,12 @@
   }
 }
 
-/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Checkout Layout */
 .checkout-layout {
   display: grid;
   grid-template-columns: 1fr 350px;
@@ -133,7 +129,6 @@
   }
 }
 
-/* Checkout Main */
 .checkout-main {
   .review-card {
     background: white;
@@ -323,7 +318,6 @@
   }
 }
 
-/* Checkout Sidebar */
 .checkout-sidebar {
   position: sticky;
   top: 100px;
@@ -450,7 +444,6 @@
   line-height: 1;
 }
 
-/* Button Styles - Matching App Design */
 .btn-primary {
   background: #1a1a1a !important;
   color: #ffffff !important;
@@ -558,7 +551,6 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .page-title {
     font-size: 2rem;

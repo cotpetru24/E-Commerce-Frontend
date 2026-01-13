@@ -1,5 +1,4 @@
 <div class="checkout-container pb-5">
-  <!-- Page Header -->
   <div class="page-header mb-5">
     <div class="container">
       <div class="header-content">
@@ -12,11 +11,8 @@
       </div>
     </div>
   </div>
-
   <div class="container">
-
     <div class="orders-layout">
-      <!-- Account Overview -->
       <div class="overview-section">
         <div class="overview-card">
           <div class="overview-header">
@@ -38,7 +34,8 @@
                 <div class="stat-number info">{{ getShippedCount() }}</div>
                 <div class="stat-label">Shipped</div>
               </div>
-              <div class="stat-item" (click)="filterOrders('processing')" [class.active]="currentFilter === 'processing'">
+              <div class="stat-item" (click)="filterOrders('processing')"
+                [class.active]="currentFilter === 'processing'">
                 <div class="stat-number warning">{{ getProcessingCount() }}</div>
                 <div class="stat-label">Processing</div>
               </div>
@@ -50,8 +47,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Orders List -->
       <div class="orders-main">
         <div class="orders-card">
           <div class="orders-header">
@@ -59,12 +54,11 @@
               <i class="bi bi-list-ul me-2"></i>Order History
             </h3>
           </div>
-          
           <div class="orders-content">
             @if (filteredOrders.length > 0) {
-              <div class="orders-list">
-                @for (order of filteredOrders; track order.id) {
-                  <div class="order-item">
+            <div class="orders-list">
+              @for (order of filteredOrders; track order.id) {
+              <div class="order-item">
                 <div class="order-header">
                   <div class="order-info">
                     <h4 class="order-id">Order #{{ order.id }}</h4>
@@ -76,19 +70,17 @@
                     </span>
                   </div>
                 </div>
-                
                 <div class="order-details">
                   <div class="order-items">
                     <h5>Items:</h5>
                     <div class="items-list">
                       @for (orderItem of order.orderItems; track orderItem.productName + '-' + orderItem.quantity) {
-                        <span class="item-badge">
-                          {{ orderItem.quantity }}x {{ orderItem.productName }}
-                        </span>
+                      <span class="item-badge">
+                        {{ orderItem.quantity }}x {{ orderItem.productName }}
+                      </span>
                       }
                     </div>
                   </div>
-                  
                   <div class="order-summary">
                     <div class="order-total">
                       <span class="total-label">Total:</span>
@@ -96,37 +88,34 @@
                     </div>
                   </div>
                 </div>
-                
                 <div class="order-actions">
                   <button class="btn btn-primary btn-sm" (click)="viewOrderDetails(order.id)" title="View Details">
                     <i class="bi bi-eye me-1"></i>View Details
                   </button>
                   @if (order.orderStatusName === 'Delivered') {
-                    <button class="btn btn-outline-success btn-sm" (click)="reorder(order)" title="Reorder">
-                      <i class="bi bi-arrow-clockwise me-1"></i>Reorder
-                    </button>
+                  <button class="btn btn-outline-success btn-sm" (click)="reorder(order)" title="Reorder">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Reorder
+                  </button>
                   }
                   @if (order.orderStatusName !== 'Completed' && order.orderStatusName !== 'Cancelled') {
-                    <button class="btn btn-outline-warning btn-sm" (click)="cancelOrder(order)" title="Cancel Order">
-                      <i class="bi bi-x-circle me-1"></i>Cancel
-                    </button>
+                  <button class="btn btn-outline-warning btn-sm" (click)="cancelOrder(order)" title="Cancel Order">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                  </button>
                   }
                 </div>
-                  </div>
-                }
               </div>
+              }
+            </div>
             }
-            
-            <!-- Empty State -->
             @if (filteredOrders.length === 0) {
-              <div class="empty-orders">
+            <div class="empty-orders">
               <i class="bi bi-bag-x empty-icon"></i>
               <h3>No orders found</h3>
               <p>You haven't placed any orders yet.</p>
               <button class="btn btn-primary" routerLink="/products">
                 <i class="bi bi-cart-plus me-2"></i>Start Shopping
               </button>
-              </div>
+            </div>
             }
           </div>
         </div>
@@ -135,8 +124,12 @@
   </div>
 </div>
 
+
+
 <!-- Order Tracking Modal -->
-<div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true"> -->
+<div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="false">
+
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -147,7 +140,7 @@
       </div>
       <div class="modal-body">
         @if (selectedOrder) {
-          <div>
+        <div>
           <div class="row mb-3">
             <div class="col-md-6">
               <strong>Order ID:</strong> #{{ selectedOrder.id }}
@@ -156,12 +149,11 @@
               <strong>Tracking Number:</strong> N/A
             </div>
           </div>
-
           <div class="alert alert-info mt-3">
             <i class="bi bi-calendar-event me-2"></i>
             <strong>Estimated Delivery:</strong> {{'EEEE, MMMM dd, yyyy' }}
           </div>
-          </div>
+        </div>
         }
       </div>
       <div class="modal-footer">

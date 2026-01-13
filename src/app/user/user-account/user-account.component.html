@@ -1,7 +1,6 @@
 <div class="checkout-container pb-5">
-  <!-- Page Header -->
   @if (!isLoading && userProfile) {
-    <div class="page-header mb-5">
+  <div class="page-header mb-5">
     <div class="container">
       <div class="header-content">
         <div class="header-main">
@@ -12,31 +11,24 @@
         </div>
       </div>
     </div>
-    </div>
+  </div>
   }
-
-  <!-- Loading Spinner -->
   @if (isLoading) {
-    <div class="container">
+  <div class="container">
     <div class="loading-container">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
       <p class="mt-2">Loading your account...</p>
     </div>
-    </div>
+  </div>
   }
-
-  <!-- Main Content -->
   @if (!isLoading && userProfile) {
-    <div class="container">
+  <div class="container">
     <div class="account-layout">
-      <!-- Main Content -->
       <div class="account-main">
-
-        <!-- Profile Edit Form -->
         @if (isEditing) {
-          <div class="form-card">
+        <div class="form-card">
           <div class="card-header">
             <h3 class="card-title">
               <i class="bi bi-pencil me-2"></i>Edit Profile
@@ -47,34 +39,30 @@
               <div class="form-row">
                 <div class="form-group">
                   <label for="firstName" class="form-label">First Name</label>
-                  <input type="text" class="form-control" id="firstName" 
-                         [(ngModel)]="editForm.firstName" name="firstName" required>
+                  <input type="text" class="form-control" id="firstName" [(ngModel)]="editForm.firstName"
+                    name="firstName" required>
                 </div>
                 <div class="form-group">
                   <label for="lastName" class="form-label">Last Name</label>
-                  <input type="text" class="form-control" id="lastName" 
-                         [(ngModel)]="editForm.lastName" name="lastName" required>
+                  <input type="text" class="form-control" id="lastName" [(ngModel)]="editForm.lastName" name="lastName"
+                    required>
                 </div>
               </div>
               <div class="form-group">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" 
-                       [(ngModel)]="editForm.email" name="email" required>
+                <input type="email" class="form-control" id="email" [(ngModel)]="editForm.email" name="email" required>
               </div>
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary mt-4">
                   <i class="bi bi-check-lg me-2"></i>Save Changes
                 </button>
-
               </div>
             </form>
           </div>
-          </div>
+        </div>
         }
-
-        <!-- Change Password Form -->
         @if (isChangingPassword) {
-          <div class="form-card">
+        <div class="form-card">
           <div class="card-header">
             <h3 class="card-title">
               <i class="bi bi-shield-lock me-2"></i>Change Password
@@ -84,34 +72,30 @@
             <form (ngSubmit)="savePassword()" class="account-form">
               <div class="form-group">
                 <label for="currentPassword" class="form-label">Current Password</label>
-                <input type="password" class="form-control" id="currentPassword" 
-                       [(ngModel)]="passwordForm.currentPassword" name="currentPassword" required>
+                <input type="password" class="form-control" id="currentPassword"
+                  [(ngModel)]="passwordForm.currentPassword" name="currentPassword" required>
               </div>
               <div class="form-group">
                 <label for="newPassword" class="form-label">New Password</label>
-                <input type="password" class="form-control" id="newPassword" 
-                       [(ngModel)]="passwordForm.newPassword" name="newPassword" required>
+                <input type="password" class="form-control" id="newPassword" [(ngModel)]="passwordForm.newPassword"
+                  name="newPassword" required>
               </div>
               <div class="form-group">
                 <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                <input type="password" class="form-control" id="confirmPassword" 
-                       [(ngModel)]="passwordForm.confirmPassword" name="confirmPassword" required>
+                <input type="password" class="form-control" id="confirmPassword"
+                  [(ngModel)]="passwordForm.confirmPassword" name="confirmPassword" required>
               </div>
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary mt-4">
                   <i class="bi bi-shield-check me-2"></i>Change Password
                 </button>
-
               </div>
             </form>
           </div>
-          </div>
+        </div>
         }
       </div>
-
-      <!-- Account Sidebar -->
       <div class="account-sidebar">
-        <!-- User Profile Card -->
         <div class="profile-card">
           <div class="profile-header">
             <div class="profile-avatar">
@@ -129,8 +113,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Navigation Menu -->
         <div class="nav-card">
           <div class="nav-header">
             <h5>
@@ -148,6 +130,6 @@
         </div>
       </div>
     </div>
-    </div>
+  </div>
   }
-</div> 
+</div>

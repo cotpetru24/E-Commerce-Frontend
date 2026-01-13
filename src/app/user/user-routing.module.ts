@@ -4,8 +4,6 @@ import { UserOrdersComponent } from "./user-orders/user-orders.component";
 import { UserOrderComponent } from "./user-order/user-order.component";
 import { NgModule } from "@angular/core";
 
-
-
 const routes : Routes=[
     {path: '', component: UserAccountComponent},
     // {path: 'order/:id', component: UserOrderComponent},

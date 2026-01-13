@@ -1,5 +1,4 @@
 <div class="container-fluid mt-4">
-  <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -12,10 +11,8 @@
       </li>
     </ol>
   </nav>
-
   <div class="row">
     <div class="col-12">
-      <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 class="h2 mb-0">
@@ -23,17 +20,7 @@
           </h1>
           <p class="text-muted mb-0">Manage customer orders and track fulfillment</p>
         </div>
-        <!-- <div class="btn-group" role="group">
-          <button class="btn btn-outline-secondary" (click)="exportOrders()">
-            <i class="bi bi-download me-1"></i>Export
-          </button>
-          <button class="btn btn-outline-info" (click)="refreshOrders()">
-            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
-          </button>
-        </div> -->
       </div>
-
-      <!-- Statistics Cards -->
       <div class="row mb-4">
         <div class="col-md-3 mb-3">
           <div class="card bg-primary text-white">
@@ -88,8 +75,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Search and Filters -->
       <div class="card mb-4">
         <div class="card-body">
           <div class="row">
@@ -99,9 +84,7 @@
                 <input type="text" class="form-control" id="searchInput" [(ngModel)]="searchTerm"
                   (keyup.enter)="onFilterChange()" placeholder="Search by order ID, customer email...">
                 <span class="input-group-text">
-
-                  <button class="btn page-link" (click)="onFilterChange()"
-                    title="Search Orders">
+                  <button class="btn page-link" (click)="onFilterChange()" title="Search Orders">
                     <i class="bi bi-search"></i>
                   </button>
                 </span>
@@ -142,21 +125,26 @@
                 <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
               </button>
             </div>
-
           </div>
         </div>
       </div>
-
-      <!-- Orders Table -->
       <div class="card">
         <div class="card-header">
           <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Orders ({{ orders.length }})</h5>
             <div class="d-flex gap-2">
+
+
+
+
               <!-- <span class="badge bg-primary">{{ orderStats.total }} Total</span>
               <span class="badge bg-warning">{{ orderStats.pending }} Pending</span>
               <span class="badge bg-info">{{ orderStats.processing }} Processing</span>
               <span class="badge bg-success">{{ orderStats.completed }} Completed</span> -->
+
+
+
+
             </div>
           </div>
         </div>
@@ -179,8 +167,15 @@
                 <tr *ngFor="let order of orders">
                   <td>
                     <strong>#{{ order.id }}</strong>
-                    <!-- <br>
-                    <small class="text-muted">{{ order.id }}</small> -->
+
+
+
+
+                    <!-- <small class="text-muted">{{ order.id }}</small> -->
+
+
+
+
                   </td>
                   <td>
                     <div>
@@ -233,24 +228,18 @@
               </tbody>
             </table>
           </div>
-
-          <!-- Loading State -->
           <div class="text-center p-4" *ngIf="isLoading">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
             <p class="mt-2">Loading orders...</p>
           </div>
-
-          <!-- Empty State -->
           <div class="text-center p-4" *ngIf="!isLoading && orders.length === 0">
             <i class="bi bi-cart display-1 text-muted"></i>
             <h4 class="mt-3">No orders found</h4>
             <p class="text-muted">Try adjusting your search or filters</p>
           </div>
         </div>
-
-        <!-- Pagination -->
         <div class="card-footer" *ngIf="orders.length > 0">
           <div class="d-flex justify-content-between align-items-center">
             <div>
@@ -260,7 +249,6 @@
             </div>
             <nav>
               <ul class="pagination pagination-sm mb-0">
-
                 <li class="page-item" [class.disabled]="currentPage === 1">
                   <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
                 </li>
@@ -271,7 +259,6 @@
                 <li class="page-item" [class.disabled]="currentPage === totalPages">
                   <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
                 </li>
-
               </ul>
             </nav>
           </div>

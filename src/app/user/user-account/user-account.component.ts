@@ -4,7 +4,12 @@ import { CommonModule } from '@angular/common';
 import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { UserApiService } from '../../services/api/user-api.service';
-import { UserProfileDto, UpdateUserProfileRequestDto, ChangePasswordRequestDto, UserStatsDto } from '../../models/user.dto';
+import {
+  UserProfileDto,
+  UpdateUserProfileRequestDto,
+  ChangePasswordRequestDto,
+  UserStatsDto,
+} from '../../models/user.dto';
 import { StorageService } from '../../services/storage.service';
 
 @Component({
@@ -12,8 +17,9 @@ import { StorageService } from '../../services/storage.service';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './user-account.component.html',
-  styleUrl: './user-account.component.scss'
+  styleUrl: './user-account.component.scss',
 })
+
 export class UserAccountComponent implements OnInit {
   userProfile: UserProfileDto | null = null;
   userStats: UserStatsDto | null = null;
@@ -21,17 +27,16 @@ export class UserAccountComponent implements OnInit {
   isEditing = true;
   isChangingPassword = false;
 
-  // Form data
   editForm = {
     email: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
   };
 
   passwordForm = {
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   };
 
   constructor(
@@ -47,8 +52,7 @@ export class UserAccountComponent implements OnInit {
 
   loadUserData() {
     this.isLoading = true;
-    
-    // Check if user is logged in
+
     const token = this.storageService.getSessionItem('accessToken');
     if (!token) {
       this.toastService.error('Please log in to view your account');
@@ -56,48 +60,42 @@ export class UserAccountComponent implements OnInit {
       return;
     }
 
-    // Load user profile and stats in parallel
     this.userApiService.getUserProfile().subscribe({
       next: (profile) => {
         this.userProfile = profile;
         this.editForm = {
           email: profile.email,
           firstName: profile.firstName,
-          lastName: profile.lastName
+          lastName: profile.lastName,
         };
         this.isLoading = false;
       },
       error: () => {
         this.toastService.error('Failed to load user profile');
         this.isLoading = false;
-      }
+      },
     });
 
     this.userApiService.getUserStats().subscribe({
       next: (stats) => {
         this.userStats = stats;
       },
-      error: () => {
-        // Silently fail - stats are not critical
-      }
+      error: () => {},
     });
-
   }
 
   startEditing() {
     this.isEditing = true;
-        this.isChangingPassword = false;
-
+    this.isChangingPassword = false;
   }
 
   cancelEditing() {
     this.isEditing = false;
-    // Reset form to original values
     if (this.userProfile) {
       this.editForm = {
         email: this.userProfile.email,
         firstName: this.userProfile.firstName,
-        lastName: this.userProfile.lastName
+        lastName: this.userProfile.lastName,
       };
     }
   }
@@ -108,28 +106,28 @@ export class UserAccountComponent implements OnInit {
     const request: UpdateUserProfileRequestDto = {
       email: this.editForm.email,
       firstName: this.editForm.firstName,
-      lastName: this.editForm.lastName
+      lastName: this.editForm.lastName,
     };
 
     this.userApiService.updateUserProfile(request).subscribe({
       next: (response) => {
-        this.toastService.success(response.message);
+        this.toastService.success('Profile updated successfully');
         this.isEditing = true;
-        this.loadUserData(); // Reload to get updated data
+        this.loadUserData();
       },
       error: () => {
         this.toastService.error('Failed to update profile');
-      }
+      },
     });
   }
 
   startChangingPassword() {
     this.isChangingPassword = true;
-        this.isEditing = false;
+    this.isEditing = false;
     this.passwordForm = {
       currentPassword: '',
       newPassword: '',
-      confirmPassword: ''
+      confirmPassword: '',
     };
   }
 
@@ -138,7 +136,7 @@ export class UserAccountComponent implements OnInit {
     this.passwordForm = {
       currentPassword: '',
       newPassword: '',
-      confirmPassword: ''
+      confirmPassword: '',
     };
   }
 
@@ -151,23 +149,23 @@ export class UserAccountComponent implements OnInit {
     const request: ChangePasswordRequestDto = {
       currentPassword: this.passwordForm.currentPassword,
       newPassword: this.passwordForm.newPassword,
-      confirmPassword: this.passwordForm.confirmPassword
+      confirmPassword: this.passwordForm.confirmPassword,
     };
 
     this.userApiService.changePassword(request).subscribe({
       next: (response) => {
-        this.toastService.success(response.message);
+        this.toastService.success('Password changed successfully');
         this.isChangingPassword = false;
-        this .isEditing = true;
+        this.isEditing = true;
         this.passwordForm = {
           currentPassword: '',
           newPassword: '',
-          confirmPassword: ''
+          confirmPassword: '',
         };
       },
       error: () => {
         this.toastService.error('Failed to change password');
-      }
+      },
     });
   }
 
@@ -177,7 +175,7 @@ export class UserAccountComponent implements OnInit {
 
   getStatusBadgeClass(status: string | undefined): string {
     if (!status) return 'bg-secondary';
-    
+
     switch (status.toLowerCase()) {
       case 'delivered':
         return 'bg-success';
@@ -191,4 +189,4 @@ export class UserAccountComponent implements OnInit {
         return 'bg-secondary';
     }
   }
-} 
+}

@@ -1,5 +1,4 @@
 <div class="container mt-4">
-  <!-- Breadcrumb -->
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -12,8 +11,6 @@
       </li>
     </ol>
   </nav>
-
-  <!-- Profiles Table -->
   <div class="card shadow-sm mb-4">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
       style="cursor: pointer;" (click)="isProfilesCardCollapsed = !isProfilesCardCollapsed">
@@ -22,17 +19,21 @@
         <i class="bi bi-folder me-2"></i>Available Profiles
       </h5>
       <div class="d-flex gap-2" (click)="$event.stopPropagation()">
-        <button class="btn btn-light btn-sm" (click)="createNewProfile()" *ngIf="!isProfilesCardCollapsed">
+        @if(!isProfilesCardCollapsed){
+        <button class="btn btn-light btn-sm" (click)="createNewProfile()">
           <i class="bi bi-plus-circle me-1"></i>New Profile
         </button>
-        <button class="btn btn-light btn-sm" (click)="expandProfilesCard()" *ngIf="isProfilesCardCollapsed">
+        }@else{
+        <button class="btn btn-light btn-sm" (click)="expandProfilesCard()">
           <i class="bi bi-chevron-down me-1"></i>Show Profiles
         </button>
+        }
       </div>
     </div>
     <div class="collapse" [class.show]="!isProfilesCardCollapsed">
       <div class="card-body">
-        <div class="table-responsive" *ngIf="!isLoading">
+        @if(!isLoading){
+        <div class="table-responsive">
           <table class="table table-hover">
             <thead>
               <tr>
@@ -44,11 +45,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let profile of storedProfiles" [class.table-active]="selectedProfileId === profile.id"
-                [class.table-success]="profile.isActive">
+              @for(let profile of storedProfiles){
+              <tr [class.table-active]="selectedProfileId === profile.id" [class.table-success]="profile.isActive">
                 <td>
                   <strong>{{ profile.profileName }}</strong>
-                  <span class="badge bg-info ms-2" *ngIf="profile.isDefault">Default profile</span>
+                  @if(profile.isDefault){
+                  <span class="badge bg-info ms-2">Default profile</span>
+                  }
                 </td>
                 <td>
                   <span class="badge" [ngClass]="profile.isActive ? 'bg-success' : 'bg-secondary'">
@@ -74,28 +77,33 @@
                   </div>
                 </td>
               </tr>
-              <tr *ngIf="storedProfiles.length === 0">
+              }
+              @if (storedProfiles.length === 0){
+              <tr>
                 <td colspan="5" class="text-center text-muted">
                   No profiles available. Click "New Profile" to create one.
                 </td>
               </tr>
+              }
             </tbody>
           </table>
         </div>
-        <div *ngIf="isLoading" class="text-center py-3">
+        }
+        @if(isLoading){
+        <div class="text-center py-3">
           <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
         </div>
+        }
       </div>
     </div>
   </div>
-
-  <div class="row mb-5" *ngIf="isEditingMode">
-    <!-- Main Content (Left Side) -->
+  @if(isEditingMode){
+  <div class="row mb-5">
     <div class="col-lg-9">
-      <!-- Branding & Logo Editor -->
-      <div class="card shadow-sm" *ngIf="activeSection === 'branding'">
+      @if(acctiveSection === 'branding'){
+      <div class="card shadow-sm">
         <div class="card-header bg-info text-white">
           <h5 class="mb-0">
             <i class="bi bi-palette me-2"></i>Branding & Logo
@@ -106,11 +114,15 @@
             <div class="col-md-6 mb-4">
               <h6 class="mb-3">Website Logo</h6>
               <div class="border rounded p-3 text-center mb-3">
-                <div class="mb-3" *ngIf="profile.logoBase64">
+                @if(profile.logoBase64){
+                <div class="mb-3">
                   <i class="bi bi-image display-4 text-muted"></i>
                 </div>
-                <img *ngIf="profile.logoBase64" [src]="'data:image/png;base64,' + profile.logoBase64" alt="Website Logo"
-                  class="img-fluid mb-3" style="max-height: 100px;">
+                }
+                @if(profile.logoBase64){
+                <img [src]="'data:image/png;base64,' + profile.logoBase64" alt="Website Logo" class="img-fluid mb-3"
+                  style="max-height: 100px;">
+                }
                 <p class="text-muted mb-2">Upload your website logo</p>
                 <button class="btn btn-outline-primary btn-sm" (click)="logoInput.click()">
                   <i class="bi bi-upload me-2"></i>Choose Logo
@@ -118,15 +130,16 @@
                 <input #logoInput type="file" class="d-none" accept="image/*" (change)="onLogoSelected($event)">
               </div>
             </div>
-
             <div class="col-md-6 mb-4">
               <h6 class="mb-3">Favicon</h6>
               <div class="border rounded p-3 text-center mb-3">
-                <div class="mb-3" *ngIf="profile!.faviconBase64">
+                @if(profile.faviconBase64){
+                <div class="mb-3">
                   <i class="bi bi-image display-4 text-muted"></i>
                 </div>
-                <img *ngIf="profile!.faviconBase64" [src]="'data:image/png;base64,' + profile.faviconBase64"
-                  alt="Favicon" class="img-fluid mb-3" style="max-height: 32px;">
+                <img [src]="'data:image/png;base64,' + profile.faviconBase64" alt="Favicon" class="img-fluid mb-3"
+                  style="max-height: 32px;">
+                }
                 <p class="text-muted mb-2">Upload favicon (32x32px recommended)</p>
                 <button class="btn btn-outline-primary btn-sm" (click)="faviconInput.click()">
                   <i class="bi bi-upload me-2"></i>Choose Favicon
@@ -135,7 +148,6 @@
               </div>
             </div>
           </div>
-
           <div class="row">
             <div class="col-md-4 mb-3">
               <label class="form-label">Profile Name <span class="text-danger">*</span></label>
@@ -153,11 +165,11 @@
               <input type="text" class="form-control" [(ngModel)]="profile!.tagline" placeholder="Enter tagline">
             </div>
           </div>
-
           <div class="row">
             <div class="col-12 mb-3">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="showLogoInHeader" [(ngModel)]="profile.showLogoInHeader">
+                <input class="form-check-input" type="checkbox" id="showLogoInHeader"
+                  [(ngModel)]="profile.showLogoInHeader">
                 <label class="form-check-label" for="showLogoInHeader">
                   <i class="bi bi-eye me-2"></i>Show Logo in Header
                 </label>
@@ -167,9 +179,9 @@
           </div>
         </div>
       </div>
-
-      <!-- Color Scheme Editor -->
-      <div class="card shadow-sm" *ngIf="activeSection === 'colors'">
+      }
+      @if(activeSection === 'colors'){
+      <div class="card shadow-sm">
         <div class="card-header bg-warning text-dark">
           <h5 class="mb-0">
             <i class="bi bi-palette2 me-2"></i>Color Scheme
@@ -204,7 +216,6 @@
                 </div>
               </div>
             </div>
-
             <div class="col-md-6 mb-4">
               <h6 class="mb-3">Footer Colors</h6>
               <div class="mb-3">
@@ -233,7 +244,6 @@
               </div>
             </div>
           </div>
-
           <div class="row">
             <div class="col-12">
               <h6 class="mb-3">Preview</h6>
@@ -257,13 +267,11 @@
               </div>
             </div>
           </div>
-
-
         </div>
       </div>
-
-      <!-- Hero Section Editor -->
-      <div class="card shadow-sm" *ngIf="activeSection === 'hero'">
+      }
+      @if(acctiveSection === 'hero'){
+      <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
           <h5 class="mb-0">
             <i class="bi bi-stars me-2"></i>Hero Section
@@ -297,17 +305,17 @@
             <div class="col-md-4 mb-3">
               <label class="form-label">Background Image</label>
               <input type="file" class="form-control" (change)="onHeroImageSelected($event)" accept="image/*">
-
-              <img *ngIf="profile.heroBackgroundImageBase64"
-                [src]="'data:image/png;base64,' + profile.heroBackgroundImageBase64" alt="Website Logo"
+              @if(profile.heroBackgroundImageBase64){
+              <img [src]="'data:image/png;base64,' + profile.heroBackgroundImageBase64" alt="Website Logo"
                 class="img-fluid mb-3" style="max-height: 100px;">
+              }
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Categories Editor -->
-      <div class="card shadow-sm" *ngIf="activeSection === 'categories'">
+      }
+      @if(activeSection === 'categories'){
+      <div class="card shadow-sm">
         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
             <i class="bi bi-grid me-2"></i>Categories
@@ -318,7 +326,8 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6 mb-3" *ngFor="let category of profile.categories; let i = index">
+            @for(let category of profile.categories; let i = index){
+            <div class="col-md-6 mb-3">
               <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                   <h6 class="mb-0">Category order:</h6>
@@ -340,17 +349,10 @@
                     <label class="form-label">Image</label>
                     <input type="file" class="form-control" (change)="onCategoryImageSelected($event, i)"
                       accept="image/*">
-
-
-
-                    <img *ngIf="category.imageBase64" [src]="'data:image/png;base64,' + category.imageBase64"
-                      class="img-fluid mb-3" style="max-height:100px">
-
-
-
-                    <!-- <img *ngIf="category.imageBase64" [src]="'data:image/png;base64,' + category.imageBase64" alt="Category Image"
-                  class="img-fluid mb-3" style="max-height: 100px;"> -->
-
+                    @if(category.imageBase64){
+                    <img [src]="'data:image/png;base64,' + category.imageBase64" class="img-fluid mb-3"
+                      style="max-height:100px">
+                    }
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Tagline</label>
@@ -359,15 +361,18 @@
                 </div>
               </div>
             </div>
-            <div class="col-12" *ngIf="profile.categories.length === 0">
+            }
+            @if (profile.categories.length === 0){
+            <div class="col-12">
               <p class="text-muted text-center">No categories added yet. Click "Add Category" to create one.</p>
             </div>
+            }
           </div>
         </div>
       </div>
-
-      <!-- Features Editor -->
-      <div class="card shadow-sm" *ngIf="activeSection === 'features'">
+      }
+      @if(activeSection === 'features'){
+      <div class="card shadow-sm">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
             <i class="bi bi-star me-2"></i>Features
@@ -378,7 +383,8 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6 mb-3" *ngFor="let feature of profile.features; let i = index">
+            @for(let feature of profile.features; let i = index){
+            <div class="col-md-6 mb-3">
               <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                   <h6 class="mb-0">Feature order:</h6>
@@ -404,18 +410,18 @@
                 </div>
               </div>
             </div>
-            <div class="col-12" *ngIf="profile.features.length === 0">
+            }
+            @if(profile.features.length === 0){
+            <div class="col-12">
               <p class="text-muted text-center">No features added yet. Click "Add Feature" to create one.</p>
             </div>
+            }
           </div>
         </div>
       </div>
-
+      }
     </div>
-
-    <!-- Navigation Sidebar (Right Side) -->
     <div class="col-lg-3">
-      <!-- Navigation Sidebar -->
       <div class="card shadow-sm">
         <div class="card-header bg-light">
           <h6 class="mb-0">
@@ -443,50 +449,44 @@
             (click)="setActiveSection('features')">
             <i class="bi bi-star me-2"></i>Features
           </a>
-          <!-- <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'testimonials'}"
-             (click)="setActiveSection('testimonials')">
-            <i class="bi bi-chat-quote me-2"></i>Testimonials
-          </a>
-          <a class="list-group-item list-group-item-action" 
-             [ngClass]="{'active': activeSection === 'brands'}"
-             (click)="setActiveSection('brands')">
-            <i class="bi bi-award me-2"></i>Brands
-          </a> -->
-          <!-- <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'newsletter'}"
-            (click)="setActiveSection('newsletter')">
-            <i class="bi bi-envelope me-2"></i>Newsletter
-          </a> -->
         </div>
       </div>
-
-      <!-- Action Buttons -->
-      <div class="card shadow-sm mt-3" *ngIf="activeSection !== 'newsletter'">
+      @if(acctiveSection !== 'newsletter'){
+      <div class="card shadow-sm mt-3">
         <div class="card-body">
           <div class="d-grid gap-2">
             <button class="btn btn-secondary" (click)="cancelEditing()" [disabled]="isLoading">
               <i class="bi bi-x-circle me-1"></i>Cancel
             </button>
+            @if(!profile || profile.id === 0){
             <button class="btn btn-primary" (click)="createCmsProfile()"
-              [disabled]="isLoading || (profile && profile.id !== 0)" *ngIf="!profile || profile.id === 0">
+              [disabled]="isLoading || (profile && profile.id !== 0)">
               <i class="bi bi-plus-circle me-1"></i>Create New Profile
             </button>
+            }
+            @if(profile || profile.id !== 0){
             <button class="btn btn-success" (click)="updateCmsProfile()"
-              [disabled]="isLoading || !profile || profile.id === 0" *ngIf="profile && profile.id !== 0">
+              [disabled]="isLoading || !profile || profile.id === 0">
               <i class="bi bi-save me-1"></i>Update Profile
             </button>
             <button class="btn btn-info" (click)="saveCmsProfileAs()"
-              [disabled]="isLoading || !profile || profile.id === 0" *ngIf="profile && profile.id !== 0">
+              [disabled]="isLoading || !profile || profile.id === 0">
               <i class="bi bi-save me-1"></i>Save Profile as
             </button>
+            }
           </div>
           <small class="text-muted d-block mt-2 text-center">
-            <span *ngIf="profile && profile.id !== 0">Editing: {{ profile.profileName }}</span>
-            <span *ngIf="!profile || profile.id === 0">Creating new profile</span>
+            @if(profile || profile.id !== 0){
+            <span>Editing: {{ profile.profileName }}</span>
+            }
+            @if(!profile || profile.id === 0){
+            <span>Creating new profile</span>
+            }
           </small>
         </div>
       </div>
+      }
     </div>
   </div>
-
+  }
 </div>

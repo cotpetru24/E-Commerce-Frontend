@@ -2,44 +2,31 @@
   <h4 class="modal-title">
     <i class="bi bi-upc-scan me-2"></i>Scan Barcode
   </h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="cancel()"
-  ></button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cancel()"></button>
 </div>
-
 <div class="modal-body">
-  <!-- Camera Scanner -->
   <div class="text-center">
     <div class="camera-container">
-      <video #video id="video" width="100%" height="400" 
-             autoplay
-             playsinline
-             [class.d-none]="!isCameraActive"
-             style="border: 2px solid #dee2e6; border-radius: 8px;">
+      <video #video id="video" width="100%" height="400" autoplay playsinline [class.d-none]="!isCameraActive"
+        style="border: 2px solid #dee2e6; border-radius: 8px;">
       </video>
       <canvas #canvas id="canvas" style="display: none;"></canvas>
-      
-      <!-- Camera Placeholder -->
-      <div class="camera-placeholder" *ngIf="!isCameraActive">
+      @if(!isCameraActive){
+      <div class="camera-placeholder">
         <div class="spinner-border text-primary mb-3" role="status">
           <span class="visually-hidden">Loading camera...</span>
         </div>
         <h5 class="text-muted">Starting camera...</h5>
       </div>
+      }
     </div>
-    
     <p class="text-muted mt-3 mb-0">
       <i class="bi bi-info-circle me-2"></i>Point camera at barcode to scan
     </p>
   </div>
 </div>
-
 <div class="modal-footer">
   <button class="btn btn-secondary" (click)="cancel()">
     <i class="bi bi-x-circle me-2"></i>Cancel
   </button>
 </div>
-

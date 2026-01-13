@@ -1,5 +1,4 @@
 <div class="checkout-container pb-5">
-  <!-- Loading Spinner -->
   @if (isLoading) {
   <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
     <div class="spinner-border text-primary" role="status">
@@ -7,11 +6,8 @@
     </div>
   </div>
   }
-
-  <!-- Order Content -->
   @if (!isLoading && order) {
   <div>
-    <!-- Page Header -->
     <div class="page-header mb-5">
       <div class="container">
         <div class="header-content">
@@ -47,12 +43,9 @@
         </div>
       </div>
     </div>
-
     <div class="container">
       <div class="checkout-layout">
-        <!-- Main Content -->
         <div class="checkout-main">
-          <!-- Order Items -->
           <div class="review-card">
             <div class="review-content">
               <div class="review-section">
@@ -84,8 +77,6 @@
                 </div>
                 }
               </div>
-
-              <!-- Shipping Address -->
               <div class="review-section">
                 <h3 class="section-title">
                   <i class="bi bi-geo-alt me-2"></i>Shipping Details
@@ -111,8 +102,6 @@
                 </div>
                 }
               </div>
-
-              <!-- Billing Address -->
               @if (billingAddress) {
               <div class="review-section">
                 <h3 class="section-title">
@@ -138,15 +127,12 @@
                 </div>
               </div>
               }
-
-              <!-- Payment Method -->
               <div class="review-section">
                 <h3 class="section-title">
                   <i class="bi bi-credit-card me-2"></i>Payment Details
                 </h3>
                 <div class="payment-card">
                   <div class="payment-content">
-
                     <div class="payment-info">
                       @if (order.payment.paymentMethod === 'Credit/Debit Card') {
                       <div>
@@ -169,7 +155,6 @@
                             Receipt
                           </a>
                         </p>
-
                         <p class="payment-details">Transaction ID: {{ order?.payment?.transactionId || 'Unknown' }}</p>
                       </div>
                       }
@@ -183,8 +168,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Shipping Information -->
               @if (shippingInfo) {
               <div class="review-section">
                 <h3 class="section-title">
@@ -204,8 +187,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Order Summary Sidebar -->
         <div class="checkout-sidebar">
           <div class="summary-card">
             <div class="summary-header">
@@ -236,8 +217,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Admin Actions -->
           <div class="order-actions">
             @if (order?.userId) {
             <button class="btn btn-primary btn-lg w-100" (click)="goToUserProfile()">
@@ -245,7 +224,6 @@
               View Customer Profile
             </button>
             }
-
             <button class="btn btn-warning btn-lg w-100 mt-2" (click)="updateOrderStatus()"
               [disabled]="isLoading || !canUpdateStatus">
               @if (isLoading) {
@@ -256,7 +234,6 @@
               }
               {{ isLoading ? 'Updating...' : 'Update Status' }}
             </button>
-
             <button class="btn btn-danger btn-lg w-100 mt-2" (click)="cancelOrder()"
               [disabled]="isLoading || !canUpdateStatus">
               @if (isLoading) {
@@ -267,7 +244,6 @@
               }
               {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}
             </button>
-
             <button class="btn btn-outline-secondary btn-lg w-100 mt-2" (click)="goBack()">
               @if (cameFromUserProfile) {
               <i class="bi bi-arrow-left me-2"></i>Back to User Profile
@@ -279,8 +255,6 @@
               }
             </button>
           </div>
-
-          <!-- Admin Info Card -->
           <div class="admin-info-card">
             <div class="admin-info-header">
               <h4>
@@ -315,7 +289,6 @@
     </div>
   </div>
   }
-  <!-- Error State -->
   @if (!isLoading && !order) {
   <div class="container">
     <div class="text-center py-5">
