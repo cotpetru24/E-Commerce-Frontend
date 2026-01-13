@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
 import { CmsStateService } from '../../services/cmsStateService';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-footer',
@@ -23,7 +24,8 @@ export class FooterComponent implements OnInit {
 
   constructor(
     private toastService: ToastService,
-    private cmsStateService: CmsStateService
+    private cmsStateService: CmsStateService,
+    private utilsService: UtilsService
   ) {}
 
   ngOnInit() {
@@ -56,7 +58,7 @@ export class FooterComponent implements OnInit {
   }
 
   scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.utilsService.scrollToTop();
   }
 
   // Modal handlers - in a real app, these would open actual modals

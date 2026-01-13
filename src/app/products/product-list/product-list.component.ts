@@ -12,6 +12,8 @@ import {
   SortByOption,
 } from '../../models/product-filter.dto';
 import { finalize } from 'rxjs';
+import { UtilsService } from '../../services/utils.service';
+import { ProductImageDto } from '../../models';
 
 @Component({
   selector: 'app-product-list',
@@ -20,7 +22,6 @@ import { finalize } from 'rxjs';
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
-
 export class ProductListComponent implements OnInit {
   products: ProductDto[] = [];
   availableBrands: string[] = [];
@@ -55,7 +56,8 @@ export class ProductListComponent implements OnInit {
     private router: Router,
     private cartService: CartService,
     private toastService: ToastService,
-    private productApi: ProductApiService
+    private productApi: ProductApiService,
+    private utilsService: UtilsService
   ) {}
 
   ngOnInit() {
@@ -134,5 +136,12 @@ export class ProductListComponent implements OnInit {
 
   navigateToProductDetails(productId: number) {
     this.router.navigate(['/products/details', productId]);
+  }
+
+  getPrimaryImage(images: ProductImageDto[]): string {
+    let primaryImage = images?.find((img) => img.isPrimary);
+    return primaryImage
+      ? primaryImage.imagePath
+      : 'products/image-coming-soon.png';
   }
 }

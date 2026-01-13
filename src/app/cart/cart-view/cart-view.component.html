@@ -1,27 +1,24 @@
 <div class="checkout-container pb-5">
-  <!-- Page Header -->
   <div class="page-header mb-5">
     <div class="container">
       <h1 class="page-title">
         <i class="bi bi-cart me-2"></i>Shopping Cart
       </h1>
       @if (cartItems.length > 0) {
-        <p class="page-subtitle">
-          {{ cartItems.length }} item(s) in your cart
-        </p>
+      <p class="page-subtitle">
+        {{ cartItems.length }} item(s) in your cart
+      </p>
       }
       @if (cartItems.length === 0) {
-        <p class="page-subtitle">
-          Your cart is empty
-        </p>
+      <p class="page-subtitle">
+        Your cart is empty
+      </p>
       }
     </div>
   </div>
-
   <div class="container">
     @if (cartItems.length > 0) {
-      <div class="checkout-layout">
-      <!-- Main Content -->
+    <div class="checkout-layout">
       <div class="checkout-main">
         <div class="form-card">
           <div class="form-header">
@@ -35,61 +32,53 @@
               <span class="text-muted">Review Items</span>
             </div>
           </div>
-
           <div class="cart-items">
             @for (item of cartItems; track trackByItem($index, item)) {
-              <div class="cart-item">
+            <div class="cart-item">
               <div class="item-image">
-                <!-- <img [src]="'/assets/' + item.product.imagePath" [alt]="item.product.name"> -->
+                <img [src]="'/assets/' + getPrimaryImage(item.product.productImages)" [alt]="item.product.name"
+                  (click)="navigateToProductDetails(item.product.id)" class="details-section">
               </div>
-              
               <div class="item-details">
-                <div class="item-info">
-                  <h4 class="item-name">{{ item.product.name }}</h4>
-                  <p class="item-brand">{{ item.product.brandName }}</p>
-                  <p class="item-category">{{ item.product.audience | titlecase }}</p>
-                  @if (item.size) {
+                <section class="details-section" (click)="navigateToProductDetails(item.product.id)">
+                  <div class="item-info">
+                    <h4 class="item-name">{{ item.product.name }}</h4>
+                    <p class="item-brand">{{ item.product.brandName }}</p>
+                    <p class="item-category">{{ item.product.audience | titlecase }}</p>
+                    @if (item.size) {
                     <span class="item-size">Size: {{ item.size }}</span>
-                  }
-                </div>
-
+                    }
+                  </div>
+                </section>
                 <div class="item-price">
                   <span class="price">£{{ item.product.price }}</span>
                 </div>
-
                 <div class="item-quantity">
                   <div class="quantity-controls">
-                    <button class="btn btn-outline-secondary btn-sm" type="button" 
-                            (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1">
+                    <button class="btn btn-outline-secondary btn-sm" type="button" (click)="decreaseQuantity(item)"
+                      [disabled]="item.quantity <= 1">
                       <i class="bi bi-dash"></i>
                     </button>
                     <span class="quantity">{{ item.quantity }}</span>
-                    <button class="btn btn-outline-secondary btn-sm" type="button" 
-                            (click)="increaseQuantity(item)" >
-                            <!-- [disabled]="item.quantity >= item.product.stock"> -->
+                    <button class="btn btn-outline-secondary btn-sm" type="button" (click)="increaseQuantity(item)">
                       <i class="bi bi-plus"></i>
                     </button>
                   </div>
                 </div>
-
                 <div class="item-total">
                   <span class="total-price">£{{ getItemTotal(item) }}</span>
                 </div>
-
                 <div class="item-actions">
-                  <button class="btn btn-outline-danger btn-sm" 
-                          (click)="removeItem(item)" title="Remove item">
+                  <button class="btn btn-outline-danger btn-sm" (click)="removeItem(item)" title="Remove item">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
               </div>
-              </div>
+            </div>
             }
           </div>
         </div>
       </div>
-
-      <!-- Cart Summary Sidebar -->
       <div class="checkout-sidebar">
         <div class="summary-card">
           <div class="summary-header">
@@ -102,29 +91,24 @@
               <span>Subtotal ({{ getTotalItems() }} items)</span>
               <span>£{{ getSubtotal() | number:'1.2-2' }}</span>
             </div>
-
             <div class="summary-item">
               <span>Shipping</span>
               <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
             </div>
-
             @if (getDiscount() > 0) {
-              <div class="summary-item discount">
-                <span>Discount</span>
-                <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
-              </div>
+            <div class="summary-item discount">
+              <span>Discount</span>
+              <span>-£{{ getDiscount() | number:'1.2-2' }}</span>
+            </div>
             }
-
             <div class="summary-item total">
               <span>Total</span>
               <span>£{{ getTotal() | number:'1.2-2' }}</span>
             </div>
           </div>
         </div>
-
-        <!-- Shipping Notice -->
-        @if (getSubtotal() < 50) {
-          <div class="shipping-notice">
+        @if (getSubtotal() < 50) { 
+        <div class="shipping-notice">
           <div class="shipping-icon">
             <i class="bi bi-truck"></i>
           </div>
@@ -132,59 +116,54 @@
             <h4>Free Shipping</h4>
             <p>Add £{{ 50 - getSubtotal() | number:'1.2-2' }} more for free shipping</p>
           </div>
-          </div>
-        }
-
-        <div class="trust-badges">
-          <div class="trust-badge">
-            <i class="bi bi-arrow-clockwise"></i>
-            <span>Easy Returns</span>
-          </div>
-          <div class="trust-badge">
-            <i class="bi bi-headset"></i>
-            <span>24/7 Support</span>
-          </div>
-          <div class="trust-badge">
-            <i class="bi bi-shield-check"></i>
-            <span>Secure Checkout</span>
-          </div>
+      </div>
+      }
+      <div class="trust-badges">
+        <div class="trust-badge">
+          <i class="bi bi-arrow-clockwise"></i>
+          <span>Easy Returns</span>
         </div>
-
-        <div class="order-actions">
-          <button class="btn btn-primary btn-lg w-100" (click)="proceedToCheckout()">
-            <i class="bi bi-cart-check me-2"></i>
-            Proceed to Checkout
-          </button>
-          
-          <button class="btn btn-outline-secondary w-100 mt-2" routerLink="/products">
-            <i class="bi bi-arrow-left me-2"></i>
-            Continue Shopping
-          </button>
+        <div class="trust-badge">
+          <i class="bi bi-headset"></i>
+          <span>24/7 Support</span>
+        </div>
+        <div class="trust-badge">
+          <i class="bi bi-shield-check"></i>
+          <span>Secure Checkout</span>
         </div>
       </div>
+      <div class="order-actions">
+        <button class="btn btn-primary btn-lg w-100" (click)="proceedToCheckout()">
+          <i class="bi bi-cart-check me-2"></i>
+          Proceed to Checkout
+        </button>
+        <button class="btn btn-outline-secondary w-100 mt-2" routerLink="/products">
+          <i class="bi bi-arrow-left me-2"></i>
+          Continue Shopping
+        </button>
       </div>
-    }
-
-    <!-- Empty Cart -->
-    @if (cartItems.length === 0) {
-      <div class="empty-cart-container">
-      <div class="empty-cart-card">
-        <div class="empty-cart-content">
-          <div class="empty-cart-icon-container">
-            <i class="bi bi-cart-x empty-cart-icon"></i>
-          </div>
-          <h2 class="empty-cart-title">Your cart is empty</h2>
-          <p class="empty-cart-description">Looks like you haven't added any items to your cart yet. Start exploring our amazing products!</p>
-          <div class="empty-cart-actions">
-            <button class="btn btn-primary btn-lg" routerLink="/products">
-              <i class="bi bi-cart-plus me-2"></i>
-              Start Shopping
-            </button>
-
-          </div>
-        </div>
-      </div>
-      </div>
-    }
+    </div>
   </div>
+  }
+  @if (cartItems.length === 0) {
+  <div class="empty-cart-container">
+    <div class="empty-cart-card">
+      <div class="empty-cart-content">
+        <div class="empty-cart-icon-container">
+          <i class="bi bi-cart-x empty-cart-icon"></i>
+        </div>
+        <h2 class="empty-cart-title">Your cart is empty</h2>
+        <p class="empty-cart-description">Looks like you haven't added any items to your cart yet. Start exploring our
+          amazing products!</p>
+        <div class="empty-cart-actions">
+          <button class="btn btn-primary btn-lg" routerLink="/products">
+            <i class="bi bi-cart-plus me-2"></i>
+            Start Shopping
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>
 </div>

@@ -17,7 +17,6 @@
   }
 }
 
-/* Hero Section */
 .hero-section {
   position: relative;
   min-height: 100vh;
@@ -219,14 +218,12 @@
   }
 }
 
-/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Section Titles */
 .section-title {
   text-align: center;
   font-size: 2.5rem;
@@ -235,7 +232,6 @@
   color: #333;
 }
 
-/* Categories Section */
 .categories-section {
   padding: 6rem 0;
   background: #1a1a1a;
@@ -358,7 +354,6 @@
   }
 }
 
-/* Featured Products Section */
 .featured-section {
   padding: 6rem 0;
   background: #ffffff;
@@ -562,7 +557,6 @@
   }
 }
 
-/* Features Section */
 .features-section {
   padding: 3rem 0;
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
@@ -624,7 +618,6 @@
   }
 }
 
-/* Testimonials Section */
 .testimonials-section {
   padding: 6rem 0;
   background: #ffffff;
@@ -727,7 +720,6 @@
   }
 }
 
-/* Brands Section */
 .brands-section {
   padding: 4rem 0;
   background: #1a1a1a;
@@ -798,7 +790,6 @@
   }
 }
 
-/* Trends Section */
 .trends-section {
   padding: 6rem 0;
   background: #ffffff;
@@ -910,7 +901,6 @@
   }
 }
 
-/* Newsletter Section */
 .newsletter-section {
   padding: 4rem 0;
   background: #1a1a1a;
@@ -1016,7 +1006,6 @@
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .hero-section .hero-content .container {
     padding: 0 1rem;

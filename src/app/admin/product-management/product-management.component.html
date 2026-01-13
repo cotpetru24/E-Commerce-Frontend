@@ -1,5 +1,4 @@
 <div class="container-fluid mt-4">
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -12,10 +11,8 @@
             </li>
         </ol>
     </nav>
-
     <div class="row">
         <div class="col-12">
-            <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="h2 mb-0">
@@ -27,64 +24,61 @@
                     <i class="bi bi-plus-circle me-2"></i>Add New Product
                 </button>
             </div>
-
-            <!-- Statistics Cards -->
             <div class="row mb-4">
                 <div class="col-md-3 mb-3">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                        <h4 class="mb-0">{{ response?.adminProductsStats?.totalProductsCount }}</h4>
-                        <small>Total Products</small>
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ response?.adminProductsStats?.totalProductsCount }}</h4>
+                                    <small>Total Products</small>
+                                </div>
+                                <i class="bi bi-box display-6"></i>
+                            </div>
                         </div>
-                        <i class="bi bi-box display-6"></i>
                     </div>
-                    </div>
-                </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                        <h4 class="mb-0">{{ response?.adminProductsStats?.totalActiveProductsCount }}</h4>
-                        <small>Active Products</small>
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ response?.adminProductsStats?.totalActiveProductsCount }}</h4>
+                                    <small>Active Products</small>
+                                </div>
+                                <i class="bi bi-check-circle display-6"></i>
+                            </div>
                         </div>
-                        <i class="bi bi-check-circle display-6"></i>
                     </div>
-                    </div>
-                </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                        <h4 class="mb-0">{{ response?.adminProductsStats?.totalLowStockProductsCount }}</h4>
-                        <small>Low Stock Products</small>
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ response?.adminProductsStats?.totalLowStockProductsCount }}</h4>
+                                    <small>Low Stock Products</small>
+                                </div>
+                                <i class="bi bi-exclamation-triangle display-6"></i>
+                            </div>
                         </div>
-                        <i class="bi bi-exclamation-triangle display-6"></i>
                     </div>
-                    </div>
-                </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                <div class="card bg-danger text-white">
-                    <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                        <h4 class="mb-0">{{ response?.adminProductsStats?.totalOutOfStockProductsCount }}</h4>
-                        <small>Out of Stock Products</small>
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ response?.adminProductsStats?.totalOutOfStockProductsCount }}
+                                    </h4>
+                                    <small>Out of Stock Products</small>
+                                </div>
+                                <i class="bi bi-x-circle display-6"></i>
+                            </div>
                         </div>
-                        <i class="bi bi-x-circle display-6"></i>
                     </div>
-                    </div>
-                </div>
                 </div>
             </div>
-
-            <!-- Search and Filters -->
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="row">
@@ -92,19 +86,16 @@
                             <label for="searchInput" class="form-label">Search Products</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="searchInput" [(ngModel)]="searchTerm"
-                                (keyup.enter)="onFilterChange()" placeholder="Search by name, description, barcode...">
-                                <button class="btn btn-outline-primary" type="button" (click)="openBarcodeScannerForSearch()" title="Scan Barcode">
+                                    (keyup.enter)="onFilterChange()"
+                                    placeholder="Search by name, description, barcode...">
+                                <button class="btn btn-outline-primary" type="button"
+                                    (click)="openBarcodeScannerForSearch()" title="Scan Barcode">
                                     <i class="bi bi-upc-scan"></i>
                                 </button>
-
-
-
-
-
                                 <span class="input-group-text">
-                                <button class="btn page-link" (click)="onFilterChange()" title="Search Products">
-                                    <i class="bi bi-search"></i>
-                                </button>
+                                    <button class="btn page-link" (click)="onFilterChange()" title="Search Products">
+                                        <i class="bi bi-search"></i>
+                                    </button>
                                 </span>
                             </div>
                         </div>
@@ -114,11 +105,10 @@
                                 (change)="onFilterChange()">
                                 <option value="null">All Categories</option>
                                 @for (a of audienceOptions; track a) {
-                                  <option [ngValue]="a">
+                                <option [ngValue]="a">
                                     {{ a | titlecase }}
-                                  </option>
+                                </option>
                                 }
-
                             </select>
                         </div>
                         <div class="col-md-2 mb-3">
@@ -127,9 +117,9 @@
                                 (change)="onFilterChange()">
                                 <option [ngValue]="null">All Brands</option>
                                 @for (b of response?.allBrands || []; track b) {
-                                  <option [ngValue]="b">
+                                <option [ngValue]="b">
                                     {{ b | titlecase }}
-                                  </option>
+                                </option>
                                 }
                             </select>
                         </div>
@@ -140,10 +130,6 @@
                                 <option [ngValue]="null">All Status</option>
                                 <option [ngValue]="true">Active</option>
                                 <option [ngValue]="false">Inactive</option>
-
-                                <!-- <option *ngFor="let s of productStatus" [ngValue]="s">
-                                    {{ s | titlecase }}
-                                </option> -->
                             </select>
                         </div>
                         <div class="col-md-2 mb-3">
@@ -152,9 +138,9 @@
                                 (change)="onFilterChange()">
                                 <option value="null">All Stock</option>
                                 @for (ss of productStockStatus; track ss) {
-                                    <option [ngValue]="ss">
-                                        {{ ss | titlecase }}
-                                    </option>
+                                <option [ngValue]="ss">
+                                    {{ ss | titlecase }}
+                                </option>
                                 }
                             </select>
                         </div>
@@ -165,11 +151,10 @@
                                 <option value="date-asc">Date Created (Oldest)</option>
                                 <option value="name-asc">Name (A-Z)</option>
                                 <option value="name-desc">Name (Z-A)</option>
-                                 <option value="stock-asc">Stock (Low-High)</option>
+                                <option value="stock-asc">Stock (Low-High)</option>
                                 <option value="stock-desc">Stock (High-Low)</option>
                             </select>
                         </div>
-
                         <div class="col-md-1 mb-3 d-flex align-items-end justify-content-end">
                             <button class="btn btn-outline-secondary" (click)="resetFilters()">
                                 <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
@@ -178,8 +163,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Products Table -->
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
@@ -203,10 +186,11 @@
                             </thead>
                             <tbody>
                                 @for (product of response?.products || []; track product.id) {
-                                  <tr>
+                                <tr>
                                     <td>
-                                        <!-- <img [src]="'/assets/'+product.imagePath" [alt]="product.name"
-                                            class="product-thumbnail img-thumbnail" title="Product image"> -->
+                                        <img [src]="'/assets/'+getPrimaryImage(product.productImages)"
+                                            [alt]="product.name" class="product-thumbnail img-thumbnail"
+                                            title="Product image">
                                     </td>
                                     <td>
                                         <div>
@@ -219,26 +203,26 @@
                                         <span class="badge brand-badge">{{ product.brandName }}</span>
                                     </td>
                                     <td>
-                                    <span class="badge" [ngClass]="getCategoryClass(product?.audience??'not working')">
-                                    {{ product.audience }}
-                                    </span>
+                                        <span class="badge"
+                                            [ngClass]="getCategoryClass(product?.audience??'not working')">
+                                            {{ product.audience }}
+                                        </span>
                                     </td>
                                     <td>
-                                        <strong >£{{ product.price | number:'1.2-2' }}</strong>
+                                        <strong>£{{ product.price | number:'1.2-2' }}</strong>
                                     </td>
                                     <td>
-                                        <span class="badge stock-badge" [ngClass]="getStockBadgeClass(product.totalStock ?? 0)">
-                                        {{ getStockText(product?.totalStock ?? 0) }}
+                                        <span class="badge stock-badge"
+                                            [ngClass]="getStockBadgeClass(product.totalStock)">
+                                            {{ getStockText(product?.totalStock ?? 0) }}
                                         </span>
                                         <small class="text-muted">
-                                        ({{ product.totalStock }})
+                                            ({{ product.totalStock }})
                                         </small>
                                     </td>
                                     <td>
-                                        <span
-                                        class="badge"
-                                        [ngClass]="product.isActive ? 'bg-success' : 'bg-warning'">
-                                        {{ product.isActive ? 'Active' : 'Inactive' }}
+                                        <span class="badge" [ngClass]="product.isActive ? 'bg-success' : 'bg-warning'">
+                                            {{ product.isActive ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
                                     <td>
@@ -257,38 +241,33 @@
                                             </button>
                                         </div>
                                     </td>
-                                  </tr>
+                                </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Loading State -->
                     @if(isLoading) {
                     <div class="text-center p-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         <p class="mt-2">Loading products...</p>
-                    </div> }
-
-
-                    <!-- Empty State -->
+                    </div>
+                    }
                     @if (!isLoading && response?.products?.length === 0) {
-                      <div class="text-center p-4">
+                    <div class="text-center p-4">
                         <i class="bi bi-box display-1 text-muted"></i>
                         <h4 class="mt-3">No products found</h4>
                         <p class="text-muted">Try adjusting your search or filters</p>
-                      </div>
+                    </div>
                     }
                 </div>
-
-                <!-- Pagination -->
                 @if ((response?.products?.length ?? 0) > 0) {
-                  <div class="card-footer">
+                <div class="card-footer">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            Showing {{ ((response?.pageNumber?? 1) - 1) * itemsPerPage + 1 }} to {{ Math.min((response?.pageNumber?? 1) *
+                            Showing {{ ((response?.pageNumber?? 1) - 1) * itemsPerPage + 1 }} to {{
+                            Math.min((response?.pageNumber?? 1) *
                             itemsPerPage,
                             (response?.totalQueryCount ?? 0)) }}
                             of {{ response?.totalQueryCount }} products
@@ -296,13 +275,14 @@
                         <nav>
                             <ul class="pagination pagination-sm mb-0">
                                 <li class="page-item" [class.disabled]="response?.pageNumber === 1">
-                                    <button class="page-link" (click)="changePage((response?.pageNumber?? 1) - 1)">Previous</button>
+                                    <button class="page-link"
+                                        (click)="changePage((response?.pageNumber?? 1) - 1)">Previous</button>
                                 </li>
                                 @for (page of getPageNumbers(); track page) {
-                                  <li class="page-item" [class.active]="page === currentPage">
+                                <li class="page-item" [class.active]="page === currentPage">
                                     <button class="page-link" (click)="changePage(page)"
                                         [class.disabled]="(response?.pageNumber ?? 1) === page">{{ page }}</button>
-                                  </li>
+                                </li>
                                 }
                                 <li class="page-item" [class.disabled]="response?.pageNumber === response?.totalPages">
                                     <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
@@ -310,7 +290,7 @@
                             </ul>
                         </nav>
                     </div>
-                  </div>
+                </div>
                 }
             </div>
         </div>

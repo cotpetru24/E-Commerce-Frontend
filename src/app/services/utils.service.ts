@@ -74,5 +74,9 @@ export class UtilsService {
       minute: '2-digit' 
     });
   }
+
+    scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 

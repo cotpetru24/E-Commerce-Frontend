@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs';
 import { CartService, CartItem } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthApiService } from '../../services/auth-api.service';
+import { UtilsService } from '../../services/utils.service';
+import { ProductImageDto } from '../../models';
 
 @Component({
   selector: 'app-cart-view',
@@ -13,7 +15,6 @@ import { AuthApiService } from '../../services/auth-api.service';
   templateUrl: './cart-view.component.html',
   styleUrls: ['./cart-view.component.scss'],
 })
-
 export class CartViewComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
   private cartSubscription: Subscription;
@@ -22,7 +23,8 @@ export class CartViewComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private router: Router,
     private toastService: ToastService,
-    private authApiService: AuthApiService
+    private authApiService: AuthApiService,
+    private utilsService: UtilsService
   ) {
     this.cartSubscription = this.cartService.cartItems$.subscribe((items) => {
       this.cartItems = items;
@@ -96,5 +98,16 @@ export class CartViewComponent implements OnInit, OnDestroy {
 
   clearCart(): void {
     this.cartService.clearCart();
+  }
+
+  getPrimaryImage(images: ProductImageDto[]): string {
+    let primaryImage = images?.find((img) => img.isPrimary);
+    return primaryImage
+      ? primaryImage.imagePath
+      : 'products/image-coming-soon.png';
+  }
+
+  navigateToProductDetails(productId: number) {
+    this.router.navigate(['/products/details', productId]);
   }
 }

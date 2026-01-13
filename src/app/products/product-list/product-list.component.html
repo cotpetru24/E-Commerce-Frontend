@@ -1,22 +1,17 @@
 <div class="product-list-container">
-  <!-- Header Section -->
   <div class="page-header">
     <div class="container">
       <h1 class="page-title">{{ getPageTitle() }}</h1>
       <p class="page-subtitle">{{ getPageSubtitle() }}</p>
     </div>
   </div>
-
   <div class="container">
     <div class="product-layout">
-      <!-- Filters Sidebar -->
       <aside class="filters-sidebar mb-5">
         <div class="filters-header">
           <h3>Filters</h3>
           <button class="btn btn-primary btn-sm" (click)="clearFilters()">Clear All</button>
         </div>
-
-        <!-- Search Filter -->
         <div class="filter-section">
           <h4>Search</h4>
           <div class="input-group">
@@ -27,14 +22,9 @@
             </button>
           </div>
         </div>
-
-
-        <!-- Category Filter -->
         <div class="filter-section">
           <h4>Category</h4>
-
-          @for ( gender of audienceOptions; track gender)
-          {
+          @for ( gender of audienceOptions; track gender) {
           <div class="input-group mb-2">
             <div class="input-group-text">
               <input class="form-check-input mt-0" type="radio" name="gender" [value]="gender"
@@ -45,63 +35,19 @@
           </div>
           }
         </div>
-
-
-        <!-- Brand Filter -->
         <div class="filter-section">
           <h4>Brand</h4>
-          <!-- <select id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand" (change)="getProducts()">
-            <option [ngValue]="null">All Brands</option>
-            @for ( brand of availableBrands; track brand)
-            {
-            <option [ngValue]="brand">
-              {{brand}}
-            </option>
-            }
-          </select> -->
-
           <select id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand" (change)="getProducts()">
             <option [ngValue]="null">All Brands</option>
-
             @for (brand of availableBrands; track brand) {
             <option [ngValue]="brand">{{ brand }}</option>
             }
           </select>
-
         </div>
-
-        <!-- Size Filter -->
         <div class="filter-section">
           <h4>Size</h4>
-          <!-- <select id="selectedSize" class="form-select" [(ngModel)]="productFilterDto.Size" (change)="getProducts()">
-            <option value="">All Sizes</option>
-            <option value="1">UK 1 (Child)</option>
-            <option value="1.5">UK 1.5 (Child)</option>
-            <option value="2">UK 2 (Child)</option>
-            <option value="2.5">UK 2.5 (Child)</option>
-            <option value="3">UK 3 (Child)</option>
-            <option value="3.5">UK 3.5 (Child)</option>
-            <option value="4">UK 4 (Child)</option>
-            <option value="4.5">UK 4.5 (Child)</option>
-            <option value="5">UK 5 (Child)</option>
-            <option value="5.5">UK 5.5 (Child)</option>
-            <option value="6">UK 6 (Child)</option>
-            <option value="6.5">UK 6.5 (Youth)</option>
-            <option value="7">UK 7 (Youth)</option>
-            <option value="7.5">UK 7.5</option>
-            <option value="8">UK 8</option>
-            <option value="8.5">UK 8.5</option>
-            <option value="9">UK 9</option>
-            <option value="9.5">UK 9.5</option>
-            <option value="10">UK 10</option>
-            <option value="10.5">UK 10.5</option>
-            <option value="11">UK 11</option>
-            <option value="11.5">UK 11.5</option>
-            <option value="12">UK 12</option>
-          </select> -->
           <select id="selectedSize" class="form-select" [(ngModel)]="productFilterDto.Size" (change)="getProducts()">
             <option [ngValue]="null">All Sizes</option>
-
             <option [ngValue]="1">UK 1 (Child)</option>
             <option [ngValue]="1.5">UK 1.5 (Child)</option>
             <option [ngValue]="2">UK 2 (Child)</option>
@@ -112,9 +58,9 @@
             <option [ngValue]="4.5">UK 4.5 (Child)</option>
             <option [ngValue]="5">UK 5 (Child)</option>
             <option [ngValue]="5.5">UK 5.5 (Child)</option>
-            <option [ngValue]="6">UK 6 (Child)</option>
-            <option [ngValue]="6.5">UK 6.5 (Youth)</option>
-            <option [ngValue]="7">UK 7 (Youth)</option>
+            <option [ngValue]="6">UK 6</option>
+            <option [ngValue]="6.5">UK 6.5</option>
+            <option [ngValue]="7">UK 7</option>
             <option [ngValue]="7.5">UK 7.5</option>
             <option [ngValue]="8">UK 8</option>
             <option [ngValue]="8.5">UK 8.5</option>
@@ -126,10 +72,7 @@
             <option [ngValue]="11.5">UK 11.5</option>
             <option [ngValue]="12">UK 12</option>
           </select>
-
         </div>
-
-        <!-- Price Range Filter -->
         <div class="filter-section mb-3">
           <h4 class="mb-3">Price Range</h4>
           <div class="price-range">
@@ -139,7 +82,6 @@
                 aria-describedby="minPriceHelp" [(ngModel)]="productFilterDto.MinPrice" (input)="getProducts()" />
               <div id="minPriceHelp" class="visually-hidden">Enter minimum price</div>
             </div>
-
             <div class="mb-3">
               <label for="maxPrice" class="form-label">Max Price</label>
               <input type="number" name="maxPrice" id="maxPrice" class="form-control" placeholder="1000"
@@ -147,60 +89,30 @@
               <div id="maxPriceHelper" class="visually-hidden">Enter maximum price</div>
             </div>
           </div>
-
         </div>
-
-        <!-- Sort Options -->
         <div class="filter-section mb-0">
           <h4>Sort By</h4>
-          <!-- <select id="sortSelect" class="form-select" [(ngModel)]="productFilterDto.SortBy" (change)="getProducts()">
-            <option value="null" disabled selected>Select sorting option</option>
-
-            @for ( option of sortByOptions; track option)
-            {
-            <option [value]="option.value">
-              {{option.label}}
+          <select id="sortSelect" class="form-select" [(ngModel)]="productFilterDto.SortBy" (change)="getProducts()">
+            <option [ngValue]="null">Select sorting option</option>
+            @for (option of sortByOptions; track option) {
+            <option [ngValue]="option.value">
+              {{ option.label }}
             </option>
             }
-
-          </select> -->
-
-
-
-          <select
-  id="sortSelect"
-  class="form-select"
-  [(ngModel)]="productFilterDto.SortBy"
-  (change)="getProducts()"
->
-  <option [ngValue]="null">Select sorting option</option>
-
-  @for (option of sortByOptions; track option) {
-    <option [ngValue]="option.value">
-      {{ option.label }}
-    </option>
-  }
-</select>
-
+          </select>
         </div>
-
       </aside>
-
-      @if (isLoading)
-      {
+      @if (isLoading) {
       <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
         <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
         <span>Loading...</span>
       </div>
       }
-      <!-- Products Grid -->
       <main class="products-main mb-5">
-        <!-- Results Header -->
         <div class="results-header">
           <div class="results-info">
             <span>{{ products.length }} products found</span>
-            @if (productFilterDto.Audience || productFilterDto.Brand || productFilterDto.SearchTerm)
-            {
+            @if (productFilterDto.Audience || productFilterDto.Brand || productFilterDto.SearchTerm) {
             <span class="active-filters"> (filtered) </span>
             }
           </div>
@@ -215,37 +127,22 @@
             </button>
           </div>
         </div>
-
-
-
-        <!-- Products Grid/List -->
         <div class="products-container" [class.list-view]="viewMode === 'list'">
-
-          @for ( product of products; track product)
-          {
-
+          @for ( product of products; track product) {
           <div class="product-card" [class.list-card]="viewMode === 'list'"
             (click)="navigateToProductDetails(product.id)">
             <div class="product-image">
-
               @if(product.productImages && product.productImages.length > 0) {
-              @for (image of product.productImages; track $index) {
-              @if (image.isPrimary) {
-              <img [src]="'/assets/'+image.imagePath" [alt]="product.name" title="Product image" />
-              break;
-              }
-              }
+              <img [src]="'/assets/'+ getPrimaryImage(product.productImages)" [alt]="product.name"
+                title="Product image" />
               } @else {
               <img [src]="'/assets/products/image-coming-soon.png'" [alt]="product.name" title="Product image" />
               }
-
-              <!-- <img [src]="'/assets/'+product.imagePath" [alt]="product.name" title="Product image" /> -->
               <div class="product-badges">
                 <span class="audience-badge" [class]="product.audience.toLowerCase()">{{ product.audience
                   }}</span>
               </div>
             </div>
-
             <div class="card-body">
               <div class="product-info">
                 <h3 class="product-name">{{ product.name }}</h3>
@@ -257,30 +154,19 @@
                     [class.out-of-stock]="product.totalStock === 0">
                     {{ product.totalStock > 0 ? 'In Stock' : 'Out of Stock' }}
                   </span>
-                  <!-- <span class="stock-count" @if="product.stock > 0">
-                    {{ product.stock }} left
-                  </span> -->
                 </div>
               </div>
             </div>
-
             <div class="card-footer d-flex justify-content-end">
               <button class="btn btn-primary m-2" [routerLink]="['/products/details', product.id]"
                 (click)="$event.stopPropagation()">
                 View Details
               </button>
-               <!-- <button class="btn btn-primary m-2" [disabled]="product.totalStock === 0"
-                (click)="addToCart(product); $event.stopPropagation()">
-                Add to Cart
-              </button> -->
             </div>
           </div>
           }
         </div>
-
-        <!-- No Results -->
-        @if (products.length === 0 && !isLoading)
-        {
+        @if (products.length === 0 && !isLoading) {
         <div class="no-results">
           <i class="bi bi-search"></i>
           <h3>No products found</h3>

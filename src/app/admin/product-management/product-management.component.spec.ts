@@ -13,33 +13,47 @@ describe('ProductManagement', () => {
   let adminApiService: jasmine.SpyObj<AdminApiService>;
 
   beforeEach(async () => {
-    adminApiService = jasmine.createSpyObj('AdminApiService', ['getAllProducts', 'deleteProduct']);
-    adminApiService.getAllProducts.and.returnValue(of({
-      products: [],
-      totalQueryCount: 0,
-      adminProductsStats: {
-        totalProductsCount: 0,
-        totalLowStockProductsCount: 0,
-        totalOutOfStockProductsCount: 0,
-        totalActiveProductsCount: 0
-      },
-      pageNumber: 1,
-      pageSize: 10,
-      totalPages: 0,
-      allBrands: []
-    }));
+    adminApiService = jasmine.createSpyObj('AdminApiService', [
+      'getAllProducts',
+      'deleteProduct',
+    ]);
+    adminApiService.getAllProducts.and.returnValue(
+      of({
+        products: [],
+        totalQueryCount: 0,
+        adminProductsStats: {
+          totalProductsCount: 0,
+          totalLowStockProductsCount: 0,
+          totalOutOfStockProductsCount: 0,
+          totalActiveProductsCount: 0,
+        },
+        pageNumber: 1,
+        pageSize: 10,
+        totalPages: 0,
+        allBrands: [],
+      })
+    );
 
     await TestBed.configureTestingModule({
       imports: [ProductManagementComponent],
       providers: [
         provideHttpClient(),
         provideRouter([]),
-        { provide: NgbModal, useValue: jasmine.createSpyObj('NgbModal', ['open']) },
+        {
+          provide: NgbModal,
+          useValue: jasmine.createSpyObj('NgbModal', ['open']),
+        },
         { provide: AdminApiService, useValue: adminApiService },
-        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) }
-      ]
-    })
-    .compileComponents();
+        {
+          provide: ToastService,
+          useValue: jasmine.createSpyObj('ToastService', [
+            'error',
+            'success',
+            'info',
+          ]),
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProductManagementComponent);
     component = fixture.componentInstance;

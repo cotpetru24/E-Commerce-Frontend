@@ -1,10 +1,8 @@
-/* Checkout Container */
 .checkout-container {
   min-height: 100vh;
   background-color: #f8f9fa;
 }
 
-/* Page Header */
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -28,14 +26,12 @@
   }
 }
 
-/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Checkout Layout */
 .checkout-layout {
   display: grid;
   grid-template-columns: 1fr 350px;
@@ -47,7 +43,6 @@
   }
 }
 
-/* Checkout Main */
 .checkout-main {
   .form-card {
     background: white;
@@ -240,7 +235,6 @@
   }
 }
 
-/* Checkout Sidebar */
 .checkout-sidebar {
   position: sticky;
   top: 100px;
@@ -387,7 +381,6 @@
   }
 }
 
-/* Empty Cart */
 .empty-cart-container {
   display: flex;
   justify-content: center;
@@ -491,7 +484,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -499,7 +493,6 @@
   }
 }
 
-/* Responsive Design for Empty Cart */
 @media (max-width: 768px) {
   .empty-cart-container {
     padding: 1rem;
@@ -545,7 +538,6 @@
   }
 }
 
-/* Button Styles - Matching App Design */
 .btn-primary {
   background: #1a1a1a !important;
   color: #ffffff !important;
@@ -605,7 +597,10 @@
   }
 }
 
-/* Responsive Design */
+.details-section {
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .page-title {
     font-size: 2rem;

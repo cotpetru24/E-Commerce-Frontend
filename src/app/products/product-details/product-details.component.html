@@ -32,20 +32,14 @@
     }
     @if(product){
     <div class="product-details">
-      <!-- Product Images -->
       <div class="product-images">
         <div class="main-image">
-          <!-- <img [src]="'/assets/'+product.imagePath || selectedImage" alt="product.name" /> -->
           <img [src]="'/assets/'+ selectedImage" alt="product.name" />
-          <!-- <img [src]="'/assets/products/image-coming-soon.png'" alt="product.name" /> -->
+          @if((product?.productImages?.length ?? 0) > 0 ) {
           <div class="image-overlay" data-bs-toggle="modal" data-bs-target="#productImagesModal" title="Open image">
-            <!-- <button class="btn btn-light btn-sm zoom-btn" (click)="openImageModal()" data-bs-toggle="modal"
-              data-bs-target="#productImagesModal" title="Open image">
-              <i class="bi bi-zoom-in"></i>
-            </button> -->
           </div>
+          }
         </div>
-        <!-- @if (additionalProductImages && additionalProductImages.length > 0) -->
         @if((product.productImages.length) > 0) {
         <div class="image-thumbnails">
           @for (image of product.productImages; track image) {
@@ -99,8 +93,7 @@
         <div class="product-features">
           <h3>Features</h3>
           <ul class="features-list">
-            @for (feature of product.productFeatures; track feature)
-            {
+            @for (feature of product.productFeatures; track feature) {
             <li>
               <i class="bi bi-check"></i>
               {{ feature.featureText }}
@@ -113,8 +106,7 @@
         <div class="size-selection">
           <h3>Select Size</h3>
           <div class="size-options mb-3">
-            @for (size of product.productSizes; track size)
-            {
+            @for (size of product.productSizes; track size) {
             <button class="btn btn-outline-primary" [class.selected]="selectedSize === size" (click)="selectSize(size)">
               {{ size.size }}
             </button>
@@ -167,14 +159,11 @@
       </div>
     </div>
     }
-
-    <!-- Loading State -->
     @if(!product) {
     <div class="loading-state">
       <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
     </div>
     }
-
     @if (relatedProducts && relatedProducts.length>0) {
     <section class="related-products">
       <h2>Related Products</h2>
@@ -182,15 +171,8 @@
         @for (relatedProduct of relatedProducts; track relatedProduct) {
         <div class="card related-product-card" role="button" (click)="navigateToProductDetails(relatedProduct.id)">
           <div class="product-image">
-            <!-- <img class="card-img-top" [src]="'/assets/'+relatedProduct.imagePath" [alt]="relatedProduct.name"
-              title="Product image" /> -->
-            @for (image of relatedProduct.productImages; track image) {
-            @if (image.isPrimary) {
-            <img class="card-img-top" [src]="'/assets/'+image.imagePath" [alt]="relatedProduct.name"
-              title="Product image" />
-            break;
-            }
-            }
+            <img class="card-img-top" [src]="'/assets/'+getPrimaryImage(relatedProduct.productImages)"
+              [alt]="relatedProduct.name" title="Product image" />
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ relatedProduct.name }}</h3>
@@ -204,8 +186,6 @@
     }
   </div>
 </div>
-
-<!-- Modal Body -->
 <div class="modal fade" id="productImagesModal" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -216,15 +196,10 @@
       <div class="modal-body p-0">
         <div id="productImagesCarousel" class="carousel slide">
           <div class="carousel-inner">
-            <div class="carousel-item active">
+            @for (image of product?.productImages; let i = $index; track image.id) {
+            <div class="carousel-item" [class.active]="i === 0">
               <div class="carousel-image-wrapper">
-                <img class="carousel-image" [src]="'/assets/'+ selectedImage" alt="product.name" />
-              </div>
-            </div>
-            @for (image of product?.productImages; track image) {
-            <div class="carousel-item">
-              <div class="carousel-image-wrapper">
-                <img class="carousel-image" [src]="'/assets/'+ image.imagePath" alt="product.name" />
+                <img class="carousel-image" [src]="'/assets/' + image.imagePath" alt="product.name" />
               </div>
             </div>
             }
@@ -242,16 +217,5 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<div #errorToast class="toast position-fixed bottom-0 start-50 translate-middle-x text-bg-danger" role="alert"
-  aria-live="assertive" aria-atomic="true">
-  <div class="d-flex">
-    <div class="toast-body">
-      Please select a size before purchasing
-    </div>
-    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-      aria-label="Close"></button>
   </div>
 </div>

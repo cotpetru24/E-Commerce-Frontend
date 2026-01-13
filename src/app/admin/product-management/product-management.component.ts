@@ -8,7 +8,6 @@ import {
   AdminProductDto,
   GetProductsAdminRequestDto,
   GetProductsAdminResponseDto,
-  ProductDto,
   ProductsSortBy,
   ProductsSortDirection,
   ProductStatus,
@@ -16,10 +15,11 @@ import {
 } from '../../models/product.dto';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
-import { Audience } from '../../models';
+import { Audience, ProductImageDto } from '../../models';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-product-management',
@@ -28,33 +28,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './product-management.component.html',
   styleUrls: ['./product-management.component.scss'],
 })
+
 export class ProductManagementComponent implements OnInit, OnDestroy {
-  // Products data
-  response?: GetProductsAdminResponseDto;
-  filteredProducts: ProductDto[] = [];
-  paginatedProducts: ProductDto[] = [];
   isLoading = false;
-
-  public audienceOptions: Audience[] = [
-    Audience.Men,
-    Audience.Women,
-    Audience.Children,
-    Audience.Unisex,
-  ];
-
-  public productStatus: ProductStatus[] = [
-    ProductStatus.Active,
-    ProductStatus.Inactive,
-  ];
-
-  public productStockStatus: ProductStockStatus[] = [
-    ProductStockStatus.LowStock,
-    ProductStockStatus.HighStock,
-    ProductStockStatus.InStock,
-    ProductStockStatus.OutOfStock,
-  ];
-
-  // Search and filters
+  Math = Math;
+  response?: GetProductsAdminResponseDto;
   searchTerm = '';
   selectedCategory: Audience | null = null;
   selectedBrand: string | null = null;
@@ -62,15 +40,27 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   selectedStock: ProductStockStatus | null = null;
   sortBy = 'date-desc';
   sortField: ProductsSortBy = ProductsSortBy.DateCreated;
-
-  // Pagination
   currentPage = 1;
   itemsPerPage = 10;
-  totalPages = 1;
-  totalQueryCount = 0;
 
-  // Math utility for template
-  Math = Math;
+  audienceOptions: Audience[] = [
+    Audience.Men,
+    Audience.Women,
+    Audience.Children,
+    Audience.Unisex,
+  ];
+
+  productStatus: ProductStatus[] = [
+    ProductStatus.Active,
+    ProductStatus.Inactive,
+  ];
+
+  productStockStatus: ProductStockStatus[] = [
+    ProductStockStatus.LowStock,
+    ProductStockStatus.HighStock,
+    ProductStockStatus.InStock,
+    ProductStockStatus.OutOfStock,
+  ];
 
   private subscriptions = new Subscription();
 
@@ -78,7 +68,8 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     private adminApi: AdminApiService,
     private router: Router,
     private toastService: ToastService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private utilsService: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -126,9 +117,6 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       this.adminApi.getAllProducts(getProductsAdminRequest).subscribe({
         next: (response) => {
           this.response = response;
-          // this.adminProductsStats = response.adminUsersStats;
-          // this.totalPages = response.totalPages;
-          // this.totalQueryCount = response.totalQueryCount;
           this.isLoading = false;
         },
         error: () => {
@@ -139,11 +127,6 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSearchChange(): void {
-    this.currentPage = 1;
-    // this.applyFilters();
-  }
-
   onFilterChange(): void {
     this.currentPage = 1;
     this.loadProducts();
@@ -152,6 +135,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   updatePagination(): void {
     if (!this.isLoading) {
       this.loadProducts();
+      this.utilsService.scrollToTop();
     }
   }
 
@@ -226,7 +210,6 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   }
 
   viewProduct(product: AdminProductDto): void {
-    // Navigate to product detail view
     this.router.navigate(['/products/details', product.id], {
       queryParams: { from: 'product-management' },
     });
@@ -234,7 +217,6 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
 
   resetFilters(): void {
     this.searchTerm = '';
-
     this.selectedCategory = null;
     this.selectedBrand = null;
     this.isActive = null;
@@ -250,31 +232,31 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.message = `Are you sure you want to delete "${product.name}"?`;
     modalRef.componentInstance.modalType = 'confirm';
 
-    modalRef.result.then((result=> {
+    modalRef.result.then((result) => {
       if (result === true) {
         this.isLoading = true;
 
-      this.subscriptions.add(
-        this.adminApi.deleteProduct(product.id).subscribe({
-          next: () => {
-            this.toastService.success('Product deleted successfully');
-            this.isLoading = false;
-            this.loadProducts();
-          },
-          error: () => {
-            this.isLoading = false;
-            this.toastService.error('Failed to delete product');
-          },
-        })
-      );
-
-    }}))
+        this.subscriptions.add(
+          this.adminApi.deleteProduct(product.id).subscribe({
+            next: () => {
+              this.toastService.success('Product deleted successfully');
+              this.isLoading = false;
+              this.loadProducts();
+            },
+            error: () => {
+              this.isLoading = false;
+              this.toastService.error('Failed to delete product');
+            },
+          })
+        );
+      }
+    });
   }
 
   openBarcodeScannerForSearch() {
     const modalRef = this.modalService.open(BarcodeScannerModalComponent, {
       size: 'lg',
-      centered: true
+      centered: true,
     });
 
     modalRef.result.then(
@@ -287,8 +269,15 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
         }
       },
       () => {
-        // Modal dismissed
+        // Dismissed modal
       }
     );
+  }
+
+  getPrimaryImage(images: ProductImageDto[]): string {
+    let primaryImage = images?.find((img) => img.isPrimary);
+    return primaryImage
+      ? primaryImage.imagePath
+      : 'products/image-coming-soon.png';
   }
 }

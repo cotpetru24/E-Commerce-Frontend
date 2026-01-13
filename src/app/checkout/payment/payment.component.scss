@@ -1,10 +1,8 @@
-/* Checkout Container */
 .checkout-container {
   min-height: 100vh;
   background-color: #f8f9fa;
 }
 
-/* Page Header */
 .page-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -28,7 +26,6 @@
   }
 }
 
-/* Checkout Layout */
 .checkout-layout {
   display: grid;
   grid-template-columns: 1fr 350px;
@@ -40,7 +37,6 @@
   }
 }
 
-/* Checkout Main */
 .checkout-main {
   .form-card {
     background: white;
@@ -175,7 +171,6 @@
             box-shadow: 0 0 0 0.2rem rgba(26, 26, 26, 0.1);
           }
 
-          // Ensure Stripe Elements are visible
           &::before {
             content: '';
             position: absolute;
@@ -195,7 +190,6 @@
           min-height: 20px;
         }
 
-        // Loading state for Stripe Elements
         .stripe-loading {
           display: flex;
           align-items: center;
@@ -301,7 +295,6 @@
   }
 }
 
-/* Checkout Sidebar */
 .checkout-sidebar {
   position: sticky;
   top: 100px;
@@ -427,7 +420,6 @@
   }
 }
 
-/* Button Styles - Matching App Design */
 .btn-primary {
   background: #1a1a1a !important;
   color: #ffffff !important;
@@ -475,7 +467,6 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .page-title {
     font-size: 2rem;

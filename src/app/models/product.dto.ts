@@ -27,7 +27,6 @@ export interface AdminProductDto {
   description?: string;
   price: number;
   originalPrice?: number | undefined;
-  imagePath?: string;
   totalStock: number;
   brandId?: number;
   brandName?: string;

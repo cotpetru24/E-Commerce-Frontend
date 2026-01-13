@@ -6,6 +6,7 @@ import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { ProductApiService } from '../../services/api';
 import { ProductImageDto } from '../../models/product-image.dto';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'product-details',
@@ -14,7 +15,6 @@ import { ProductImageDto } from '../../models/product-image.dto';
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.scss',
 })
-
 export class ProductDetailsComponent implements OnInit {
   product: ProductDto | null = null;
   cameFromProductManagement: boolean = false;
@@ -34,7 +34,8 @@ export class ProductDetailsComponent implements OnInit {
     private cartService: CartService,
     private toastService: ToastService,
     private productApi: ProductApiService,
-    private router: Router
+    private router: Router,
+    private utilsService: UtilsService
   ) {}
 
   ngOnInit() {
@@ -124,5 +125,12 @@ export class ProductDetailsComponent implements OnInit {
         this.product.originalPrice) *
         100
     );
+  }
+
+  getPrimaryImage(images: ProductImageDto[]): string {
+    let primaryImage = images?.find((img) => img.isPrimary);
+    return primaryImage
+      ? primaryImage.imagePath
+      : 'products/image-coming-soon.png';
   }
 }
