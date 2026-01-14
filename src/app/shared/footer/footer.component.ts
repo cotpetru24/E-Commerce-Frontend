@@ -14,12 +14,14 @@ import { UtilsService } from '../../services/utils.service';
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
 })
+
 export class FooterComponent implements OnInit {
   newsletterEmail: string = '';
   showBackToTop: boolean = false;
   websiteName = '';
   websiteLogo?: String | null = null;
   showLogo: boolean = false;
+
   private sub!: Subscription;
 
   constructor(
@@ -42,26 +44,10 @@ export class FooterComponent implements OnInit {
     this.showBackToTop = window.scrollY > 300;
   }
 
-  subscribeNewsletter() {
-    if (this.newsletterEmail && this.isValidEmail(this.newsletterEmail)) {
-      // In a real app, this would call a service to subscribe
-      this.toastService.success('Thank you for subscribing to our newsletter!');
-      this.newsletterEmail = '';
-    } else {
-      this.toastService.error('Please enter a valid email address');
-    }
-  }
-
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
   scrollToTop() {
     this.utilsService.scrollToTop();
   }
 
-  // Modal handlers - in a real app, these would open actual modals
   openContactModal() {
     this.toastService.info('Contact modal would open here');
   }

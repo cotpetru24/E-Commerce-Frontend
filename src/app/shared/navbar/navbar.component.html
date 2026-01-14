@@ -1,6 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-    <!-- Brand -->
     <a class="navbar-brand" routerLink="/">
       @if(!showLogo){
       <i class="bi bi-bag-heart"></i>
@@ -10,24 +9,17 @@
       <img [src]="'data:image/png;base64,' +websiteLogo" class="img-fluid logo" alt="Website Logo" />
       }
     </a>
-
-    <!-- Mobile Toggle Button -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleMobileMenu()">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-    <!-- Navigation Items -->
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-
       <ul class="navbar-nav">
-
         <li class="nav-item">
           <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
             <i class="bi bi-house"></i> Home
           </a>
         </li>
-
         <li class="nav-item dropdown" (mouseenter)="showShopDropdown = true" (mouseleave)="showShopDropdown = false">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-shop"></i> Shop
@@ -40,7 +32,6 @@
             </li>
           </ul>
         </li>
-
         <li class="nav-item">
           <a class="nav-link position-relative" routerLink="/cart/view" routerLinkActive="active">
             <i class="bi bi-cart3"></i> Cart
@@ -51,7 +42,6 @@
             }
           </a>
         </li>
-
         @if (!isLoggedIn()) {
         <li class="nav-item">
           <a class="nav-link" routerLink="/auth/login" routerLinkActive="active">
@@ -59,29 +49,25 @@
           </a>
         </li>
         }
-
         @if (isLoggedIn()) {
         <li class="nav-item">
           <a class="nav-link" href="/" role="button" (click)="logout()">
             <i class="bi bi-box-arrow-right"></i>
             Logout</a>
         </li>
-
         <li class="nav-item dropdown" (mouseenter)="showAccountDropdown=true" (mouseleave)="showAccountDropdown=false">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class=" bi bi-person-circle"></i>Account
           </a>
           <ul class="dropdown-menu" [class.show]="showAccountDropdown">
             <li><a class="dropdown-item" routerLink="/user" (click)="showAccountDropdown=false">My account</a></li>
-            @if(!isAdmin())
-            {
+            @if(!isAdmin()) {
             <li><a class="dropdown-item" routerLink="/user/orders" (click)="showAccountDropdown=false">My orders</a>
             </li>
             }
           </ul>
         </li>
         }
-
         @if (isAdmin() && isLoggedIn()) {
         <li class="nav-item">
           <a class="nav-link" routerLink="/admin" routerLinkActive="active">
@@ -93,8 +79,6 @@
     </div>
   </div>
 </nav>
-
-<!-- Mobile Menu (Offcanvas) -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="mobileMenuLabel">Menu</h5>

@@ -11,18 +11,27 @@ describe('Footer', () => {
   let cmsStateService: jasmine.SpyObj<CmsStateService>;
 
   beforeEach(async () => {
-    cmsStateService = jasmine.createSpyObj('CmsStateService', ['getCmsProfile', 'setProfile']);
+    cmsStateService = jasmine.createSpyObj('CmsStateService', [
+      'getCmsProfile',
+      'setProfile',
+    ]);
     cmsStateService.cmsProfile$ = of({} as any);
 
     await TestBed.configureTestingModule({
       imports: [FooterComponent],
       providers: [
         provideRouter([]),
-        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) },
-        { provide: CmsStateService, useValue: cmsStateService }
-      ]
-    })
-    .compileComponents();
+        {
+          provide: ToastService,
+          useValue: jasmine.createSpyObj('ToastService', [
+            'error',
+            'success',
+            'info',
+          ]),
+        },
+        { provide: CmsStateService, useValue: cmsStateService },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(FooterComponent);
     component = fixture.componentInstance;

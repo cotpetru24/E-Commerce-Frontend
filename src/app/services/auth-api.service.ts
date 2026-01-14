@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { defaultUrlMatcher, Router } from '@angular/router';
-import { ToastService } from './toast.service';
 import { BaseApiService } from './api';
 import { StorageService } from './storage.service';
 import { HttpClient } from '@angular/common/http';
@@ -12,28 +10,25 @@ import {
   UserInfoDto,
   UserRole,
 } from '../models/auth.dto';
-import { UserModule } from '../user/user.module';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class AuthApiService extends BaseApiService {
   private readonly baseUrl = '/api/auth';
 
   constructor(
     protected override http: HttpClient,
-    private router: Router,
-    private toastService: ToastService,
     protected override storageService: StorageService
   ) {
     super(http, storageService);
   }
 
-  // Traditional email/password login
   login(credentials: LoginRequestDto): Observable<{ token: string }> {
     return this.post<{ token: string }>(
-      this.buildUrl(this.baseUrl+'/login'),
+      this.buildUrl(this.baseUrl + '/login'),
       credentials
     ).pipe(
       tap((response) => {
@@ -42,13 +37,13 @@ export class AuthApiService extends BaseApiService {
     );
   }
 
-
-  register(userData: RegisterRequestDto): Observable<{token:string}> {
-    return this.post<{token:string}>(
-      this.buildUrl(this.baseUrl+`/register`), userData)
-      .pipe(
+  register(userData: RegisterRequestDto): Observable<{ token: string }> {
+    return this.post<{ token: string }>(
+      this.buildUrl(this.baseUrl + `/register`),
+      userData
+    ).pipe(
       tap((response) => {
-        this.setCurrentUser(response)
+        this.setCurrentUser(response);
       })
     );
   }
@@ -57,9 +52,9 @@ export class AuthApiService extends BaseApiService {
     this.clearAuthData();
   }
 
-  // User management
   getCurrentUser(): UserInfoDto | null {
-    const userInfo = this.storageService.getLocalObject<UserInfoDto>('currentUser');
+    const userInfo =
+      this.storageService.getLocalObject<UserInfoDto>('currentUser');
     if (!userInfo) return null;
 
     return {
@@ -117,9 +112,8 @@ export class AuthApiService extends BaseApiService {
   private validateRole(role: UserRole | string): UserRole {
     switch (role) {
       case UserRole.Customer:
-      case 'Customer':  
+      case 'Customer':
         return UserRole.Customer;
-      // case 'admin':
       case UserRole.Administrator:
       case 'Administrator':
         return UserRole.Administrator;

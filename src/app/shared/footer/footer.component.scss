@@ -1,12 +1,11 @@
 footer {
-  background: var(--footer-bg-color) !important; // Strong override to match navbar background color
-color: var(--footer-link-color);
+  background: var(--footer-bg-color) !important;
+  color: var(--footer-link-color);
   position: relative;
   margin-top: auto;
   padding: 3rem 0 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); // Line separator at top
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 
-  // Override Bootstrap's bg-dark class
   &.bg-dark {
     background: var(--footer-bg-color) !important;
   }
@@ -73,9 +72,9 @@ color: var(--footer-link-color);
     font-weight: 600;
     margin-bottom: 1.5rem;
     position: relative;
-    
+
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       bottom: -0.5rem;
       left: 0;
@@ -102,7 +101,7 @@ color: var(--footer-link-color);
         padding-left: 0;
 
         &::before {
-          content: '→';
+          content: "→";
           position: absolute;
           left: -1rem;
           opacity: 0;
@@ -127,10 +126,10 @@ color: var(--footer-link-color);
     border-color: rgba(255, 255, 255, 0.1) !important;
   }
 
-.logo{
-  max-width: 200px;
-  max-height: 50px;
-}
+  .logo {
+    max-width: 200px;
+    max-height: 50px;
+  }
 
   .payment-methods {
     .text-muted {
@@ -189,7 +188,6 @@ color: var(--footer-link-color);
   }
 }
 
-// Responsive Design
 @media (max-width: 768px) {
   footer {
     padding: 2rem 0 1rem;

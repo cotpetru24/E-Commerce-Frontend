@@ -7,75 +7,24 @@ import { OrderStatus } from '../../models';
   selector: 'app-modal-dialog',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="modal-header">
-      <h4 class="modal-title">{{ title }}</h4>
-      <button
-        type="button"
-        class="btn-close"
-        aria-label="Close"
-        (click)="activeModal.dismiss()"
-      ></button>
-    </div>
-
-    <div class="modal-body">
-      <!-- Default message -->
-      @if (modalType === 'confirm') {
-        <p>{{ message }}</p>
-      }
-
-      @if (modalType === 'updateOrderStatus') {
-        <p>{{ message }}</p>
-      }
-
-      @if (modalType === 'updateOrderStatus') {
-        <div>
-          @for (option of options; track option.value) {
-            <div class="form-check">
-              <input
-                type="checkbox"
-                class="form-check-input"
-                [checked]="option.checked"
-                (change)="option.checked = !option.checked"
-                [id]="'option-' + option.value"
-              />
-              <label class="form-check-label" [for]="'option-' + option.value">
-                {{ option.label }}
-              </label>
-            </div>
-          }
-        </div>
-      }
-    </div>
-
-    @if (modalType === 'confirm') {
-      <div class="modal-footer">
-        <button class="btn btn-danger" (click)="onConfirm()">Yes</button>
-        <button class="btn btn-secondary" (click)="activeModal.dismiss()">No</button>
-      </div>
-    }
-
-    @if (modalType === 'updateOrderStatus') {
-      <div class="modal-footer">
-        <button class="btn btn-danger" (click)="onConfirm()">Update</button>
-        <button class="btn btn-secondary" (click)="activeModal.dismiss()">Cancel</button>
-      </div>
-    }
-  `,
+  templateUrl: './modal-dialog.component.html',
 })
+
 export class ModalDialogComponent {
   @Input() title = 'Confirm';
   @Input() message = 'Are you sure?';
   @Input() modalType: 'confirm' | 'updateOrderStatus' = 'confirm';
   @Input() options: { label: string; value: OrderStatus; checked?: boolean }[] = [];
 
-  constructor(public activeModal: NgbActiveModal) {}
+  constructor(
+    public activeModal: NgbActiveModal
+  ) {}
 
   onConfirm(): void {
     if (this.modalType === 'updateOrderStatus') {
       const selected = this.options
-        .filter(o => o.checked)
-        .map(o => o.value);
+        .filter((o) => o.checked)
+        .map((o) => o.value);
       this.activeModal.close(selected);
     } else {
       this.activeModal.close(true);

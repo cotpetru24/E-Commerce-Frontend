@@ -15,15 +15,26 @@ describe('Navbar', () => {
   let cmsStateService: jasmine.SpyObj<CmsStateService>;
 
   beforeEach(async () => {
-    cartService = jasmine.createSpyObj('CartService', ['getCartItems', 'getCartItemCount']);
+    cartService = jasmine.createSpyObj('CartService', [
+      'getCartItems',
+      'getCartItemCount',
+    ]);
     cartService.getCartItems.and.returnValue([]);
     cartService.getCartItemCount.and.returnValue(0);
     cartService.cartItems$ = of([]);
 
-    cmsStateService = jasmine.createSpyObj('CmsStateService', ['getCmsProfile', 'setProfile']);
+    cmsStateService = jasmine.createSpyObj('CmsStateService', [
+      'getCmsProfile',
+      'setProfile',
+    ]);
     cmsStateService.cmsProfile$ = of({} as any);
 
-    const authApiService = jasmine.createSpyObj('AuthApiService', ['logout', 'isAuthenticated', 'isLoggedIn', 'isAdmin']);
+    const authApiService = jasmine.createSpyObj('AuthApiService', [
+      'logout',
+      'isAuthenticated',
+      'isLoggedIn',
+      'isAdmin',
+    ]);
     authApiService.isLoggedIn.and.returnValue(false);
     authApiService.isAdmin.and.returnValue(false);
 
@@ -33,20 +44,25 @@ describe('Navbar', () => {
         provideHttpClient(),
         provideRouter([]),
         { provide: CartService, useValue: cartService },
-        { provide: ToastService, useValue: jasmine.createSpyObj('ToastService', ['error', 'success', 'info']) },
+        {
+          provide: ToastService,
+          useValue: jasmine.createSpyObj('ToastService', [
+            'error',
+            'success',
+            'info',
+          ]),
+        },
         { provide: AuthApiService, useValue: authApiService },
-        { provide: CmsStateService, useValue: cmsStateService }
-      ]
-    })
-    .compileComponents();
+        { provide: CmsStateService, useValue: cmsStateService },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NavbarComponent);
     component = fixture.componentInstance;
-    
-    // Spy on component template methods before detectChanges
+
     spyOn(component, 'isLoggedIn').and.returnValue(false);
     spyOn(component, 'isAdmin').and.returnValue(false);
-    
+
     fixture.detectChanges();
   });
 
