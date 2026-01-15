@@ -6,7 +6,7 @@ import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { ProductApiService } from '../../services/api';
 import { ProductImageDto } from '../../models/product-image.dto';
-import { UtilsService } from '../../services/utils.service';
+import { UtilsService } from '../../services/utils';
 
 @Component({
   selector: 'product-details',

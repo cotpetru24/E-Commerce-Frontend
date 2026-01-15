@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { CartService, CartItem } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthApiService } from '../../services/api/auth-api.service';
-import { UtilsService } from '../../services/utils.service';
+import { UtilsService } from '../../services/utils';
 import { ProductImageDto } from '../../models';
 
 @Component({

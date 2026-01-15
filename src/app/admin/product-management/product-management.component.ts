@@ -19,7 +19,7 @@ import { Audience, ProductImageDto } from '../../models';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UtilsService } from '../../services/utils.service';
+import { UtilsService } from '../../services/utils';
 
 @Component({
   selector: 'app-product-management',

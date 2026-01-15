@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
 import { CmsStateService } from '../../services/cmsStateService';
-import { UtilsService } from '../../services/utils.service';
+import { UtilsService } from '../../services/utils';
 
 @Component({
   selector: 'app-footer',

@@ -5,7 +5,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
-import { UtilsService } from '../../services/utils.service';
+import { UtilsService } from '../../services/utils';
 import { AdminOrderDto } from '../../models/order.dto';
 import { AdminUser } from '../../services/api/admin-api.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';

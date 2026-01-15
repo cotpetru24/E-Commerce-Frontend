@@ -17,18 +17,18 @@ import { jwtDecode } from 'jwt-decode';
 })
 
 export class AuthApiService extends BaseApiService {
-  private readonly baseUrl = '/api/auth';
+  private readonly authEndpoint = '/api/auth';
 
   constructor(
     protected override http: HttpClient,
-    protected override storageService: StorageService
+    protected storageService: StorageService
   ) {
-    super(http, storageService);
+    super(http);
   }
 
   login(credentials: LoginRequestDto): Observable<{ token: string }> {
     return this.post<{ token: string }>(
-      this.buildUrl(this.baseUrl + '/login'),
+      this.buildUrl(this.authEndpoint + '/login'),
       credentials
     ).pipe(
       tap((response) => {
@@ -39,7 +39,7 @@ export class AuthApiService extends BaseApiService {
 
   register(userData: RegisterRequestDto): Observable<{ token: string }> {
     return this.post<{ token: string }>(
-      this.buildUrl(this.baseUrl + `/register`),
+      this.buildUrl(this.authEndpoint + `/register`),
       userData
     ).pipe(
       tap((response) => {
@@ -76,9 +76,8 @@ export class AuthApiService extends BaseApiService {
     return currentUser?.role === UserRole.Administrator;
   }
 
-  getUserRole(): string | null {
-    const currentUser = this.storageService.getLocalObject<any>('currentUser');
-    return currentUser?.role || null;
+  getUserRole(): UserRole | null {
+    return this.getCurrentUser()?.role ?? null;
   }
 
   private setCurrentUser(response: { token: string }): void {
@@ -133,12 +132,10 @@ export class AuthApiService extends BaseApiService {
       const token = this.storageService.getSessionItem('accessToken');
       if (!token) return false;
 
-      const decodedToken = jwtDecode(token);
+      const decodedToken = jwtDecode<{ exp: number }>(token);
       if (!decodedToken.exp) return false;
 
-      const currentTime = Math.floor(Date.now() / 1000);
-
-      return decodedToken.exp > currentTime;
+      return decodedToken.exp > Math.floor(Date.now() / 1000);
     } catch {
       return false;
     }

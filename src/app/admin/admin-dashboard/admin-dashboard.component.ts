@@ -9,7 +9,7 @@ import {
   AdminStats,
 } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
-import { UtilsService } from '../../services/utils.service';
+import { UtilsService } from '../../services/utils';
 
 @Component({
   selector: 'app-admin-dashboard',

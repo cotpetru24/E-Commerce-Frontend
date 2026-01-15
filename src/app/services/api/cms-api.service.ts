@@ -9,7 +9,7 @@ import { StorageService } from '../storage.service';
   providedIn: 'root',
 })
 export class CmsApiService extends BaseApiService {
-  protected readonly baseUrl = '/api/Cms';
+  protected readonly cmsEndpoint = '/api/Cms';
 
   constructor(protected override http: HttpClient, protected override storageService: StorageService) {
     super(http, storageService);
@@ -43,12 +43,9 @@ export class CmsApiService extends BaseApiService {
 
 
   getCmsActiveProfilesAsync(): Observable<CmsProfileDto> {
-    const url = this.buildUrl(this.baseUrl + '/active');
-    this.logRequest('GET', url);
+    const url = this.buildUrl(this.cmsEndpoint + '/active');
 
-    return this.get<CmsProfileDto>(url).pipe(
-      tap((response) => this.logResponse('GET', url, response))
-    );
+    return this.get<CmsProfileDto>(url);
   }
 
 

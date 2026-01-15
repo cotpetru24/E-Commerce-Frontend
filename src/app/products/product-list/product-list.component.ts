@@ -12,7 +12,7 @@ import {
   SortByOption,
 } from '../../models/product-filter.dto';
 import { finalize } from 'rxjs';
-import { UtilsService } from '../../services/utils.service';
+import { UtilsService } from '../../services/utils';
 import { ProductImageDto } from '../../models';
 
 @Component({
