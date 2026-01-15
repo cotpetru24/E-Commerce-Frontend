@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BaseApiService } from './api';
-import { StorageService } from './storage.service';
+import { BaseApiService } from '.';
+import { StorageService } from '../storage.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs';
@@ -9,7 +9,7 @@ import {
   RegisterRequestDto,
   UserInfoDto,
   UserRole,
-} from '../models/auth.dto';
+} from '../../models/auth.dto';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({

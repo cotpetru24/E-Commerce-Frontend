@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
-import { AuthApiService } from '../../services/auth-api.service';
+import { AuthApiService } from '../../services/api/auth-api.service';
 import { CmsStateService } from '../../services/cmsStateService';
 
 @Component({

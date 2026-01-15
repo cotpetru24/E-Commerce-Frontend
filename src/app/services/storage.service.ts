@@ -1,18 +1,10 @@
 import { Injectable } from '@angular/core';
 
-/**
- * Centralized storage service for localStorage and sessionStorage operations
- * Ensures consistent storage access patterns across the application
- */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+
 export class StorageService {
-  
-  // ============================================================================
-  // SESSION STORAGE METHODS
-  // ============================================================================
-  
   getSessionItem(key: string): string | null {
     try {
       return sessionStorage.getItem(key);
@@ -24,31 +16,21 @@ export class StorageService {
   setSessionItem(key: string, value: string): void {
     try {
       sessionStorage.setItem(key, value);
-    } catch (error) {
-      // Silently fail if storage is unavailable
-    }
+    } catch (error) {}
   }
 
   removeSessionItem(key: string): void {
     try {
       sessionStorage.removeItem(key);
-    } catch {
-      // Silently fail if storage is unavailable
-    }
+    } catch {}
   }
 
   clearSessionStorage(): void {
     try {
       sessionStorage.clear();
-    } catch {
-      // Silently fail if storage is unavailable
-    }
+    } catch {}
   }
 
-  // ============================================================================
-  // LOCAL STORAGE METHODS
-  // ============================================================================
-  
   getLocalItem(key: string): string | null {
     try {
       return localStorage.getItem(key);
@@ -60,31 +42,21 @@ export class StorageService {
   setLocalItem(key: string, value: string): void {
     try {
       localStorage.setItem(key, value);
-    } catch (error) {
-      // Silently fail if storage is unavailable
-    }
+    } catch (error) {}
   }
 
   removeLocalItem(key: string): void {
     try {
       localStorage.removeItem(key);
-    } catch {
-      // Silently fail if storage is unavailable
-    }
+    } catch {}
   }
 
   clearLocalStorage(): void {
     try {
       localStorage.clear();
-    } catch {
-      // Silently fail if storage is unavailable
-    }
+    } catch {}
   }
 
-  // ============================================================================
-  // JSON HELPERS
-  // ============================================================================
-  
   getSessionObject<T>(key: string): T | null {
     const item = this.getSessionItem(key);
     if (!item) return null;
@@ -98,9 +70,7 @@ export class StorageService {
   setSessionObject<T>(key: string, value: T): void {
     try {
       this.setSessionItem(key, JSON.stringify(value));
-    } catch {
-      // Silently fail if storage is unavailable
-    }
+    } catch {}
   }
 
   getLocalObject<T>(key: string): T | null {
@@ -116,9 +86,6 @@ export class StorageService {
   setLocalObject<T>(key: string, value: T): void {
     try {
       this.setLocalItem(key, JSON.stringify(value));
-    } catch {
-      // Silently fail if storage is unavailable
-    }
+    } catch {}
   }
 }
-

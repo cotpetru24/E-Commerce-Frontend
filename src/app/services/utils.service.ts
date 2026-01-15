@@ -1,32 +1,18 @@
 import { Injectable } from '@angular/core';
 
-/**
- * Shared utility service for common formatting and helper functions
- * Used across multiple components to avoid code duplication
- */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+
 export class UtilsService {
-  
-  /**
-   * Format a date to a localized date string
-   */
   formatDate(date: Date | string): string {
     return new Date(date).toLocaleDateString();
   }
 
-  /**
-   * Format a number as currency (GBP)
-   */
   formatCurrency(amount: number): string {
     return `£${amount.toFixed(2)}`;
   }
 
-  /**
-   * Format time ago string (e.g., "2 days ago", "Just now")
-   * More detailed version with seconds/minutes/hours
-   */
   formatTimeAgo(dateString: Date | string): string {
     const date = new Date(dateString);
     const now = new Date();
@@ -48,15 +34,12 @@ export class UtilsService {
     }
   }
 
-  /**
-   * Get time ago string (simpler version with days/weeks/months/years)
-   */
   getTimeAgo(date: Date | string): string {
     const now = new Date();
     const past = new Date(date);
     const diffInMs = now.getTime() - past.getTime();
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffInDays === 0) return 'Today';
     if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} days ago`;
@@ -65,18 +48,14 @@ export class UtilsService {
     return `${Math.floor(diffInDays / 365)} years ago`;
   }
 
-  /**
-   * Format time (HH:mm)
-   */
   formatTime(date: Date | string): string {
-    return new Date(date).toLocaleTimeString('en-GB', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return new Date(date).toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
 
-    scrollToTop() {
+  scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
-

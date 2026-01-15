@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
-import { AuthApiService } from '../../services/auth-api.service';
+import { AuthApiService } from '../../services/api/auth-api.service';
 
 export const adminGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthApiService);

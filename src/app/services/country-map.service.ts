@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+
 export class CountryMapService {
   private countryMap: { [key: string]: string } = {
     US: 'United States',
@@ -23,7 +24,7 @@ export class CountryMapService {
     AT: 'Austria',
     BE: 'Belgium',
     IE: 'Ireland',
-    NZ: 'New Zealand'
+    NZ: 'New Zealand',
   };
 
   getName(code: string): string {
@@ -31,6 +32,9 @@ export class CountryMapService {
   }
 
   getAll(): { code: string; name: string }[] {
-    return Object.entries(this.countryMap).map(([code, name]) => ({ code, name }));
+    return Object.entries(this.countryMap).map(([code, name]) => ({
+      code,
+      name,
+    }));
   }
 }
