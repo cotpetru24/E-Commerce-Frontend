@@ -17,7 +17,7 @@ import {
   ShippingAddressDto,
   ShippingInfo,
   UpdateOrderStatusRequestDto,
-} from '../../models';
+} from '../../dtos';
 import { ToastService } from '../../services/toast.service';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ActivatedRoute } from '@angular/router';

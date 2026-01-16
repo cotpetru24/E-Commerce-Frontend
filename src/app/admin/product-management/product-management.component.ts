@@ -15,7 +15,7 @@ import {
 } from '../../models/product.dto';
 import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
-import { Audience, ProductImageDto } from '../../models';
+import { Audience, ProductImageDto } from '../../dtos';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

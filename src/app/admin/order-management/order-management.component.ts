@@ -15,7 +15,7 @@ import {
   SortBy,
   SortDirection,
   UpdateOrderStatusRequestDto,
-} from '../../models';
+} from '../../dtos';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 

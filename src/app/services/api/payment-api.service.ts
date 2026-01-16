@@ -2,36 +2,36 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-import { StorageService } from '../storage.service';
-
+import {
+  CreatePaymentIntentRequestDto,
+  CreatePaymentIntentResponseDto,
+  StorePaymentRequestDto,
+} from '../../dtos';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class PaymentApiService extends BaseApiService {
+  private readonly paymentEndPoint = '/api/Payment';
 
-    protected readonly baseUrl = '/api/Payment';
-
-  constructor(
-    protected override http: HttpClient,
-    protected override storageService: StorageService
-  ) {
-    super(http, storageService);
+  constructor(protected override http: HttpClient) {
+    super(http);
   }
 
-
-  createPaymentIntent(amount: number ): Observable<{ clientSecret: string }> {
-    return this.post<{ clientSecret: string }>(
-      this.buildUrl(this.baseUrl+'/createPaymentIntent'),
-
-      amount
+  createPaymentIntent(
+    request: CreatePaymentIntentRequestDto
+  ): Observable<CreatePaymentIntentResponseDto> {
+    return this.post<CreatePaymentIntentResponseDto>(
+      this.buildUrl(this.paymentEndPoint + '/createPaymentIntent'),
+      request
     );
   }
 
-  storePaymentDetails(orderId: number, paymentIntentId: string): Observable<void> {
-    const body = { orderId, paymentIntentId };
-    return this.post<void, { orderId: number; paymentIntentId: string }>
-    (this.buildUrl(`${this.baseUrl}/storePaymentDetails`), body);
+  storePaymentDetails(request: StorePaymentRequestDto): Observable<void> {
+    return this.post<void, StorePaymentRequestDto>(
+      this.buildUrl(`${this.paymentEndPoint}/storePaymentDetails`),
+      request
+    );
   }
-
 }

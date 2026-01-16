@@ -6,7 +6,7 @@ import { CartService, CartItem } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthApiService } from '../../services/api/auth-api.service';
 import { UtilsService } from '../../services/utils';
-import { ProductImageDto } from '../../models';
+import { ProductImageDto } from '../../dtos';
 
 @Component({
   selector: 'app-cart-view',

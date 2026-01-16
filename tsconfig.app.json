@@ -5,12 +5,13 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "types": ["node"],
-    "typeRoots": ["node_modules/@types", "src/types"]
+    "typeRoots": ["node_modules/@types", "src/types"],
+    "baseUrl": "src",
+    "paths": {
+      "@dtos/*": ["app/dtos/*"],
+      "@dtos": ["app/dtos"]
+    }
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "src/**/*.spec.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts"]
 }

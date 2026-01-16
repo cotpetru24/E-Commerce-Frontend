@@ -21,6 +21,4 @@ export interface UserInfoDto {
 export enum UserRole {
   Administrator = 1,
   Customer = 2,
-// Customer='Customer',
-// Administrator='Administrator'
 }

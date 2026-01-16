@@ -13,7 +13,7 @@ import {
 } from '../../models/product-filter.dto';
 import { finalize } from 'rxjs';
 import { UtilsService } from '../../services/utils';
-import { ProductImageDto } from '../../models';
+import { ProductImageDto } from '../../dtos';
 
 @Component({
   selector: 'app-product-list',

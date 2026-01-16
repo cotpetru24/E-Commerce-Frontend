@@ -10,7 +10,7 @@ import {
   PlaceOrderResponseDto,
   CreateBillingAddressRequestDto,
   AddressData,
-} from '../../models';
+} from '../../dtos';
 import { CartService } from '../../services/cart.service';
 import {
   loadStripe,

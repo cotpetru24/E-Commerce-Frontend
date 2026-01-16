@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { OrderStatus } from '../../models';
+import { OrderStatus } from '../../dtos';
 
 @Component({
   selector: 'app-modal-dialog',

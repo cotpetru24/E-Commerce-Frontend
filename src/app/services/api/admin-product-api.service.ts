@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
-import { StorageService } from '../storage.service';
 import {
   AdminProductDto,
   AdminBrandDto,
@@ -12,42 +10,28 @@ import {
   GetProductsAdminResponseDto,
 } from '../../models/product.dto';
 
-// Type alias for response DTO
-type AdminProductListDto = GetProductsAdminResponseDto;
-
-// ============================================================================
-// ADMIN PRODUCT API SERVICE
-// ============================================================================
-// Handles admin product management API calls
-
 @Injectable({
   providedIn: 'root',
 })
-export class AdminProductApiService extends BaseApiService {
-  private readonly endPoint = '/api/admin/products';
 
-  constructor(
-    protected override http: HttpClient,
-    protected override storageService: StorageService
-  ) {
-    super(http, storageService);
+export class AdminProductApiService extends BaseApiService {
+  private readonly adminProductEndPoint = '/api/admin/products';
+
+  constructor(protected override http: HttpClient) {
+    super(http);
   }
 
-  /**
-   * Get all products with admin details
-   */
   getProducts(
-    request: GetProductsAdminRequestDto | null
-  ): Observable<AdminProductListDto> {
-    const url = this.buildUrl(this.endPoint);
+    request?: GetProductsAdminRequestDto
+  ): Observable<GetProductsAdminResponseDto> {
+    const url = this.buildUrl(this.adminProductEndPoint);
     const params = this.createParams({
       pageNumber: request?.pageNumber || 1,
       pageSize: request?.pageSize || 10,
       ...(request?.searchTerm && { searchTerm: request.searchTerm }),
       ...(request?.productBrand && { productBrand: request.productBrand }),
       ...(request?.isActive !== null &&
-        request?.isActive !== undefined &&
-        { isActive: request.isActive }),
+        request?.isActive !== undefined && { isActive: request.isActive }),
       ...(request?.productStockStatus && {
         productStockStatus: request.productStockStatus,
       }),
@@ -58,92 +42,39 @@ export class AdminProductApiService extends BaseApiService {
       }),
     });
 
-    this.logRequest('GET', url, params);
-
-    return this.get<AdminProductListDto>(url, { params }).pipe(
-      tap((response) => this.logResponse('GET', url, response)),
-      catchError(this.handleError)
-    );
+    return this.get<GetProductsAdminResponseDto>(url, { params });
   }
 
-  /**
-   * Get product by ID
-   */
   getProductById(productId: number): Observable<AdminProductDto> {
-    const url = this.buildUrl(`${this.endPoint}/${productId}`);
-    this.logRequest('GET', url);
-
-    return this.get<AdminProductDto>(url).pipe(
-      tap((response) => this.logResponse('GET', url, response)),
-      catchError(this.handleError)
-    );
+    const url = this.buildUrl(`${this.adminProductEndPoint}/${productId}`);
+    return this.get<AdminProductDto>(url);
   }
 
-  /**
-   * Get product brands
-   */
   getProductBrands(): Observable<AdminBrandDto[]> {
-    const url = this.buildUrl(`${this.endPoint}/brands`);
-    this.logRequest('GET', url);
-
-    return this.get<AdminBrandDto[]>(url).pipe(
-      tap((response) => this.logResponse('GET', url, response)),
-      catchError(this.handleError)
-    );
+    const url = this.buildUrl(`${this.adminProductEndPoint}/brands`);
+    return this.get<AdminBrandDto[]>(url);
   }
 
-  /**
-   * Get product audience types
-   */
   getProductAudience(): Observable<AdminProductAudienceDto[]> {
-    const url = this.buildUrl(`${this.endPoint}/audience`);
-    this.logRequest('GET', url);
-
-    return this.get<AdminProductAudienceDto[]>(url).pipe(
-      tap((response) => this.logResponse('GET', url, response)),
-      catchError(this.handleError)
-    );
+    const url = this.buildUrl(`${this.adminProductEndPoint}/audience`);
+    return this.get<AdminProductAudienceDto[]>(url);
   }
 
-  /**
-   * Create new product
-   */
   createProduct(product: AdminProductDto): Observable<AdminProductDto> {
-    const url = this.buildUrl(this.endPoint);
-    this.logRequest('POST', url, product);
-
-    return this.post<AdminProductDto>(url, product).pipe(
-      tap((response) => this.logResponse('POST', url, response)),
-      catchError(this.handleError)
-    );
+    const url = this.buildUrl(this.adminProductEndPoint);
+    return this.post<AdminProductDto>(url, product);
   }
 
-  /**
-   * Update product
-   */
   updateProduct(
     productId: number,
     product: AdminProductDto
-  ): Observable<any> {
-    const url = this.buildUrl(`${this.endPoint}/${productId}`);
-    this.logRequest('PUT', url, product);
-
-    return this.put<any>(url, product).pipe(
-      tap((response) => this.logResponse('PUT', url, response)),
-      catchError(this.handleError)
-    );
+  ): Observable<{ message: string }> {
+    const url = this.buildUrl(`${this.adminProductEndPoint}/${productId}`);
+    return this.put<{ message: string }>(url, product);
   }
 
-  /**
-   * Delete product
-   */
-  deleteProduct(productId: number): Observable<any> {
-    const url = this.buildUrl(`${this.endPoint}/${productId}`);
-    this.logRequest('DELETE', url);
-
-    return this.delete<any>(url).pipe(
-      tap((response) => this.logResponse('DELETE', url, response)),
-      catchError(this.handleError)
-    );
+  deleteProduct(productId: number): Observable<{ message: string }> {
+    const url = this.buildUrl(`${this.adminProductEndPoint}/${productId}`);
+    return this.delete<{ message: string }>(url);
   }
 }

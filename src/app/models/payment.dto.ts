@@ -10,3 +10,16 @@ export interface PaymentDto {
   receiptUrl?: string;
   paymentMethod?: string;
 }
+
+export interface StorePaymentRequestDto {
+  orderId: number;
+  paymentIntentId: string;
+}
+
+export interface CreatePaymentIntentRequestDto {
+  amount: number;
+}
+
+export interface CreatePaymentIntentResponseDto {
+  clientSecret: string;
+}

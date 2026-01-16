@@ -7,7 +7,7 @@ import {
   OrderSummary,
   CreateShippingAddressRequestDto,
   ShippingAddressDto,
-} from '../../models';
+} from '../../dtos';
 import { CartService } from '../../services/cart.service';
 import { ShippingAddressApiService } from '../../services/api/shipping-address-api.service';
 import { ToastService } from '../../services/toast.service';

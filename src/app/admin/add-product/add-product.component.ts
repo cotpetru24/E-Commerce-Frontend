@@ -14,7 +14,7 @@ import {
   AdminProductDto,
   AdminProductFeatureDto,
   ProductSizeDto,
-} from '../../models';
+} from '../../dtos';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 

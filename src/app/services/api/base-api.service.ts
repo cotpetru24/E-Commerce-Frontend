@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -12,27 +12,36 @@ export abstract class BaseApiService {
 
   constructor(protected http: HttpClient) {}
 
-  protected get<T>(
+  protected get<TResponse>(
     url: string,
     options: { params?: HttpParams } = {}
-  ): Observable<T> {
-    return this.http.get<T>(url, options);
+  ): Observable<TResponse> {
+    return this.http.get<TResponse>(url, options);
   }
 
-  protected post<T, B = any>(url: string, body: B): Observable<T> {
-    return this.http.post<T>(url, body);
+  protected post<TResponse, TBody = any>(
+    url: string,
+    body: TBody
+  ): Observable<TResponse> {
+    return this.http.post<TResponse>(url, body);
   }
 
-  protected put<T, B = any>(url: string, body: B): Observable<T> {
-    return this.http.put<T>(url, body);
+  protected put<TResponse, TBody = any>(
+    url: string,
+    body: TBody
+  ): Observable<TResponse> {
+    return this.http.put<TResponse>(url, body);
   }
 
-  protected patch<T>(url: string, body: any): Observable<T> {
-    return this.http.patch<T>(url, body);
+  protected patch<TResponse, TBody = any>(
+    url: string,
+    body: TBody
+  ): Observable<TResponse> {
+    return this.http.patch<TResponse>(url, body);
   }
 
-  protected delete<T>(url: string): Observable<T> {
-    return this.http.delete<T>(url);
+  protected delete<TResponse>(url: string): Observable<TResponse> {
+    return this.http.delete<TResponse>(url);
   }
 
   protected buildUrl(endpoint: string): string {

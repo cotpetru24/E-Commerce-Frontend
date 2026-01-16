@@ -1,5 +1,4 @@
-import { AdminUser } from "../services/api/admin-api.service";
-import { UserRole } from "./auth.dto";
+import { UserRole } from '.';
 
 export interface UserDto {
   id: number;
@@ -9,6 +8,19 @@ export interface UserDto {
   roles: UserRole[];
   isBlocked: boolean;
   emailVerified: boolean;
+  createdAt: Date;
+  lastLoginAt?: Date;
+  orderCount?: number;
+}
+
+export interface AdminUserDto {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  roles: UserRole[];
+  isBlocked: boolean;
+  emailConfirmed?: boolean;
   createdAt: Date;
   lastLoginAt?: Date;
   orderCount?: number;
@@ -31,10 +43,30 @@ export interface UpdateUserProfileRequestDto {
   lastName: string;
 }
 
+export interface AdminUpdateUserProfileRequestDto {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  isBlocked?: boolean;
+  roles?: string[];
+}
+
+export interface UpdateUserProfileResponseDto {
+  message: string;
+}
+
 export interface ChangePasswordRequestDto {
   currentPassword: string;
   newPassword: string;
   confirmPassword: string;
+}
+
+export interface AdminChangePasswordResponseDto {
+  newPassword: string;
+}
+
+export interface ChangePasswordResponseDto {
+  message: string;
 }
 
 export interface UserStatsDto {
@@ -44,20 +76,25 @@ export interface UserStatsDto {
   totalSpent: number;
 }
 
-
-export interface GetAllUsersRequestDto {
-pageNumber: number;
-pageSize: number;
-searchTerm?: string | null;
-sortDirection : UsersSortDirection | null
-sortBy?: UsersSortBy | null;
-userStatus?: UserStatus | null;
-userRole?: UserRole | null;
+export interface AdminUsersStatsDto {
+  totalUsersCount: number;
+  totalActiveUsersCount: number;
+  totalBlockedUsersCount: number;
+  totalNewUsersCountThisMonth: number;
 }
 
+export interface GetAllUsersRequestDto {
+  pageNumber: number;
+  pageSize: number;
+  searchTerm?: string | null;
+  sortDirection: UsersSortDirection | null;
+  sortBy?: UsersSortBy | null;
+  userStatus?: UserStatus | null;
+  userRole?: UserRole | null;
+}
 
 export interface GetAllUsersResponseDto {
-  users: AdminUser[];
+  users: AdminUserDto[];
   totalQueryCount: number;
   adminUsersStats: AdminUsersStatsDto;
   pageNumber: number;
@@ -65,22 +102,14 @@ export interface GetAllUsersResponseDto {
   totalPages: number;
 }
 
-export interface AdminUsersStatsDto{
-totalUsersCount: number;
-totalActiveUsersCount: number;
-totalBlockedUsersCount: number;
-totalNewUsersCountThisMonth: number;
-}
-
-
 export enum UsersSortBy {
-  DateCreated=1,
-  Name=2,
+  DateCreated = 1,
+  Name = 2,
 }
 
 export enum UsersSortDirection {
-  Ascending=1,
-  Descending=2,
+  Ascending = 1,
+  Descending = 2,
 }
 
 export enum UserStatus {

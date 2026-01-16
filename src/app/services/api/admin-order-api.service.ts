@@ -1,42 +1,29 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
-import { StorageService } from '../storage.service';
 import {
   GetAllOrdersRequestDto,
   GetAllOrdersResponseDto,
   AdminOrderDto,
   UpdateOrderStatusRequestDto,
-} from '../../models';
-
-// Type alias for response DTO
-type AdminOrderListDto = GetAllOrdersResponseDto;
-
-// ============================================================================
-// ADMIN ORDER API SERVICE
-// ============================================================================
-// Handles admin order management API calls
+} from '../../dtos';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AdminOrderApiService extends BaseApiService {
-  private readonly endPoint = '/api/admin/orders';
 
-  constructor(
-    protected override http: HttpClient,
-    protected override storageService: StorageService
-  ) {
-    super(http, storageService);
+export class AdminOrderApiService extends BaseApiService {
+  private readonly adminOrderEndPoint = '/api/admin/orders';
+
+  constructor(protected override http: HttpClient) {
+    super(http);
   }
 
-  /**
-   * Get all orders with pagination and filtering
-   */
-  getOrders(request: GetAllOrdersRequestDto): Observable<AdminOrderListDto> {
-    const url = this.buildUrl(this.endPoint);
+  getOrders(
+    request: GetAllOrdersRequestDto
+  ): Observable<GetAllOrdersResponseDto> {
+    const url = this.buildUrl(this.adminOrderEndPoint);
     const params = this.createParams({
       pageNumber: request?.pageNumber || 1,
       pageSize: request?.pageSize || 10,
@@ -52,40 +39,19 @@ export class AdminOrderApiService extends BaseApiService {
         }),
     });
 
-    this.logRequest('GET', url, request);
-
-    return this.get<AdminOrderListDto>(url, { params }).pipe(
-      tap((response) => this.logResponse('GET', url, response)),
-      catchError(this.handleError)
-    );
+    return this.get<GetAllOrdersResponseDto>(url, { params });
   }
 
-  /**
-   * Get specific order by ID
-   */
   getOrderById(orderId: number): Observable<AdminOrderDto> {
-    const url = this.buildUrl(`${this.endPoint}/${orderId}`);
-    this.logRequest('GET', url);
-
-    return this.get<AdminOrderDto>(url).pipe(
-      tap((response) => this.logResponse('GET', url, response)),
-      catchError(this.handleError)
-    );
+    const url = this.buildUrl(`${this.adminOrderEndPoint}/${orderId}`);
+    return this.get<AdminOrderDto>(url);
   }
 
-  /**
-   * Update order status
-   */
   updateOrderStatus(
     orderId: number,
     statusData: UpdateOrderStatusRequestDto
-  ): Observable<any> {
-    const url = this.buildUrl(`${this.endPoint}/${orderId}/status`);
-    this.logRequest('PUT', url, statusData);
-
-    return this.put<any>(url, statusData).pipe(
-      tap((response) => this.logResponse('PUT', url, response)),
-      catchError(this.handleError)
-    );
+  ): Observable<{ message: string }> {
+    const url = this.buildUrl(`${this.adminOrderEndPoint}/${orderId}/status`);
+    return this.put<{ message: string }>(url, statusData);
   }
 }

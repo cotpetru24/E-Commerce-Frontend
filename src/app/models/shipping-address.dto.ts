@@ -46,8 +46,13 @@ export interface UpdateShippingAddressRequestDto {
   country: string;
 }
 
-export interface ShippingAddressResponseDto {
+export interface CreateShippingAddressResponseDto {
   id: number;
   message: string;
   createdAt: Date;
+}
+
+
+export interface DeleteShippingAddressResponseDto {
+  message: string;
 }

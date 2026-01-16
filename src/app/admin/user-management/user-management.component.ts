@@ -9,7 +9,7 @@ import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AdminUsersStatsDto, GetAllUsersRequestDto, UserRole, UserStatus } from '../../models';
+import { AdminUsersStatsDto, GetAllUsersRequestDto, UserRole, UserStatus } from '../../dtos';
 import { UsersSortBy, UsersSortDirection } from '../../models/user.dto';
 
 @Component({

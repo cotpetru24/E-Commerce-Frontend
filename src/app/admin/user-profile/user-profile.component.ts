@@ -10,7 +10,7 @@ import { AdminOrderDto } from '../../models/order.dto';
 import { AdminUser } from '../../services/api/admin-api.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UserRole } from '../../models';
+import { UserRole } from '../../dtos';
 
 @Component({
   selector: 'app-user-profile',

@@ -16,7 +16,7 @@ import {
   AdminProductDto,
   AdminProductFeatureDto,
   ProductSizeDto,
-} from '../../models';
+} from '../../dtos';
 
 @Component({
   selector: 'app-edit-product',

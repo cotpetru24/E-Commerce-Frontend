@@ -10,7 +10,7 @@ import {
   ShippingAddress,
   ShippingAddressDto,
   ShippingInfo,
-} from '../../models';
+} from '../../dtos';
 import { ToastService } from '../../services/toast.service';
 import { OrderApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';

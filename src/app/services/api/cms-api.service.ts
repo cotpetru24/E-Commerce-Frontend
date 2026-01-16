@@ -1,104 +1,67 @@
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
-import { CmsLandingPageDto, CmsNavAndFooterDto, CmsProfileDto, CmsStoredProfileDto } from '../../models/cms.dto';
-import { Observable, tap } from 'rxjs';
-import { StorageService } from '../storage.service';
+import {
+  CmsLandingPageDto,
+  CmsNavAndFooterDto,
+  CmsProfileDto,
+  CmsStoredProfileDto,
+} from '../../models/cms.dto';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class CmsApiService extends BaseApiService {
   protected readonly cmsEndpoint = '/api/Cms';
 
-  constructor(protected override http: HttpClient, protected override storageService: StorageService) {
-    super(http, storageService);
+  constructor(protected override http: HttpClient) {
+    super(http);
   }
 
-  getCmsProfilesAsync(): Observable<CmsStoredProfileDto[]> {
-    this.logRequest('GET', this.buildUrl(this.baseUrl + '/profiles'));
-
-    return this.get(
-      this.buildUrl(this.baseUrl + '/profiles')
-    );
+  getCmsProfiles(): Observable<CmsStoredProfileDto[]> {
+    const url = this.buildUrl(this.cmsEndpoint + '/profiles');
+    return this.get<CmsStoredProfileDto[]>(url);
   }
 
-  GetCmsNavAndFooterAsync(): Observable<CmsNavAndFooterDto> {
-    const url = this.buildUrl(this.baseUrl + '/navAndFooter');
-    this.logRequest('GET', url);
-
-    return this.get<CmsNavAndFooterDto>(url).pipe(
-      tap((response) => this.logResponse('GET', url, response))
-    );
+  getCmsNavAndFooter(): Observable<CmsNavAndFooterDto> {
+    const url = this.buildUrl(this.cmsEndpoint + '/navAndFooter');
+    return this.get<CmsNavAndFooterDto>(url);
   }
 
-  getCmsLandingPageAsync(): Observable<CmsLandingPageDto> {
-    const url = this.buildUrl(this.baseUrl + '/landing');
-    this.logRequest('GET', url);
-
-    return this.get<CmsLandingPageDto>(url).pipe(
-      tap((response) => this.logResponse('GET', url, response))
-    );
+  getCmsLandingPage(): Observable<CmsLandingPageDto> {
+    const url = this.buildUrl(this.cmsEndpoint + '/landing');
+    return this.get<CmsLandingPageDto>(url);
   }
 
-
-  getCmsActiveProfilesAsync(): Observable<CmsProfileDto> {
+  getCmsActiveProfiles(): Observable<CmsProfileDto> {
     const url = this.buildUrl(this.cmsEndpoint + '/active');
-
     return this.get<CmsProfileDto>(url);
   }
 
-
-
-
-
-
-
-  getCmsProfileByIdAsync(profileId: number): Observable<CmsProfileDto> {
-    const url = this.buildUrl(`${this.baseUrl}/${profileId}`);
-    this.logRequest('GET', url, profileId);
-
-    return this.get<CmsProfileDto>(url).pipe(
-      tap((response) => this.logResponse('GET', url, response))
-    );
+  getCmsProfileById(profileId: number): Observable<CmsProfileDto> {
+    const url = this.buildUrl(`${this.cmsEndpoint}/${profileId}`);
+    return this.get<CmsProfileDto>(url);
   }
 
-  createCmsProfileAsync(
-    profileToCreate: CmsProfileDto
-  ): Observable<CmsProfileDto> {
-    const url = this.buildUrl(this.baseUrl);
-    this.logRequest('POST', url, profileToCreate);
-
-    return this.post<CmsProfileDto, CmsProfileDto>(url, profileToCreate).pipe(
-      tap((response) => this.logResponse('POST', url, response))
-    );
+  createCmsProfile(profileToCreate: CmsProfileDto): Observable<CmsProfileDto> {
+    const url = this.buildUrl(this.cmsEndpoint);
+    return this.post<CmsProfileDto, CmsProfileDto>(url, profileToCreate);
   }
 
-  activateCmsProfileAsync(profileId: number): Observable<CmsProfileDto> {
-    const url = this.buildUrl(`${this.baseUrl}/activate/${profileId}`);
-    this.logRequest('POST', url, profileId);
-
-    return this.post<CmsProfileDto, number>(url, profileId).pipe(
-      tap((response) => this.logResponse('POST', url, response))
-    );
+  activateCmsProfile(profileId: number): Observable<CmsProfileDto> {
+    const url = this.buildUrl(`${this.cmsEndpoint}/activate/${profileId}`);
+    return this.post<CmsProfileDto>(url, undefined);
   }
 
-  updateCmsProfileAsync(
-    profileToUpdate: CmsProfileDto
-  ): Observable<CmsProfileDto> {
-    const url = this.buildUrl(this.baseUrl);
-    this.logRequest('PUT', url, profileToUpdate);
-    return this.put<CmsProfileDto, CmsProfileDto>(url, profileToUpdate).pipe(
-      tap((response) => this.logResponse('PUT', url, response))
-    );
+  updateCmsProfile(profileToUpdate: CmsProfileDto): Observable<CmsProfileDto> {
+    const url = this.buildUrl(this.cmsEndpoint);
+    return this.put<CmsProfileDto, CmsProfileDto>(url, profileToUpdate);
   }
 
-  deleteCmsProfileAsync(profileId: number): Observable<boolean> {
-    const url = this.buildUrl(`${this.baseUrl}/${profileId}`);
-    this.logRequest('DELETE', url, profileId);
-
-    return this.delete<boolean>(url).pipe(
-      tap((response) => this.logResponse('DELETE', url, response))
-    );
+  deleteCmsProfile(profileId: number): Observable<boolean> {
+    const url = this.buildUrl(`${this.cmsEndpoint}/${profileId}`);
+    return this.delete<boolean>(url);
   }
 }

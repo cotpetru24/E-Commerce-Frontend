@@ -2,42 +2,47 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-import { StorageService } from '../storage.service';
-import { UserProfileDto, UpdateUserProfileRequestDto, ChangePasswordRequestDto, UserStatsDto } from '../../models/user.dto';
+import {
+  UserProfileDto,
+  UpdateUserProfileRequestDto,
+  ChangePasswordRequestDto,
+  UserStatsDto,
+  UpdateUserProfileResponseDto,
+  ChangePasswordResponseDto,
+} from '../../models/user.dto';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+
 export class UserApiService extends BaseApiService {
   private readonly userEndpoint = '/api/User';
 
-  constructor(
-    protected override http: HttpClient,
-    protected override storageService: StorageService
-  ) {
-    super(http, storageService);
+  constructor(protected override http: HttpClient) {
+    super(http);
   }
 
   getUserProfile(): Observable<UserProfileDto> {
-    const url = this.buildUrl(this.userEndpoint + '/profile');
-    this.logRequest('GET', url);
+    const url = this.buildUrl(`${this.userEndpoint}/profile`);
     return this.get<UserProfileDto>(url);
   }
 
-  updateUserProfile(request: UpdateUserProfileRequestDto): Observable<{ message: string }> {
-    const url = this.buildUrl(this.userEndpoint + '/profile');
-    this.logRequest('PUT', url, request);
-    return this.put<{ message: string }>(url, request);
+  updateUserProfile(
+    request: UpdateUserProfileRequestDto
+  ): Observable<UpdateUserProfileResponseDto> {
+    const url = this.buildUrl(`${this.userEndpoint}/profile`);
+    return this.put<UpdateUserProfileResponseDto>(url, request);
   }
 
-  changePassword(request: ChangePasswordRequestDto): Observable<{ message: string }> {
-    const url = this.buildUrl(this.userEndpoint + '/change-password');
-    return this.put<{ message: string }>(url, request);
+  changePassword(
+    request: ChangePasswordRequestDto
+  ): Observable<ChangePasswordResponseDto> {
+    const url = this.buildUrl(`${this.userEndpoint}/change-password`);
+    return this.put<ChangePasswordResponseDto>(url, request);
   }
 
   getUserStats(): Observable<UserStatsDto> {
-    const url = this.buildUrl(this.userEndpoint + '/stats');
-    this.logRequest('GET', url);
+    const url = this.buildUrl(`${this.userEndpoint}/stats`);
     return this.get<UserStatsDto>(url);
   }
 }
