@@ -66,7 +66,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private adminUserApiService: AdminUserApiService,
     private router: Router,
     private toastService: ToastService,
-    private modalService: NgbModal,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -111,7 +111,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.toastService.error('Failed to load users');
         },
-      }),
+      })
     );
   }
 
@@ -229,7 +229,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.message = `Are you sure you want to ${action} user: ${user.firstName} ${user.lastName}?`;
     modalRef.componentInstance.modalType = 'confirm';
 
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: boolean) => {
       if (result === true) {
         this.isLoading = true;
 
@@ -251,7 +251,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
               error: (err) => {
                 this.toastService.error('Failed to update user status');
               },
-            }),
+            })
         );
       }
     });
@@ -263,7 +263,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.message = `Are you sure you want to delete user: ${user.firstName} ${user.lastName}?`;
     modalRef.componentInstance.modalType = 'confirm';
 
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: boolean) => {
       if (result === true) {
         this.isLoading = true;
 
@@ -280,7 +280,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
               this.toastService.error('Failed to delete user');
               this.isLoading = false;
             },
-          }),
+          })
         );
       }
     });

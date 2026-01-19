@@ -1,4 +1,4 @@
-export interface ShippingAddressDto {
+export interface AddressDto {
   id: number;
   userId?: string;
   firstName: string;
@@ -12,9 +12,7 @@ export interface ShippingAddressDto {
   phoneNumber?: string;
 }
 
-export interface BillingAddressDto {
-  id: number;
-  userId?: string;
+export interface CreateAddressRequestDto {
   addressLine1: string;
   city: string;
   county: string;
@@ -22,46 +20,13 @@ export interface BillingAddressDto {
   country: string;
 }
 
-export interface AdminBillingAddressDto {
-  id: number;
-  firstName: string;
-  lastName: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-  phoneNumber?: string;
-}
-
-export interface CreateShippingAddressRequestDto {
-  addressLine1: string;
-  city: string;
-  county: string;
-  postcode: string;
-  country: string;
-}
-
-export interface CreateBillingAddressRequestDto {
-  addressLine1: string;
-  city: string;
-  county: string;
-  postcode: string;
-  country: string;
-}
-
-export interface DeleteShippingAddressResponseDto {
-  message: string;
-}
-
-export interface CreateShippingAddressResponseDto {
+export interface CreateAddressResponseDto {
   id: number;
   message: string;
   createdAt: Date;
 }
 
-export interface UpdateShippingAddressRequestDto {
+export interface UpdateAddressRequestDto {
   id: number;
   userId?: string;
   addressLine1: string;
@@ -69,4 +34,8 @@ export interface UpdateShippingAddressRequestDto {
   county: string;
   postcode: string;
   country: string;
+}
+
+export interface DeleteAddressResponseDto {
+  message: string;
 }

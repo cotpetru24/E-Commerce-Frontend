@@ -88,7 +88,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     private paymentApiService: PaymentApiService,
     private orderApiService: OrderApiService,
     private toastService: ToastService,
-    private storageService: StorageService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -121,7 +121,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       const { clientSecret } = await firstValueFrom(
         this.paymentApiService.createPaymentIntent({
           amount: Math.round(this.orderSummary.total * 100),
-        }),
+        })
       );
 
       if (!clientSecret) {
@@ -169,13 +169,13 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       const orderRequest = this.createOrderRequest();
       this.orderResponse = await firstValueFrom(
-        this.orderApiService.placeOrder(orderRequest),
+        this.orderApiService.placeOrder(orderRequest)
       );
 
       this.toastService.success('Order placed successfully!');
       this.storageService.setLocalItem(
         'lastOrderId',
-        this.orderResponse.orderId.toString(),
+        this.orderResponse.orderId.toString()
       );
 
       if (this.paymentData.paymentMethod === 'card') {
@@ -204,7 +204,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                   ['/user/order', this.orderResponse!.orderId],
                   {
                     queryParams: { isNewOrder: true },
-                  },
+                  }
                 );
               },
             });
@@ -236,7 +236,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
 
     const shippingAddressId = parseInt(
-      this.storageService.getLocalItem('selectedShippingAddressId') || '0',
+      this.storageService.getLocalItem('selectedShippingAddressId') || '0'
     );
     const deliveryInstructions =
       this.storageService.getLocalItem('deliveryInstructions') || '';

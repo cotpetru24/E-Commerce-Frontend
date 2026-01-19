@@ -115,7 +115,7 @@ src/
     user/
     shared/
     services/
-    models/
+    dtos/
 e2e/
 docs/
 .github/

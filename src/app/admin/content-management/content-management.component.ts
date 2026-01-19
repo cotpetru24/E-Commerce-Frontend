@@ -8,11 +8,7 @@ import { finalize } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { CmsStateService } from '../../services/cmsStateService';
-import {
-  CmsProfileDto,
-  CmsStoredProfileDto,
-  CmsNavAndFooterDto,
-} from '@dtos';
+import { CmsProfileDto, CmsStoredProfileDto, CmsNavAndFooterDto } from '@dtos';
 
 @Component({
   selector: 'app-content-management',
@@ -60,7 +56,7 @@ export class ContentManagementComponent implements OnInit {
     private toastService: ToastService,
     private cmsApiService: CmsApiService,
     private modalService: NgbModal,
-    private cmsStateService: CmsStateService,
+    private cmsStateService: CmsStateService
   ) {}
 
   ngOnInit() {
@@ -343,7 +339,7 @@ export class ContentManagementComponent implements OnInit {
   onCategoryImageSelected(event: Event, index: number) {
     this.fileToBase64(
       event,
-      (b64) => (this.profile!.categories[index].imageBase64 = b64),
+      (b64) => (this.profile!.categories[index].imageBase64 = b64)
     );
   }
 
@@ -378,11 +374,11 @@ export class ContentManagementComponent implements OnInit {
     if (!this.canDeleteProfile(profile)) {
       if (this.storedProfiles.length <= 1) {
         this.toastService.error(
-          'Cannot delete the last profile. At least one profile must exist.',
+          'Cannot delete the last profile. At least one profile must exist.'
         );
       } else if (profile.isActive) {
         this.toastService.error(
-          'Cannot delete the active profile. Please set another profile as active first.',
+          'Cannot delete the active profile. Please set another profile as active first.'
         );
       }
       return;
@@ -393,7 +389,7 @@ export class ContentManagementComponent implements OnInit {
     modalRef.componentInstance.message = `Are you sure you want to delete the profile "${profile.profileName}"?`;
     modalRef.componentInstance.modalType = 'confirm';
 
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: boolean) => {
       if (result === true) {
         this.isLoading = true;
 

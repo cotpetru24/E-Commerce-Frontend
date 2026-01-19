@@ -14,11 +14,10 @@ import { CountryMapService } from '../../services/country-map.service';
 import { Utils } from '../../shared/utils';
 import {
   AdminOrderDto,
-  AdminBillingAddressDto,
   OrderDto,
   OrderItemDto,
   OrderStatus,
-  ShippingAddressDto,
+  AddressDto,
   UpdateOrderStatusRequestDto,
 } from '@dtos';
 
@@ -38,8 +37,8 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
   cameFromUserProfile: boolean = false;
   order: AdminOrderDto | null = null;
   orderItems: OrderItemDto[] = [];
-  shippingAddress: ShippingAddressDto | null = null;
-  billingAddress: AdminBillingAddressDto | null = null;
+  shippingAddress: AddressDto | null = null;
+  billingAddress: AddressDto | null = null;
 
   shippingInfo: ShippingInfo = {
     method: 'Standard Shipping',
@@ -55,7 +54,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private countryMap: CountryMapService,
-    private utils: Utils,
+    private utils: Utils
   ) {}
 
   ngOnInit(): void {
@@ -64,7 +63,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
       this.route.queryParams.subscribe((params) => {
         this.cameFromDashboard = params['from'] === 'dashboard';
         this.cameFromUserProfile = params['from'] === 'user-profile';
-      }),
+      })
     );
 
     this.utils.scrollToTop();
@@ -97,14 +96,14 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             this.shippingAddress = order.shippingAddress ?? null;
             if (this.shippingAddress) {
               this.shippingAddress.country = this.countryMap.getName(
-                this.shippingAddress.country,
+                this.shippingAddress.country
               );
             }
 
             this.billingAddress = order.billingAddress ?? null;
             if (this.billingAddress) {
               this.billingAddress.country = this.countryMap.getName(
-                this.billingAddress.country,
+                this.billingAddress.country
               );
             } else if (this.shippingAddress) {
               this.billingAddress = {
@@ -116,8 +115,8 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
                   ? { addressLine2: this.shippingAddress.addressLine2 }
                   : {}),
                 city: this.shippingAddress.city,
-                state: this.shippingAddress.county,
-                postalCode: this.shippingAddress.postcode,
+                county: this.shippingAddress.county,
+                postcode: this.shippingAddress.postcode,
                 country: this.shippingAddress.country,
                 ...(this.shippingAddress.phoneNumber
                   ? { phoneNumber: this.shippingAddress.phoneNumber }
@@ -129,7 +128,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             this.toastService.error('Failed to load order details');
             this.router.navigate(['/admin/orders']);
           },
-        }),
+        })
     );
   }
 
@@ -145,7 +144,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
     return (
       this.order?.orderItems?.reduce(
         (total, item) => total + this.getItemTotal(item),
-        0,
+        0
       ) ?? 0
     );
   }
@@ -203,13 +202,13 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
               error: (err) => {
                 if (err.status === 404) {
                   this.toastService.warning(
-                    'Order not found or cannot be updated.',
+                    'Order not found or cannot be updated.'
                   );
                 } else {
                   this.toastService.error('Failed to update order status.');
                 }
               },
-            }),
+            })
         );
       }
     });
@@ -222,7 +221,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
       'Are you sure you want to cancel this order?';
     modalRef.componentInstance.modalType = 'confirm';
 
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: boolean) => {
       if (result === true) {
         this.isLoading = true;
 
@@ -244,13 +243,13 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
               error: (err) => {
                 if (err.status === 404) {
                   this.toastService.warning(
-                    'Order not found or cannot be cancelled.',
+                    'Order not found or cannot be cancelled.'
                   );
                 } else {
                   this.toastService.error('Failed to cancel order.');
                 }
               },
-            }),
+            })
         );
       }
     });

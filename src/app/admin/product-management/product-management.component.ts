@@ -232,7 +232,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.message = `Are you sure you want to delete "${product.name}"?`;
     modalRef.componentInstance.modalType = 'confirm';
 
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: boolean) => {
       if (result === true) {
         this.isLoading = true;
 

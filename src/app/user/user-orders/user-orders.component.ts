@@ -19,7 +19,6 @@ import { StorageService } from '../../services/storage.service';
   templateUrl: './user-orders.component.html',
   styleUrl: './user-orders.component.scss',
 })
-
 export class UserOrdersComponent implements OnInit {
   currentFilter = 'all';
   selectedOrder: OrderDto | null = null;
@@ -136,7 +135,7 @@ export class UserOrdersComponent implements OnInit {
     modalRef.componentInstance.message =
       'Are you sure you want to cancel this order?';
 
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: boolean) => {
       if (result === true) {
         this.isLoading = true;
 

@@ -35,7 +35,7 @@
       <div class="product-images">
         <div class="main-image">
           <img [src]="'/assets/'+ selectedImage" alt="product.name" />
-          @if((product?.productImages?.length ?? 0) > 0 ) {
+          @if(product.productImages.length > 0 ) {
           <div class="image-overlay" data-bs-toggle="modal" data-bs-target="#productImagesModal" title="Open image">
           </div>
           }

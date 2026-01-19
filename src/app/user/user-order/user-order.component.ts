@@ -66,7 +66,7 @@ export class UserOrderComponent implements OnInit {
     private orderApiService: OrderApiService,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private countryMap: CountryMapService,
+    private countryMap: CountryMapService
   ) {}
   ngOnInit(): void {
     // Load order data from service or route parameters
@@ -116,7 +116,7 @@ export class UserOrderComponent implements OnInit {
   getSubtotal(): number {
     return this.orderItems.reduce(
       (total, item) => total + this.getItemTotal(item),
-      0,
+      0
     );
   }
 
@@ -140,7 +140,7 @@ export class UserOrderComponent implements OnInit {
     modalRef.componentInstance.message =
       'Are you sure you want to cancel this order?';
 
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: boolean) => {
       if (result === true) {
         this.isLoading = true;
 
@@ -154,7 +154,7 @@ export class UserOrderComponent implements OnInit {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be cancelled.',
+                'Order not found or cannot be cancelled.'
               );
             } else {
               this.toastService.error('Failed to cancel order.');
@@ -178,7 +178,7 @@ export class UserOrderComponent implements OnInit {
     if (this.isNewOrder) {
       this.toastService.success(
         'Thank you for your order!\nYour order has been placed successfully!',
-        5000,
+        5000
       );
       this.isNewOrder = false; // Prevent multiple toasts
     }

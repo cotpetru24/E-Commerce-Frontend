@@ -48,7 +48,7 @@ export class ShippingAddressComponent implements OnInit {
     private cartService: CartService,
     private shippingAddressService: ShippingAddressApiService,
     private toastService: ToastService,
-    private storageService: StorageService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +80,7 @@ export class ShippingAddressComponent implements OnInit {
 
   loadSavedAddressFromLocalStorage(): void {
     const savedAddress = this.storageService.getLocalObject<any>(
-      'savedShippingAddress',
+      'savedShippingAddress'
     );
     if (savedAddress) {
       this.addressData = { ...this.addressData, ...savedAddress };
@@ -145,14 +145,14 @@ export class ShippingAddressComponent implements OnInit {
     if (this.selectedAddressId) {
       this.storageService.setLocalItem(
         'selectedShippingAddressId',
-        this.selectedAddressId.toString(),
+        this.selectedAddressId.toString()
       );
     }
 
     if (this.addressData.instructions) {
       this.storageService.setLocalItem(
         'deliveryInstructions',
-        this.addressData.instructions,
+        this.addressData.instructions
       );
     }
 

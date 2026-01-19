@@ -57,7 +57,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private adminUserApiService: AdminUserApiService,
     private toastService: ToastService,
-    private utils: Utils,
+    private utils: Utils
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +68,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           this.loadUserData();
           this.loadUserOrders();
         }
-      }),
+      })
     );
   }
 
@@ -106,7 +106,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           this.toastService.error('Failed to load user data');
           this.isLoading = false;
         },
-      }),
+      })
     );
   }
 
@@ -130,7 +130,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             this.toastService.error('Failed to load user orders');
             this.ordersLoading = false;
           },
-        }),
+        })
     );
   }
 
@@ -174,7 +174,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         error: () => {
           this.toastService.error('Failed to update user profile');
         },
-      }),
+      })
     );
   }
 
@@ -226,7 +226,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           error: () => {
             this.toastService.error('Failed to update password');
           },
-        }),
+        })
     );
   }
 
@@ -269,7 +269,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.message = `Are you sure you want to ${action} user: ${user.firstName} ${user.lastName}?`;
     modalRef.componentInstance.modalType = 'confirm';
 
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: boolean) => {
       if (result === true) {
         this.isLoading = true;
 
@@ -289,7 +289,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
               error: (err) => {
                 this.toastService.error('Failed to update user status');
               },
-            }),
+            })
         );
       }
     });
@@ -366,25 +366,25 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   getProcessingCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'processing',
+      (order) => order.orderStatusName?.toLowerCase() === 'processing'
     ).length;
   }
 
   getShippedCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'shipped',
+      (order) => order.orderStatusName?.toLowerCase() === 'shipped'
     ).length;
   }
 
   getDeliveredCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'delivered',
+      (order) => order.orderStatusName?.toLowerCase() === 'delivered'
     ).length;
   }
 
   getCancelledCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'cancelled',
+      (order) => order.orderStatusName?.toLowerCase() === 'cancelled'
     ).length;
   }
 }
