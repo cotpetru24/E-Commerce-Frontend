@@ -32,7 +32,7 @@ export class AppComponent {
       this.cmsStateService.setPageTitle(cached.websiteName);
     }
 
-    this.cmsService.GetCmsNavAndFooterAsync().subscribe((cms) => {
+    this.cmsService.getCmsNavAndFooter().subscribe((cms) => {
       this.storageService.setLocalObject('cmsProfile', cms);
       this.cmsStateService.setProfile(cms);
       this.cmsStateService.applyTheme(cms);

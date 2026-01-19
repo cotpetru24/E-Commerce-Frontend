@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProductDto } from '../models/product.dto';
 import { CartService } from '../services/cart.service';
 import { ToastService } from '../services/toast.service';
 import { ProductApiService } from '../services/api';
 import { finalize } from 'rxjs';
 import { CmsApiService } from '../services/api/cms-api.service';
-import { CmsLandingPageDto } from '../models/cms.dto';
+import { CmsLandingPageDto, ProductDto } from '@dtos';
 
 @Component({
   selector: 'app-landing-page',
@@ -55,7 +54,7 @@ export class LandingPageComponent implements OnInit {
     private toastService: ToastService,
     private productApi: ProductApiService,
     private cmsService: CmsApiService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -66,7 +65,7 @@ export class LandingPageComponent implements OnInit {
   getCmsLandingDto() {
     this.isLoading = true;
     this.cmsService
-      .getCmsLandingPageAsync()
+      .getCmsLandingPage()
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response) => {
@@ -111,11 +110,6 @@ export class LandingPageComponent implements OnInit {
 
   viewProduct(product: ProductDto) {
     this.router.navigate(['/products/details', product.id]);
-  }
-
-  addToCart(product: ProductDto) {
-    this.cartService.addToCart(product, 1);
-    this.toastService.success(`${product.name} added to cart!`);
   }
 
   getStars(rating: number): number[] {

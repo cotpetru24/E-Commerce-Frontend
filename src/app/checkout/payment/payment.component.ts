@@ -2,6 +2,20 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { CartService } from '../../services/cart.service';
+import { environment } from '../../../environments/environment';
+import { PaymentApiService } from '../../services/api/payment-api.service';
+import { OrderApiService } from '../../services/api/order-api.service';
+import { ToastService } from '../../services/toast.service';
+import { StorageService } from '../../services/storage.service';
+import { firstValueFrom } from 'rxjs';
+import { AddressData } from '../checkout.types';
+import {
+  loadStripe,
+  Stripe,
+  StripeElements,
+  StripePaymentElement,
+} from '@stripe/stripe-js';
 import {
   PaymentDto,
   OrderSummary,
@@ -9,21 +23,7 @@ import {
   OrderItemRequestDto,
   PlaceOrderResponseDto,
   CreateBillingAddressRequestDto,
-  AddressData,
-} from '../../dtos';
-import { CartService } from '../../services/cart.service';
-import {
-  loadStripe,
-  Stripe,
-  StripeElements,
-  StripePaymentElement,
-} from '@stripe/stripe-js';
-import { environment } from '../../../environments/environment';
-import { PaymentApiService } from '../../services/api/payment-api.service';
-import { OrderApiService } from '../../services/api/order-api.service';
-import { ToastService } from '../../services/toast.service';
-import { StorageService } from '../../services/storage.service';
-import { firstValueFrom } from 'rxjs';
+} from '@dtos';
 
 @Component({
   selector: 'payment',
@@ -39,6 +39,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   private orderResponse: PlaceOrderResponseDto | null = null;
 
   paymentData: PaymentDto = {
+    paymentId: 0,
     orderId: 0,
     amount: 0,
     currency: '',
@@ -46,7 +47,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     cardLast4: '',
     billingName: '',
     billingEmail: '',
-    status: '',
+    paymentStatus: '',
     paymentMethod: '',
   };
 
@@ -87,7 +88,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     private paymentApiService: PaymentApiService,
     private orderApiService: OrderApiService,
     private toastService: ToastService,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {}
 
   ngOnInit(): void {
@@ -118,9 +119,9 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       const { clientSecret } = await firstValueFrom(
-        this.paymentApiService.createPaymentIntent(
-          Math.round(this.orderSummary.total * 100)
-        )
+        this.paymentApiService.createPaymentIntent({
+          amount: Math.round(this.orderSummary.total * 100),
+        }),
       );
 
       if (!clientSecret) {
@@ -168,13 +169,13 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       const orderRequest = this.createOrderRequest();
       this.orderResponse = await firstValueFrom(
-        this.orderApiService.placeOrder(orderRequest)
+        this.orderApiService.placeOrder(orderRequest),
       );
 
       this.toastService.success('Order placed successfully!');
       this.storageService.setLocalItem(
         'lastOrderId',
-        this.orderResponse.orderId.toString()
+        this.orderResponse.orderId.toString(),
       );
 
       if (this.paymentData.paymentMethod === 'card') {
@@ -191,7 +192,10 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (paymentIntent && paymentIntent.status === 'succeeded' && !error) {
           this.paymentApiService
-            .storePaymentDetails(this.orderResponse.orderId, paymentIntent.id)
+            .storePaymentDetails({
+              orderId: this.orderResponse.orderId,
+              paymentIntentId: paymentIntent.id,
+            })
             .subscribe({
               next: () => {
                 this.cartService.clearCart();
@@ -200,7 +204,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                   ['/user/order', this.orderResponse!.orderId],
                   {
                     queryParams: { isNewOrder: true },
-                  }
+                  },
                 );
               },
             });
@@ -228,10 +232,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       productId: item.product.id,
       quantity: item.quantity,
       ...(item.size && { size: item.size }),
+      ...(item.barcode && { barcode: item.barcode }),
     }));
 
     const shippingAddressId = parseInt(
-      this.storageService.getLocalItem('selectedShippingAddressId') || '0'
+      this.storageService.getLocalItem('selectedShippingAddressId') || '0',
     );
     const deliveryInstructions =
       this.storageService.getLocalItem('deliveryInstructions') || '';

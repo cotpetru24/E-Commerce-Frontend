@@ -4,12 +4,10 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import {
-  AdminApiService,
-  AdminStats,
-} from '../../services/api/admin-api.service';
+import { AdminDashboardApiService } from '../../services/api';
+import { DashboardStatsDto } from '@dtos';
 import { ToastService } from '../../services/toast.service';
-import { UtilsService } from '../../services/utils';
+import { Utils } from '../../shared/utils';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -18,18 +16,17 @@ import { UtilsService } from '../../services/utils';
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
 })
-
 export class AdminDashboardComponent implements OnInit, OnDestroy {
-  dashboardStats: AdminStats | null = null;
+  dashboardStats: DashboardStatsDto | null = null;
   isLoadingStats = false;
 
   private subscriptions = new Subscription();
 
   constructor(
-    private adminApi: AdminApiService,
+    private adminDashboardApiService: AdminDashboardApiService,
     private toastService: ToastService,
     private router: Router,
-    private utilsService: UtilsService
+    private utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +41,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.isLoadingStats = true;
 
     this.subscriptions.add(
-      this.adminApi
+      this.adminDashboardApiService
         .getDashboardStats()
         .pipe(finalize(() => (this.isLoadingStats = false)))
         .subscribe({
@@ -54,7 +51,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           error: () => {
             this.toastService.error('Failed to load dashboard statistics');
           },
-        })
+        }),
     );
   }
 
@@ -76,11 +73,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(value: number): string {
-    return this.utilsService.formatCurrency(value);
+    return this.utils.formatCurrency(value);
   }
 
   formatTimeAgo(dateString: string): string {
-    return this.utilsService.formatTimeAgo(dateString);
+    return this.utils.formatTimeAgo(dateString);
   }
 
   viewActivity(activity: any): void {
@@ -120,7 +117,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   viewAllActivity(): void {
     this.toastService.info(
-      'View all Activities - this feature is out of scope!'
+      'View all Activities - this feature is out of scope!',
     );
   }
 

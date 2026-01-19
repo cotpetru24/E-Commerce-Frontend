@@ -92,11 +92,6 @@
                   <button class="btn btn-primary btn-sm" (click)="viewOrderDetails(order.id)" title="View Details">
                     <i class="bi bi-eye me-1"></i>View Details
                   </button>
-                  @if (order.orderStatusName === 'Delivered') {
-                  <button class="btn btn-outline-success btn-sm" (click)="reorder(order)" title="Reorder">
-                    <i class="bi bi-arrow-clockwise me-1"></i>Reorder
-                  </button>
-                  }
                   @if (order.orderStatusName !== 'Completed' && order.orderStatusName !== 'Cancelled') {
                   <button class="btn btn-outline-warning btn-sm" (click)="cancelOrder(order)" title="Cancel Order">
                     <i class="bi bi-x-circle me-1"></i>Cancel

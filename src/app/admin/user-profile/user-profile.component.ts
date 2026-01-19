@@ -3,25 +3,23 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
-import { UtilsService } from '../../services/utils';
-import { AdminOrderDto } from '../../models/order.dto';
-import { AdminUser } from '../../services/api/admin-api.service';
+import { Utils } from '../../shared/utils';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UserRole } from '../../dtos';
+import { AdminUserApiService } from 'app/services/api';
+import { AdminOrderDto, AdminUserDto, UserRole } from '@dtos';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.scss']
+  styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
   // User data
-  user: AdminUser | null = null;
+  user: AdminUserDto | null = null;
   userId: string | null = null;
   isLoading = false;
   isEditing = false;
@@ -30,7 +28,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   UserRole = UserRole;
   selectedRole: UserRole | null = null;
-
 
   // Orders data
   userOrders: AdminOrderDto[] = [];
@@ -44,12 +41,12 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     email: '',
     firstName: '',
     lastName: '',
-    roles:UserRole.Customer
+    roles: UserRole.Customer,
   };
 
   passwordForm = {
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   };
 
   private subscriptions = new Subscription();
@@ -58,20 +55,20 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
-    private adminApiService: AdminApiService,
+    private adminUserApiService: AdminUserApiService,
     private toastService: ToastService,
-    private utilsService: UtilsService
+    private utils: Utils,
   ) {}
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.route.params.subscribe(params => {
+      this.route.params.subscribe((params) => {
         this.userId = params['id'];
         if (this.userId) {
           this.loadUserData();
           this.loadUserOrders();
         }
-      })
+      }),
     );
   }
 
@@ -84,29 +81,32 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.subscriptions.add(
-      this.adminApiService.getUserById(this.userId).subscribe({
+      this.adminUserApiService.getUserById(this.userId).subscribe({
         next: (user) => {
           this.user = user;
           if (this.user) {
             this.user.roles = [
-              user.roles[0] === 'Administrator'
+              user.roles[0] === UserRole.Administrator
                 ? UserRole.Administrator
-                : UserRole.Customer
+                : UserRole.Customer,
             ];
           }
           this.editForm = {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            roles: user.roles[0] === 'Administrator' ? UserRole.Administrator : UserRole.Customer
+            roles:
+              user.roles[0] === UserRole.Administrator
+                ? UserRole.Administrator
+                : UserRole.Customer,
           };
           this.isLoading = false;
         },
         error: () => {
           this.toastService.error('Failed to load user data');
           this.isLoading = false;
-        }
-      })
+        },
+      }),
     );
   }
 
@@ -115,20 +115,22 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
     this.ordersLoading = true;
     this.subscriptions.add(
-      this.adminApiService.getUserOrders(this.userId, {
-        pageNumber: 1,
-        pageSize: 100
-      }).subscribe({
-        next: (response) => {
-          this.userOrders = response.orders;
-          this.filterOrders(this.currentFilter);
-          this.ordersLoading = false;
-        },
-        error: () => {
-          this.toastService.error('Failed to load user orders');
-          this.ordersLoading = false;
-        }
-      })
+      this.adminUserApiService
+        .getUserOrders(this.userId, {
+          pageNumber: 1,
+          pageSize: 100,
+        })
+        .subscribe({
+          next: (response) => {
+            this.userOrders = response;
+            this.filterOrders(this.currentFilter);
+            this.ordersLoading = false;
+          },
+          error: () => {
+            this.toastService.error('Failed to load user orders');
+            this.ordersLoading = false;
+          },
+        }),
     );
   }
 
@@ -140,12 +142,12 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   cancelEditing(): void {
     this.isEditing = false;
     if (this.user) {
-        this.editForm = {
-          email: this.user.email,
-          firstName: this.user.firstName || '',
-          lastName: this.user.lastName || '',
-          roles: this.user.roles[0]
-        };
+      this.editForm = {
+        email: this.user.email,
+        firstName: this.user.firstName || '',
+        lastName: this.user.lastName || '',
+        roles: this.user.roles[0],
+      };
     }
   }
 
@@ -156,11 +158,14 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       email: this.editForm.email,
       firstName: this.editForm.firstName,
       lastName: this.editForm.lastName,
-      roles: this.editForm.roles === UserRole.Customer ? ['Customer'] : ['Administrator']
+      roles:
+        this.editForm.roles === UserRole.Customer
+          ? ['Customer']
+          : ['Administrator'],
     };
 
     this.subscriptions.add(
-      this.adminApiService.updateUser(this.userId, updateData).subscribe({
+      this.adminUserApiService.updateUser(this.userId, updateData).subscribe({
         next: () => {
           this.toastService.success('User profile updated successfully');
           this.isEditing = false;
@@ -168,8 +173,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.toastService.error('Failed to update user profile');
-        }
-      })
+        },
+      }),
     );
   }
 
@@ -178,11 +183,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.isEditing = false;
     this.passwordForm = {
       newPassword: '',
-      confirmPassword: ''
+      confirmPassword: '',
     };
   }
 
-  togglePassword(): void{
+  togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
@@ -190,7 +195,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.isChangingPassword = false;
     this.passwordForm = {
       newPassword: '',
-      confirmPassword: ''
+      confirmPassword: '',
     };
   }
 
@@ -203,23 +208,25 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
 
     const passwordData = {
-      newPassword: this.passwordForm.newPassword
+      newPassword: this.passwordForm.newPassword,
     };
 
     this.subscriptions.add(
-      this.adminApiService.updateUserPassword(this.userId, passwordData).subscribe({
-        next: () => {
-          this.toastService.success('Password updated successfully');
-          this.isChangingPassword = false;
-          this.passwordForm = {
-            newPassword: '',
-            confirmPassword: ''
-          };
-        },
-        error: () => {
-          this.toastService.error('Failed to update password');
-        }
-      })
+      this.adminUserApiService
+        .updateUserPassword(this.userId, passwordData)
+        .subscribe({
+          next: () => {
+            this.toastService.success('Password updated successfully');
+            this.isChangingPassword = false;
+            this.passwordForm = {
+              newPassword: '',
+              confirmPassword: '',
+            };
+          },
+          error: () => {
+            this.toastService.error('Failed to update password');
+          },
+        }),
     );
   }
 
@@ -228,7 +235,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     if (filter === 'all') {
       this.filteredOrders = [...this.userOrders];
     } else {
-      this.filteredOrders = this.userOrders.filter(order => {
+      this.filteredOrders = this.userOrders.filter((order) => {
         const status = order.orderStatusName?.toLowerCase();
         switch (filter) {
           case 'delivered':
@@ -247,12 +254,12 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   viewOrderDetails(orderId: number): void {
-    this.router.navigate(['/admin/orders', orderId],
-      { queryParams: {from: 'user-profile'}}
-    );
+    this.router.navigate(['/admin/orders', orderId], {
+      queryParams: { from: 'user-profile' },
+    });
   }
 
-  toggleUserStatus(user: AdminUser): void {
+  toggleUserStatus(user: AdminUserDto): void {
     const action = user.isBlocked ? 'unblock' : 'block';
 
     const modalRef = this.modalService.open(ModalDialogComponent);
@@ -267,8 +274,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         this.subscriptions.add(
-          this.adminApiService
-            .toggleUserStatus(user.id.toString(), !user.isBlocked, user.roles)
+          this.adminUserApiService
+            .toggleUserStatus(user.id.toString(), {
+              isBlocked: !user.isBlocked,
+            })
             .subscribe({
               next: () => {
                 const status = user.isBlocked ? 'unblocked' : 'blocked';
@@ -280,18 +289,18 @@ export class UserProfileComponent implements OnInit, OnDestroy {
               error: (err) => {
                 this.toastService.error('Failed to update user status');
               },
-            })
+            }),
         );
       }
     });
   }
 
   formatDate(date: string | Date): string {
-    return this.utilsService.formatDate(date);
+    return this.utils.formatDate(date);
   }
 
   getTimeAgo(date: string | Date): string {
-    return this.utilsService.getTimeAgo(date);
+    return this.utils.getTimeAgo(date);
   }
 
   getStatusBadgeClass(status?: string): string {
@@ -351,32 +360,31 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     return userRole;
   }
 
-
   goBack(): void {
     this.router.navigate(['/admin/users']);
   }
 
   getProcessingCount(): number {
-    return this.userOrders.filter(order => 
-      order.orderStatusName?.toLowerCase() === 'processing'
+    return this.userOrders.filter(
+      (order) => order.orderStatusName?.toLowerCase() === 'processing',
     ).length;
   }
 
   getShippedCount(): number {
-    return this.userOrders.filter(order => 
-      order.orderStatusName?.toLowerCase() === 'shipped'
+    return this.userOrders.filter(
+      (order) => order.orderStatusName?.toLowerCase() === 'shipped',
     ).length;
   }
 
   getDeliveredCount(): number {
-    return this.userOrders.filter(order => 
-      order.orderStatusName?.toLowerCase() === 'delivered'
+    return this.userOrders.filter(
+      (order) => order.orderStatusName?.toLowerCase() === 'delivered',
     ).length;
   }
 
   getCancelledCount(): number {
-    return this.userOrders.filter(order => 
-      order.orderStatusName?.toLowerCase() === 'cancelled'
+    return this.userOrders.filter(
+      (order) => order.orderStatusName?.toLowerCase() === 'cancelled',
     ).length;
   }
 }

@@ -2,15 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import {
-  OrderDto,
-  OrderItem,
-  OrderItemDto,
-  PaymentMethod,
-  ShippingAddress,
-  ShippingAddressDto,
-  ShippingInfo,
-} from '../../dtos';
 import { ToastService } from '../../services/toast.service';
 import { OrderApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
@@ -18,6 +9,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { switchMap } from 'rxjs';
 import { CountryMapService } from '../../services/country-map.service';
+import { ShippingInfo } from 'app/checkout/checkout.types';
+import {
+  BillingAddressDto,
+  OrderDto,
+  OrderItemDto,
+  ShippingAddressDto,
+} from '@dtos';
 
 @Component({
   selector: 'app-user-order',
@@ -37,20 +35,20 @@ export class UserOrderComponent implements OnInit {
     country: '',
     id: 0,
     userId: '',
+    firstName: '',
+    lastName: '',
   };
 
-  billingAddress: ShippingAddressDto = {
+  billingAddress: BillingAddressDto = {
+    id: 0,
+    userId: '',
     addressLine1: '',
     city: '',
     county: '',
     postcode: '',
     country: '',
-    id: 0,
-    userId: '',
   };
-  paymentMethod: PaymentMethod = {
-    method: 'card',
-  };
+
   shippingInfo: ShippingInfo = {
     method: 'Standard Shipping',
     estimatedDelivery: '3-5 business days',
@@ -68,7 +66,7 @@ export class UserOrderComponent implements OnInit {
     private orderApiService: OrderApiService,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private countryMap: CountryMapService
+    private countryMap: CountryMapService,
   ) {}
   ngOnInit(): void {
     // Load order data from service or route parameters
@@ -95,35 +93,16 @@ export class UserOrderComponent implements OnInit {
           order.orderStatusName !== 'Returned';
         this.shippingAddress = order.shippingAddress;
         this.shippingAddress.country = this.shippingAddress.country =
-          this.countryMap.getName(this.order.shippingAddress.country);
+          this.countryMap.getName(this.order!.shippingAddress.country);
 
         this.billingAddress = order.billingAddress;
         this.billingAddress.country = this.billingAddress.country =
-          this.countryMap.getName(this.order.billingAddress.country);
+          this.countryMap.getName(this.order!.billingAddress.country);
       },
       error: () => {
         this.toastService.error('Failed to load order details');
       },
     });
-
-    
-
-    // this.shippingAddress = {
-    //   firstName: 'John',
-    //   lastName: 'Doe',
-    //   address: '123 Main Street',
-    //   city: 'London',
-    //   state: 'England',
-    //   zipCode: 'SW1A 1AA',
-    //   country: 'United Kingdom',
-    //   phone: '+44 20 1234 5678',
-    // };
-
-    this.paymentMethod = {
-      method: 'card',
-      cardNumber: '1234567890123456',
-      cardholderName: 'John Doe',
-    };
   }
 
   getItemTotal(item: OrderItemDto): number {
@@ -137,7 +116,7 @@ export class UserOrderComponent implements OnInit {
   getSubtotal(): number {
     return this.orderItems.reduce(
       (total, item) => total + this.getItemTotal(item),
-      0
+      0,
     );
   }
 
@@ -175,7 +154,7 @@ export class UserOrderComponent implements OnInit {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be cancelled.'
+                'Order not found or cannot be cancelled.',
               );
             } else {
               this.toastService.error('Failed to cancel order.');
@@ -199,7 +178,7 @@ export class UserOrderComponent implements OnInit {
     if (this.isNewOrder) {
       this.toastService.success(
         'Thank you for your order!\nYour order has been placed successfully!',
-        5000
+        5000,
       );
       this.isNewOrder = false; // Prevent multiple toasts
     }

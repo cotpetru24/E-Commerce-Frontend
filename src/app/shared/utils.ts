@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 
-export class UtilsService {
+export class Utils {
   formatDate(date: Date | string): string {
     return new Date(date).toLocaleDateString();
   }

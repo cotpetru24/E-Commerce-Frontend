@@ -2,18 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ProductDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
-import { Audience } from '../../models/audience.enum';
 import { ProductApiService } from '../../services/api';
+import { finalize } from 'rxjs';
+import { Utils } from 'app/shared/utils';
 import {
   ProductFilterDto,
   SortByOption,
-} from '../../models/product-filter.dto';
-import { finalize } from 'rxjs';
-import { UtilsService } from '../../services/utils';
-import { ProductImageDto } from '../../dtos';
+  ProductDto,
+  Audience,
+  ProductImageDto,
+} from '@dtos';
 
 @Component({
   selector: 'app-product-list',
@@ -57,7 +57,7 @@ export class ProductListComponent implements OnInit {
     private cartService: CartService,
     private toastService: ToastService,
     private productApi: ProductApiService,
-    private utilsService: UtilsService
+    private utils: Utils,
   ) {}
 
   ngOnInit() {
@@ -127,11 +127,6 @@ export class ProductListComponent implements OnInit {
 
   setViewMode(mode: 'grid' | 'list') {
     this.viewMode = mode;
-  }
-
-  addToCart(product: ProductDto) {
-    this.cartService.addToCart(product, 1);
-    this.toastService.success(`${product.name} added to cart!`);
   }
 
   navigateToProductDetails(productId: number) {

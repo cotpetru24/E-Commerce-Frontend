@@ -4,19 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AdminApiService } from '../../services/api/admin-api.service';
+import { AdminProductApiService } from '../../services/api/admin-product-api.service';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
-import {
-  AdminBrandDto,
-  AdminProductAudienceDto,
-  AdminProductDto,
-  AdminProductFeatureDto,
-  ProductSizeDto,
-} from '../../dtos';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import {
+  BrandDto,
+  ProductAudienceDto,
+  AdminProductDto,
+  ProductFeatureDto,
+  ProductSizeDto,
+} from '@dtos';
 
 @Component({
   selector: 'app-add-product',
@@ -25,16 +25,15 @@ import { finalize } from 'rxjs/operators';
   templateUrl: './add-product.component.html',
   styleUrls: ['./add-product.component.scss'],
 })
-
 export class AddProductComponent implements OnInit, OnDestroy {
   productData: AdminProductDto = this.createEmptyProduct();
   isLoading = false;
   discountText = '';
   priceText = '';
-  brands: AdminBrandDto[] = [];
-  productAudience: AdminProductAudienceDto[] = [];
+  brands: BrandDto[] = [];
+  productAudience: ProductAudienceDto[] = [];
 
-  newSpec: AdminProductFeatureDto = {
+  newSpec: ProductFeatureDto = {
     id: 0,
     sortOrder: 0,
     featureText: '',
@@ -54,9 +53,9 @@ export class AddProductComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private toastService: ToastService,
-    private adminApiService: AdminApiService,
+    private adminProductApiService: AdminProductApiService,
     private modalService: NgbModal,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {}
 
   ngOnInit(): void {
@@ -85,7 +84,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
     this.productData.discountPercentage = Number(this.discountText);
 
     this.subscriptions.add(
-      this.adminApiService
+      this.adminProductApiService
         .createProduct(this.productData)
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
@@ -96,7 +95,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
           error: () => {
             this.toastService.error('Failed to create product.');
           },
-        })
+        }),
     );
   }
 
@@ -154,7 +153,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
           this.toastService.success(`Barcode scanned: ${barcode}`);
         }
       },
-      () => {}
+      () => {},
     );
   }
 
@@ -175,7 +174,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
           this.toastService.success(`Barcode scanned: ${barcode}`);
         }
       },
-      () => {}
+      () => {},
     );
   }
 
@@ -217,28 +216,28 @@ export class AddProductComponent implements OnInit, OnDestroy {
   private getProductBrands() {
     this.isLoading = true;
     this.subscriptions.add(
-      this.adminApiService
+      this.adminProductApiService
         .getProductBrands()
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
           next: (response) => {
             this.brands = response;
           },
-        })
+        }),
     );
   }
 
   private getProductAudience() {
     this.isLoading = true;
     this.subscriptions.add(
-      this.adminApiService
+      this.adminProductApiService
         .getProductAudience()
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
           next: (response) => {
             this.productAudience = response;
           },
-        })
+        }),
     );
   }
 

@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-import { GetProductsDto } from '../../models/get-products.dto';
-import { ProductFilterDto } from '../../models/product-filter.dto';
-import { GetSingleProductDto } from '../../models/get-single-product.dto';
+import {
+  ProductFilterDto,
+  GetProductByIdDto,
+  GetProductsDto,
+} from '@dtos';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class ProductApiService extends BaseApiService {
   private readonly productEndPoint = '/api/product';
 
@@ -23,9 +24,9 @@ export class ProductApiService extends BaseApiService {
     return this.get<GetProductsDto>(url, { params: params });
   }
 
-  getProductById(id: number): Observable<GetSingleProductDto> {
+  getProductById(id: number): Observable<GetProductByIdDto> {
     const url = this.buildUrl(`${this.productEndPoint}/${id}`);
-    return this.get<GetSingleProductDto>(url);
+    return this.get<GetProductByIdDto>(url);
   }
 
   getFeaturedProducts(): Observable<GetProductsDto> {

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { ProductDto, ProductSizeDto } from '../../models/product.dto';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { ProductApiService } from '../../services/api';
-import { ProductImageDto } from '../../models/product-image.dto';
-import { UtilsService } from '../../services/utils';
+import { Utils } from '../../shared/utils';
+import { ProductDto, ProductSizeDto, ProductImageDto } from '@dtos';
 
 @Component({
   selector: 'product-details',
@@ -35,7 +34,7 @@ export class ProductDetailsComponent implements OnInit {
     private toastService: ToastService,
     private productApi: ProductApiService,
     private router: Router,
-    private utilsService: UtilsService
+    private utils: Utils,
   ) {}
 
   ngOnInit() {
@@ -113,7 +112,8 @@ export class ProductDetailsComponent implements OnInit {
     this.cartService.addToCart(
       this.product,
       this.quantity,
-      this.selectedSize.size
+      this.selectedSize.size,
+      this.selectedSize.barcode,
     );
     this.toastService.success(`${this.product.name} added to cart!`);
   }
@@ -123,7 +123,7 @@ export class ProductDetailsComponent implements OnInit {
     return Math.round(
       ((this.product.originalPrice - this.product.price) /
         this.product.originalPrice) *
-        100
+        100,
     );
   }
 

@@ -7,7 +7,7 @@ import {
   GetAllOrdersResponseDto,
   AdminOrderDto,
   UpdateOrderStatusRequestDto,
-} from '../../dtos';
+} from '@dtos';
 
 @Injectable({
   providedIn: 'root',

@@ -4,16 +4,15 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import {
   AdminProductDto,
-  AdminBrandDto,
-  AdminProductAudienceDto,
+  BrandDto,
+  ProductAudienceDto,
   GetProductsAdminRequestDto,
   GetProductsAdminResponseDto,
-} from '../../models/product.dto';
+} from '@dtos';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class AdminProductApiService extends BaseApiService {
   private readonly adminProductEndPoint = '/api/admin/products';
 
@@ -22,7 +21,7 @@ export class AdminProductApiService extends BaseApiService {
   }
 
   getProducts(
-    request?: GetProductsAdminRequestDto
+    request?: GetProductsAdminRequestDto,
   ): Observable<GetProductsAdminResponseDto> {
     const url = this.buildUrl(this.adminProductEndPoint);
     const params = this.createParams({
@@ -50,14 +49,14 @@ export class AdminProductApiService extends BaseApiService {
     return this.get<AdminProductDto>(url);
   }
 
-  getProductBrands(): Observable<AdminBrandDto[]> {
+  getProductBrands(): Observable<BrandDto[]> {
     const url = this.buildUrl(`${this.adminProductEndPoint}/brands`);
-    return this.get<AdminBrandDto[]>(url);
+    return this.get<BrandDto[]>(url);
   }
 
-  getProductAudience(): Observable<AdminProductAudienceDto[]> {
+  getProductAudience(): Observable<ProductAudienceDto[]> {
     const url = this.buildUrl(`${this.adminProductEndPoint}/audience`);
-    return this.get<AdminProductAudienceDto[]>(url);
+    return this.get<ProductAudienceDto[]>(url);
   }
 
   createProduct(product: AdminProductDto): Observable<AdminProductDto> {
@@ -67,7 +66,7 @@ export class AdminProductApiService extends BaseApiService {
 
   updateProduct(
     productId: number,
-    product: AdminProductDto
+    product: AdminProductDto,
   ): Observable<{ message: string }> {
     const url = this.buildUrl(`${this.adminProductEndPoint}/${productId}`);
     return this.put<{ message: string }>(url, product);

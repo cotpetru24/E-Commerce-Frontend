@@ -1,17 +1,17 @@
-// ============================================================================
-// SHIPPING ADDRESS DTOs
-// ============================================================================
-// These interfaces match the backend Shipping Address DTOs
-
 export interface ShippingAddressDto {
   id: number;
   userId?: string;
+  firstName: string;
+  lastName: string;
   addressLine1: string;
+  addressLine2?: string;
   city: string;
   county: string;
   postcode: string;
   country: string;
+  phoneNumber?: string;
 }
+
 export interface BillingAddressDto {
   id: number;
   userId?: string;
@@ -20,6 +20,19 @@ export interface BillingAddressDto {
   county: string;
   postcode: string;
   country: string;
+}
+
+export interface AdminBillingAddressDto {
+  id: number;
+  firstName: string;
+  lastName: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  phoneNumber?: string;
 }
 
 export interface CreateShippingAddressRequestDto {
@@ -31,19 +44,15 @@ export interface CreateShippingAddressRequestDto {
 }
 
 export interface CreateBillingAddressRequestDto {
-  addressLine1: string | "";
-  city: string | "";
-  county: string | "";
-  postcode: string| "";
-  country: string | "";
-}
-
-export interface UpdateShippingAddressRequestDto {
   addressLine1: string;
   city: string;
   county: string;
   postcode: string;
   country: string;
+}
+
+export interface DeleteShippingAddressResponseDto {
+  message: string;
 }
 
 export interface CreateShippingAddressResponseDto {
@@ -52,7 +61,12 @@ export interface CreateShippingAddressResponseDto {
   createdAt: Date;
 }
 
-
-export interface DeleteShippingAddressResponseDto {
-  message: string;
+export interface UpdateShippingAddressRequestDto {
+  id: number;
+  userId?: string;
+  addressLine1: string;
+  city: string;
+  county: string;
+  postcode: string;
+  country: string;
 }

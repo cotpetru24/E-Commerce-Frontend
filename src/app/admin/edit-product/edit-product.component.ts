@@ -6,17 +6,17 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { AdminApiService } from '../../services/api/admin-api.service';
+import { AdminProductApiService } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import {
-  AdminBrandDto,
-  AdminProductAudienceDto,
+  BrandDto,
+  ProductAudienceDto,
   AdminProductDto,
-  AdminProductFeatureDto,
+  ProductFeatureDto,
   ProductSizeDto,
-} from '../../dtos';
+} from '@dtos';
 
 @Component({
   selector: 'app-edit-product',
@@ -25,17 +25,16 @@ import {
   templateUrl: './edit-product.component.html',
   styleUrls: ['./edit-product.component.scss'],
 })
-
 export class EditProductComponent implements OnInit, OnDestroy {
   productData: AdminProductDto | null = null;
   productId!: number;
-  brands: AdminBrandDto[] = [];
-  productAudience: AdminProductAudienceDto[] = [];
+  brands: BrandDto[] = [];
+  productAudience: ProductAudienceDto[] = [];
   discountText = '';
   priceText = '';
   isLoading = false;
 
-  newSpec: AdminProductFeatureDto = {
+  newSpec: ProductFeatureDto = {
     id: 0,
     sortOrder: 0,
     featureText: '',
@@ -55,8 +54,8 @@ export class EditProductComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private toastService: ToastService,
-    private adminApiService: AdminApiService,
-    private modalService: NgbModal
+    private adminProductApiService: AdminProductApiService,
+    private modalService: NgbModal,
   ) {}
 
   ngOnInit(): void {
@@ -91,7 +90,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
     this.productData.discountPercentage = Number(this.discountText);
 
     this.subscriptions.add(
-      this.adminApiService
+      this.adminProductApiService
         .updateProduct(this.productId, this.productData)
         .subscribe({
           next: () => {
@@ -103,7 +102,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
             this.toastService.error('Failed to update product.');
             this.isLoading = false;
           },
-        })
+        }),
     );
   }
 
@@ -180,7 +179,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
           this.toastService.success(`Barcode scanned: ${barcode}`);
         }
       },
-      () => {}
+      () => {},
     );
   }
 
@@ -201,7 +200,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
           this.toastService.success(`Barcode scanned: ${barcode}`);
         }
       },
-      () => {}
+      () => {},
     );
   }
 
@@ -254,17 +253,19 @@ export class EditProductComponent implements OnInit, OnDestroy {
       if (result) {
         this.isLoading = true;
         this.subscriptions.add(
-          this.adminApiService.deleteProduct(this.productData!.id).subscribe({
-            next: () => {
-              this.toastService.success('Product deleted successfully');
-              this.isLoading = false;
-              this.router.navigate(['/admin/products']);
-            },
-            error: () => {
-              this.isLoading = false;
-              this.toastService.error('Failed to delete product');
-            },
-          })
+          this.adminProductApiService
+            .deleteProduct(this.productData!.id)
+            .subscribe({
+              next: () => {
+                this.toastService.success('Product deleted successfully');
+                this.isLoading = false;
+                this.router.navigate(['/admin/products']);
+              },
+              error: () => {
+                this.isLoading = false;
+                this.toastService.error('Failed to delete product');
+              },
+            }),
         );
       }
     });
@@ -278,34 +279,34 @@ export class EditProductComponent implements OnInit, OnDestroy {
 
   private getProductBrands(): void {
     this.subscriptions.add(
-      this.adminApiService.getProductBrands().subscribe({
+      this.adminProductApiService.getProductBrands().subscribe({
         next: (response) => {
           this.brands = response;
         },
         error: () => {
           this.toastService.error('Failed to load product brands.');
         },
-      })
+      }),
     );
   }
 
   private getProductAudience(): void {
     this.subscriptions.add(
-      this.adminApiService.getProductAudience().subscribe({
+      this.adminProductApiService.getProductAudience().subscribe({
         next: (response) => {
           this.productAudience = response;
         },
         error: () => {
           this.toastService.error('Failed to load product audience options.');
         },
-      })
+      }),
     );
   }
 
   private loadProductData(): void {
     this.isLoading = true;
     this.subscriptions.add(
-      this.adminApiService
+      this.adminProductApiService
         .getProductById(this.productId)
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
@@ -322,7 +323,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
           error: () => {
             this.toastService.error('Failed to load product data.');
           },
-        })
+        }),
     );
   }
 }

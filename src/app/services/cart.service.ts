@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ProductDto } from '../models/product.dto';
-import { CartItem } from '../models/cart-item.model';
+import { ProductDto } from '@dtos';
+import { CartItem } from '..//cart/cart.types';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -31,11 +31,16 @@ export class CartService {
   getCartItemCount(): number {
     return this.cartItemsSubject.value.reduce(
       (total, item) => total + item.quantity,
-      0
+      0,
     );
   }
 
-  addToCart(product: ProductDto, quantity: number = 1, barcode: string): void {
+  addToCart(
+    product: ProductDto,
+    quantity: number = 1,
+    size: number,
+    barcode: string,
+  ): void {
     const currentCart = this.cartItemsSubject.value;
     const existingItemIndex = currentCart.findIndex((item) => {
       return item.barcode === barcode;
@@ -55,6 +60,7 @@ export class CartService {
       const newItem: CartItem = {
         product,
         quantity: Math.min(quantity, product.totalStock),
+        size,
         barcode,
       };
 
@@ -78,7 +84,7 @@ export class CartService {
       } else {
         updatedCart[existingItemIndex].quantity = Math.min(
           quantity,
-          updatedCart[existingItemIndex].product.totalStock
+          updatedCart[existingItemIndex].product.totalStock,
         );
       }
 

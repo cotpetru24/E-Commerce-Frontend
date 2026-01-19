@@ -2,33 +2,28 @@ export interface CmsProfileDto {
   id: number;
   profileName: string;
   isActive: boolean;
-
   websiteName: string;
   tagline?: string;
   logoBase64?: string;
   faviconBase64?: string;
   showLogoInHeader?: boolean;
-
   navbarBgColor: string;
   navbarTextColor: string;
   navbarLinkColor: string;
-
   footerBgColor: string;
   footerTextColor: string;
   footerLinkColor: string;
-
   heroTitle: string;
   heroSubtitle: string;
   heroDescription: string;
   heroPrimaryButtonText: string;
   heroSecondaryButtonText: string;
   heroBackgroundImageBase64?: string;
-
-  features: CmsFeature[];
-  categories: CmsCategory[];
+  features: CmsFeatureDto[];
+  categories: CmsCategoryDto[];
 }
 
-export interface CmsFeature {
+export interface CmsFeatureDto {
   id: number;
   iconClass: string;
   title: string;
@@ -36,7 +31,7 @@ export interface CmsFeature {
   sortOrder: number;
 }
 
-export interface CmsCategory {
+export interface CmsCategoryDto {
   id: number;
   title: string;
   description: string;
@@ -54,39 +49,31 @@ export interface CmsStoredProfileDto {
   createdAt: Date;
 }
 
-
 export interface CmsLandingPageDto {
   websiteName: string;
   tagline?: string;
   logoBase64?: string;
   faviconBase64?: string;
-
   heroTitle: string;
   heroSubtitle: string;
   heroDescription: string;
   heroPrimaryButtonText: string;
   heroSecondaryButtonText: string;
   heroBackgroundImageBase64?: string;
-
   showLogoInHeader: boolean;
-
-  features: CmsFeature[];
-  categories: CmsCategory[];
+  features: CmsFeatureDto[];
+  categories: CmsCategoryDto[];
 }
-
 
 export interface CmsNavAndFooterDto {
   navbarBgColor: string;
   navbarTextColor: string;
   navbarLinkColor: string;
-
   footerBgColor: string;
   footerTextColor: string;
   footerLinkColor: string;
-
-  websiteName:string;
-  websiteLogo:string;
-  showLogo:boolean;
-
-  favicon:string;
+  websiteName: string;
+  websiteLogo: string;
+  showLogo: boolean;
+  favicon: string;
 }

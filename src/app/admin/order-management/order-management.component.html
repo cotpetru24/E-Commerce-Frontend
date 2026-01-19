@@ -132,20 +132,6 @@
         <div class="card-header">
           <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Orders ({{ orders.length }})</h5>
-            <div class="d-flex gap-2">
-
-
-
-
-              <!-- <span class="badge bg-primary">{{ orderStats.total }} Total</span>
-              <span class="badge bg-warning">{{ orderStats.pending }} Pending</span>
-              <span class="badge bg-info">{{ orderStats.processing }} Processing</span>
-              <span class="badge bg-success">{{ orderStats.completed }} Completed</span> -->
-
-
-
-
-            </div>
           </div>
         </div>
         <div class="card-body p-0">
@@ -164,18 +150,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let order of orders">
+                @for(order of orders; track order.id){
+                <tr>
                   <td>
                     <strong>#{{ order.id }}</strong>
-
-
-
-
-                    <!-- <small class="text-muted">{{ order.id }}</small> -->
-
-
-
-
                   </td>
                   <td>
                     <div>
@@ -186,9 +164,9 @@
                   </td>
                   <td>
                     <div>
-                      <strong>{{ order.createdAt ? formatDate(order.createdAt) : '—' }}</strong>
+                      <strong>{{ order.createdAt ? utils.formatDate(order.createdAt) : '—' }}</strong>
                       <br>
-                      <small class="text-muted">{{ order.createdAt ? formatTime(order.createdAt) : '—' }}</small>
+                      <small class="text-muted">{{ order.createdAt ? utils.formatTime(order.createdAt) : '—' }}</small>
                     </div>
                   </td>
                   <td>
@@ -201,8 +179,8 @@
                     <span [class]="getStatusClass(order.orderStatusName)">{{ order.orderStatusName | titlecase }}</span>
                   </td>
                   <td>
-                    <span [class]="getPaymentClass(order.payment.paymentStatusName)">{{
-                      order?.payment?.paymentStatusName | titlecase }}</span>
+                    <span [class]="getPaymentClass(order.payment.paymentStatus)">{{
+                      order?.payment?.paymentStatus | titlecase }}</span>
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm" role="group">
@@ -212,35 +190,41 @@
                       <button class="btn btn-outline-primary" (click)="updateOrderStatus(order)" title="Update Status">
                         <i class="bi bi-pencil"></i>
                       </button>
-                      <button class="btn btn-outline-success" (click)="markShipped(order)"
-                        *ngIf="order.orderStatusName === 'Processing' || order.orderStatusName === 'processing'"
-                        title="Mark Shipped">
+                      @if (order.orderStatusName === 'Processing' || order.orderStatusName === 'processing') {
+                      <button class="btn btn-outline-success" (click)="markShipped(order)" title="Mark Shipped">
                         <i class="bi bi-truck"></i>
                       </button>
-                      <button class="btn btn-outline-warning" (click)="cancelOrder(order)"
-                        *ngIf="order.orderStatusName !== 'Cancelled' && order.orderStatusName !== 'delivered'"
-                        title="Cancel Order">
+                      }
+                      @if (order.orderStatusName !== 'Cancelled' && order.orderStatusName !== 'delivered') {
+                      <button class="btn btn-outline-warning" (click)="cancelOrder(order)" title="Cancel Order">
                         <i class="bi bi-x-circle"></i>
                       </button>
+                      }
                     </div>
                   </td>
                 </tr>
+                }
               </tbody>
             </table>
           </div>
-          <div class="text-center p-4" *ngIf="isLoading">
+          @if (isLoading) {
+          <div class="text-center p-4">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
             <p class="mt-2">Loading orders...</p>
           </div>
-          <div class="text-center p-4" *ngIf="!isLoading && orders.length === 0">
+          }
+          @if (!isLoading && orders.length === 0) {
+          <div class="text-center p-4">
             <i class="bi bi-cart display-1 text-muted"></i>
             <h4 class="mt-3">No orders found</h4>
             <p class="text-muted">Try adjusting your search or filters</p>
           </div>
+          }
         </div>
-        <div class="card-footer" *ngIf="orders.length > 0">
+        @if (orders.length >0) {
+        <div class="card-footer">
           <div class="d-flex justify-content-between align-items-center">
             <div>
               Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage,
@@ -252,10 +236,12 @@
                 <li class="page-item" [class.disabled]="currentPage === 1">
                   <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
                 </li>
-                <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+                @for(page of getPageNumbers(); track $index){
+                <li class="page-item" [class.active]="page === currentPage">
                   <button class="page-link" (click)="changePage(page)" [class.disabled]="currentPage === page">{{ page
                     }}</button>
                 </li>
+                }
                 <li class="page-item" [class.disabled]="currentPage === totalPages">
                   <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
                 </li>
@@ -263,6 +249,7 @@
             </nav>
           </div>
         </div>
+        }
       </div>
     </div>
   </div>

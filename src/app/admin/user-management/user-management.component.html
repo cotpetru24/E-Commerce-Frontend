@@ -156,7 +156,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (let user of users) {
+                @for (user of users; track user.id) {
                 <tr>
                   <td>
                     <div class="d-flex align-items-center">

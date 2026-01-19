@@ -111,12 +111,12 @@
                         <div class="d-flex justify-content-between mb-2">
                           <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
                           <span class="badge badge-compact" [ngClass]="{
-                              'bg-success text-dark': order?.payment?.status === 'Completed',
-                              'bg-warning text-dark': order?.payment?.status === 'Pending',
-                              'bg-danger text-dark': order?.payment?.status === 'Failed',
-                              'bg-info text-dark': order?.payment?.status === 'Refunded'
+                              'bg-success text-dark': order?.payment?.paymentStatus === 'Completed',
+                              'bg-warning text-dark': order?.payment?.paymentStatus === 'Pending',
+                              'bg-danger text-dark': order?.payment?.paymentStatus === 'Failed',
+                              'bg-info text-dark': order?.payment?.paymentStatus === 'Refunded'
                             }">
-                            Payment status: {{ order?.payment?.status }}
+                            Payment status: {{ order?.payment?.paymentStatus }}
                           </span>
                         </div>
                         <p class="payment-details text-capitalize">Card brand: {{ order?.payment?.cardBrand || '' }}</p>

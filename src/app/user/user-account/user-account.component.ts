@@ -4,13 +4,13 @@ import { CommonModule } from '@angular/common';
 import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { UserApiService } from '../../services/api/user-api.service';
+import { StorageService } from '../../services/storage.service';
 import {
   UserProfileDto,
   UpdateUserProfileRequestDto,
   ChangePasswordRequestDto,
   UserStatsDto,
-} from '../../models/user.dto';
-import { StorageService } from '../../services/storage.service';
+} from '@dtos';
 
 @Component({
   selector: 'app-user-account',
@@ -19,7 +19,6 @@ import { StorageService } from '../../services/storage.service';
   templateUrl: './user-account.component.html',
   styleUrl: './user-account.component.scss',
 })
-
 export class UserAccountComponent implements OnInit {
   userProfile: UserProfileDto | null = null;
   userStats: UserStatsDto | null = null;
@@ -43,7 +42,7 @@ export class UserAccountComponent implements OnInit {
     private router: Router,
     private toastService: ToastService,
     private userApiService: UserApiService,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {}
 
   ngOnInit() {

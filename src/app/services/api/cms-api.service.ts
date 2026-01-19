@@ -6,7 +6,7 @@ import {
   CmsNavAndFooterDto,
   CmsProfileDto,
   CmsStoredProfileDto,
-} from '../../models/cms.dto';
+} from '@dtos';
 import { Observable } from 'rxjs';
 
 @Injectable({

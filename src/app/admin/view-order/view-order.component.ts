@@ -4,26 +4,23 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import {
-  AdminOrderDto,
-  AdminShippingAddressDto,
-  AdminBillingAddressDto,
-  OrderDto,
-  OrderItem,
-  OrderItemDto,
-  OrderStatus,
-  PaymentMethod,
-  ShippingAddress,
-  ShippingAddressDto,
-  ShippingInfo,
-  UpdateOrderStatusRequestDto,
-} from '../../dtos';
+import { ShippingInfo } from '../../checkout/checkout.types';
 import { ToastService } from '../../services/toast.service';
-import { AdminApiService } from '../../services/api/admin-api.service';
+import { AdminOrderApiService } from 'app/services/api';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { CountryMapService } from '../../services/country-map.service';
+import { Utils } from '../../shared/utils';
+import {
+  AdminOrderDto,
+  AdminBillingAddressDto,
+  OrderDto,
+  OrderItemDto,
+  OrderStatus,
+  ShippingAddressDto,
+  UpdateOrderStatusRequestDto,
+} from '@dtos';
 
 @Component({
   selector: 'app-view-order',
@@ -33,45 +30,44 @@ import { CountryMapService } from '../../services/country-map.service';
   styleUrl: './view-order.component.scss',
 })
 export class ViewOrderComponent implements OnInit, OnDestroy {
-  order: AdminOrderDto | null = null;
-  orderItems: OrderItemDto[] = [];
-  shippingAddress: AdminShippingAddressDto | null = null;
-  billingAddress: AdminBillingAddressDto | null = null;
-
-  shippingInfo: ShippingInfo = {
-    method: 'Standard Shipping',
-    estimatedDelivery: '3-5 business days',
-  };
   isLoading: boolean = false;
   canUpdateStatus: boolean = true;
   orderId: number | null = null;
   orderStatus: string = 'Processing';
   cameFromDashboard: boolean = false;
   cameFromUserProfile: boolean = false;
+  order: AdminOrderDto | null = null;
+  orderItems: OrderItemDto[] = [];
+  shippingAddress: ShippingAddressDto | null = null;
+  billingAddress: AdminBillingAddressDto | null = null;
+
+  shippingInfo: ShippingInfo = {
+    method: 'Standard Shipping',
+    estimatedDelivery: '3-5 business days',
+  };
 
   private subscriptions = new Subscription();
 
   constructor(
     private router: Router,
     private toastService: ToastService,
-    private adminApiService: AdminApiService,
+    private adminApiOrderService: AdminOrderApiService,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private countryMap: CountryMapService
+    private countryMap: CountryMapService,
+    private utils: Utils,
   ) {}
 
   ngOnInit(): void {
     this.orderId = Number(this.route.snapshot.paramMap.get('id'));
-
-    // Check if we came from dashboard
     this.subscriptions.add(
       this.route.queryParams.subscribe((params) => {
         this.cameFromDashboard = params['from'] === 'dashboard';
         this.cameFromUserProfile = params['from'] === 'user-profile';
-      })
+      }),
     );
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.utils.scrollToTop();
 
     if (this.orderId) {
       this.loadOrderData();
@@ -89,7 +85,8 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     this.subscriptions.add(
-      this.adminApiService.getOrder(this.orderId!)
+      this.adminApiOrderService
+        .getOrderById(this.orderId!)
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe({
           next: (order) => {
@@ -100,28 +97,31 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             this.shippingAddress = order.shippingAddress ?? null;
             if (this.shippingAddress) {
               this.shippingAddress.country = this.countryMap.getName(
-                this.shippingAddress.country
+                this.shippingAddress.country,
               );
             }
 
             this.billingAddress = order.billingAddress ?? null;
             if (this.billingAddress) {
               this.billingAddress.country = this.countryMap.getName(
-                this.billingAddress.country
+                this.billingAddress.country,
               );
             } else if (this.shippingAddress) {
-              // Fallback to shipping address if billing address is not provided
               this.billingAddress = {
                 id: this.shippingAddress.id,
                 firstName: this.shippingAddress.firstName,
                 lastName: this.shippingAddress.lastName,
                 addressLine1: this.shippingAddress.addressLine1,
-                ...(this.shippingAddress.addressLine2 ? { addressLine2: this.shippingAddress.addressLine2 } : {}),
+                ...(this.shippingAddress.addressLine2
+                  ? { addressLine2: this.shippingAddress.addressLine2 }
+                  : {}),
                 city: this.shippingAddress.city,
-                state: this.shippingAddress.state,
-                postalCode: this.shippingAddress.postalCode,
+                state: this.shippingAddress.county,
+                postalCode: this.shippingAddress.postcode,
                 country: this.shippingAddress.country,
-                ...(this.shippingAddress.phoneNumber ? { phoneNumber: this.shippingAddress.phoneNumber } : {}),
+                ...(this.shippingAddress.phoneNumber
+                  ? { phoneNumber: this.shippingAddress.phoneNumber }
+                  : {}),
               };
             }
           },
@@ -129,7 +129,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             this.toastService.error('Failed to load order details');
             this.router.navigate(['/admin/orders']);
           },
-        })
+        }),
     );
   }
 
@@ -145,13 +145,12 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
     return (
       this.order?.orderItems?.reduce(
         (total, item) => total + this.getItemTotal(item),
-        0
+        0,
       ) ?? 0
     );
   }
 
   getShippingCost(): number {
-    // Free shipping for orders over £50
     return this.getSubtotal() >= 50 ? 0 : 5.99;
   }
 
@@ -178,7 +177,6 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
       { label: 'Processing', value: OrderStatus.processing },
       { label: 'Shipped', value: OrderStatus.shipped },
       { label: 'Delivered', value: OrderStatus.delivered },
-      // { label: 'Cancelled', value: OrderStatus.cancelled },
       { label: 'Refunded', value: OrderStatus.refunded },
       { label: 'Returned', value: OrderStatus.returned },
     ];
@@ -193,7 +191,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
         };
 
         this.subscriptions.add(
-          this.adminApiService
+          this.adminApiOrderService
             .updateOrderStatus(this.orderId!, statusData)
             .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
@@ -205,13 +203,13 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
               error: (err) => {
                 if (err.status === 404) {
                   this.toastService.warning(
-                    'Order not found or cannot be updated.'
+                    'Order not found or cannot be updated.',
                   );
                 } else {
                   this.toastService.error('Failed to update order status.');
                 }
               },
-            })
+            }),
         );
       }
     });
@@ -234,7 +232,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
         };
 
         this.subscriptions.add(
-          this.adminApiService
+          this.adminApiOrderService
             .updateOrderStatus(this.orderId!, statusData)
             .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
@@ -246,13 +244,13 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
               error: (err) => {
                 if (err.status === 404) {
                   this.toastService.warning(
-                    'Order not found or cannot be cancelled.'
+                    'Order not found or cannot be cancelled.',
                   );
                 } else {
                   this.toastService.error('Failed to cancel order.');
                 }
               },
-            })
+            }),
         );
       }
     });
@@ -261,11 +259,9 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
   goBack(): void {
     if (this.cameFromDashboard) {
       this.router.navigate(['/admin']);
-    } 
-    else if (this.cameFromUserProfile){
-      this .router.navigate(['/admin/users', this.order?.userId]);
-    }
-    else {
+    } else if (this.cameFromUserProfile) {
+      this.router.navigate(['/admin/users', this.order?.userId]);
+    } else {
       this.router.navigate(['/admin/orders']);
     }
   }
@@ -276,8 +272,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
 
   goToUserProfile(): void {
     if (this.order?.userId) {
-    this.router.navigate(['/admin/users', this.order.userId]);
-
+      this.router.navigate(['/admin/users', this.order.userId]);
     }
   }
 }

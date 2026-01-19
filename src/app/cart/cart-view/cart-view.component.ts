@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CartService, CartItem } from '../../services/cart.service';
+import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthApiService } from '../../services/api/auth-api.service';
-import { UtilsService } from '../../services/utils';
-import { ProductImageDto } from '../../dtos';
+import { Utils } from '../../shared/utils';
+import { ProductImageDto } from '@dtos';
+import { CartItem } from '../cart.types';
 
 @Component({
   selector: 'app-cart-view',
@@ -24,7 +25,7 @@ export class CartViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private toastService: ToastService,
     private authApiService: AuthApiService,
-    private utilsService: UtilsService
+    private utils: Utils,
   ) {
     this.cartSubscription = this.cartService.cartItems$.subscribe((items) => {
       this.cartItems = items;
@@ -45,16 +46,16 @@ export class CartViewComponent implements OnInit, OnDestroy {
 
   decreaseQuantity(item: CartItem): void {
     const newQuantity = item.quantity - 1;
-    this.cartService.updateQuantity(item.product.id, item.size, newQuantity);
+    this.cartService.updateQuantity(item.barcode, newQuantity);
   }
 
   increaseQuantity(item: CartItem): void {
     const newQuantity = item.quantity + 1;
-    this.cartService.updateQuantity(item.product.id, item.size, newQuantity);
+    this.cartService.updateQuantity(item.barcode, newQuantity);
   }
 
   removeItem(item: CartItem): void {
-    this.cartService.removeFromCart(item.product.id, item.size);
+    this.cartService.removeFromCart(item.barcode);
   }
 
   getItemTotal(item: CartItem): number {

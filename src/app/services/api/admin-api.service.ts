@@ -25,27 +25,6 @@
 // // Handles all admin-specific API calls
 // // Note: These endpoints typically require admin authentication
 
-// export interface AdminStats {
-//   totalUsers: number;
-//   totalOrders: number;
-//   totalRevenue: number;
-//   totalProducts: number;
-//   lowStockProducts: number;
-//   outOfStockProducts: number;
-//   pendingOrders: number;
-//   newUsersToday: number;
-//   newOrdersToday: number;
-//   todayRevenue: number;
-//   recentActivity: {
-//     source: 'User' | 'Product' | 'Order' | 'Payment' | 'Shipping';
-//     userGuid?: string;
-//     userEmail?: string;
-//     id: number;
-//     description: string;
-//     createdAt: string;
-//   }[];
-// }
-
 // export interface Order {
 //   id: number;
 //   userId: number;
@@ -92,23 +71,6 @@
 //     protected override storageService: StorageService
 //   ) {
 //     super(http, storageService);
-//   }
-
-//   // ============================================================================
-//   // DASHBOARD & STATISTICS
-//   // ============================================================================
-
-//   /**
-//    * Get admin dashboard statistics
-//    */
-//   getDashboardStats(): Observable<AdminStats> {
-//     const url = this.buildUrl(`${this.endPoint}/dashboard`);
-//     this.logRequest('GET', url);
-
-//     return this.get<AdminStats>(url).pipe(
-//       tap((response) => this.logResponse('GET', url, response)),
-//       catchError(this.handleError)
-//     );
 //   }
 
 //   // ============================================================================

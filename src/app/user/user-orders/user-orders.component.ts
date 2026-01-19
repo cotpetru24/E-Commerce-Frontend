@@ -5,9 +5,9 @@ import { ToastService } from '../../services/toast.service';
 import { OrderApiService } from '../../services/api/order-api.service';
 import {
   OrderDto,
-  GetOrdersRequestDto,
-  GetOrdersResponseDto,
-} from '../../models/order.dto';
+  GetUserOrdersRequestDto,
+  GetUserOrdersResponseDto,
+} from '@dtos';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { StorageService } from '../../services/storage.service';
@@ -60,13 +60,13 @@ export class UserOrdersComponent implements OnInit {
       return;
     }
 
-    const request: GetOrdersRequestDto = {
-      page: 1,
+    const request: GetUserOrdersRequestDto = {
+      pageNumber: 1,
       pageSize: this.pageSize,
     };
 
     this.orderApiService.getOrders(request).subscribe({
-      next: (response: GetOrdersResponseDto) => {
+      next: (response: GetUserOrdersResponseDto) => {
         this.cachedOrders = response.orders;
         this.allOrders = response.orders;
         this.totalCount = response.totalCount;

@@ -4,6 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
+import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Utils } from '../../shared/utils';
+import { AdminProductApiService } from 'app/services/api';
 import {
   AdminProductDto,
   GetProductsAdminRequestDto,
@@ -12,14 +18,9 @@ import {
   ProductsSortDirection,
   ProductStatus,
   ProductStockStatus,
-} from '../../models/product.dto';
-import { AdminApiService } from '../../services/api/admin-api.service';
-import { ToastService } from '../../services/toast.service';
-import { Audience, ProductImageDto } from '../../dtos';
-import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
-import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UtilsService } from '../../services/utils';
+  Audience,
+  ProductImageDto,
+} from '@dtos';
 
 @Component({
   selector: 'app-product-management',
@@ -28,7 +29,6 @@ import { UtilsService } from '../../services/utils';
   templateUrl: './product-management.component.html',
   styleUrls: ['./product-management.component.scss'],
 })
-
 export class ProductManagementComponent implements OnInit, OnDestroy {
   isLoading = false;
   Math = Math;
@@ -65,11 +65,11 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
-    private adminApi: AdminApiService,
+    private adminProductApi: AdminProductApiService,
     private router: Router,
     private toastService: ToastService,
     private modalService: NgbModal,
-    private utilsService: UtilsService
+    private utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -114,7 +114,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     };
 
     this.subscriptions.add(
-      this.adminApi.getAllProducts(getProductsAdminRequest).subscribe({
+      this.adminProductApi.getProducts(getProductsAdminRequest).subscribe({
         next: (response) => {
           this.response = response;
           this.isLoading = false;
@@ -123,7 +123,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.toastService.error('Failed to load products');
         },
-      })
+      }),
     );
   }
 
@@ -135,7 +135,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   updatePagination(): void {
     if (!this.isLoading) {
       this.loadProducts();
-      this.utilsService.scrollToTop();
+      this.utils.scrollToTop();
     }
   }
 
@@ -151,7 +151,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     const maxVisible = 5;
     let start = Math.max(
       1,
-      (this.response?.pageNumber ?? 0) - Math.floor(maxVisible / 2)
+      (this.response?.pageNumber ?? 0) - Math.floor(maxVisible / 2),
     );
     let end = Math.min(this.response?.totalPages ?? 0, start + maxVisible - 1);
 
@@ -237,7 +237,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         this.subscriptions.add(
-          this.adminApi.deleteProduct(product.id).subscribe({
+          this.adminProductApi.deleteProduct(product.id).subscribe({
             next: () => {
               this.toastService.success('Product deleted successfully');
               this.isLoading = false;
@@ -247,7 +247,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
               this.isLoading = false;
               this.toastService.error('Failed to delete product');
             },
-          })
+          }),
         );
       }
     });
@@ -270,7 +270,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       },
       () => {
         // Dismissed modal
-      }
+      },
     );
   }
 

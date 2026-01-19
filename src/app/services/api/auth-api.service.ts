@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BaseApiService } from '.';
+import { BaseApiService } from './base-api.service';
 import { StorageService } from '../storage.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -9,19 +9,18 @@ import {
   RegisterRequestDto,
   UserInfoDto,
   UserRole,
-} from '../../models/auth.dto';
+} from '@dtos';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class AuthApiService extends BaseApiService {
   private readonly authEndpoint = '/api/auth';
 
   constructor(
     protected override http: HttpClient,
-    protected storageService: StorageService
+    protected storageService: StorageService,
   ) {
     super(http);
   }
@@ -29,22 +28,22 @@ export class AuthApiService extends BaseApiService {
   login(credentials: LoginRequestDto): Observable<{ token: string }> {
     return this.post<{ token: string }>(
       this.buildUrl(this.authEndpoint + '/login'),
-      credentials
+      credentials,
     ).pipe(
       tap((response) => {
         this.setCurrentUser(response);
-      })
+      }),
     );
   }
 
   register(userData: RegisterRequestDto): Observable<{ token: string }> {
     return this.post<{ token: string }>(
       this.buildUrl(this.authEndpoint + `/register`),
-      userData
+      userData,
     ).pipe(
       tap((response) => {
         this.setCurrentUser(response);
-      })
+      }),
     );
   }
 

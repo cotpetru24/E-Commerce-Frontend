@@ -1,4 +1,5 @@
 export interface PaymentDto {
+  paymentId: number;
   orderId: number;
   amount: number;
   currency?: string;
@@ -6,9 +7,11 @@ export interface PaymentDto {
   cardLast4?: string;
   billingName?: string;
   billingEmail?: string;
-  status: string;
+  paymentStatus: string;
   receiptUrl?: string;
   paymentMethod?: string;
+  transactionId?: string;
+  createdAt?: Date;
 }
 
 export interface StorePaymentRequestDto {

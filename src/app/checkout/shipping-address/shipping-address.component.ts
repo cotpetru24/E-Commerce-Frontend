@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import {
-  AddressData,
-  OrderSummary,
-  CreateShippingAddressRequestDto,
-  ShippingAddressDto,
-} from '../../dtos';
 import { CartService } from '../../services/cart.service';
 import { ShippingAddressApiService } from '../../services/api/shipping-address-api.service';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
+import { AddressData } from '../checkout.types';
+import {
+  OrderSummary,
+  CreateShippingAddressRequestDto,
+  ShippingAddressDto,
+} from '@dtos';
 
 @Component({
   selector: 'shipping-address',
@@ -20,7 +20,6 @@ import { StorageService } from '../../services/storage.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
 })
-
 export class ShippingAddressComponent implements OnInit {
   savedAddresses: ShippingAddressDto[] = [];
   selectedAddressId: number | null = null;
@@ -49,7 +48,7 @@ export class ShippingAddressComponent implements OnInit {
     private cartService: CartService,
     private shippingAddressService: ShippingAddressApiService,
     private toastService: ToastService,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {}
 
   ngOnInit(): void {
@@ -81,7 +80,7 @@ export class ShippingAddressComponent implements OnInit {
 
   loadSavedAddressFromLocalStorage(): void {
     const savedAddress = this.storageService.getLocalObject<any>(
-      'savedShippingAddress'
+      'savedShippingAddress',
     );
     if (savedAddress) {
       this.addressData = { ...this.addressData, ...savedAddress };
@@ -146,14 +145,14 @@ export class ShippingAddressComponent implements OnInit {
     if (this.selectedAddressId) {
       this.storageService.setLocalItem(
         'selectedShippingAddressId',
-        this.selectedAddressId.toString()
+        this.selectedAddressId.toString(),
       );
     }
 
     if (this.addressData.instructions) {
       this.storageService.setLocalItem(
         'deliveryInstructions',
-        this.addressData.instructions
+        this.addressData.instructions,
       );
     }
 

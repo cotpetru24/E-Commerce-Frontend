@@ -4,13 +4,21 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AdminUser } from '../../services/api/admin-api.service';
-import { AdminApiService } from '../../services/api/admin-api.service';
 import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AdminUsersStatsDto, GetAllUsersRequestDto, UserRole, UserStatus } from '../../dtos';
-import { UsersSortBy, UsersSortDirection } from '../../models/user.dto';
+import { AdminUserApiService } from 'app/services/api';
+
+import {
+  UsersSortBy,
+  UsersSortDirection,
+  AdminUserDto,
+  AdminUpdateUserProfileRequestDto,
+  AdminUsersStatsDto,
+  GetAllUsersRequestDto,
+  UserRole,
+  UserStatus,
+} from '@dtos';
 
 @Component({
   selector: 'app-user-management',
@@ -21,16 +29,16 @@ import { UsersSortBy, UsersSortDirection } from '../../models/user.dto';
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
   // Users data
-  users: AdminUser[] = [];
-  filteredUsers: AdminUser[] = [];
-  paginatedUsers: AdminUser[] = [];
+  users: AdminUserDto[] = [];
+  filteredUsers: AdminUserDto[] = [];
+  paginatedUsers: AdminUserDto[] = [];
 
   adminUsersStats: AdminUsersStatsDto = {
     totalUsersCount: 0,
     totalActiveUsersCount: 0,
     totalBlockedUsersCount: 0,
     totalNewUsersCountThisMonth: 0,
-  }
+  };
   isLoading = false;
   UserRole = UserRole;
   UserStatus = UserStatus;
@@ -49,17 +57,16 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   totalPages = 1;
   totalQueryCount = 0;
 
-
   // Math utility for template
   Math = Math;
 
   private subscriptions = new Subscription();
 
   constructor(
-    private adminApiService: AdminApiService,
+    private adminUserApiService: AdminUserApiService,
     private router: Router,
     private toastService: ToastService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
   ) {}
 
   ngOnInit(): void {
@@ -90,7 +97,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     };
 
     this.subscriptions.add(
-      this.adminApiService.getAllUsers(getAllUsersRequest).subscribe({
+      this.adminUserApiService.getUsers(getAllUsersRequest).subscribe({
         next: (response) => {
           this.users = response.users;
           this.adminUsersStats = response.adminUsersStats;
@@ -104,7 +111,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.toastService.error('Failed to load users');
         },
-      })
+      }),
     );
   }
 
@@ -122,11 +129,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
-  applyFilters(): void {
-  }
+  applyFilters(): void {}
 
-  sortUsers(): void {
-  }
+  sortUsers(): void {}
 
   updatePagination(): void {
     if (!this.isLoading) {
@@ -157,7 +162,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
     return pages;
   }
-
 
   getRoleClass(roles: UserRole[] | string[]): string {
     let userRole = '';
@@ -205,17 +209,17 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     return `${Math.floor(diffInDays / 365)} years ago`;
   }
 
-  viewUser(user: AdminUser): void {
+  viewUser(user: AdminUserDto): void {
     // Navigate to user profile view
     this.router.navigate(['/admin/users', user.id]);
   }
 
-  editUser(user: AdminUser): void {
+  editUser(user: AdminUserDto): void {
     // Navigate to user edit form
     this.router.navigate(['/admin/edit-user', user.id]);
   }
 
-  toggleUserStatus(user: AdminUser): void {
+  toggleUserStatus(user: AdminUserDto): void {
     const action = user.isBlocked ? 'unblock' : 'block';
 
     const modalRef = this.modalService.open(ModalDialogComponent);
@@ -229,9 +233,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       if (result === true) {
         this.isLoading = true;
 
+        const updateUserRequest: AdminUpdateUserProfileRequestDto = {
+          isBlocked: !user.isBlocked,
+        };
+
         this.subscriptions.add(
-          this.adminApiService
-            .toggleUserStatus(user.id.toString(), !user.isBlocked, user.roles)
+          this.adminUserApiService
+            .toggleUserStatus(user.id.toString(), updateUserRequest)
             .subscribe({
               next: () => {
                 const status = user.isBlocked ? 'unblocked' : 'blocked';
@@ -243,13 +251,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
               error: (err) => {
                 this.toastService.error('Failed to update user status');
               },
-            })
+            }),
         );
       }
     });
   }
 
-  deleteUser(user: AdminUser): void {
+  deleteUser(user: AdminUserDto): void {
     const modalRef = this.modalService.open(ModalDialogComponent);
     modalRef.componentInstance.title = 'Delete User';
     modalRef.componentInstance.message = `Are you sure you want to delete user: ${user.firstName} ${user.lastName}?`;
@@ -260,7 +268,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         this.subscriptions.add(
-          this.adminApiService.deleteUser(user.id.toString()).subscribe({
+          this.adminUserApiService.deleteUser(user.id.toString()).subscribe({
             next: () => {
               this.toastService.success('User deleted successfully');
 
@@ -272,7 +280,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
               this.toastService.error('Failed to delete user');
               this.isLoading = false;
             },
-          })
+          }),
         );
       }
     });

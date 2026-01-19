@@ -2,18 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { AdminApiService } from '../../services/api/admin-api.service';
-import { CmsApiService } from '../../services/api/cms-api.service';
+import { CmsApiService } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
-import {
-  CmsProfileDto,
-  CmsStoredProfileDto,
-  CmsNavAndFooterDto,
-} from '../../models/cms.dto';
 import { finalize } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { CmsStateService } from '../../services/cmsStateService';
+import {
+  CmsProfileDto,
+  CmsStoredProfileDto,
+  CmsNavAndFooterDto,
+} from '@dtos';
 
 @Component({
   selector: 'app-content-management',
@@ -61,7 +60,7 @@ export class ContentManagementComponent implements OnInit {
     private toastService: ToastService,
     private cmsApiService: CmsApiService,
     private modalService: NgbModal,
-    private cmsStateService: CmsStateService
+    private cmsStateService: CmsStateService,
   ) {}
 
   ngOnInit() {
@@ -71,7 +70,7 @@ export class ContentManagementComponent implements OnInit {
   loadStoredProfiles() {
     this.isLoading = true;
     this.cmsApiService
-      .getCmsProfilesAsync()
+      .getCmsProfiles()
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response: CmsStoredProfileDto[]) => {
@@ -98,7 +97,7 @@ export class ContentManagementComponent implements OnInit {
   getProfileById(profile: CmsStoredProfileDto) {
     this.isLoading = true;
     this.cmsApiService
-      .getCmsProfileByIdAsync(profile.id)
+      .getCmsProfileById(profile.id)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response: CmsProfileDto) => {
@@ -152,7 +151,7 @@ export class ContentManagementComponent implements OnInit {
   createCmsProfile() {
     this.isLoading = true;
     this.cmsApiService
-      .createCmsProfileAsync(this.profile!)
+      .createCmsProfile(this.profile!)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response: CmsProfileDto) => {
@@ -176,13 +175,13 @@ export class ContentManagementComponent implements OnInit {
   activateCmsProfile(profile: CmsStoredProfileDto) {
     this.isLoading = true;
     this.cmsApiService
-      .activateCmsProfileAsync(profile.id)
+      .activateCmsProfile(profile.id)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response: CmsProfileDto) => {
           try {
             this.profile = response;
-            this.cmsApiService.GetCmsNavAndFooterAsync().subscribe({
+            this.cmsApiService.getCmsNavAndFooter().subscribe({
               next: (cms: CmsNavAndFooterDto) => {
                 localStorage.removeItem('cmsProfile');
                 localStorage.setItem('cmsProfile', JSON.stringify(cms));
@@ -228,7 +227,7 @@ export class ContentManagementComponent implements OnInit {
     }
     this.isLoading = true;
     this.cmsApiService
-      .updateCmsProfileAsync(this.profile!)
+      .updateCmsProfile(this.profile!)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response: CmsProfileDto) => {
@@ -236,7 +235,7 @@ export class ContentManagementComponent implements OnInit {
             this.profile = response;
 
             if (response.isActive) {
-              this.cmsApiService.GetCmsNavAndFooterAsync().subscribe({
+              this.cmsApiService.getCmsNavAndFooter().subscribe({
                 next: (cms: CmsNavAndFooterDto) => {
                   localStorage.removeItem('cmsProfile');
                   localStorage.setItem('cmsProfile', JSON.stringify(cms));
@@ -295,7 +294,7 @@ export class ContentManagementComponent implements OnInit {
     }));
 
     this.cmsApiService
-      .createCmsProfileAsync(this.profile!)
+      .createCmsProfile(this.profile!)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response: CmsProfileDto) => {
@@ -344,7 +343,7 @@ export class ContentManagementComponent implements OnInit {
   onCategoryImageSelected(event: Event, index: number) {
     this.fileToBase64(
       event,
-      (b64) => (this.profile!.categories[index].imageBase64 = b64)
+      (b64) => (this.profile!.categories[index].imageBase64 = b64),
     );
   }
 
@@ -379,11 +378,11 @@ export class ContentManagementComponent implements OnInit {
     if (!this.canDeleteProfile(profile)) {
       if (this.storedProfiles.length <= 1) {
         this.toastService.error(
-          'Cannot delete the last profile. At least one profile must exist.'
+          'Cannot delete the last profile. At least one profile must exist.',
         );
       } else if (profile.isActive) {
         this.toastService.error(
-          'Cannot delete the active profile. Please set another profile as active first.'
+          'Cannot delete the active profile. Please set another profile as active first.',
         );
       }
       return;
@@ -398,7 +397,7 @@ export class ContentManagementComponent implements OnInit {
       if (result === true) {
         this.isLoading = true;
 
-        this.cmsApiService.deleteCmsProfileAsync(profile.id).subscribe({
+        this.cmsApiService.deleteCmsProfile(profile.id).subscribe({
           next: (response: boolean) => {
             this.toastService.success('Profile deleted successfully');
             this.isLoading = false;

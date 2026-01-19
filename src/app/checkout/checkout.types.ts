@@ -7,3 +7,8 @@ export interface AddressData {
   instructions: string;
   saveAddress: boolean;
 }
+
+export interface ShippingInfo {
+  method: string;
+  estimatedDelivery: string;
+}

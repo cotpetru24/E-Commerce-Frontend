@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
 import { CmsStateService } from '../../services/cmsStateService';
-import { UtilsService } from '../../services/utils';
+import { Utils } from '../utils';
 
 @Component({
   selector: 'app-footer',
@@ -14,7 +14,6 @@ import { UtilsService } from '../../services/utils';
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
 })
-
 export class FooterComponent implements OnInit {
   newsletterEmail: string = '';
   showBackToTop: boolean = false;
@@ -27,7 +26,7 @@ export class FooterComponent implements OnInit {
   constructor(
     private toastService: ToastService,
     private cmsStateService: CmsStateService,
-    private utilsService: UtilsService
+    private utils: Utils,
   ) {}
 
   ngOnInit() {
@@ -45,7 +44,7 @@ export class FooterComponent implements OnInit {
   }
 
   scrollToTop() {
-    this.utilsService.scrollToTop();
+    this.utils.scrollToTop();
   }
 
   openContactModal() {

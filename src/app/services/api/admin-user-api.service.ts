@@ -4,18 +4,18 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import {
   AdminOrderDto,
+  AdminUpdateUserProfileRequestDto,
   AdminUserDto,
   GetAllUsersRequestDto,
   GetAllUsersResponseDto,
   GetUserOrdersRequestDto,
-  UpdateUserPasswordRequestDto,
-  UpdateUserRequestDto,
-} from '../../dtos';
+  AdminChangePasswordResponseDto,
+  UpdateUserProfileRequestDto,
+} from '@dtos';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class AdminUserApiService extends BaseApiService {
   private readonly adminUserEndPoint = '/api/admin/users';
 
@@ -49,10 +49,21 @@ export class AdminUserApiService extends BaseApiService {
 
   updateUser(
     userId: string,
-    updates: UpdateUserRequestDto
+    updates: UpdateUserProfileRequestDto,
   ): Observable<{ message: string }> {
     const url = this.buildUrl(`${this.adminUserEndPoint}/${userId}`);
     return this.put<{ message: string }>(url, updates);
+  }
+
+  toggleUserStatus(
+    userId: string,
+    request: AdminUpdateUserProfileRequestDto,
+  ): Observable<any> {
+    const url = this.buildUrl(`${this.adminUserEndPoint}/users/${userId}`);
+    return this.put<
+      UpdateUserProfileRequestDto,
+      AdminUpdateUserProfileRequestDto
+    >(url, request);
   }
 
   deleteUser(userId: string): Observable<{ message: string }> {
@@ -62,7 +73,7 @@ export class AdminUserApiService extends BaseApiService {
 
   updateUserPassword(
     userId: string,
-    passwordData: UpdateUserPasswordRequestDto
+    passwordData: AdminChangePasswordResponseDto,
   ): Observable<{ message: string }> {
     const url = this.buildUrl(`${this.adminUserEndPoint}/${userId}/password`);
     return this.put<{ message: string }>(url, passwordData);
@@ -70,7 +81,7 @@ export class AdminUserApiService extends BaseApiService {
 
   getUserOrders(
     userId: string,
-    request: GetUserOrdersRequestDto
+    request: GetUserOrdersRequestDto,
   ): Observable<AdminOrderDto[]> {
     const url = this.buildUrl(`${this.adminUserEndPoint}/${userId}/orders`);
     const params = this.createParams({

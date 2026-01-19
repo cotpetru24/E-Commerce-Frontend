@@ -1,6 +1,3 @@
-import { Audience } from './audience.enum';
-import { ProductImageDto } from './product-image.dto';
-
 export interface ProductDto {
   id: number;
   name: string;
@@ -13,7 +10,7 @@ export interface ProductDto {
   rating?: number | undefined;
   reviewCount?: number | undefined;
   productSizes?: ProductSizeDto[] | undefined;
-  productFeatures: AdminProductFeatureDto[];
+  productFeatures: ProductFeatureDto[];
   productImages: ProductImageDto[];
   isNew?: boolean | undefined;
   discountPercentage?: number;
@@ -35,7 +32,7 @@ export interface AdminProductDto {
   rating?: number | undefined;
   reviewCount?: number | undefined;
   productSizes: ProductSizeDto[];
-  productFeatures: AdminProductFeatureDto[];
+  productFeatures: ProductFeatureDto[];
   productImages: ProductImageDto[];
   isNew?: boolean | undefined;
   discountPercentage?: number;
@@ -45,17 +42,7 @@ export interface AdminProductDto {
   updatedAt?: Date;
 }
 
-export interface AdminBrandDto {
-  brandId: number;
-  brandName: string;
-}
-
-export interface AdminProductAudienceDto {
-  audienceId: number;
-  audienceName: string;
-}
-
-export interface AdminProductFeatureDto {
+export interface ProductFeatureDto {
   id: number;
   featureText: string;
   sortOrder: number;
@@ -69,6 +56,35 @@ export interface ProductSizeDto {
   barcode: string;
 }
 
+export interface ProductImageDto {
+  id: number;
+  productId: number;
+  imagePath: string;
+  isPrimary: boolean;
+  sortOrder: number;
+}
+
+export interface BrandDto {
+  brandId: number;
+  brandName: string;
+}
+
+export interface AdminProductsStatsDto {
+  totalProductsCount: number;
+  totalLowStockProductsCount: number;
+  totalOutOfStockProductsCount: number;
+  totalActiveProductsCount: number;
+}
+
+export interface GetProductsDto {
+  products: ProductDto[];
+  brands: string[];
+}
+export interface GetProductByIdDto {
+  product: ProductDto | null;
+  relatedProducts: ProductDto[];
+}
+
 export interface GetProductsAdminResponseDto {
   products: AdminProductDto[];
   totalQueryCount: number;
@@ -78,6 +94,7 @@ export interface GetProductsAdminResponseDto {
   totalPages: number;
   allBrands: string[];
 }
+
 export interface GetProductsAdminRequestDto {
   pageNumber?: number;
   pageSize?: number;
@@ -86,16 +103,32 @@ export interface GetProductsAdminRequestDto {
   productCategory?: Audience | null;
   productBrand?: string | null;
   productStockStatus?: ProductStockStatus | null;
-
   sortDirection: ProductsSortDirection | null;
   sortBy?: ProductsSortBy | null;
 }
 
-export interface AdminProductsStatsDto {
-  totalProductsCount: number;
-  totalLowStockProductsCount: number;
-  totalOutOfStockProductsCount: number;
-  totalActiveProductsCount: number;
+export interface ProductAudienceDto {
+  audienceId: number;
+  audienceName: string;
+}
+
+export interface ProductFilterDto {
+  Audience?: Audience | null;
+  Brand?: string | null;
+  MinPrice?: number | null;
+  MaxPrice?: number | null;
+  SearchTerm?: string | null;
+  Page?: number | null;
+  PageSize?: number | null;
+  SortBy?: SortByOption | null;
+  Size?: number | null;
+}
+
+export enum Audience {
+  Men = 'men',
+  Women = 'women',
+  Children = 'children',
+  Unisex = 'unisex',
 }
 
 export enum ProductsSortBy {
@@ -119,4 +152,13 @@ export enum ProductStockStatus {
   HighStock = 'high stock',
   InStock = 'in stock',
   OutOfStock = 'out of stock',
+}
+
+export enum SortByOption {
+  NameAsc = 'NameAsc',
+  NameDesc = 'NameDesc',
+  PriceAsc = 'PriceAsc',
+  PriceDesc = 'PriceDesc',
+  BrandAsc = 'BrandAsc',
+  BrandDesc = 'BrandDesc',
 }

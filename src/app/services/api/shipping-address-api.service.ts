@@ -8,7 +8,7 @@ import {
   UpdateShippingAddressRequestDto,
   CreateShippingAddressResponseDto,
   DeleteShippingAddressResponseDto,
-} from '../../models/shipping-address.dto';
+} from '@dtos';
 
 @Injectable({
   providedIn: 'root',

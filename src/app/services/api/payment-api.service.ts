@@ -6,7 +6,7 @@ import {
   CreatePaymentIntentRequestDto,
   CreatePaymentIntentResponseDto,
   StorePaymentRequestDto,
-} from '../../dtos';
+} from '@dtos';
 
 @Injectable({
   providedIn: 'root',

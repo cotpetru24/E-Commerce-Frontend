@@ -15,12 +15,12 @@
             <h1 class="page-title">
               <i class="bi bi-clipboard-check me-2"></i>Order #{{ orderId }}
             </h1>
-            <p class="page-subtitle">Order placed on {{ order?.createdAt | date:'MMMM dd, yyyy' }}</p>
+            <p class="page-subtitle">Order placed on {{ order.createdAt | date:'MMMM dd, yyyy' }}</p>
             <div class="customer-info mt-2">
               <small class="text-white-50">
                 <i class="bi bi-person me-1"></i>
-                Customer: {{ order?.userName || 'N/A' }}
-                @if (order?.userId) {
+                Customer: {{ order.userName || 'N/A' }}
+                @if (order.userId) {
                 <span class="ms-3">
                   <i class="bi bi-envelope me-1"></i>
                   ID: {{ order.userId }}
@@ -57,11 +57,18 @@
                   @for (item of orderItems; track item.productId) {
                   <div class="order-item" (click)="goToItem(item.productId!)">
                     <div class="item-image">
-                      <img [src]="'/assets/'+item.imagePath" [alt]="item.productName" title="productName">
+                      @if (item.mainImage != null) {
+                      <img [src]="'/assets/'+item.mainImage" [alt]="item.productName" title="productName">
+                      } @else {
+                      <img src="/assets/products/image-coming-soon.png" [alt]="item.productName" title="productName">
+                      }
                     </div>
                     <div class="item-details">
                       <h4 class="item-name">{{ item.productName }}</h4>
-                      <p class="item-brand">{{ item.brandName }}</p>
+                      <div class="item-meta">
+                        <p class="item-brand">{{ item.brandName }}</p>
+                        <p class="text-muted">Code:{{item.barcode}}</p>
+                      </div>
                       <div class="item-meta">
                         @if (item.size) {
                         <span class="item-size">Size: {{ item.size }}</span>
@@ -91,8 +98,8 @@
                       @if (shippingAddress.addressLine2) {
                       <p class="address-line">{{ shippingAddress.addressLine2 }}</p>
                       }
-                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.state }} {{
-                        shippingAddress.postalCode }}</p>
+                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }} {{
+                        shippingAddress.postcode }}</p>
                       <p class="address-line">{{ shippingAddress.country }}</p>
                       @if (shippingAddress.phoneNumber) {
                       <p class="address-line">{{ shippingAddress.phoneNumber }}</p>
@@ -137,31 +144,31 @@
                       @if (order.payment.paymentMethod === 'Credit/Debit Card') {
                       <div>
                         <div class="d-flex justify-content-between mb-2">
-                          <p class="payment-type"><strong>{{ order?.payment?.paymentMethod }}</strong></p>
+                          <p class="payment-type"><strong>{{ order.payment.paymentMethod }}</strong></p>
                           <span class="badge badge-compact" [ngClass]="{
-                              'bg-success text-dark': order?.payment?.paymentStatusName === 'Completed',
-                              'bg-warning text-dark': order?.payment?.paymentStatusName === 'Pending',
-                              'bg-danger text-dark': order?.payment?.paymentStatusName === 'Failed',
-                              'bg-info text-dark': order?.payment?.paymentStatusName === 'Refunded'
+                              'bg-success text-dark': order.payment.paymentStatus === 'Completed',
+                              'bg-warning text-dark': order.payment.paymentStatus === 'Pending',
+                              'bg-danger text-dark': order.payment.paymentStatus === 'Failed',
+                              'bg-info text-dark': order.payment.paymentStatus === 'Refunded'
                             }">
-                            Payment status: {{ order?.payment?.paymentStatusName }}
+                            Payment status: {{ order.payment.paymentStatus }}
                           </span>
                         </div>
-                        <p class="payment-details text-capitalize">Card brand: {{ order?.payment?.cardBrand || '' }}</p>
-                        <p class="payment-details">Card number: **** **** **** {{ order?.payment?.cardLast4 || '****' }}
+                        <p class="payment-details text-capitalize">Card brand: {{ order.payment.cardBrand || '' }}</p>
+                        <p class="payment-details">Card number: **** **** **** {{ order.payment.cardLast4 || '****' }}
                         </p>
                         <p class="payment-details">
-                          <a [href]="order?.payment?.receiptUrl || ''" target="_blank" rel="noopener noreferrer">
+                          <a [href]="order.payment.receiptUrl || ''" target="_blank" rel="noopener noreferrer">
                             Receipt
                           </a>
                         </p>
-                        <p class="payment-details">Transaction ID: {{ order?.payment?.transactionId || 'Unknown' }}</p>
+                        <p class="payment-details">Transaction ID: {{ order.payment.transactionId || 'Unknown' }}</p>
                       </div>
                       }
-                      @if (order?.payment?.paymentMethod === 'paypal') {
+                      @if (order.payment.paymentMethod === 'paypal') {
                       <div>
                         <p class="payment-type"><strong>PayPal</strong></p>
-                        <p class="payment-details">{{ order?.payment?.billingEmail }}</p>
+                        <p class="payment-details">{{ order.payment.billingEmail }}</p>
                       </div>
                       }
                     </div>
@@ -218,7 +225,7 @@
             </div>
           </div>
           <div class="order-actions">
-            @if (order?.userId) {
+            @if (order.userId) {
             <button class="btn btn-primary btn-lg w-100" (click)="goToUserProfile()">
               <i class="bi bi-person me-2"></i>
               View Customer Profile
@@ -266,7 +273,7 @@
                 <span class="info-label">Order ID:</span>
                 <span class="info-value">{{ orderId }}</span>
               </div>
-              @if (order?.userId) {
+              @if (order.userId) {
               <div class="info-item">
                 <span class="info-label">Customer ID:</span>
                 <span class="info-value">{{ order.userId }}</span>
@@ -274,9 +281,9 @@
               }
               <div class="info-item">
                 <span class="info-label">Created:</span>
-                <span class="info-value">{{ order?.createdAt | date:'short' }}</span>
+                <span class="info-value">{{ order.createdAt | date:'short' }}</span>
               </div>
-              @if (order?.updatedAt) {
+              @if (order.updatedAt) {
               <div class="info-item">
                 <span class="info-label">Last Updated:</span>
                 <span class="info-value">{{ order.updatedAt | date:'short' }}</span>

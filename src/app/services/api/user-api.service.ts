@@ -9,12 +9,11 @@ import {
   UserStatsDto,
   UpdateUserProfileResponseDto,
   ChangePasswordResponseDto,
-} from '../../models/user.dto';
+} from '@dtos';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class UserApiService extends BaseApiService {
   private readonly userEndpoint = '/api/User';
 
@@ -28,14 +27,14 @@ export class UserApiService extends BaseApiService {
   }
 
   updateUserProfile(
-    request: UpdateUserProfileRequestDto
+    request: UpdateUserProfileRequestDto,
   ): Observable<UpdateUserProfileResponseDto> {
     const url = this.buildUrl(`${this.userEndpoint}/profile`);
     return this.put<UpdateUserProfileResponseDto>(url, request);
   }
 
   changePassword(
-    request: ChangePasswordRequestDto
+    request: ChangePasswordRequestDto,
   ): Observable<ChangePasswordResponseDto> {
     const url = this.buildUrl(`${this.userEndpoint}/change-password`);
     return this.put<ChangePasswordResponseDto>(url, request);

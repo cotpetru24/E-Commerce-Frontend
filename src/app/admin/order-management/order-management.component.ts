@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Order } from '../../services/api/admin-api.service';
-import { AdminApiService } from '../../services/api/admin-api.service';
+import { AdminOrderApiService } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
+import { Utils } from '../../shared/utils';
 import {
   AdminOrderDto,
   AdminOrdersStatsDto,
@@ -15,16 +17,7 @@ import {
   SortBy,
   SortDirection,
   UpdateOrderStatusRequestDto,
-} from '../../dtos';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
-
-interface OrderStats {
-  total: number;
-  pending: number;
-  processing: number;
-  completed: number;
-}
+} from '@dtos';
 
 @Component({
   selector: 'app-order-management',
@@ -34,22 +27,18 @@ interface OrderStats {
   styleUrls: ['./order-management.component.scss'],
 })
 export class OrderManagementComponent implements OnInit, OnDestroy {
-  // Orders data
+  Math = Math;
   orders: AdminOrderDto[] = [];
   isLoading = false;
   initialInit: boolean = true;
-
-  searchTerm: string | null = null;
-  selectedStatus: OrderStatus | null = null;
-
-  selectedDateRange = '';
-  sortBy = 'date-desc';
-
-  // Pagination
   currentPage: number = 0;
   itemsPerPage: number = 10;
   totalPages: number = 0;
   totalQueryCount = 0;
+  searchTerm: string | null = null;
+  selectedStatus: OrderStatus | null = null;
+  selectedDateRange = '';
+  sortBy = 'date-desc';
 
   adminOrdersStats: AdminOrdersStatsDto = {
     totalOrdersCount: 0,
@@ -58,16 +47,14 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     totalProcessingOrdersCount: 0,
   };
 
-  // Math utility for template
-  Math = Math;
-
   private subscriptions = new Subscription();
 
   constructor(
-    private adminApiService: AdminApiService,
+    private adminApiService: AdminOrderApiService,
     private router: Router,
     private toastService: ToastService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -107,7 +94,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         fromDate = new Date(
           now.getFullYear(),
           Math.floor(now.getMonth() / 3) * 3,
-          1
+          1,
         );
         toDate = new Date();
         break;
@@ -130,7 +117,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     };
 
     this.subscriptions.add(
-      this.adminApiService.getAllOrders(getAllOrdersRequest).subscribe({
+      this.adminApiService.getOrders(getAllOrdersRequest).subscribe({
         next: (response) => {
           this.orders = response.orders;
           this.adminOrdersStats = response.adminOrdersStats;
@@ -145,44 +132,13 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.toastService.error('Failed to load orders');
         },
-      })
+      }),
     );
   }
 
   onFilterChange(): void {
     this.currentPage = 1;
     this.loadOrders();
-  }
-
-  isInDateRange(date: Date | string, range: string): boolean {
-    const orderDate = new Date(date);
-    const now = new Date();
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
-
-    switch (range) {
-      case 'today':
-        return orderDate >= startOfDay;
-      case 'week':
-        const startOfWeek = new Date(startOfDay);
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-        return orderDate >= startOfWeek;
-      case 'month':
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        return orderDate >= startOfMonth;
-      case 'quarter':
-        const startOfQuarter = new Date(
-          now.getFullYear(),
-          Math.floor(now.getMonth() / 3) * 3,
-          1
-        );
-        return orderDate >= startOfQuarter;
-      default:
-        return true;
-    }
   }
 
   updatePagination(): void {
@@ -253,16 +209,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatDate(date: Date | string): string {
-    return new Date(date).toLocaleDateString();
-  }
-
-  formatTime(date: Date | string): string {
-    return new Date(date).toLocaleTimeString();
-  }
-
   viewOrder(order: AdminOrderDto): void {
-    // Navigate to admin order detail view
     this.router.navigate(['/admin/orders', order.id]);
   }
 
@@ -293,10 +240,8 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           notes: 'testing the notes',
         };
 
-        this.adminApiService
-          .updateOrderStatus(order.id, statusData)
-            .subscribe({
-              next: () => {
+        this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
+          next: () => {
             this.toastService.success('Order status updated successfully!');
             this.loadOrders();
             this.isLoading = false;
@@ -304,7 +249,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be updated.'
+                'Order not found or cannot be updated.',
               );
             } else {
               this.toastService.error('Failed to update order status.');
@@ -318,7 +263,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
 
   markShipped(order: AdminOrderDto): void {
     const modalRef = this.modalService.open(ModalDialogComponent);
-    modalRef.componentInstance.title = 'Cancel Order';
+    modalRef.componentInstance.title = 'Mark as shipped';
     modalRef.componentInstance.message =
       'Are you sure you want to mark this order as Shipped?';
     modalRef.componentInstance.modalType = 'confirm';
@@ -328,7 +273,6 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          // orderStatusId: 5,
           orderStatusId: OrderStatus.shipped,
           notes: 'Order marked as shipped by admin',
         };
@@ -342,7 +286,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be updated.'
+                'Order not found or cannot be updated.',
               );
             } else {
               this.toastService.error('Failed to mark the order as shipped.');
@@ -385,7 +329,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be cancelled.'
+                'Order not found or cannot be cancelled.',
               );
             } else {
               this.toastService.error('Failed to cancel order.');
@@ -397,20 +341,11 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshOrders(): void {
-    this.loadOrders();
-  }
-
-  exportOrders(): void {
-    // Implement export functionality
-    this.toastService.info('Export functionality coming soon!');
-  }
-
   getOrderItemsCount(order: AdminOrderDto): number {
     return (
       order.orderItems.reduce(
         (orderItmsQuantity, item) => orderItmsQuantity + item.quantity,
-        0
+        0,
       ) ?? 0
     );
   }

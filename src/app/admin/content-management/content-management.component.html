@@ -45,7 +45,7 @@
               </tr>
             </thead>
             <tbody>
-              @for(let profile of storedProfiles){
+              @for(profile of storedProfiles; track profile.id){
               <tr [class.table-active]="selectedProfileId === profile.id" [class.table-success]="profile.isActive">
                 <td>
                   <strong>{{ profile.profileName }}</strong>
@@ -102,7 +102,7 @@
   @if(isEditingMode){
   <div class="row mb-5">
     <div class="col-lg-9">
-      @if(acctiveSection === 'branding'){
+      @if(activeSection === 'branding'){
       <div class="card shadow-sm">
         <div class="card-header bg-info text-white">
           <h5 class="mb-0">
@@ -270,7 +270,7 @@
         </div>
       </div>
       }
-      @if(acctiveSection === 'hero'){
+      @if(activeSection === 'hero'){
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
           <h5 class="mb-0">
@@ -326,13 +326,13 @@
         </div>
         <div class="card-body">
           <div class="row">
-            @for(let category of profile.categories; let i = index){
+            @for(category of profile.categories; track $index){
             <div class="col-md-6 mb-3">
               <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                   <h6 class="mb-0">Category order:</h6>
                   <input type="text" class="form-control" [(ngModel)]="category.sortOrder" />
-                  <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(i)">
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory($index)">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
@@ -347,7 +347,7 @@
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Image</label>
-                    <input type="file" class="form-control" (change)="onCategoryImageSelected($event, i)"
+                    <input type="file" class="form-control" (change)="onCategoryImageSelected($event, $index)"
                       accept="image/*">
                     @if(category.imageBase64){
                     <img [src]="'data:image/png;base64,' + category.imageBase64" class="img-fluid mb-3"
@@ -383,13 +383,13 @@
         </div>
         <div class="card-body">
           <div class="row">
-            @for(let feature of profile.features; let i = index){
+            @for(feature of profile.features; track $index){
             <div class="col-md-6 mb-3">
               <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                   <h6 class="mb-0">Feature order:</h6>
                   <input type="text" class="form-control" [(ngModel)]="feature.sortOrder" />
-                  <button class="btn btn-sm btn-outline-danger" (click)="deleteFeature(i)">
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteFeature($index)">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
@@ -451,7 +451,7 @@
           </a>
         </div>
       </div>
-      @if(acctiveSection !== 'newsletter'){
+      @if(activeSection !== 'newsletter'){
       <div class="card shadow-sm mt-3">
         <div class="card-body">
           <div class="d-grid gap-2">
@@ -464,7 +464,7 @@
               <i class="bi bi-plus-circle me-1"></i>Create New Profile
             </button>
             }
-            @if(profile || profile.id !== 0){
+            @if(profile.id || profile.id !== 0){
             <button class="btn btn-success" (click)="updateCmsProfile()"
               [disabled]="isLoading || !profile || profile.id === 0">
               <i class="bi bi-save me-1"></i>Update Profile
@@ -476,7 +476,7 @@
             }
           </div>
           <small class="text-muted d-block mt-2 text-center">
-            @if(profile || profile.id !== 0){
+            @if(profile.id || profile.id !== 0){
             <span>Editing: {{ profile.profileName }}</span>
             }
             @if(!profile || profile.id === 0){

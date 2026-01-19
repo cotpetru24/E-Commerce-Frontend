@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { CmsNavAndFooterDto } from '../models/cms.dto';
+import { CmsNavAndFooterDto } from '@dtos';
 
 @Injectable({ providedIn: 'root' })
-
 export class CmsStateService {
   private cmsProfileSubject = new BehaviorSubject<CmsNavAndFooterDto | null>(
-    null
+    null,
   );
 
   cmsProfile$ = this.cmsProfileSubject.asObservable();

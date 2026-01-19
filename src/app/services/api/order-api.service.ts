@@ -6,14 +6,13 @@ import {
   OrderDto,
   PlaceOrderRequestDto,
   PlaceOrderResponseDto,
-  GetOrdersRequestDto,
-  GetOrdersResponseDto,
-} from '../../models/order.dto';
+  GetUserOrdersRequestDto,
+  GetUserOrdersResponseDto,
+} from '@dtos';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class OrderApiService extends BaseApiService {
   private readonly orderEndPoint = '/api/Order';
 
@@ -31,17 +30,19 @@ export class OrderApiService extends BaseApiService {
     return this.get<OrderDto>(url);
   }
 
-  getOrders(request: GetOrdersRequestDto): Observable<GetOrdersResponseDto> {
+  getOrders(
+    request: GetUserOrdersRequestDto,
+  ): Observable<GetUserOrdersResponseDto> {
     const url = this.buildUrl(this.orderEndPoint);
     const params = this.createParams({
-      page: request.page,
+      page: request.pageNumber,
       pageSize: request.pageSize,
-      ...(request.orderStatus && { orderStatus: request.orderStatus }),
+      ...(request.statusFilter && { orderStatus: request.statusFilter }),
       ...(request.fromDate && { fromDate: request.fromDate.toISOString() }),
       ...(request.toDate && { toDate: request.toDate.toISOString() }),
     });
 
-    return this.get<GetOrdersResponseDto>(url, { params });
+    return this.get<GetUserOrdersResponseDto>(url, { params });
   }
 
   cancelOrder(orderId: number): Observable<OrderDto> {

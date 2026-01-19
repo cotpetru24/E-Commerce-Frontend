@@ -1,7 +1,8 @@
-import { ProductDto } from './product.dto';
+import { ProductDto } from "@dtos/product.dto";
 
 export interface CartItem {
   product: ProductDto;
   quantity: number;
+  size: number;
   barcode: string;
 }
