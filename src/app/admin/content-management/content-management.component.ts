@@ -28,35 +28,11 @@ export class ContentManagementComponent implements OnInit {
   isProfilesCardCollapsed: boolean = false;
   isEditingMode: boolean = false;
 
-  testimonialsContent = [
-    {
-      name: 'Sarah Johnson',
-      location: 'New York, NY',
-      rating: 5,
-      text: 'Amazing quality shoes! The delivery was fast and the customer service was excellent.',
-      avatar: null,
-    },
-    {
-      name: 'Mike Chen',
-      location: 'Los Angeles, CA',
-      rating: 5,
-      text: 'Great selection of shoes for all occasions. Highly recommend!',
-      avatar: null,
-    },
-    {
-      name: 'Emily Davis',
-      location: 'Chicago, IL',
-      rating: 4,
-      text: 'Love the variety and the prices are reasonable. Will definitely shop here again.',
-      avatar: null,
-    },
-  ];
-
   constructor(
     private toastService: ToastService,
     private cmsApiService: CmsApiService,
     private modalService: NgbModal,
-    private cmsStateService: CmsStateService
+    private cmsStateService: CmsStateService,
   ) {}
 
   ngOnInit() {
@@ -339,7 +315,7 @@ export class ContentManagementComponent implements OnInit {
   onCategoryImageSelected(event: Event, index: number) {
     this.fileToBase64(
       event,
-      (b64) => (this.profile!.categories[index].imageBase64 = b64)
+      (b64) => (this.profile!.categories[index].imageBase64 = b64),
     );
   }
 
@@ -374,11 +350,11 @@ export class ContentManagementComponent implements OnInit {
     if (!this.canDeleteProfile(profile)) {
       if (this.storedProfiles.length <= 1) {
         this.toastService.error(
-          'Cannot delete the last profile. At least one profile must exist.'
+          'Cannot delete the last profile. At least one profile must exist.',
         );
       } else if (profile.isActive) {
         this.toastService.error(
-          'Cannot delete the active profile. Please set another profile as active first.'
+          'Cannot delete the active profile. Please set another profile as active first.',
         );
       }
       return;
@@ -414,18 +390,28 @@ export class ContentManagementComponent implements OnInit {
     });
   }
 
+  //checked-----------------
   expandProfilesCard() {
     this.isProfilesCardCollapsed = false;
-  }
-
-  collapseProfilesCard() {
-    this.isProfilesCardCollapsed = true;
   }
 
   setActiveSection(section: string) {
     this.activeSection = section;
   }
+  //----------------
 
+
+
+
+
+
+
+
+  //can delete
+  collapseProfilesCard() {
+    this.isProfilesCardCollapsed = true;
+  }
+  //can delete
   onLogoUpload(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -437,7 +423,7 @@ export class ContentManagementComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
-
+  //can delete
   onFaviconUpload(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -449,7 +435,7 @@ export class ContentManagementComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
-
+  //can delete
   onImageUpload(event: any, type: string, index?: number) {
     const file = event.target.files[0];
     if (file) {
@@ -466,11 +452,6 @@ export class ContentManagementComponent implements OnInit {
               // this.categoriesContent[index].image = imageUrl;
             }
             break;
-          case 'testimonial':
-            if (index !== undefined) {
-              this.testimonialsContent[index].avatar = imageUrl;
-            }
-            break;
         }
 
         this.toastService.success('Image uploaded successfully!');
@@ -478,6 +459,30 @@ export class ContentManagementComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+  //can delete
+  previewChanges() {
+    // Implement preview functionality
+    this.toastService.info('Preview functionality coming soon!');
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
   addCategory() {
     this.profile?.categories.push({
@@ -521,10 +526,7 @@ export class ContentManagementComponent implements OnInit {
     this.profile = this.createEmptyCmsProfileDto();
   }
 
-  previewChanges() {
-    // Implement preview functionality
-    this.toastService.info('Preview functionality coming soon!');
-  }
+
 
   createEmptyCmsProfileDto(): CmsProfileDto {
     return {

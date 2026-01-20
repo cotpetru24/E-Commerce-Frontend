@@ -18,25 +18,18 @@ import { AdminOrderDto, AdminUserDto, UserRole } from '@dtos';
   styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
-  // User data
-  user: AdminUserDto | null = null;
-  userId: string | null = null;
   isLoading = false;
   isEditing = false;
   isChangingPassword = false;
   showPassword = false;
-
+  ordersLoading = false;
   UserRole = UserRole;
-  selectedRole: UserRole | null = null;
-
-  // Orders data
+  user: AdminUserDto | null = null;
+  userId: string | null = null;
   userOrders: AdminOrderDto[] = [];
   filteredOrders: AdminOrderDto[] = [];
-  ordersLoading = false;
   currentFilter = 'all';
-  selectedOrder: AdminOrderDto | null = null;
 
-  // Form data
   editForm = {
     email: '',
     firstName: '',
@@ -85,20 +78,13 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         next: (user) => {
           this.user = user;
           if (this.user) {
-            this.user.roles = [
-              user.roles[0] === UserRole.Administrator
-                ? UserRole.Administrator
-                : UserRole.Customer,
-            ];
+            this.user.roles = this.utils.normaliseUserRoles(this.user.roles);
           }
           this.editForm = {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            roles:
-              user.roles[0] === UserRole.Administrator
-                ? UserRole.Administrator
-                : UserRole.Customer,
+            roles: this.user.roles[0],
           };
           this.isLoading = false;
         },
@@ -158,10 +144,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       email: this.editForm.email,
       firstName: this.editForm.firstName,
       lastName: this.editForm.lastName,
-      roles:
-        this.editForm.roles === UserRole.Customer
-          ? ['Customer']
-          : ['Administrator'],
+      roles: this.utils.serializeUserRoles([this.editForm.roles]),
     };
 
     this.subscriptions.add(
@@ -351,7 +334,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
     return userRole;
   }
-  
+
   getRoleText(): string {
     let roleText = '';
     for (let role of this.user?.roles || []) {

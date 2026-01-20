@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
+import { UserRole } from '@dtos/auth.dto';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class Utils {
   formatDate(date: Date | string): string {
     return new Date(date).toLocaleDateString();
@@ -57,5 +57,15 @@ export class Utils {
 
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  normaliseUserRoles(roles: (UserRole | string)[]): UserRole[] {
+    return roles.map((r) =>
+      typeof r === 'string' ? UserRole[r as keyof typeof UserRole] : r,
+    );
+  }
+
+  serializeUserRoles(roles: UserRole[]): string[] {
+    return roles.map((r) => UserRole[r]);
   }
 }

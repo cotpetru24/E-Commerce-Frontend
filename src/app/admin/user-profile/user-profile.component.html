@@ -108,6 +108,9 @@
           </div>
           @if (isChangingPassword) {
           <div class="mb-3">
+            <p class="text-muted">Passwords must be at least 8 characters long, have at least one non alphanumeric
+              character, one lowercase character
+              ('a'-'z') and one uppercase character ('A'-'Z').'</p>
             <label class="form-label fw-bold">New Password</label>
             <div class="input-group mb-2">
               <input [type]="showPassword ? 'text' : 'password'" class="form-control"
