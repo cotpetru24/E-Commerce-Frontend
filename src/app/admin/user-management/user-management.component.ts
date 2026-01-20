@@ -8,7 +8,7 @@ import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdminUserApiService } from 'app/services/api';
-
+import { Utils } from 'app/shared/utils';
 import {
   UsersSortBy,
   UsersSortDirection,
@@ -28,37 +28,28 @@ import {
   styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
-  // Users data
+  UserRole = UserRole;
+  UserStatus = UserStatus;
+  Math = Math;
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalPages = 1;
+  totalQueryCount = 0;
+  searchTerm = '';
+  sortBy = 'date-desc';
+  isLoading = false;
+  selectedUserStatus: UserStatus | null = null;
+  selectedRole: UserRole | null = null;
+  sortDirection: UsersSortDirection | null = UsersSortDirection.Descending;
   users: AdminUserDto[] = [];
   filteredUsers: AdminUserDto[] = [];
   paginatedUsers: AdminUserDto[] = [];
-
   adminUsersStats: AdminUsersStatsDto = {
     totalUsersCount: 0,
     totalActiveUsersCount: 0,
     totalBlockedUsersCount: 0,
     totalNewUsersCountThisMonth: 0,
   };
-  isLoading = false;
-  UserRole = UserRole;
-  UserStatus = UserStatus;
-
-  // Search and filters
-  searchTerm = '';
-  selectedUserStatus: UserStatus | null = null;
-  selectedRole: UserRole | null = null;
-  sortBy = 'date-desc';
-
-  sortDirection: UsersSortDirection | null = UsersSortDirection.Descending;
-
-  // Pagination
-  currentPage = 1;
-  itemsPerPage = 10;
-  totalPages = 1;
-  totalQueryCount = 0;
-
-  // Math utility for template
-  Math = Math;
 
   private subscriptions = new Subscription();
 
@@ -66,7 +57,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private adminUserApiService: AdminUserApiService,
     private router: Router,
     private toastService: ToastService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -103,7 +95,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           this.adminUsersStats = response.adminUsersStats;
           this.totalPages = response.totalPages;
           this.totalQueryCount = response.totalQueryCount;
-          this.applyFilters();
           this.isLoading = false;
         },
         error: (error) => {
@@ -111,27 +102,14 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.toastService.error('Failed to load users');
         },
-      })
+      }),
     );
-  }
-
-  onSearchChange(): void {
-    this.currentPage = 1;
-    this.applyFilters();
   }
 
   onFilterChange(): void {
     this.currentPage = 1;
     this.loadUsers();
   }
-
-  onSortChange(): void {
-    this.applyFilters();
-  }
-
-  applyFilters(): void {}
-
-  sortUsers(): void {}
 
   updatePagination(): void {
     if (!this.isLoading) {
@@ -191,32 +169,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     return isBlocked ? 'Blocked' : 'Active';
   }
 
-  formatDate(date: Date | string): string {
-    return new Date(date).toLocaleDateString();
-  }
-
-  getTimeAgo(date: Date | string): string {
-    const now = new Date();
-    const past = new Date(date);
-    const diffInMs = now.getTime() - past.getTime();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-    if (diffInDays === 0) return 'Today';
-    if (diffInDays === 1) return 'Yesterday';
-    if (diffInDays < 7) return `${diffInDays} days ago`;
-    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
-    if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
-    return `${Math.floor(diffInDays / 365)} years ago`;
-  }
-
   viewUser(user: AdminUserDto): void {
-    // Navigate to user profile view
     this.router.navigate(['/admin/users', user.id]);
-  }
-
-  editUser(user: AdminUserDto): void {
-    // Navigate to user edit form
-    this.router.navigate(['/admin/edit-user', user.id]);
   }
 
   toggleUserStatus(user: AdminUserDto): void {
@@ -251,7 +205,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
               error: (err) => {
                 this.toastService.error('Failed to update user status');
               },
-            })
+            }),
         );
       }
     });
@@ -271,16 +225,14 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           this.adminUserApiService.deleteUser(user.id.toString()).subscribe({
             next: () => {
               this.toastService.success('User deleted successfully');
-
               this.loadUsers();
-
               this.isLoading = false;
             },
-            error: (err) => {
+            error: () => {
               this.toastService.error('Failed to delete user');
               this.isLoading = false;
             },
-          })
+          }),
         );
       }
     });
@@ -295,14 +247,5 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.itemsPerPage = 10;
     this.loadUsers();
-  }
-
-  refreshUsers(): void {
-    this.loadUsers();
-  }
-
-  exportUsers(): void {
-    // Implement export functionality
-    this.toastService.info('Export functionality coming soon!');
   }
 }

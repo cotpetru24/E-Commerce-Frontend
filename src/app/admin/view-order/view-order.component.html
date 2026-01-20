@@ -92,18 +92,10 @@
                 <div class="address-card">
                   <div class="address-content">
                     <div class="address-info">
-                      <p class="address-name"><strong>{{ shippingAddress.firstName }} {{ shippingAddress.lastName
-                          }}</strong></p>
-                      <p class="address-line">{{ shippingAddress.addressLine1 }}</p>
-                      @if (shippingAddress.addressLine2) {
-                      <p class="address-line">{{ shippingAddress.addressLine2 }}</p>
-                      }
-                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }} {{
+                      <p class="address-line"><strong>{{ shippingAddress.addressLine1 }}</strong></p>
+                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }}, {{
                         shippingAddress.postcode }}</p>
                       <p class="address-line">{{ shippingAddress.country }}</p>
-                      @if (shippingAddress.phoneNumber) {
-                      <p class="address-line">{{ shippingAddress.phoneNumber }}</p>
-                      }
                     </div>
                   </div>
                 </div>
@@ -117,18 +109,10 @@
                 <div class="address-card">
                   <div class="address-content">
                     <div class="address-info">
-                      <p class="address-name"><strong>{{ billingAddress.firstName }} {{ billingAddress.lastName
-                          }}</strong></p>
-                      <p class="address-line">{{ billingAddress.addressLine1 }}</p>
-                      @if (billingAddress.addressLine2) {
-                      <p class="address-line">{{ billingAddress.addressLine2 }}</p>
-                      }
-                      <p class="address-line">{{ billingAddress.city }}, {{ billingAddress.state }} {{
-                        billingAddress.postalCode }}</p>
+                      <p class="address-line"><strong>{{ billingAddress.addressLine1}}</strong></p>
+                      <p class="address-line">{{ billingAddress.city }}, {{ billingAddress.county }} {{
+                        billingAddress.postcode }}</p>
                       <p class="address-line">{{ billingAddress.country }}</p>
-                      @if (billingAddress.phoneNumber) {
-                      <p class="address-line">{{ billingAddress.phoneNumber }}</p>
-                      }
                     </div>
                   </div>
                 </div>

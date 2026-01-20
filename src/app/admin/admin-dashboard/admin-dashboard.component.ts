@@ -26,7 +26,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     private adminDashboardApiService: AdminDashboardApiService,
     private toastService: ToastService,
     private router: Router,
-    private utils: Utils,
+    public utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -70,14 +70,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       default:
         return 'bi-info-circle';
     }
-  }
-
-  formatCurrency(value: number): string {
-    return this.utils.formatCurrency(value);
-  }
-
-  formatTimeAgo(dateString: string): string {
-    return this.utils.formatTimeAgo(dateString);
   }
 
   viewActivity(activity: any): void {

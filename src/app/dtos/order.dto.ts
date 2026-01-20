@@ -1,9 +1,7 @@
 import {
-  ShippingAddressDto,
+  AddressDto,
   PaymentDto,
-  CreateBillingAddressRequestDto,
-  BillingAddressDto,
-  AdminBillingAddressDto,
+  CreateAddressRequestDto,
 } from '.';
 
 export interface OrderDto {
@@ -15,8 +13,8 @@ export interface OrderDto {
   shippingCost: number;
   discount: number;
   total: number;
-  shippingAddress: ShippingAddressDto;
-  billingAddress: BillingAddressDto;
+  shippingAddress: AddressDto;
+  billingAddress: AddressDto;
   payment?: PaymentDto;
   notes?: string;
   createdAt?: Date;
@@ -38,8 +36,8 @@ export interface AdminOrderDto {
   notes?: string;
   createdAt?: Date;
   updatedAt?: Date;
-  shippingAddress?: ShippingAddressDto;
-  billingAddress?: AdminBillingAddressDto;
+  shippingAddress?: AddressDto;
+  billingAddress?: AddressDto;
   orderItems: OrderItemDto[];
   payment: PaymentDto;
 }
@@ -106,7 +104,7 @@ export interface PlaceOrderRequestDto {
   shippingAddressId: number;
   billingAddressId?: number;
   billingAddressSameAsShipping: boolean;
-  billingAddress: CreateBillingAddressRequestDto | null;
+  billingAddress: CreateAddressRequestDto | null;
   shippingCost: number;
   discount: number;
   notes?: string;

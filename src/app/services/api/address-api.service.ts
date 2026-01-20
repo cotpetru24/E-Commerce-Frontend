@@ -3,11 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import {
-  ShippingAddressDto,
-  CreateShippingAddressRequestDto,
-  UpdateShippingAddressRequestDto,
-  CreateShippingAddressResponseDto,
-  DeleteShippingAddressResponseDto,
+  AddressDto,
+  CreateAddressRequestDto,
+  CreateAddressResponseDto,
+  DeleteAddressResponseDto,
 } from '@dtos';
 
 @Injectable({
@@ -22,40 +21,40 @@ export class ShippingAddressApiService extends BaseApiService {
   }
 
   createShippingAddress(
-    request: CreateShippingAddressRequestDto
-  ): Observable<CreateShippingAddressResponseDto> {
+    request: CreateAddressRequestDto
+  ): Observable<CreateAddressResponseDto> {
     const url = this.buildUrl(this.shippingAddressEndpoint);
     return this.post<
-      CreateShippingAddressResponseDto,
-      CreateShippingAddressRequestDto
+      CreateAddressResponseDto,
+      CreateAddressRequestDto
     >(url, request);
   }
 
-  getShippingAddresses(): Observable<ShippingAddressDto[]> {
+  getShippingAddresses(): Observable<AddressDto[]> {
     const url = this.buildUrl(this.shippingAddressEndpoint);
-    return this.get<ShippingAddressDto[]>(url);
+    return this.get<AddressDto[]>(url);
   }
 
-  getShippingAddress(addressId: number): Observable<ShippingAddressDto> {
+  getShippingAddress(addressId: number): Observable<AddressDto> {
     const url = this.buildUrl(`${this.shippingAddressEndpoint}/${addressId}`);
-    return this.get<ShippingAddressDto>(url);
+    return this.get<AddressDto>(url);
   }
 
   updateShippingAddress(
     addressId: number,
-    request: UpdateShippingAddressRequestDto
-  ): Observable<CreateShippingAddressResponseDto> {
+    request: AddressDto
+  ): Observable<CreateAddressResponseDto> {
     const url = this.buildUrl(`${this.shippingAddressEndpoint}/${addressId}`);
     return this.put<
-      CreateShippingAddressResponseDto,
-      UpdateShippingAddressRequestDto
+      CreateAddressResponseDto,
+      AddressDto
     >(url, request);
   }
 
   deleteShippingAddress(
     addressId: number
-  ): Observable<DeleteShippingAddressResponseDto> {
+  ): Observable<DeleteAddressResponseDto> {
     const url = this.buildUrl(`${this.shippingAddressEndpoint}/${addressId}`);
-    return this.delete<DeleteShippingAddressResponseDto>(url);
+    return this.delete<DeleteAddressResponseDto>(url);
   }
 }

@@ -49,7 +49,7 @@
                   @for (item of orderItems; track item.productId) {
                     <div class="order-item" (click)="goToItem(item.productId!)">
                   <div class="item-image">
-                    <img [src]="'/assets/'+item.imagePath" [alt]="item.productName" title="productName">
+                    <img [src]="'/assets/'+item.mainImage" [alt]="item.productName" title="productName">
                   </div>
                   <div class="item-details">
                     <h4 class="item-name">{{ item.productName }}</h4>

@@ -52,15 +52,6 @@
             </div>
             <h4>{{ user.firstName || 'N/A' }} {{ user.lastName || 'N/A' }}</h4>
             <p class="text-muted mb-0">ID: {{ user.id }}</p>
-
-
-
-            <!-- <span [class]="getRoleClass(user.roles[0] || 'customer')">{{ (user.roles[0] || 'customer') | titlecase }}</span> -->
-
-
-
-
-
           </div>
           <div class="row mb-3">
             <div class="col-12">
@@ -136,18 +127,14 @@
             <div class="col-6">
               <label class="form-label fw-bold">Status</label>
               <div>
-                <span [class]="getStatusClass(getIsBlocked())">{{ getStatusText(getIsBlocked()) }}</span>
+                <span [class]="getStatusClass()">{{ getStatusText() }}</span>
               </div>
             </div>
             <div class="col-6">
               <label class="form-label fw-bold">Role</label>
               @if (!isEditing) {
               <div>
-                <span [class]="getRoleClass(user.roles)">
-                  @if (user.roles.length > 0) {
-                  {{ user.roles[0] === UserRole.Administrator? 'Administrator' : 'Customer' }}
-                  }
-                </span>
+                <span [class]="getRoleClass()">{{ getRoleText()}} </span>
               </div>
               }
               @if (isEditing) {
@@ -165,8 +152,8 @@
               <label class="form-label fw-bold">Joined</label>
               <div>
                 @if (user.createdAt) {
-                <p class="mb-0">{{ formatDate(user.createdAt) }}</p>
-                <small class="text-muted">{{ getTimeAgo(user.createdAt) }}</small>
+                <p class="mb-0">{{ utils.formatDate(user.createdAt) }}</p>
+                <small class="text-muted">{{ utils.getTimeAgo(user.createdAt) }}</small>
                 }
                 @if (!user.createdAt) {
                 <p class="mb-0 text-muted">Unknown</p>
@@ -268,9 +255,9 @@
                   </td>
                   <td>
                     <div>
-                      <strong>{{ formatDate(order.createdAt ?? '') }}</strong>
+                      <strong>{{ utils.formatDate(order.createdAt ?? '') }}</strong>
                       <br>
-                      <small class="text-muted">{{ getTimeAgo(order.createdAt ?? '') }}</small>
+                      <small class="text-muted">{{ utils.getTimeAgo(order.createdAt ?? '') }}</small>
                     </div>
                   </td>
                   <td>

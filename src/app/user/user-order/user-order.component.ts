@@ -10,12 +10,7 @@ import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-
 import { switchMap } from 'rxjs';
 import { CountryMapService } from '../../services/country-map.service';
 import { ShippingInfo } from 'app/checkout/checkout.types';
-import {
-  BillingAddressDto,
-  OrderDto,
-  OrderItemDto,
-  ShippingAddressDto,
-} from '@dtos';
+import { AddressDto, OrderDto, OrderItemDto } from '@dtos';
 
 @Component({
   selector: 'app-user-order',
@@ -27,19 +22,17 @@ import {
 export class UserOrderComponent implements OnInit {
   order: OrderDto | null = null;
   orderItems: OrderItemDto[] = [];
-  shippingAddress: ShippingAddressDto = {
+  shippingAddress: AddressDto = {
+    id: 0,
+    userId: '',
     addressLine1: '',
     city: '',
     county: '',
     postcode: '',
     country: '',
-    id: 0,
-    userId: '',
-    firstName: '',
-    lastName: '',
   };
 
-  billingAddress: BillingAddressDto = {
+  billingAddress: AddressDto = {
     id: 0,
     userId: '',
     addressLine1: '',
@@ -66,7 +59,7 @@ export class UserOrderComponent implements OnInit {
     private orderApiService: OrderApiService,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private countryMap: CountryMapService
+    private countryMap: CountryMapService,
   ) {}
   ngOnInit(): void {
     // Load order data from service or route parameters
@@ -116,7 +109,7 @@ export class UserOrderComponent implements OnInit {
   getSubtotal(): number {
     return this.orderItems.reduce(
       (total, item) => total + this.getItemTotal(item),
-      0
+      0,
     );
   }
 
@@ -154,7 +147,7 @@ export class UserOrderComponent implements OnInit {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be cancelled.'
+                'Order not found or cannot be cancelled.',
               );
             } else {
               this.toastService.error('Failed to cancel order.');
@@ -178,7 +171,7 @@ export class UserOrderComponent implements OnInit {
     if (this.isNewOrder) {
       this.toastService.success(
         'Thank you for your order!\nYour order has been placed successfully!',
-        5000
+        5000,
       );
       this.isNewOrder = false; // Prevent multiple toasts
     }

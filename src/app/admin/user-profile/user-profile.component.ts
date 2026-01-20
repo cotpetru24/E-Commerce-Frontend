@@ -57,7 +57,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private adminUserApiService: AdminUserApiService,
     private toastService: ToastService,
-    private utils: Utils
+    public utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +68,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           this.loadUserData();
           this.loadUserOrders();
         }
-      })
+      }),
     );
   }
 
@@ -106,7 +106,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           this.toastService.error('Failed to load user data');
           this.isLoading = false;
         },
-      })
+      }),
     );
   }
 
@@ -122,15 +122,15 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         })
         .subscribe({
           next: (response) => {
-            this.userOrders = response;
+            this.userOrders = response.orders;
             this.filterOrders(this.currentFilter);
             this.ordersLoading = false;
           },
           error: () => {
-            this.toastService.error('Failed to load user orders');
             this.ordersLoading = false;
+            this.toastService.error('Failed to load user orders');
           },
-        })
+        }),
     );
   }
 
@@ -174,7 +174,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         error: () => {
           this.toastService.error('Failed to update user profile');
         },
-      })
+      }),
     );
   }
 
@@ -226,7 +226,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           error: () => {
             this.toastService.error('Failed to update password');
           },
-        })
+        }),
     );
   }
 
@@ -289,18 +289,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
               error: (err) => {
                 this.toastService.error('Failed to update user status');
               },
-            })
+            }),
         );
       }
     });
-  }
-
-  formatDate(date: string | Date): string {
-    return this.utils.formatDate(date);
-  }
-
-  getTimeAgo(date: string | Date): string {
-    return this.utils.getTimeAgo(date);
   }
 
   getStatusBadgeClass(status?: string): string {
@@ -328,28 +320,28 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  getStatusClass(isBlocked: boolean): string {
-    return isBlocked ? 'badge bg-danger' : 'badge bg-success';
+  getStatusClass(): string {
+    return this.user?.isBlocked === true
+      ? 'badge bg-danger'
+      : 'badge bg-success';
   }
 
-  getStatusText(isBlocked: boolean): string {
-    return isBlocked ? 'Blocked' : 'Active';
+  getStatusText(): string {
+    return this.user?.isBlocked === true ? 'Blocked' : 'Active';
   }
 
   getIsBlocked(): boolean {
     return this.user?.isBlocked || false;
   }
 
-  getRoleClass(roles: UserRole[] | string[]): string {
+  getRoleClass(): string {
     let userRole = '';
-    for (let role of roles) {
+    for (let role of this.user?.roles || []) {
       switch (role) {
         case UserRole.Administrator:
-        case 'Administrator':
           userRole = 'badge bg-danger';
           break;
         case UserRole.Customer:
-        case 'Customer':
           userRole = 'badge bg-info';
           break;
         default:
@@ -359,6 +351,24 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
     return userRole;
   }
+  
+  getRoleText(): string {
+    let roleText = '';
+    for (let role of this.user?.roles || []) {
+      switch (role) {
+        case UserRole.Administrator:
+          roleText = 'Administrator';
+          break;
+        case UserRole.Customer:
+          roleText = 'Customer';
+          break;
+        default:
+          roleText = 'Customer';
+          break;
+      }
+    }
+    return roleText;
+  }
 
   goBack(): void {
     this.router.navigate(['/admin/users']);
@@ -366,25 +376,25 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   getProcessingCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'processing'
+      (order) => order.orderStatusName?.toLowerCase() === 'processing',
     ).length;
   }
 
   getShippedCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'shipped'
+      (order) => order.orderStatusName?.toLowerCase() === 'shipped',
     ).length;
   }
 
   getDeliveredCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'delivered'
+      (order) => order.orderStatusName?.toLowerCase() === 'delivered',
     ).length;
   }
 
   getCancelledCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'cancelled'
+      (order) => order.orderStatusName?.toLowerCase() === 'cancelled',
     ).length;
   }
 }

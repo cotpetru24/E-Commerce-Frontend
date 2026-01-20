@@ -7,5 +7,5 @@ export { CmsApiService } from './cms-api.service';
 export { OrderApiService } from './order-api.service';
 export { PaymentApiService } from './payment-api.service';
 export { ProductApiService } from './product-api.service';
-export { ShippingAddressApiService } from './shipping-address-api.service';
+export { ShippingAddressApiService } from './address-api.service';
 export { UserApiService } from './user-api.service';

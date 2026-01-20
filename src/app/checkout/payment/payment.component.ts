@@ -22,7 +22,7 @@ import {
   PlaceOrderRequestDto,
   OrderItemRequestDto,
   PlaceOrderResponseDto,
-  CreateBillingAddressRequestDto,
+  CreateAddressRequestDto,
 } from '@dtos';
 
 @Component({
@@ -68,7 +68,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     total: 0,
   };
 
-  billingAddress: CreateBillingAddressRequestDto = {
+  billingAddress: CreateAddressRequestDto = {
     addressLine1: '',
     city: '',
     county: '',

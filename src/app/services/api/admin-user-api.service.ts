@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import {
-  AdminOrderDto,
   AdminUpdateUserProfileRequestDto,
   AdminUserDto,
   GetAllUsersRequestDto,
@@ -11,6 +10,7 @@ import {
   GetUserOrdersRequestDto,
   AdminChangePasswordResponseDto,
   UpdateUserProfileRequestDto,
+  GetAllOrdersResponseDto,
 } from '@dtos';
 
 @Injectable({
@@ -59,7 +59,7 @@ export class AdminUserApiService extends BaseApiService {
     userId: string,
     request: AdminUpdateUserProfileRequestDto,
   ): Observable<any> {
-    const url = this.buildUrl(`${this.adminUserEndPoint}/users/${userId}`);
+    const url = this.buildUrl(`${this.adminUserEndPoint}/${userId}`);
     return this.put<
       UpdateUserProfileRequestDto,
       AdminUpdateUserProfileRequestDto
@@ -82,7 +82,7 @@ export class AdminUserApiService extends BaseApiService {
   getUserOrders(
     userId: string,
     request: GetUserOrdersRequestDto,
-  ): Observable<AdminOrderDto[]> {
+  ): Observable<GetAllOrdersResponseDto> {
     const url = this.buildUrl(`${this.adminUserEndPoint}/${userId}/orders`);
     const params = this.createParams({
       pageNumber: request?.pageNumber || 1,
@@ -92,6 +92,6 @@ export class AdminUserApiService extends BaseApiService {
       ...(request?.toDate && { toDate: request.toDate.toISOString() }),
     });
 
-    return this.get<AdminOrderDto[]>(url, { params });
+    return this.get<GetAllOrdersResponseDto>(url, { params });
   }
 }

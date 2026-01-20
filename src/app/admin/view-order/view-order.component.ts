@@ -108,19 +108,11 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             } else if (this.shippingAddress) {
               this.billingAddress = {
                 id: this.shippingAddress.id,
-                firstName: this.shippingAddress.firstName,
-                lastName: this.shippingAddress.lastName,
                 addressLine1: this.shippingAddress.addressLine1,
-                ...(this.shippingAddress.addressLine2
-                  ? { addressLine2: this.shippingAddress.addressLine2 }
-                  : {}),
                 city: this.shippingAddress.city,
                 county: this.shippingAddress.county,
                 postcode: this.shippingAddress.postcode,
                 country: this.shippingAddress.country,
-                ...(this.shippingAddress.phoneNumber
-                  ? { phoneNumber: this.shippingAddress.phoneNumber }
-                  : {}),
               };
             }
           },

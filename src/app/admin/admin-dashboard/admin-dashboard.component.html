@@ -39,10 +39,10 @@
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
-                  <h4 class="mb-0">{{ formatCurrency(dashboardStats.totalRevenue) }}</h4>
+                  <h4 class="mb-0">{{ utils.formatCurrency(dashboardStats.totalRevenue) }}</h4>
                   <small>Total Revenue</small>
                   <div class="mt-1">
-                    <span class="badge bg-light text-success">+{{ formatCurrency(dashboardStats.todayRevenue) }}
+                    <span class="badge bg-light text-success">+{{ utils.formatCurrency(dashboardStats.todayRevenue) }}
                       today</span>
                   </div>
                 </div>
@@ -187,7 +187,7 @@
                         </div>
                       </td>
                       <td>
-                        <small class="text-muted">{{ formatTimeAgo(activity.createdAt) }}</small>
+                        <small class="text-muted">{{ utils.formatTimeAgo(activity.createdAt) }}</small>
                       </td>
                       <td>
                         <button class="btn btn-outline-primary btn-sm" (click)="viewActivity(activity)"
