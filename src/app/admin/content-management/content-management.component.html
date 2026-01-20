@@ -1,4 +1,4 @@
-<div class="container mt-4">
+<div class="container-fluid mt-4">
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -11,482 +11,517 @@
       </li>
     </ol>
   </nav>
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
-      style="cursor: pointer;" (click)="isProfilesCardCollapsed = !isProfilesCardCollapsed">
-      <h5 class="mb-0">
-        <i class="bi" [ngClass]="isProfilesCardCollapsed ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
-        <i class="bi bi-folder me-2"></i>Available Profiles
-      </h5>
-      <div class="d-flex gap-2" (click)="$event.stopPropagation()">
-        @if(!isProfilesCardCollapsed){
-        <button class="btn btn-light btn-sm" (click)="createNewProfile()">
-          <i class="bi bi-plus-circle me-1"></i>New Profile
-        </button>
-        }@else{
-        <button class="btn btn-light btn-sm" (click)="expandProfilesCard()">
-          <i class="bi bi-chevron-down me-1"></i>Show Profiles
-        </button>
-        }
-      </div>
-    </div>
-    <div class="collapse" [class.show]="!isProfilesCardCollapsed">
-      <div class="card-body">
-        @if(!isLoading){
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Profile Name</th>
-                <th>Status</th>
-                <th>Last Modified</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for(profile of storedProfiles; track profile.id){
-              <tr [class.table-active]="selectedProfileId === profile.id" [class.table-success]="profile.isActive">
-                <td>
-                  <strong>{{ profile.profileName }}</strong>
-                  @if(profile.isDefault){
-                  <span class="badge bg-info ms-2">Default profile</span>
-                  }
-                </td>
-                <td>
-                  <span class="badge" [ngClass]="profile.isActive ? 'bg-success' : 'bg-secondary'">
-                    {{ profile.isActive ? 'Active' : 'Inactive' }}
-                  </span>
-                </td>
-                <td>{{ profile.lastModified | date:'short' }}</td>
-                <td>{{ profile.createdAt | date:'short' }}</td>
-                <td>
-                  <div class="btn-group btn-group-sm" role="group">
-                    <button class="btn btn-outline-primary" (click)="selectProfile(profile)" [disabled]="isLoading">
-                      <i class="bi bi-eye me-1"></i>View
-                    </button>
-                    <button class="btn btn-outline-success" (click)="activateCmsProfile(profile)"
-                      [disabled]="isLoading || profile.isActive">
-                      <i class="bi bi-check-circle me-1"></i>Activate
-                    </button>
-                    <button class="btn btn-outline-danger" (click)="deleteProfile(profile)"
-                      [disabled]="isLoading || !canDeleteProfile(profile) || profile.isDefault"
-                      [title]="!canDeleteProfile(profile) ? (profile.isActive ? 'Cannot delete active profile' : 'Cannot delete last profile') : 'Delete profile'">
-                      <i class="bi bi-trash me-1"></i>Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              }
-              @if (storedProfiles.length === 0){
-              <tr>
-                <td colspan="5" class="text-center text-muted">
-                  No profiles available. Click "New Profile" to create one.
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        }
-        @if(isLoading){
-        <div class="text-center py-3">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-        }
-      </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h2 mb-0">
+        <i class="bi bi-people me-2"></i>Content Management
+      </h1>
+      <p class="text-muted mb-0">Manage customer accounts and permissions</p>
     </div>
   </div>
-  @if(isEditingMode){
-  <div class="row mb-5">
-    <div class="col-lg-9">
-      @if(activeSection === 'branding'){
-      <div class="card shadow-sm">
-        <div class="card-header bg-info text-white">
-          <h5 class="mb-0">
-            <i class="bi bi-palette me-2"></i>Branding & Logo
-          </h5>
-        </div>
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <div class="card bg-primary text-white">
         <div class="card-body">
-          <div class="row">
-            <div class="col-md-6 mb-4">
-              <h6 class="mb-3">Website Logo</h6>
-              <div class="border rounded p-3 text-center mb-3">
-                @if(profile.logoBase64){
-                <div class="mb-3">
-                  <i class="bi bi-image display-4 text-muted"></i>
-                </div>
-                }
-                @if(profile.logoBase64){
-                <img [src]="'data:image/png;base64,' + profile.logoBase64" alt="Website Logo" class="img-fluid mb-3"
-                  style="max-height: 100px;">
-                }
-                <p class="text-muted mb-2">Upload your website logo</p>
-                <button class="btn btn-outline-primary btn-sm" (click)="logoInput.click()">
-                  <i class="bi bi-upload me-2"></i>Choose Logo
-                </button>
-                <input #logoInput type="file" class="d-none" accept="image/*" (change)="onLogoSelected($event)">
-              </div>
+          <div class="d-flex justify-content-between">
+            <div>
+              <h4 class="mb-0">profiles count</h4>
+              <small>Total Profiles</small>
             </div>
-            <div class="col-md-6 mb-4">
-              <h6 class="mb-3">Favicon</h6>
-              <div class="border rounded p-3 text-center mb-3">
-                @if(profile.faviconBase64){
-                <div class="mb-3">
-                  <i class="bi bi-image display-4 text-muted"></i>
-                </div>
-                <img [src]="'data:image/png;base64,' + profile.faviconBase64" alt="Favicon" class="img-fluid mb-3"
-                  style="max-height: 32px;">
-                }
-                <p class="text-muted mb-2">Upload favicon (32x32px recommended)</p>
-                <button class="btn btn-outline-primary btn-sm" (click)="faviconInput.click()">
-                  <i class="bi bi-upload me-2"></i>Choose Favicon
-                </button>
-                <input #faviconInput type="file" class="d-none" accept="image/*" (change)="onFaviconSelected($event)">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Profile Name <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" [(ngModel)]="profile.profileName"
-                placeholder="Enter profile name">
-              <small class="form-text text-muted">Unique name for this profile</small>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Website Name</label>
-              <input type="text" class="form-control" [(ngModel)]="profile!.websiteName"
-                placeholder="Enter website name">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Tagline</label>
-              <input type="text" class="form-control" [(ngModel)]="profile!.tagline" placeholder="Enter tagline">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 mb-3">
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="showLogoInHeader"
-                  [(ngModel)]="profile.showLogoInHeader">
-                <label class="form-check-label" for="showLogoInHeader">
-                  <i class="bi bi-eye me-2"></i>Show Logo in Header
-                </label>
-                <small class="form-text text-muted d-block">Display the website logo in the navigation header</small>
-              </div>
-            </div>
+            <i class="bi bi-people display-6"></i>
           </div>
         </div>
       </div>
-      }
-      @if(activeSection === 'colors'){
-      <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
-          <h5 class="mb-0">
-            <i class="bi bi-palette2 me-2"></i>Color Scheme
-          </h5>
-        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="card bg-success text-white">
         <div class="card-body">
-          <div class="row">
-            <div class="col-md-6 mb-4">
-              <h6 class="mb-3">Navbar Colors</h6>
-              <div class="mb-3">
-                <label class="form-label">Background Color</label>
-                <div class="input-group">
-                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarBgColor"
-                    title="Choose navbar background color">
-                  <input type="text" class="form-control" [(ngModel)]="profile.navbarBgColor" placeholder="#ffffff">
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Text Color</label>
-                <div class="input-group">
-                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarTextColor"
-                    title="Choose navbar text color">
-                  <input type="text" class="form-control" [(ngModel)]="profile.navbarTextColor" placeholder="#000000">
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Link Color</label>
-                <div class="input-group">
-                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarLinkColor"
-                    title="Choose navbar link color">
-                  <input type="text" class="form-control" [(ngModel)]="profile.navbarLinkColor" placeholder="#007bff">
-                </div>
-              </div>
+          <div class="d-flex justify-content-between">
+            <div>
+              <h4 class="mb-0">profile.isactive</h4>
+              <small>Active Profile</small>
             </div>
-            <div class="col-md-6 mb-4">
-              <h6 class="mb-3">Footer Colors</h6>
-              <div class="mb-3">
-                <label class="form-label">Background Color</label>
-                <div class="input-group">
-                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerBgColor"
-                    title="Choose footer background color">
-                  <input type="text" class="form-control" [(ngModel)]="profile.footerBgColor" placeholder="#343a40">
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Text Color</label>
-                <div class="input-group">
-                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerTextColor"
-                    title="Choose footer text color">
-                  <input type="text" class="form-control" [(ngModel)]="profile.footerTextColor" placeholder="#ffffff">
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Link Color</label>
-                <div class="input-group">
-                  <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerLinkColor"
-                    title="Choose footer link color">
-                  <input type="text" class="form-control" [(ngModel)]="profile.footerLinkColor" placeholder="#17a2b8">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <h6 class="mb-3">Preview</h6>
-              <div class="border rounded p-3">
-                <div class="mb-3" [style.background-color]="profile.navbarBgColor"
-                  [style.color]="profile.navbarTextColor" style="padding: 10px; border-radius: 4px;">
-                  <strong>Navbar Preview</strong>
-                  <a href="#" [style.color]="profile.navbarBgColor"
-                    style="margin-left: 15px; text-decoration: none;">Home</a>
-                  <a href="#" [style.color]="profile.navbarBgColor"
-                    style="margin-left: 15px; text-decoration: none;">Products</a>
-                </div>
-                <div [style.background-color]="profile.footerBgColor" [style.color]="profile.footerTextColor"
-                  style="padding: 10px; border-radius: 4px;">
-                  <strong>Footer Preview</strong>
-                  <a href="#" [style.color]="profile.footerLinkColor"
-                    style="margin-left: 15px; text-decoration: none;">About</a>
-                  <a href="#" [style.color]="profile.footerLinkColor"
-                    style="margin-left: 15px; text-decoration: none;">Contact</a>
-                </div>
-              </div>
-            </div>
+            <i class="bi bi-check-circle display-6"></i>
           </div>
         </div>
       </div>
-      }
-      @if(activeSection === 'hero'){
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">
-            <i class="bi bi-stars me-2"></i>Hero Section
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Main Title</label>
-              <input type="text" class="form-control" [(ngModel)]="profile.heroTitle" placeholder="Enter main title">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Subtitle</label>
-              <input type="text" class="form-control" [(ngModel)]="profile.heroSubtitle" placeholder="Enter subtitle">
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea class="form-control" rows="3" [(ngModel)]="profile.heroDescription"
-              placeholder="Enter description"></textarea>
-          </div>
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Primary Button Text</label>
-              <input type="text" class="form-control" [(ngModel)]="profile.heroPrimaryButtonText">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Secondary Button Text</label>
-              <input type="text" class="form-control" [(ngModel)]="profile.heroSecondaryButtonText">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Background Image</label>
-              <input type="file" class="form-control" (change)="onHeroImageSelected($event)" accept="image/*">
-              @if(profile.heroBackgroundImageBase64){
-              <img [src]="'data:image/png;base64,' + profile.heroBackgroundImageBase64" alt="Website Logo"
-                class="img-fluid mb-3" style="max-height: 100px;">
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-      }
-      @if(activeSection === 'categories'){
-      <div class="card shadow-sm">
-        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="bi bi-grid me-2"></i>Categories
-          </h5>
-          <button class="btn btn-light btn-sm" (click)="addCategory()">
-            <i class="bi bi-plus-circle me-1"></i>Add Category
+    </div>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+        style="cursor: pointer;" (click)="isProfilesCardCollapsed = !isProfilesCardCollapsed">
+        <h5 class="mb-0">
+          <i class="bi" [ngClass]="isProfilesCardCollapsed ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+          <i class="bi bi-folder me-2"></i>Available Profiles
+        </h5>
+        <div class="d-flex gap-2" (click)="$event.stopPropagation()">
+          @if(!isProfilesCardCollapsed){
+          <button class="btn btn-light btn-sm" (click)="createNewProfile()">
+            <i class="bi bi-plus-circle me-1"></i>New Profile
           </button>
+          }@else{
+          <button class="btn btn-light btn-sm" (click)="expandProfilesCard()">
+            <i class="bi bi-chevron-down me-1"></i>Show Profiles
+          </button>
+          }
         </div>
+      </div>
+      <div class="collapse" [class.show]="!isProfilesCardCollapsed">
         <div class="card-body">
-          <div class="row">
-            @for(category of profile.categories; track $index){
-            <div class="col-md-6 mb-3">
-              <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  <h6 class="mb-0">Category order:</h6>
-                  <input type="text" class="form-control" [(ngModel)]="category.sortOrder" />
-                  <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory($index)">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-                <div class="card-body">
-                  <div class="mb-3">
-                    <label class="form-label">Title</label>
-                    <input type="text" class="form-control" [(ngModel)]="category.title">
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-control" rows="2" [(ngModel)]="category.description"></textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Image</label>
-                    <input type="file" class="form-control" (change)="onCategoryImageSelected($event, $index)"
-                      accept="image/*">
-                    @if(category.imageBase64){
-                    <img [src]="'data:image/png;base64,' + category.imageBase64" class="img-fluid mb-3"
-                      style="max-height:100px">
+          @if(!isLoading){
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Profile Name</th>
+                  <th>Status</th>
+                  <th>Last Modified</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for(profile of storedProfiles; track profile.id){
+                <tr [class.table-active]="selectedProfileId === profile.id" [class.table-success]="profile.isActive">
+                  <td>
+                    <strong>{{ profile.profileName }}</strong>
+                    @if(profile.isDefault){
+                    <span class="badge bg-info ms-2">Default profile</span>
                     }
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Tagline</label>
-                    <input type="text" class="form-control" [(ngModel)]="category.itemTagline">
-                  </div>
-                </div>
-              </div>
-            </div>
-            }
-            @if (profile.categories.length === 0){
-            <div class="col-12">
-              <p class="text-muted text-center">No categories added yet. Click "Add Category" to create one.</p>
-            </div>
-            }
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="profile.isActive ? 'bg-success' : 'bg-secondary'">
+                      {{ profile.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                  </td>
+                  <td>{{ profile.lastModified | date:'short' }}</td>
+                  <td>{{ profile.createdAt | date:'short' }}</td>
+                  <td>
+                    <div class="btn-group btn-group-sm" role="group">
+                      <button class="btn btn-outline-primary" (click)="selectProfile(profile)" [disabled]="isLoading">
+                        <i class="bi bi-eye me-1"></i>View
+                      </button>
+                      <button class="btn btn-outline-success" (click)="activateCmsProfile(profile)"
+                        [disabled]="isLoading || profile.isActive">
+                        <i class="bi bi-check-circle me-1"></i>Activate
+                      </button>
+                      <button class="btn btn-outline-danger" (click)="deleteProfile(profile)"
+                        [disabled]="isLoading || !canDeleteProfile(profile) || profile.isDefault"
+                        [title]="!canDeleteProfile(profile) ? (profile.isActive ? 'Cannot delete active profile' : 'Cannot delete last profile') : 'Delete profile'">
+                        <i class="bi bi-trash me-1"></i>Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                }
+                @if (storedProfiles.length === 0){
+                <tr>
+                  <td colspan="5" class="text-center text-muted">
+                    No profiles available. Click "New Profile" to create one.
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
           </div>
+          }
+          @if(isLoading){
+          <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          }
         </div>
       </div>
-      }
-      @if(activeSection === 'features'){
-      <div class="card shadow-sm">
-        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="bi bi-star me-2"></i>Features
-          </h5>
-          <button class="btn btn-light btn-sm" (click)="addFeature()">
-            <i class="bi bi-plus-circle me-1"></i>Add Feature
-          </button>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            @for(feature of profile.features; track $index){
-            <div class="col-md-6 mb-3">
-              <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  <h6 class="mb-0">Feature order:</h6>
-                  <input type="text" class="form-control" [(ngModel)]="feature.sortOrder" />
-                  <button class="btn btn-sm btn-outline-danger" (click)="deleteFeature($index)">
-                    <i class="bi bi-trash"></i>
+    </div>
+    @if(isEditingMode){
+    <div class="row mb-5">
+      <div class="col-lg-9">
+        @if(activeSection === 'branding'){
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0">
+              <i class="bi bi-palette me-2"></i>Branding & Logo
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <h6 class="mb-3">Website Logo</h6>
+                <div class="border rounded p-3 text-center mb-3">
+                  @if(profile.logoBase64){
+                  <div class="mb-3">
+                    <i class="bi bi-image display-4 text-muted"></i>
+                  </div>
+                  }
+                  @if(profile.logoBase64){
+                  <img [src]="'data:image/png;base64,' + profile.logoBase64" alt="Website Logo" class="img-fluid mb-3"
+                    style="max-height: 100px;">
+                  }
+                  <p class="text-muted mb-2">Upload your website logo</p>
+                  <button class="btn btn-outline-primary btn-sm" (click)="logoInput.click()">
+                    <i class="bi bi-upload me-2"></i>Choose Logo
                   </button>
+                  <input #logoInput type="file" class="d-none" accept="image/*" (change)="onLogoSelected($event)">
                 </div>
-                <div class="card-body">
+              </div>
+              <div class="col-md-6 mb-4">
+                <h6 class="mb-3">Favicon</h6>
+                <div class="border rounded p-3 text-center mb-3">
+                  @if(profile.faviconBase64){
                   <div class="mb-3">
-                    <label class="form-label">Icon Class</label>
-                    <input type="text" class="form-control" [(ngModel)]="feature.iconClass" placeholder="bi-truck">
-                    <small class="form-text text-muted">Bootstrap icon class (e.g., bi-truck, bi-shield-check)</small>
+                    <i class="bi bi-image display-4 text-muted"></i>
                   </div>
-                  <div class="mb-3">
-                    <label class="form-label">Title</label>
-                    <input type="text" class="form-control" [(ngModel)]="feature.title">
+                  <img [src]="'data:image/png;base64,' + profile.faviconBase64" alt="Favicon" class="img-fluid mb-3"
+                    style="max-height: 32px;">
+                  }
+                  <p class="text-muted mb-2">Upload favicon (32x32px recommended)</p>
+                  <button class="btn btn-outline-primary btn-sm" (click)="faviconInput.click()">
+                    <i class="bi bi-upload me-2"></i>Choose Favicon
+                  </button>
+                  <input #faviconInput type="file" class="d-none" accept="image/*" (change)="onFaviconSelected($event)">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Profile Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" [(ngModel)]="profile.profileName"
+                  placeholder="Enter profile name">
+                <small class="form-text text-muted">Unique name for this profile</small>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Website Name</label>
+                <input type="text" class="form-control" [(ngModel)]="profile!.websiteName"
+                  placeholder="Enter website name">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Tagline</label>
+                <input type="text" class="form-control" [(ngModel)]="profile!.tagline" placeholder="Enter tagline">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 mb-3">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="showLogoInHeader"
+                    [(ngModel)]="profile.showLogoInHeader">
+                  <label class="form-check-label" for="showLogoInHeader">
+                    <i class="bi bi-eye me-2"></i>Show Logo in Header
+                  </label>
+                  <small class="form-text text-muted d-block">Display the website logo in the navigation header</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+        @if(activeSection === 'colors'){
+        <div class="card shadow-sm">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">
+              <i class="bi bi-palette2 me-2"></i>Color Scheme
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <h6 class="mb-3">Navbar Colors</h6>
+                <div class="mb-3">
+                  <label class="form-label">Background Color</label>
+                  <div class="input-group">
+                    <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarBgColor"
+                      title="Choose navbar background color">
+                    <input type="text" class="form-control" [(ngModel)]="profile.navbarBgColor" placeholder="#ffffff">
                   </div>
-                  <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-control" rows="2" [(ngModel)]="feature.description"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Text Color</label>
+                  <div class="input-group">
+                    <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarTextColor"
+                      title="Choose navbar text color">
+                    <input type="text" class="form-control" [(ngModel)]="profile.navbarTextColor" placeholder="#000000">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Link Color</label>
+                  <div class="input-group">
+                    <input type="color" class="form-control form-control-color" [(ngModel)]="profile.navbarLinkColor"
+                      title="Choose navbar link color">
+                    <input type="text" class="form-control" [(ngModel)]="profile.navbarLinkColor" placeholder="#007bff">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <h6 class="mb-3">Footer Colors</h6>
+                <div class="mb-3">
+                  <label class="form-label">Background Color</label>
+                  <div class="input-group">
+                    <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerBgColor"
+                      title="Choose footer background color">
+                    <input type="text" class="form-control" [(ngModel)]="profile.footerBgColor" placeholder="#343a40">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Text Color</label>
+                  <div class="input-group">
+                    <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerTextColor"
+                      title="Choose footer text color">
+                    <input type="text" class="form-control" [(ngModel)]="profile.footerTextColor" placeholder="#ffffff">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Link Color</label>
+                  <div class="input-group">
+                    <input type="color" class="form-control form-control-color" [(ngModel)]="profile.footerLinkColor"
+                      title="Choose footer link color">
+                    <input type="text" class="form-control" [(ngModel)]="profile.footerLinkColor" placeholder="#17a2b8">
                   </div>
                 </div>
               </div>
             </div>
-            }
-            @if(profile.features.length === 0){
-            <div class="col-12">
-              <p class="text-muted text-center">No features added yet. Click "Add Feature" to create one.</p>
+            <div class="row">
+              <div class="col-12">
+                <h6 class="mb-3">Preview</h6>
+                <div class="border rounded p-3">
+                  <div class="mb-3" [style.background-color]="profile.navbarBgColor"
+                    [style.color]="profile.navbarTextColor" style="padding: 10px; border-radius: 4px;">
+                    <strong>Navbar Preview</strong>
+                    <a href="#" [style.color]="profile.navbarBgColor"
+                      style="margin-left: 15px; text-decoration: none;">Home</a>
+                    <a href="#" [style.color]="profile.navbarBgColor"
+                      style="margin-left: 15px; text-decoration: none;">Products</a>
+                  </div>
+                  <div [style.background-color]="profile.footerBgColor" [style.color]="profile.footerTextColor"
+                    style="padding: 10px; border-radius: 4px;">
+                    <strong>Footer Preview</strong>
+                    <a href="#" [style.color]="profile.footerLinkColor"
+                      style="margin-left: 15px; text-decoration: none;">About</a>
+                    <a href="#" [style.color]="profile.footerLinkColor"
+                      style="margin-left: 15px; text-decoration: none;">Contact</a>
+                  </div>
+                </div>
+              </div>
             </div>
-            }
           </div>
         </div>
-      </div>
-      }
-    </div>
-    <div class="col-lg-3">
-      <div class="card shadow-sm">
-        <div class="card-header bg-light">
-          <h6 class="mb-0">
-            <i class="bi bi-list me-2"></i>Content Sections
-          </h6>
-        </div>
-        <div class="list-group list-group-flush">
-          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'branding'}"
-            (click)="setActiveSection('branding')">
-            <i class="bi bi-palette me-2"></i>Branding & Logo
-          </a>
-          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'colors'}"
-            (click)="setActiveSection('colors')">
-            <i class="bi bi-palette2 me-2"></i>Color Scheme
-          </a>
-          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'hero'}"
-            (click)="setActiveSection('hero')">
-            <i class="bi bi-stars me-2"></i>Hero Section
-          </a>
-          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'categories'}"
-            (click)="setActiveSection('categories')">
-            <i class="bi bi-grid me-2"></i>Categories
-          </a>
-          <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'features'}"
-            (click)="setActiveSection('features')">
-            <i class="bi bi-star me-2"></i>Features
-          </a>
-        </div>
-      </div>
-      @if(activeSection !== 'newsletter'){
-      <div class="card shadow-sm mt-3">
-        <div class="card-body">
-          <div class="d-grid gap-2">
-            <button class="btn btn-secondary" (click)="cancelEditing()" [disabled]="isLoading">
-              <i class="bi bi-x-circle me-1"></i>Cancel
-            </button>
-            @if(!profile || profile.id === 0){
-            <button class="btn btn-primary" (click)="createCmsProfile()"
-              [disabled]="isLoading || (profile && profile.id !== 0)">
-              <i class="bi bi-plus-circle me-1"></i>Create New Profile
-            </button>
-            }
-            @if(profile.id || profile.id !== 0){
-            <button class="btn btn-success" (click)="updateCmsProfile()"
-              [disabled]="isLoading || !profile || profile.id === 0">
-              <i class="bi bi-save me-1"></i>Update Profile
-            </button>
-            <button class="btn btn-info" (click)="saveCmsProfileAs()"
-              [disabled]="isLoading || !profile || profile.id === 0">
-              <i class="bi bi-save me-1"></i>Save Profile as
-            </button>
-            }
+        }
+        @if(activeSection === 'hero'){
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+              <i class="bi bi-stars me-2"></i>Hero Section
+            </h5>
           </div>
-          <small class="text-muted d-block mt-2 text-center">
-            @if(profile.id || profile.id !== 0){
-            <span>Editing: {{ profile.profileName }}</span>
-            }
-            @if(!profile || profile.id === 0){
-            <span>Creating new profile</span>
-            }
-          </small>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Main Title</label>
+                <input type="text" class="form-control" [(ngModel)]="profile.heroTitle" placeholder="Enter main title">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Subtitle</label>
+                <input type="text" class="form-control" [(ngModel)]="profile.heroSubtitle" placeholder="Enter subtitle">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" rows="3" [(ngModel)]="profile.heroDescription"
+                placeholder="Enter description"></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Primary Button Text</label>
+                <input type="text" class="form-control" [(ngModel)]="profile.heroPrimaryButtonText">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Secondary Button Text</label>
+                <input type="text" class="form-control" [(ngModel)]="profile.heroSecondaryButtonText">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Background Image</label>
+                <input type="file" class="form-control" (change)="onHeroImageSelected($event)" accept="image/*">
+                @if(profile.heroBackgroundImageBase64){
+                <img [src]="'data:image/png;base64,' + profile.heroBackgroundImageBase64" alt="Website Logo"
+                  class="img-fluid mb-3" style="max-height: 100px;">
+                }
+              </div>
+            </div>
+          </div>
         </div>
+        }
+        @if(activeSection === 'categories'){
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-grid me-2"></i>Categories
+            </h5>
+            <button class="btn btn-light btn-sm" (click)="addCategory()">
+              <i class="bi bi-plus-circle me-1"></i>Add Category
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              @for(category of profile.categories; track $index){
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Category order:</h6>
+                    <input type="text" class="form-control" [(ngModel)]="category.sortOrder" />
+                    <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory($index)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label">Title</label>
+                      <input type="text" class="form-control" [(ngModel)]="category.title">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Description</label>
+                      <textarea class="form-control" rows="2" [(ngModel)]="category.description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Image</label>
+                      <input type="file" class="form-control" (change)="onCategoryImageSelected($event, $index)"
+                        accept="image/*">
+                      @if(category.imageBase64){
+                      <img [src]="'data:image/png;base64,' + category.imageBase64" class="img-fluid mb-3"
+                        style="max-height:100px">
+                      }
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Tagline</label>
+                      <input type="text" class="form-control" [(ngModel)]="category.itemTagline">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              }
+              @if (profile.categories.length === 0){
+              <div class="col-12">
+                <p class="text-muted text-center">No categories added yet. Click "Add Category" to create one.</p>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+        }
+        @if(activeSection === 'features'){
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-star me-2"></i>Features
+            </h5>
+            <button class="btn btn-light btn-sm" (click)="addFeature()">
+              <i class="bi bi-plus-circle me-1"></i>Add Feature
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              @for(feature of profile.features; track $index){
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Feature order:</h6>
+                    <input type="text" class="form-control" [(ngModel)]="feature.sortOrder" />
+                    <button class="btn btn-sm btn-outline-danger" (click)="deleteFeature($index)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label">Icon Class</label>
+                      <input type="text" class="form-control" [(ngModel)]="feature.iconClass" placeholder="bi-truck">
+                      <small class="form-text text-muted">Bootstrap icon class (e.g., bi-truck, bi-shield-check)</small>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Title</label>
+                      <input type="text" class="form-control" [(ngModel)]="feature.title">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Description</label>
+                      <textarea class="form-control" rows="2" [(ngModel)]="feature.description"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              }
+              @if(profile.features.length === 0){
+              <div class="col-12">
+                <p class="text-muted text-center">No features added yet. Click "Add Feature" to create one.</p>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+        }
       </div>
-      }
+      <div class="col-lg-3">
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
+            <h6 class="mb-0">
+              <i class="bi bi-list me-2"></i>Content Sections
+            </h6>
+          </div>
+          <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'branding'}"
+              (click)="setActiveSection('branding')">
+              <i class="bi bi-palette me-2"></i>Branding & Logo
+            </a>
+            <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'colors'}"
+              (click)="setActiveSection('colors')">
+              <i class="bi bi-palette2 me-2"></i>Color Scheme
+            </a>
+            <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'hero'}"
+              (click)="setActiveSection('hero')">
+              <i class="bi bi-stars me-2"></i>Hero Section
+            </a>
+            <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'categories'}"
+              (click)="setActiveSection('categories')">
+              <i class="bi bi-grid me-2"></i>Categories
+            </a>
+            <a class="list-group-item list-group-item-action" [ngClass]="{'active': activeSection === 'features'}"
+              (click)="setActiveSection('features')">
+              <i class="bi bi-star me-2"></i>Features
+            </a>
+          </div>
+        </div>
+        @if(activeSection !== 'newsletter'){
+        <div class="card shadow-sm mt-3">
+          <div class="card-body">
+            <div class="d-grid gap-2">
+              <button class="btn btn-secondary" (click)="cancelEditing()" [disabled]="isLoading">
+                <i class="bi bi-x-circle me-1"></i>Cancel
+              </button>
+              @if(!profile || profile.id === 0){
+              <button class="btn btn-primary" (click)="createCmsProfile()"
+                [disabled]="isLoading || (profile && profile.id !== 0)">
+                <i class="bi bi-plus-circle me-1"></i>Create New Profile
+              </button>
+              }
+              @if(profile.id || profile.id !== 0){
+              <button class="btn btn-success" (click)="updateCmsProfile()"
+                [disabled]="isLoading || !profile || profile.id === 0">
+                <i class="bi bi-save me-1"></i>Update Profile
+              </button>
+              <button class="btn btn-info" (click)="saveCmsProfileAs()"
+                [disabled]="isLoading || !profile || profile.id === 0">
+                <i class="bi bi-save me-1"></i>Save Profile as
+              </button>
+              }
+            </div>
+            <small class="text-muted d-block mt-2 text-center">
+              @if(profile.id || profile.id !== 0){
+              <span>Editing: {{ profile.profileName }}</span>
+              }
+              @if(!profile || profile.id === 0){
+              <span>Creating new profile</span>
+              }
+            </small>
+          </div>
+        </div>
+        }
+      </div>
     </div>
+    }
   </div>
-  }
-</div>
