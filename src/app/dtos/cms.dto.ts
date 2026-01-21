@@ -1,6 +1,7 @@
 export interface CmsProfileDto {
   id: number;
   profileName: string;
+  isDefault: boolean;
   isActive: boolean;
   websiteName: string;
   tagline?: string;

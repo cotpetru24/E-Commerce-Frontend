@@ -9,6 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { CmsStateService } from '../../services/cmsStateService';
 import { CmsProfileDto, CmsStoredProfileDto, CmsNavAndFooterDto } from '@dtos';
+import { StorageService } from 'app/services/storage.service';
 
 @Component({
   selector: 'app-content-management',
@@ -18,21 +19,22 @@ import { CmsProfileDto, CmsStoredProfileDto, CmsNavAndFooterDto } from '@dtos';
   styleUrls: ['./content-management.component.scss'],
 })
 export class ContentManagementComponent implements OnInit {
+    isProfilesCardCollapsed: boolean = false;
+  isEditingMode: boolean = false;
+    isLoading: boolean = false;
+  profileName: string = '';
   activeSection = 'branding';
-
   storedProfiles: CmsStoredProfileDto[] = [];
   profile: CmsProfileDto = this.createEmptyCmsProfileDto();
   selectedProfileId: number | null = null;
-  isLoading: boolean = false;
-  profileName: string = '';
-  isProfilesCardCollapsed: boolean = false;
-  isEditingMode: boolean = false;
+
 
   constructor(
     private toastService: ToastService,
     private cmsApiService: CmsApiService,
     private modalService: NgbModal,
     private cmsStateService: CmsStateService,
+    private storageService : StorageService
   ) {}
 
   ngOnInit() {
@@ -48,7 +50,9 @@ export class ContentManagementComponent implements OnInit {
         next: (response: CmsStoredProfileDto[]) => {
           try {
             this.storedProfiles = response;
+            this.isLoading = false
           } catch (err) {
+            this.isLoading = false
             console.error('Validation failed', err);
             this.toastService.error('CMS profile data is invalid');
           }
@@ -87,39 +91,6 @@ export class ContentManagementComponent implements OnInit {
       });
   }
 
-  populateContentFromProfile(profile: CmsProfileDto) {
-    this.profile = profile;
-    // this.profile.categories = [...this.profile.categories];
-
-    // Populate categories
-    this.profile!.categories = profile.categories.map((cat) => ({
-      id: cat.id,
-      title: cat.title,
-      description: cat.description,
-      imageBase64: cat.imageBase64 || '',
-      itemTagline: cat.itemTagline || '',
-      sortOrder: cat.sortOrder,
-    }));
-
-    // Populate features
-    this.profile!.features = profile.features.map((feat) => ({
-      id: feat.id,
-      iconClass: feat.iconClass,
-      title: feat.title,
-      description: feat.description,
-      sortOrder: feat.sortOrder,
-    }));
-  }
-
-  createNewProfile() {
-    // Reset to default values
-    this.selectedProfileId = null;
-    this.profileName = '';
-    this.isEditingMode = true;
-    this.isProfilesCardCollapsed = true;
-    this.profile = this.createEmptyCmsProfileDto();
-  }
-
   createCmsProfile() {
     this.isLoading = true;
     this.cmsApiService
@@ -130,7 +101,7 @@ export class ContentManagementComponent implements OnInit {
           try {
             this.profile = response;
             this.selectedProfileId = response.id;
-            this.isEditingMode = true;
+            this.cancelEditing();
             this.toastService.success('CMS profile created successfully');
             this.loadStoredProfiles();
           } catch (err) {
@@ -155,11 +126,10 @@ export class ContentManagementComponent implements OnInit {
             this.profile = response;
             this.cmsApiService.getCmsNavAndFooter().subscribe({
               next: (cms: CmsNavAndFooterDto) => {
-                localStorage.removeItem('cmsProfile');
-                localStorage.setItem('cmsProfile', JSON.stringify(cms));
+                this.storageService.removeLocalItem('cmsProfile');
+                this.storageService.setLocalItem('cmsProfile', JSON.stringify(cms));
                 this.cmsStateService.setProfile(cms);
-                this.applyTheme(cms);
-
+                this.cmsStateService.applyTheme(cms);
                 this.cmsStateService.setPageTitle(cms.websiteName);
                 this.cmsStateService.setFavicon(cms.favicon);
               },
@@ -180,18 +150,6 @@ export class ContentManagementComponent implements OnInit {
       });
   }
 
-  private applyTheme(cms: CmsNavAndFooterDto): void {
-    const root = document.documentElement;
-
-    root.style.setProperty('--navbar-bg-color', cms.navbarBgColor);
-    root.style.setProperty('--navbar-link-color', cms.navbarLinkColor);
-    root.style.setProperty('--navbar-text-color', cms.navbarTextColor);
-
-    root.style.setProperty('--footer-bg-color', cms.footerBgColor);
-    root.style.setProperty('--footer-link-color', cms.footerLinkColor);
-    root.style.setProperty('--footer-text-color', cms.footerTextColor);
-  }
-
   updateCmsProfile() {
     if (!this.profile || !this.selectedProfileId) {
       this.toastService.error('Please select a profile to update');
@@ -205,15 +163,13 @@ export class ContentManagementComponent implements OnInit {
         next: (response: CmsProfileDto) => {
           try {
             this.profile = response;
-
             if (response.isActive) {
               this.cmsApiService.getCmsNavAndFooter().subscribe({
                 next: (cms: CmsNavAndFooterDto) => {
-                  localStorage.removeItem('cmsProfile');
-                  localStorage.setItem('cmsProfile', JSON.stringify(cms));
+                this.storageService.removeLocalItem('cmsProfile');
+                this.storageService.setLocalItem('cmsProfile', JSON.stringify(cms));
                   this.cmsStateService.setProfile(cms);
-                  this.applyTheme(cms);
-
+                  this.cmsStateService.applyTheme(cms);
                   this.cmsStateService.setPageTitle(cms.websiteName);
                   this.cmsStateService.setFavicon(cms.favicon);
                 },
@@ -223,11 +179,10 @@ export class ContentManagementComponent implements OnInit {
               });
             }
 
-            this.profile = this.createEmptyCmsProfileDto();
-            this.isEditingMode = false;
-            this.isProfilesCardCollapsed = false;
+            this.cancelEditing()
             this.toastService.success('CMS profile updated successfully');
             this.loadStoredProfiles();
+
           } catch (err) {
             console.error('Validation failed', err);
             this.toastService.error('CMS profile data is invalid');
@@ -239,6 +194,10 @@ export class ContentManagementComponent implements OnInit {
       });
   }
 
+
+
+//to test and clean these
+//------------------------------------------
   saveCmsProfileAs() {
     if (!this.profile || !this.selectedProfileId) {
       this.toastService.error('Please select a profile to update');
@@ -288,36 +247,6 @@ export class ContentManagementComponent implements OnInit {
       });
   }
 
-  //   trackByCategoryId(index: number, category: any) {
-  //   return category.id;
-  // }
-
-  private fileToBase64(event: Event, assign: (base64: string) => void) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-
-    const reader = new FileReader();
-    reader.onload = () => assign((reader.result as string).split(',')[1]);
-    // reader.onload = () =>
-    // assign(reader.result as string);
-
-    reader.readAsDataURL(input.files[0]);
-  }
-
-  onLogoSelected(event: Event) {
-    this.fileToBase64(event, (b64) => (this.profile!.logoBase64 = b64));
-  }
-
-  onFaviconSelected(event: Event) {
-    this.fileToBase64(event, (b64) => (this.profile!.faviconBase64 = b64));
-  }
-
-  onCategoryImageSelected(event: Event, index: number) {
-    this.fileToBase64(
-      event,
-      (b64) => (this.profile!.categories[index].imageBase64 = b64),
-    );
-  }
 
   onHeroImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -333,20 +262,23 @@ export class ContentManagementComponent implements OnInit {
 
     reader.readAsDataURL(file);
   }
+//------------------------------------------
 
+
+
+
+  //checked-----------------
   canDeleteProfile(profile: CmsStoredProfileDto): boolean {
-    // Cannot delete if it's the last profile
     if (this.storedProfiles.length <= 1) {
       return false;
     }
-    // Cannot delete if it's the active profile
     if (profile.isActive) {
       return false;
     }
     return true;
   }
 
-  deleteProfile(profile: CmsStoredProfileDto) {
+    deleteProfile(profile: CmsStoredProfileDto) {
     if (!this.canDeleteProfile(profile)) {
       if (this.storedProfiles.length <= 1) {
         this.toastService.error(
@@ -369,10 +301,11 @@ export class ContentManagementComponent implements OnInit {
       if (result === true) {
         this.isLoading = true;
 
-        this.cmsApiService.deleteCmsProfile(profile.id).subscribe({
+        this.cmsApiService.deleteCmsProfile(profile.id)
+              .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
           next: (response: boolean) => {
             this.toastService.success('Profile deleted successfully');
-            this.isLoading = false;
             if (this.selectedProfileId === profile.id) {
               this.selectedProfileId = null;
               this.profile = this.createEmptyCmsProfileDto();
@@ -381,7 +314,6 @@ export class ContentManagementComponent implements OnInit {
             this.loadStoredProfiles();
           },
           error: (error: any) => {
-            this.isLoading = false;
             console.error('Error deleting profile:', error);
             this.toastService.error('Failed to delete profile');
           },
@@ -390,13 +322,40 @@ export class ContentManagementComponent implements OnInit {
     });
   }
 
-  //checked-----------------
+  private fileToBase64(event: Event, assign: (base64: string) => void) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const reader = new FileReader();
+    reader.onload = () => assign((reader.result as string).split(',')[1]);
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  onLogoSelected(event: Event) {
+    this.fileToBase64(event, (b64) => (this.profile!.logoBase64 = b64));
+  }
+
+    onFaviconSelected(event: Event) {
+    this.fileToBase64(event, (b64) => (this.profile!.faviconBase64 = b64));
+  }
+
+    onCategoryImageSelected(event: Event, index: number) {
+    this.fileToBase64(
+      event,
+      (b64) => (this.profile!.categories[index].imageBase64 = b64),
+    );
+  }
+
   expandProfilesCard() {
     this.isProfilesCardCollapsed = false;
   }
 
   setActiveSection(section: string) {
     this.activeSection = section;
+  }
+
+  getActiveProfile():string {
+     return (this.storedProfiles.find((p)=>p.isActive)?.profileName ?? "N/A" )
   }
   //----------------
 
@@ -407,63 +366,7 @@ export class ContentManagementComponent implements OnInit {
 
 
 
-  //can delete
-  collapseProfilesCard() {
-    this.isProfilesCardCollapsed = true;
-  }
-  //can delete
-  onLogoUpload(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        // this.brandingContent.logoUrl = e.target.result;
-        this.toastService.success('Logo uploaded successfully!');
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-  //can delete
-  onFaviconUpload(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        // this.brandingContent.faviconUrl = e.target.result;
-        this.toastService.success('Favicon uploaded successfully!');
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-  //can delete
-  onImageUpload(event: any, type: string, index?: number) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        const imageUrl = e.target.result;
 
-        switch (type) {
-          case 'hero':
-            // this.heroContent.backgroundImage = imageUrl;
-            break;
-          case 'category':
-            if (index !== undefined) {
-              // this.categoriesContent[index].image = imageUrl;
-            }
-            break;
-        }
-
-        this.toastService.success('Image uploaded successfully!');
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-  //can delete
-  previewChanges() {
-    // Implement preview functionality
-    this.toastService.info('Preview functionality coming soon!');
-  }
 
 
 
@@ -517,15 +420,46 @@ export class ContentManagementComponent implements OnInit {
     }
   }
 
-  cancelEditing() {
+
+
+
+//tested and cleaned
+  populateContentFromProfile(profile: CmsProfileDto) {
+    this.profile = profile;
+
+    this.profile!.categories = profile.categories.map((cat) => ({
+      id: cat.id,
+      title: cat.title,
+      description: cat.description,
+      imageBase64: cat.imageBase64 || '',
+      itemTagline: cat.itemTagline || '',
+      sortOrder: cat.sortOrder,
+    }));
+
+    this.profile!.features = profile.features.map((feat) => ({
+      id: feat.id,
+      iconClass: feat.iconClass,
+      title: feat.title,
+      description: feat.description,
+      sortOrder: feat.sortOrder,
+    }));
+  }
+
+  createNewProfile() {
+    this.selectedProfileId = null;
+    this.profileName = '';
+    this.isEditingMode = true;
+    this.isProfilesCardCollapsed = true;
+    this.profile = this.createEmptyCmsProfileDto();
+  }
+  
+    cancelEditing() {
     this.isEditingMode = false;
     this.selectedProfileId = null;
-    // this.profile = null;
     this.profileName = '';
     this.isProfilesCardCollapsed = false;
     this.profile = this.createEmptyCmsProfileDto();
   }
-
 
 
   createEmptyCmsProfileDto(): CmsProfileDto {
@@ -533,6 +467,7 @@ export class ContentManagementComponent implements OnInit {
       id: 0,
       profileName: '',
       isActive: false,
+      isDefault:false,
 
       websiteName: '',
       tagline: '',
