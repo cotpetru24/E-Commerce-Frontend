@@ -54,7 +54,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     private router: Router,
     private toastService: ToastService,
     private modalService: NgbModal,
-    public utils: Utils
+    public utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -94,7 +94,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         fromDate = new Date(
           now.getFullYear(),
           Math.floor(now.getMonth() / 3) * 3,
-          1
+          1,
         );
         toDate = new Date();
         break;
@@ -132,7 +132,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.toastService.error('Failed to load orders');
         },
-      })
+      }),
     );
   }
 
@@ -249,7 +249,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be updated.'
+                'Order not found or cannot be updated.',
               );
             } else {
               this.toastService.error('Failed to update order status.');
@@ -286,7 +286,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be updated.'
+                'Order not found or cannot be updated.',
               );
             } else {
               this.toastService.error('Failed to mark the order as shipped.');
@@ -329,7 +329,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           error: (err) => {
             if (err.status === 404) {
               this.toastService.warning(
-                'Order not found or cannot be cancelled.'
+                'Order not found or cannot be cancelled.',
               );
             } else {
               this.toastService.error('Failed to cancel order.');
@@ -345,7 +345,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     return (
       order.orderItems.reduce(
         (orderItmsQuantity, item) => orderItmsQuantity + item.quantity,
-        0
+        0,
       ) ?? 0
     );
   }

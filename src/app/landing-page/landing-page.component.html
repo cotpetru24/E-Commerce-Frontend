@@ -113,10 +113,10 @@
               }
             </div>
             <div class="product-rating">
-              @for (star of getStars(product.rating || 0); track star) {
+              @for (star of getStars(product.rating || 0); track $index) {
               <i class="bi bi-star-fill star filled"></i>
               }
-              @for (star of getEmptyStars(product.rating || 0); track star) {
+              @for (star of getEmptyStars(product.rating || 0); track $index) {
               <i class="bi bi-star star"></i>
               }
               <span class="rating-count">({{product.reviewCount}})</span>
@@ -159,7 +159,7 @@
         <div class="testimonial-card">
           <div class="testimonial-content">
             <div class="testimonial-rating">
-              @for (star of getStars(testimonial.rating); track star) {
+              @for (star of getStars(testimonial.rating); track $index) {
               <i class="bi bi-star-fill star filled"></i>
               }
             </div>

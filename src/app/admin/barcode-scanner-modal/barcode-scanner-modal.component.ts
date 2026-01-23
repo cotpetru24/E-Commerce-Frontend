@@ -1,3 +1,6 @@
+import { CommonModule } from '@angular/common';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastService } from '../../services/toast.service';
 import {
   Component,
   OnInit,
@@ -6,9 +9,6 @@ import {
   ElementRef,
   AfterViewInit,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastService } from '../../services/toast.service';
 import {
   BrowserMultiFormatReader,
   DecodeHintType,
@@ -22,7 +22,6 @@ import {
   templateUrl: './barcode-scanner-modal.component.html',
   styleUrls: ['./barcode-scanner-modal.component.scss'],
 })
-
 export class BarcodeScannerModalComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
@@ -36,7 +35,7 @@ export class BarcodeScannerModalComponent
 
   constructor(
     public activeModal: NgbActiveModal,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -109,19 +108,19 @@ export class BarcodeScannerModalComponent
             const barcode = result.getText();
             this.onBarcodeDetected(barcode);
           }
-        }
+        },
       );
 
       this.isCameraActive = true;
     } catch (error: any) {
       this.toastService.error(
-        'Failed to start camera. Please check permissions.'
+        'Failed to start camera. Please check permissions.',
       );
       console.error('Camera error:', error);
 
       if (error.name === 'NotAllowedError') {
         this.toastService.error(
-          'Camera permission denied. Please allow camera access in browser settings.'
+          'Camera permission denied. Please allow camera access in browser settings.',
         );
       }
     }

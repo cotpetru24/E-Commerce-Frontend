@@ -4,10 +4,7 @@
 </div>
 
 <div class="modal-body">
-    @if (modalType === 'confirm') {
-    <p>{{ message }}</p>
-    }
-    @if (modalType === 'updateOrderStatus') {
+    @if (modalType === 'confirm' || modalType === 'updateOrderStatus') {
     <p>{{ message }}</p>
     }
     @if (modalType === 'updateOrderStatus') {
@@ -19,6 +16,17 @@
             <label class="form-check-label" [for]="'option-' + option.value">
                 {{ option.label }}
             </label>
+        </div>
+        }
+    </div>
+    }
+    @if (modalType === 'saveAs') {
+    <div>
+        <input type="text" class="form-control" [(ngModel)]="saveAs" placeholder="Profile Name..."
+            [ngClass]="{ 'is-invalid': !saveAs?.trim() }" />
+        @if (!saveAs?.trim()) {
+        <div class="invalid-feedback">
+            Profile name is required.
         </div>
         }
     </div>
@@ -35,6 +43,14 @@
 @if (modalType === 'updateOrderStatus') {
 <div class="modal-footer">
     <button class="btn btn-danger" (click)="onConfirm()">Update</button>
+    <button class="btn btn-secondary" (click)="activeModal.dismiss()">
+        Cancel
+    </button>
+</div>
+}
+@if (modalType === 'saveAs') {
+<div class="modal-footer">
+    <button class="btn btn-success" (click)="onConfirm()">Save</button>
     <button class="btn btn-secondary" (click)="activeModal.dismiss()">
         Cancel
     </button>

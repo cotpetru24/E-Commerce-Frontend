@@ -249,6 +249,8 @@
           border-radius: 12px;
           padding: 1.5rem;
           transition: all 0.3s ease;
+          vertical-align: bottom;
+          cursor: pointer;
 
           &:hover {
             border-color: #1a1a1a;
@@ -274,90 +276,73 @@
                 color: #1a1a1a;
                 margin-bottom: 0.25rem;
               }
-
-              .order-date {
-                color: #666;
-                font-size: 0.9rem;
-                margin: 0;
-              }
             }
 
             .order-status {
-              .status-badge {
-                display: inline-flex;
-                align-items: center;
-                padding: 0.5rem 1rem;
-                border-radius: 20px;
-                font-weight: 600;
-                font-size: 0.875rem;
-                text-transform: capitalize;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              &.bg-success {
+                background: #28a745;
+                color: #ffffff;
+                border: 1px solid #28a745;
+              }
 
-                &.bg-success {
-                  background: #28a745;
-                  color: #ffffff;
-                  border: 1px solid #28a745;
-                }
+              &.bg-warning {
+                background: #ffc107;
+                color: #000000;
+                border: 1px solid #ffc107;
+              }
 
-                &.bg-warning {
-                  background: #ffc107;
-                  color: #000000;
-                  border: 1px solid #ffc107;
-                }
+              &.bg-info {
+                background: #0dcaf0;
+                color: #ffffff;
+                border: 1px solid #0dcaf0;
+              }
 
-                &.bg-info {
-                  background: #0dcaf0;
-                  color: #ffffff;
-                  border: 1px solid #0dcaf0;
-                }
+              &.bg-danger {
+                background: #dc3545;
+                color: #ffffff;
+                border: 1px solid #dc3545;
+              }
 
-                &.bg-danger {
-                  background: #dc3545;
-                  color: #ffffff;
-                  border: 1px solid #dc3545;
-                }
+              &.bg-secondary {
+                background: #6c757d;
+                color: #ffffff;
+                border: 1px solid #6c757d;
+              }
 
-                &.bg-secondary {
-                  background: #6c757d;
-                  color: #ffffff;
-                  border: 1px solid #6c757d;
-                }
+              &.status-completed {
+                background: #28a745;
+                color: #ffffff;
+                border: 1px solid #28a745;
+              }
 
-                &.status-completed {
-                  background: #28a745;
-                  color: #ffffff;
-                  border: 1px solid #28a745;
-                }
+              &.status-processing {
+                background: #0dcaf0;
+                color: #ffffff;
+                border: 1px solid #0dcaf0;
+              }
 
-                &.status-processing {
-                  background: #0dcaf0;
-                  color: #ffffff;
-                  border: 1px solid #0dcaf0;
-                }
+              &.status-cancelled {
+                background: #dc3545;
+                color: #ffffff;
+                border: 1px solid #dc3545;
+              }
 
-                &.status-cancelled {
-                  background: #dc3545;
-                  color: #ffffff;
-                  border: 1px solid #dc3545;
-                }
+              &.status-pending {
+                background: #ffc107;
+                color: #000000;
+                border: 1px solid #ffc107;
+              }
 
-                &.status-pending {
-                  background: #ffc107;
-                  color: #000000;
-                  border: 1px solid #ffc107;
-                }
+              &.status-shipped {
+                background: #17a2b8;
+                color: #ffffff;
+                border: 1px solid #17a2b8;
+              }
 
-                &.status-shipped {
-                  background: #17a2b8;
-                  color: #ffffff;
-                  border: 1px solid #17a2b8;
-                }
-
-                &.status-delivered {
-                  background: #28a745;
-                  color: #ffffff;
-                  border: 1px solid #28a745;
-                }
+              &.status-delivered {
+                background: #28a745;
+                color: #ffffff;
+                border: 1px solid #28a745;
               }
             }
           }
@@ -366,7 +351,7 @@
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 2rem;
-            margin-bottom: 1.5rem;
+            margin-top: 1.5rem;
 
             @media (max-width: 768px) {
               grid-template-columns: 1fr;
@@ -398,30 +383,46 @@
             }
 
             .order-summary {
+              align-self: end;
+            }
+
+            .order-summary {
+              .payment-method,
               .order-total {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-end;
-                gap: 0.25rem;
+                text-align: right;
 
                 @media (max-width: 768px) {
                   align-items: flex-start;
                 }
 
-                .total-label {
+                .total-label,
+                .payment-label {
                   color: #666;
                   font-size: 0.9rem;
                 }
 
-                .total-amount {
+                .date-placed,
+                .total-amount,
+                .payment {
                   font-size: 1.25rem;
                   font-weight: 700;
-                  color: #1a1a1a;
+                  color: #666;
                 }
               }
             }
           }
 
+          .order-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+          }
+
+          .order-separator {
+            color: #bbb;
+          }
           .order-actions {
             display: flex;
             gap: 0.75rem;

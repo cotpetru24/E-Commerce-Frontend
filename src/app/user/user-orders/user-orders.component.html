@@ -6,47 +6,21 @@
           <h1 class="page-title">
             <i class="bi bi-bag me-2"></i>My Orders
           </h1>
-          <p class="page-subtitle">View and manage your order history</p>
+          <p class="page-subtitle">Your past orders</p>
         </div>
       </div>
     </div>
   </div>
   <div class="container">
-    <div class="orders-layout">
-      <div class="overview-section">
-        <div class="overview-card">
-          <div class="overview-header">
-            <h3 class="overview-title">
-              <i class="bi bi-speedometer2 me-2"></i>Orders Overview
-            </h3>
-          </div>
-          <div class="overview-content">
-            <div class="stats-grid">
-              <div class="stat-item" (click)="filterOrders('all')" [class.active]="currentFilter === 'all'">
-                <div class="stat-number">{{ totalCount }}</div>
-                <div class="stat-label">Total Orders</div>
-              </div>
-              <div class="stat-item" (click)="filterOrders('delivered')" [class.active]="currentFilter === 'delivered'">
-                <div class="stat-number success">{{ getDeliveredCount() }}</div>
-                <div class="stat-label">Delivered</div>
-              </div>
-              <div class="stat-item" (click)="filterOrders('shipped')" [class.active]="currentFilter === 'shipped'">
-                <div class="stat-number info">{{ getShippedCount() }}</div>
-                <div class="stat-label">Shipped</div>
-              </div>
-              <div class="stat-item" (click)="filterOrders('processing')"
-                [class.active]="currentFilter === 'processing'">
-                <div class="stat-number warning">{{ getProcessingCount() }}</div>
-                <div class="stat-label">Processing</div>
-              </div>
-              <div class="stat-item" (click)="filterOrders('cancelled')" [class.active]="currentFilter === 'cancelled'">
-                <div class="stat-number danger">{{ getCancelledCount() }}</div>
-                <div class="stat-label">Cancelled</div>
-              </div>
-            </div>
-          </div>
-        </div>
+    @if (isLoading) {
+    <div class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
+      <p class="mt-2">Loading...</p>
+    </div>
+    }
+    <div class="orders-layout">
       <div class="orders-main">
         <div class="orders-card">
           <div class="orders-header">
@@ -55,17 +29,24 @@
             </h3>
           </div>
           <div class="orders-content">
-            @if (filteredOrders.length > 0) {
+            @if (orders.length > 0) {
             <div class="orders-list">
-              @for (order of filteredOrders; track order.id) {
-              <div class="order-item">
+              @for (order of orders; track order.id) {
+              <div class="order-item" (click)="viewOrderDetails(order.id)">
                 <div class="order-header">
                   <div class="order-info">
-                    <h4 class="order-id">Order #{{ order.id }}</h4>
-                    <p class="order-date">{{ order.createdAt | date:'MMMM dd, yyyy' }}</p>
+                    <div class="order-meta">
+                      <span class="order-date">
+                        Placed on:<strong class="date-placed"> {{order.createdAt | date:'MMMM dd, yyyy' }}</strong>
+                      </span>
+                      <span class="order-separator">|</span>
+                      <span class="order-total">Total:<strong class="total-amount"> £{{ order.total | number:'1.2-2'
+                          }}</strong>
+                      </span>
+                    </div>
                   </div>
                   <div class="order-status">
-                    <span class="status-badge" [ngClass]="getStatusBadgeClass(order.orderStatusName)">
+                    <span class="badge" [ngClass]="getStatusBadgeClass(order.orderStatusName)">
                       {{ order.orderStatusName || 'Unknown' }}
                     </span>
                   </div>
@@ -74,35 +55,29 @@
                   <div class="order-items">
                     <h5>Items:</h5>
                     <div class="items-list">
-                      @for (orderItem of order.orderItems; track orderItem.productName + '-' + orderItem.quantity) {
-                      <span class="item-badge">
+                      @if(order.orderItems.length<=4){ @for (orderItem of order.orderItems; track
+                        orderItem.productName+ '-' + orderItem.quantity) { <span class="item-badge">
                         {{ orderItem.quantity }}x {{ orderItem.productName }}
-                      </span>
-                      }
+                        </span>
+                        }
+                        }@else {
+                        @for(orderItem of order.orderItems.slice(0,4); track orderItem.productName){
+                        <span class="item-badge">
+                          {{ orderItem.quantity }}x {{ orderItem.productName }}
+                        </span>
+                        }
+                        <span class="item-badge">
+                          + {{ order.orderItems.length-4}} more items
+                        </span>
+                        }
                     </div>
                   </div>
-                  <div class="order-summary">
-                    <div class="order-total">
-                      <span class="total-label">Total:</span>
-                      <span class="total-amount">£{{ order.total | number:'1.2-2' }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="order-actions">
-                  <button class="btn btn-primary btn-sm" (click)="viewOrderDetails(order.id)" title="View Details">
-                    <i class="bi bi-eye me-1"></i>View Details
-                  </button>
-                  @if (order.orderStatusName !== 'Completed' && order.orderStatusName !== 'Cancelled') {
-                  <button class="btn btn-outline-warning btn-sm" (click)="cancelOrder(order)" title="Cancel Order">
-                    <i class="bi bi-x-circle me-1"></i>Cancel
-                  </button>
-                  }
                 </div>
               </div>
               }
             </div>
             }
-            @if (filteredOrders.length === 0) {
+            @if (orders.length === 0) {
             <div class="empty-orders">
               <i class="bi bi-bag-x empty-icon"></i>
               <h3>No orders found</h3>
@@ -114,45 +89,6 @@
             }
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<!-- Order Tracking Modal -->
-<!-- <div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="true"> -->
-<div class="modal fade" id="trackingModal" tabindex="-1" aria-labelledby="trackingModalLabel" aria-hidden="false">
-
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="trackingModalLabel">
-          <i class="bi bi-truck me-2"></i>Order Tracking
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        @if (selectedOrder) {
-        <div>
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <strong>Order ID:</strong> #{{ selectedOrder.id }}
-            </div>
-            <div class="col-md-6">
-              <strong>Tracking Number:</strong> N/A
-            </div>
-          </div>
-          <div class="alert alert-info mt-3">
-            <i class="bi bi-calendar-event me-2"></i>
-            <strong>Estimated Delivery:</strong> {{'EEEE, MMMM dd, yyyy' }}
-          </div>
-        </div>
-        }
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
