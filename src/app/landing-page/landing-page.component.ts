@@ -18,6 +18,8 @@ import { CmsLandingPageDto, ProductDto } from '@dtos';
 })
 export class LandingPageComponent implements OnInit {
   newsletterEmail: string = '';
+  isLoading: boolean = false;
+  isCmsLoading: boolean = false;
 
   public featuredProducts: ProductDto[] = [];
   public availableBrands: string[] = [];
@@ -47,8 +49,6 @@ export class LandingPageComponent implements OnInit {
     },
   ];
 
-  public isLoading: boolean = false;
-
   constructor(
     private cartService: CartService,
     private toastService: ToastService,
@@ -58,15 +58,15 @@ export class LandingPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.getFeaturedProducts();
     this.getCmsLandingDto();
+    this.getFeaturedProducts();
   }
 
   getCmsLandingDto() {
-    this.isLoading = true;
+    this.isCmsLoading = true;
     this.cmsService
       .getCmsLandingPage()
-      .pipe(finalize(() => (this.isLoading = false)))
+      .pipe(finalize(() => (this.isCmsLoading = false)))
       .subscribe({
         next: (response) => {
           try {

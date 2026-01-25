@@ -102,19 +102,18 @@ export interface GetAllOrdersResponseDto {
 export interface PlaceOrderRequestDto {
   orderItems: OrderItemRequestDto[];
   shippingAddressId: number;
-  billingAddressId?: number;
+  billingAddressId: number | null;
   billingAddressSameAsShipping: boolean;
-  billingAddress: CreateAddressRequestDto | null;
+  billingAddressRequest: CreateAddressRequestDto | null;
   shippingCost: number;
   discount: number;
-  notes?: string;
+  notes: string | null;
 }
 
 export interface OrderItemRequestDto {
   productId: number;
   quantity: number;
-  size?: number;
-  barcode?: string;
+  productSizeBarcode: string;
 }
 
 export interface PlaceOrderResponseDto {

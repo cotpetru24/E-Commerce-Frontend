@@ -136,7 +136,18 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.elements = this.stripe.elements({ clientSecret });
-      this.paymentElement = this.elements.create('payment');
+      // this.paymentElement = this.elements.create('payment');
+
+//       this.elements = this.stripe.elements({
+//   clientSecret,
+//   appearance,
+// });
+      this.paymentElement = this.elements.create('payment', {
+  wallets: {
+    applePay: "never",
+    googlePay: "never",
+  },
+});
       this.paymentElement.mount('#payment-element');
 
       const mountEl2 = document.querySelector('#payment-element');
@@ -163,7 +174,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async onSubmit(): Promise<void> {
-    if (!this.validateForm()) return;
+    // if (!this.validateForm()) return;
     this.isLoading = true;
 
     try {
@@ -231,8 +242,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     const orderItems: OrderItemRequestDto[] = cartItems.map((item) => ({
       productId: item.product.id,
       quantity: item.quantity,
-      ...(item.size && { size: item.size }),
-      ...(item.barcode && { barcode: item.barcode }),
+      productSizeBarcode: item.barcode ,
     }));
 
     const shippingAddressId = parseInt(
@@ -241,11 +251,12 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     const deliveryInstructions =
       this.storageService.getLocalItem('deliveryInstructions') || '';
 
-    return {
+    const request: PlaceOrderRequestDto = {
       orderItems,
       shippingAddressId,
       billingAddressSameAsShipping: this.billigngAddressSameAsShipping,
-      billingAddress: !this.billingAddressData.saveAddress
+      billingAddressId : this.billigngAddressSameAsShipping ? shippingAddressId :null,
+      billingAddressRequest: !this.billingAddressData.saveAddress
         ? null
         : {
             addressLine1: this.billingAddressData.addressLine1!,
@@ -258,6 +269,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       discount: this.orderSummary.discount,
       notes: deliveryInstructions,
     };
+    return request;
   }
 
   validateForm(): boolean {
