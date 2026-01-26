@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CartService } from '../../services/cart.service';
-import { ShippingAddressApiService } from '../../services/api/address-api.service';
+import { AddressApiService } from '../../services/api/address-api.service';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
 import { AddressData } from '../checkout.types';
@@ -42,7 +42,7 @@ export class ShippingAddressComponent implements OnInit {
   constructor(
     private router: Router,
     private cartService: CartService,
-    private shippingAddressService: ShippingAddressApiService,
+    private addressService: AddressApiService,
     private toastService: ToastService,
     private storageService: StorageService,
   ) {}
@@ -60,7 +60,7 @@ export class ShippingAddressComponent implements OnInit {
       return;
     }
 
-    this.shippingAddressService.getShippingAddresses().subscribe({
+    this.addressService.getUserAddresses().subscribe({
       next: (addresses) => {
         this.savedAddresses = addresses;
         if (addresses.length > 0) {
@@ -119,8 +119,8 @@ export class ShippingAddressComponent implements OnInit {
         country: this.addressData.country,
       };
 
-      this.shippingAddressService
-        .createShippingAddress(addressRequest)
+      this.addressService
+        .createAddress(addressRequest)
         .subscribe({
           next: (response) => {
             this.toastService.success('Address saved successfully');

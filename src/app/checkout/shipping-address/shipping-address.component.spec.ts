@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { ShippingAddressComponent } from './shipping-address.component';
 import { CartService } from '../../services/cart.service';
-import { ShippingAddressApiService } from '../../services/api/shipping-address-api.service';
+import { AddressApiService } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
 
@@ -25,11 +25,11 @@ describe('AddressForm', () => {
     cartService.getDiscount.and.returnValue(0);
     cartService.getTotal.and.returnValue(0);
 
-    const shippingAddressApiService = jasmine.createSpyObj(
-      'ShippingAddressApiService',
-      ['createShippingAddress', 'getShippingAddresses']
+    const addressApiService = jasmine.createSpyObj(
+      'AddressApiService',
+      ['createAddress', 'getAddresses']
     );
-    shippingAddressApiService.getShippingAddresses.and.returnValue(of([]));
+    addressApiService.getAddresses.and.returnValue(of([]));
 
     const storageService = jasmine.createSpyObj('StorageService', [
       'getLocalObject',
@@ -45,8 +45,8 @@ describe('AddressForm', () => {
         provideRouter([]),
         { provide: CartService, useValue: cartService },
         {
-          provide: ShippingAddressApiService,
-          useValue: shippingAddressApiService,
+          provide: AddressApiService,
+          useValue: addressApiService,
         },
         {
           provide: ToastService,
