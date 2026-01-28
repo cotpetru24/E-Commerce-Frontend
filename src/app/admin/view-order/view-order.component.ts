@@ -16,7 +16,7 @@ import {
   AdminOrderDto,
   OrderDto,
   OrderItemDto,
-  OrderStatus,
+  OrderStatusEnum,
   AddressDto,
   UpdateOrderStatusRequestDto,
 } from '@dtos';
@@ -110,7 +110,6 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
                 id: this.shippingAddress.id,
                 addressLine1: this.shippingAddress.addressLine1,
                 city: this.shippingAddress.city,
-                county: this.shippingAddress.county,
                 postcode: this.shippingAddress.postcode,
                 country: this.shippingAddress.country,
               };
@@ -164,14 +163,12 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.message = 'Select the new order status';
     modalRef.componentInstance.modalType = 'updateOrderStatus';
     modalRef.componentInstance.options = [
-      { label: 'Pending', value: OrderStatus.pending },
-      { label: 'Processing', value: OrderStatus.processing },
-      { label: 'Shipped', value: OrderStatus.shipped },
-      { label: 'Delivered', value: OrderStatus.delivered },
-      { label: 'Refunded', value: OrderStatus.refunded },
-      { label: 'Returned', value: OrderStatus.returned },
+      { label: 'Processing', value: OrderStatusEnum.Processing },
+      { label: 'Shipped', value: OrderStatusEnum.Shipped },
+      { label: 'Delivered', value: OrderStatusEnum.Delivered },
+      { label: 'Returned', value: OrderStatusEnum.Returned },
     ];
-    modalRef.result.then((result: OrderStatus[]) => {
+    modalRef.result.then((result: OrderStatusEnum[]) => {
       if (result && result.length > 0) {
         const selectedStatus = result[0];
         this.isLoading = true;
@@ -187,7 +184,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
               next: () => {
-                this.orderStatus = OrderStatus[selectedStatus];
+                this.orderStatus = OrderStatusEnum[selectedStatus];
                 this.canUpdateStatus = true;
                 this.toastService.success('Order status updated successfully!');
               },
@@ -218,7 +215,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          orderStatusId: OrderStatus.cancelled,
+          orderStatusId: OrderStatusEnum.Cancelled,
           notes: 'Order cancelled by admin',
         };
 

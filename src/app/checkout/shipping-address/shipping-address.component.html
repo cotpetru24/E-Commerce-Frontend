@@ -58,7 +58,7 @@
                     </div>
                   </div>
                   <div class="address-details">
-                    <p>{{ address.city }}, {{ address.county }} {{ address.postcode }}</p>
+                    <p>{{ address.addressLine1 }}, {{ address.city }} {{ address.postcode }}</p>
                     <p>{{ address.country }}</p>
                   </div>
                 </div>
@@ -95,30 +95,6 @@
                   }
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label for="state" class="form-label">State/County *</label>
-                  <input type="text" class="form-control" id="state" name="state" [(ngModel)]="addressData.state"
-                    required placeholder="State/County"
-                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.state}">
-                  @if (addressForm.submitted && !addressData.state) {
-                  <div class="invalid-feedback">
-                    State/County is required.
-                  </div>
-                  }
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="postcode" class="form-label">Postcode/ZIP *</label>
-                  <input type="text" class="form-control" id="postcode" name="postcode"
-                    [(ngModel)]="addressData.postcode" required placeholder="Postcode"
-                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.postcode}">
-                  @if (addressForm.submitted && !addressData.postcode) {
-                  <div class="invalid-feedback">
-                    Postcode is required.
-                  </div>
-                  }
-                </div>
-                <div class="col-md-6 mb-3">
                   <label for="country" class="form-label">Country *</label>
                   <select class="form-select" id="country" name="country" [(ngModel)]="addressData.country" required
                     [ngClass]="{'is-invalid': addressForm.submitted && !addressData.country}">
@@ -150,6 +126,19 @@
                   }
                 </div>
               </div>
+              <div class="row justify-content-end">
+                <div class="col-md-6 mb-3">
+                  <label for="postcode" class="form-label">Postcode/ZIP *</label>
+                  <input type="text" class="form-control" id="postcode" name="postcode"
+                    [(ngModel)]="addressData.postcode" required placeholder="Postcode"
+                    [ngClass]="{'is-invalid': addressForm.submitted && !addressData.postcode}">
+                  @if (addressForm.submitted && !addressData.postcode) {
+                  <div class="invalid-feedback">
+                    Postcode is required.
+                  </div>
+                  }
+                </div>
+              </div>
             </div>
             }
             <div class="form-section">
@@ -162,15 +151,7 @@
                   [(ngModel)]="addressData.instructions" rows="3"
                   placeholder="Any special delivery instructions, building access codes, or notes for the delivery person..."></textarea>
               </div>
-              @if (!useExistingAddress) {
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="saveAddress" [(ngModel)]="addressData.saveAddress"
-                  name="saveAddress">
-                <label class="form-check-label" for="saveAddress">
-                  Save this address for future orders
-                </label>
-              </div>
-              }
+
             </div>
             <div class="form-actions">
               <button type="button" class="btn btn-outline-secondary" (click)="goBack()">

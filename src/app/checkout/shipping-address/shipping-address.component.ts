@@ -25,11 +25,9 @@ export class ShippingAddressComponent implements OnInit {
   addressData: AddressData = {
     addressLine1: '',
     city: '',
-    state: '',
     postcode: '',
     country: '',
     instructions: '',
-    saveAddress: false,
   };
 
   orderSummary: OrderSummary = {
@@ -110,11 +108,10 @@ export class ShippingAddressComponent implements OnInit {
   saveAndProceed(): void {
     this.isLoading = true;
 
-    if (this.addressData.saveAddress) {
+    if (!this.useExistingAddress) {
       const addressRequest: CreateAddressRequestDto = {
         addressLine1: this.addressData.addressLine1,
         city: this.addressData.city,
-        county: this.addressData.state,
         postcode: this.addressData.postcode,
         country: this.addressData.country,
       };
@@ -172,7 +169,6 @@ export class ShippingAddressComponent implements OnInit {
     return !!(
       this.addressData.addressLine1 &&
       this.addressData.city &&
-      this.addressData.state &&
       this.addressData.postcode &&
       this.addressData.country
     );

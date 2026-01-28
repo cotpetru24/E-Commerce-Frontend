@@ -1,17 +1,12 @@
 export interface PaymentDto {
-  paymentId: number;
   orderId: number;
   amount: number;
-  currency?: string;
-  cardBrand?: string;
-  cardLast4?: string;
-  billingName?: string;
-  billingEmail?: string;
-  paymentStatus: string;
-  receiptUrl?: string;
-  paymentMethod?: string;
-  transactionId?: string;
-  createdAt?: Date;
+  currency: string;
+  cardBrand: string | null;
+  cardLast4: string | null;
+  status: string;
+  paymentMethod: string;
+  receiptUrl: string;
 }
 
 export interface StorePaymentRequestDto {
@@ -25,4 +20,12 @@ export interface CreatePaymentIntentRequestDto {
 
 export interface CreatePaymentIntentResponseDto {
   clientSecret: string;
+}
+
+export enum PaymentStatusEnum {
+  Pending = 1,
+  Authorised = 3,
+  Failed = 4,
+  Refunded = 6,
+  Paid = 12,
 }

@@ -1,9 +1,7 @@
 export interface AddressDto {
   id: number;
-  userId?: string;
   addressLine1: string;
   city: string;
-  county: string;
   postcode: string;
   country: string;
 }
@@ -11,7 +9,6 @@ export interface AddressDto {
 export interface CreateAddressRequestDto {
   addressLine1: string;
   city: string;
-  county: string;
   postcode: string;
   country: string;
 }

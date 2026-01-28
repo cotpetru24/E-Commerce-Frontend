@@ -41,7 +41,7 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <h4 class="mb-0">{{ adminOrdersStats.totalPendingOrdersCount }}</h4>
-                  <small>Pending</small>
+                  <small>Returned</small>
                 </div>
                 <i class="bi bi-clock display-6"></i>
               </div>
@@ -179,8 +179,8 @@
                     <span [class]="getStatusClass(order.orderStatusName)">{{ order.orderStatusName | titlecase }}</span>
                   </td>
                   <td>
-                    <span [class]="getPaymentClass(order.payment.paymentStatus)">{{
-                      order?.payment?.paymentStatus | titlecase }}</span>
+                    <span [class]="getPaymentClass(order.payment.status)">{{
+                      order?.payment?.status | titlecase }}</span>
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm" role="group">
@@ -195,7 +195,7 @@
                         <i class="bi bi-truck"></i>
                       </button>
                       }
-                      @if (order.orderStatusName !== 'Cancelled' && order.orderStatusName !== 'delivered') {
+                      @if (order.orderStatusCode === OrderStatus.Processing && order.orderStatusName === 'processing') {
                       <button class="btn btn-outline-warning" (click)="cancelOrder(order)" title="Cancel Order">
                         <i class="bi bi-x-circle"></i>
                       </button>

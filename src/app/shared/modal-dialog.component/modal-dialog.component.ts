@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { OrderStatus } from '@dtos';
+import { OrderStatusEnum } from '@dtos';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -14,7 +14,7 @@ export class ModalDialogComponent {
   @Input() title = 'Confirm';
   @Input() message = 'Are you sure?';
   @Input() modalType: 'confirm' | 'updateOrderStatus' | 'saveAs' = 'confirm';
-  @Input() options: { label: string; value: OrderStatus; checked?: boolean }[] =
+  @Input() options: { label: string; value: OrderStatusEnum; checked?: boolean }[] =
     [];
   @Input() saveAs = '';
 

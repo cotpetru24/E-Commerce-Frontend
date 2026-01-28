@@ -13,7 +13,7 @@ import {
   AdminOrderDto,
   AdminOrdersStatsDto,
   GetAllOrdersRequestDto,
-  OrderStatus,
+  OrderStatusEnum,
   SortBy,
   SortDirection,
   UpdateOrderStatusRequestDto,
@@ -28,6 +28,7 @@ import {
 })
 export class OrderManagementComponent implements OnInit, OnDestroy {
   Math = Math;
+  OrderStatus = OrderStatusEnum;
   orders: AdminOrderDto[] = [];
   isLoading = false;
   initialInit: boolean = true;
@@ -36,7 +37,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   totalPages: number = 0;
   totalQueryCount = 0;
   searchTerm: string | null = null;
-  selectedStatus: OrderStatus | null = null;
+  selectedStatus: OrderStatusEnum | null = null;
   selectedDateRange = '';
   sortBy = 'date-desc';
 
@@ -214,6 +215,13 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   }
 
   updateOrderStatus(order: AdminOrderDto): void {
+    const allowedNextStatuses =
+      this.ORDER_STATUS_UPDATE_CONSTRAINTS[order.orderStatusCode] ?? [];
+
+    if (allowedNextStatuses.length === 0) {
+      this.toastService.warning('This order status cannot be changed.');
+      return;
+    }
     const modalRef = this.modalService.open(ModalDialogComponent, {
       size: 'md',
       backdrop: 'static',
@@ -222,15 +230,12 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.title = 'Update Order Status';
     modalRef.componentInstance.message = 'Select the new order status';
     modalRef.componentInstance.modalType = 'updateOrderStatus';
-    modalRef.componentInstance.options = [
-      { label: 'Pending', value: OrderStatus.pending },
-      { label: 'Processing', value: OrderStatus.processing },
-      { label: 'Shipped', value: OrderStatus.shipped },
-      { label: 'Delivered', value: OrderStatus.delivered },
-      { label: 'Refunded', value: OrderStatus.refunded },
-      { label: 'Returned', value: OrderStatus.returned },
-    ];
-    modalRef.result.then((result: OrderStatus[]) => {
+    modalRef.componentInstance.options = allowedNextStatuses.map((status) => ({
+      label: OrderStatusEnum[status],
+      value: status,
+    }));
+
+    modalRef.result.then((result: OrderStatusEnum[]) => {
       if (result && result.length > 0) {
         const selectedStatus = result[0];
         this.isLoading = true;
@@ -273,7 +278,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          orderStatusId: OrderStatus.shipped,
+          orderStatusId: OrderStatusEnum.Shipped,
           notes: 'Order marked as shipped by admin',
         };
 
@@ -310,7 +315,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          orderStatusId: OrderStatus.cancelled,
+          orderStatusId: OrderStatusEnum.Cancelled,
           notes: 'Order cancelled by admin',
         };
 
@@ -358,4 +363,13 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.loadOrders();
   }
+
+  ORDER_STATUS_UPDATE_CONSTRAINTS: Partial<Record<OrderStatusEnum, OrderStatusEnum[]>> =
+    {
+      [OrderStatusEnum.Processing]: [OrderStatusEnum.Shipped, OrderStatusEnum.Cancelled],
+      [OrderStatusEnum.Shipped]: [OrderStatusEnum.Delivered],
+      [OrderStatusEnum.Delivered]: [OrderStatusEnum.Returned],
+      [OrderStatusEnum.Cancelled]: [],
+      [OrderStatusEnum.Returned]: [],
+    };
 }

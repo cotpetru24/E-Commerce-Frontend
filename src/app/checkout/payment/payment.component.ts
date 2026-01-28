@@ -8,8 +8,9 @@ import { PaymentApiService } from '../../services/api/payment-api.service';
 import { OrderApiService } from '../../services/api/order-api.service';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
-import { firstValueFrom } from 'rxjs';
+import { finalize, firstValueFrom, Subscription } from 'rxjs';
 import { AddressData } from '../checkout.types';
+import type { PaymentIntent, StripeError } from '@stripe/stripe-js';
 import {
   loadStripe,
   Stripe,
@@ -39,26 +40,22 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   private orderResponse: PlaceOrderResponseDto | null = null;
 
   paymentData: PaymentDto = {
-    paymentId: 0,
     orderId: 0,
     amount: 0,
     currency: '',
     cardBrand: '',
     cardLast4: '',
-    billingName: '',
-    billingEmail: '',
-    paymentStatus: '',
+    status: '',
     paymentMethod: '',
+    receiptUrl:''
   };
 
   billingAddressData: AddressData = {
     addressLine1: '',
     city: '',
-    state: '',
     postcode: '',
     country: '',
     instructions: '',
-    saveAddress: false,
   };
 
   orderSummary: OrderSummary = {
@@ -71,7 +68,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   billingAddress: CreateAddressRequestDto = {
     addressLine1: '',
     city: '',
-    county: '',
     postcode: '',
     country: '',
   };
@@ -82,13 +78,15 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   acceptTerms: boolean = false;
   billigngAddressSameAsShipping: boolean = true;
 
+  private subscriptions = new Subscription();
+
   constructor(
     private router: Router,
     private cartService: CartService,
     private paymentApiService: PaymentApiService,
     private orderApiService: OrderApiService,
     private toastService: ToastService,
-    private storageService: StorageService
+    private storageService: StorageService,
   ) {}
 
   ngOnInit(): void {
@@ -121,7 +119,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       const { clientSecret } = await firstValueFrom(
         this.paymentApiService.createPaymentIntent({
           amount: Math.round(this.orderSummary.total * 100),
-        })
+        }),
       );
 
       if (!clientSecret) {
@@ -138,16 +136,16 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       this.elements = this.stripe.elements({ clientSecret });
       // this.paymentElement = this.elements.create('payment');
 
-//       this.elements = this.stripe.elements({
-//   clientSecret,
-//   appearance,
-// });
+      //       this.elements = this.stripe.elements({
+      //   clientSecret,
+      //   appearance,
+      // });
       this.paymentElement = this.elements.create('payment', {
-  wallets: {
-    applePay: "never",
-    googlePay: "never",
-  },
-});
+        wallets: {
+          applePay: 'never',
+          googlePay: 'never',
+        },
+      });
       this.paymentElement.mount('#payment-element');
 
       const mountEl2 = document.querySelector('#payment-element');
@@ -177,76 +175,72 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     // if (!this.validateForm()) return;
     this.isLoading = true;
 
-    try {
-      const orderRequest = this.createOrderRequest();
-      this.orderResponse = await firstValueFrom(
-        this.orderApiService.placeOrder(orderRequest)
-      );
+    if (this.paymentData.paymentMethod === 'card') {
+      if (!this.stripe || !this.elements) {
+        this.isLoading = false;
+        return;
+      }
 
-      this.toastService.success('Order placed successfully!');
-      this.storageService.setLocalItem(
-        'lastOrderId',
-        this.orderResponse.orderId.toString()
-      );
+      let paymentIntent: PaymentIntent | undefined;
+      let error: StripeError | undefined;
 
-      if (this.paymentData.paymentMethod === 'card') {
-        if (!this.stripe || !this.elements) {
-          this.isLoading = false;
-          return;
-        }
-
-        const { error, paymentIntent } = await this.stripe.confirmPayment({
+      try {
+        ({ error, paymentIntent } = await this.stripe.confirmPayment({
           elements: this.elements,
           confirmParams: {},
           redirect: 'if_required',
-        });
-
-        if (paymentIntent && paymentIntent.status === 'succeeded' && !error) {
-          this.paymentApiService
-            .storePaymentDetails({
-              orderId: this.orderResponse.orderId,
-              paymentIntentId: paymentIntent.id,
-            })
-            .subscribe({
-              next: () => {
-                this.cartService.clearCart();
-                this.isLoading = false;
-                this.router.navigate(
-                  ['/user/order', this.orderResponse!.orderId],
-                  {
-                    queryParams: { isNewOrder: true },
-                  }
-                );
-              },
-            });
-        } else if (error) {
-          {
-            this.toastService.error('Payment failed: ' + error.message);
-            this.isLoading = false;
-            return;
-          }
-        }
-      } else {
-        this.router.navigate(['/user/order', this.orderResponse.orderId], {
-          queryParams: { isNewOrder: true },
-        });
+        }));
+      } catch (e) {
+        this.toastService.error('Payment failed.');
+        this.isLoading = false;
+        return;
       }
-    } catch {
-      this.toastService.error('Failed to place order. Please try again.');
+
+      if (error) {
+        this.toastService.error('Payment failed: ' + error.message);
+        this.isLoading = false;
+        return;
+      } else if (paymentIntent?.status === 'succeeded') {
+        const orderRequest = this.createOrderRequest(paymentIntent.id);
+        this.subscriptions.add(
+          this.orderApiService
+            .placeOrder(orderRequest)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+              next: (res) => {
+                this.orderResponse = res;
+                this.cartService.clearCart();
+                this.router.navigate(['/user/order', res.orderId], {
+                  queryParams: { isNewOrder: true },
+                });
+              },
+              error: () => {
+                this.toastService.error('Failed to place order.');
+              },
+            }),
+        );
+      } else {
+        this.toastService.error('Payment not completed.');
+        this.isLoading = false;
+        return;
+      }
+    } else {
       this.isLoading = false;
+      this.toastService.info('PayPal payments coming soon. Please pay by card.'); 
+          return;
     }
   }
 
-  private createOrderRequest(): PlaceOrderRequestDto {
+  private createOrderRequest(paymentIntentId: string): PlaceOrderRequestDto {
     const cartItems = this.cartService.getCartItems();
     const orderItems: OrderItemRequestDto[] = cartItems.map((item) => ({
       productId: item.product.id,
       quantity: item.quantity,
-      productSizeBarcode: item.barcode ,
+      productSizeBarcode: item.barcode,
     }));
 
     const shippingAddressId = parseInt(
-      this.storageService.getLocalItem('selectedShippingAddressId') || '0'
+      this.storageService.getLocalItem('selectedShippingAddressId') || '0',
     );
     const deliveryInstructions =
       this.storageService.getLocalItem('deliveryInstructions') || '';
@@ -255,19 +249,22 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       orderItems,
       shippingAddressId,
       billingAddressSameAsShipping: this.billigngAddressSameAsShipping,
-      billingAddressId : this.billigngAddressSameAsShipping ? shippingAddressId :null,
-      billingAddressRequest: !this.billingAddressData.saveAddress
+      billingAddressId: this.billigngAddressSameAsShipping
+        ? shippingAddressId
+        : null,
+
+      billingAddressRequest: this.billigngAddressSameAsShipping
         ? null
         : {
             addressLine1: this.billingAddressData.addressLine1!,
             city: this.billingAddressData.city!,
-            county: this.billingAddressData.state!,
             postcode: this.billingAddressData.postcode!,
             country: this.billingAddressData.country!,
           },
       shippingCost: this.orderSummary.shipping,
       discount: this.orderSummary.discount,
       notes: deliveryInstructions,
+      paymentIntentId: paymentIntentId,
     };
     return request;
   }
@@ -277,15 +274,12 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       if (
         !this.paymentData.cardLast4 ||
         !this.paymentData.amount ||
-        !this.paymentData.paymentMethod ||
-        !this.paymentData.billingName
+        !this.paymentData.paymentMethod 
       ) {
         return false;
       }
     } else if (this.paymentData.paymentMethod === 'paypal') {
-      if (!this.paymentData.billingEmail) {
-        return false;
-      }
+
     }
 
     if (!this.acceptTerms) {
@@ -296,17 +290,17 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onBillingAddressChange(): void {
-    if (this.billingAddressData.saveAddress) {
+    // if (this.billingAddressData.saveAddress) {
       // Clear billing address fields when same as shipping is selected
-      this.paymentData.billingName = '';
+      // this.paymentData.billingName = '';
       // this.paymentData.billingLastName = '';
       // this.paymentData.billingAddress = '';
-    } else {
+    // } else {
       // Pre-fill with shipping address data (mock)
       // this.paymentData.billingFirstName = 'John';
       // this.paymentData.billingLastName = 'Doe';
       // this.paymentData.billingAddress = '123 Main Street, London, England';
-    }
+    // }
   }
 
   onPaymentMethodChange(): void {

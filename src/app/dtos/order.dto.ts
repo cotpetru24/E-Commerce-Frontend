@@ -1,8 +1,4 @@
-import {
-  AddressDto,
-  PaymentDto,
-  CreateAddressRequestDto,
-} from '.';
+import { AddressDto, PaymentDto, CreateAddressRequestDto } from '.';
 
 export interface OrderDto {
   id: number;
@@ -15,7 +11,7 @@ export interface OrderDto {
   total: number;
   shippingAddress: AddressDto;
   billingAddress: AddressDto;
-  payment?: PaymentDto;
+  payment: PaymentDto;
   notes?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -28,7 +24,7 @@ export interface AdminOrderDto {
   userEmail: string;
   userName: string;
   orderStatusName?: string;
-  orderStatusCode?: string;
+  orderStatusCode: OrderStatusEnum;
   subtotal: number;
   shippingCost: number;
   discount: number;
@@ -80,7 +76,7 @@ export interface GetUserOrdersResponseDto {
 }
 
 export interface GetAllOrdersRequestDto {
-  orderStatus?: OrderStatus | null;
+  orderStatus?: OrderStatusEnum | null;
   pageNumber?: number | null;
   pageSize?: number | null;
   fromDate?: Date | null;
@@ -108,6 +104,7 @@ export interface PlaceOrderRequestDto {
   shippingCost: number;
   discount: number;
   notes: string | null;
+  paymentIntentId: string;
 }
 
 export interface OrderItemRequestDto {
@@ -124,18 +121,17 @@ export interface PlaceOrderResponseDto {
 }
 
 export interface UpdateOrderStatusRequestDto {
-  orderStatusId: OrderStatus;
+  orderStatusId: OrderStatusEnum;
   notes?: string;
 }
 
-export enum OrderStatus {
-  pending = 1,
-  processing = 2,
-  shipped = 3,
-  delivered = 4,
-  cancelled = 5,
-  refunded = 6,
-  returned = 7,
+export enum OrderStatusEnum {
+  Processing = 2,
+  Shipped = 3,
+  Delivered = 4,
+  Cancelled = 5,
+  PaymentFailed = 6,
+  Returned = 7,
 }
 
 export enum SortBy {

@@ -93,8 +93,7 @@
                   <div class="address-content">
                     <div class="address-info">
                       <p class="address-line"><strong>{{ shippingAddress.addressLine1 }}</strong></p>
-                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.county }}, {{
-                        shippingAddress.postcode }}</p>
+                      <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.postcode }}</p>
                       <p class="address-line">{{ shippingAddress.country }}</p>
                     </div>
                   </div>
@@ -110,8 +109,7 @@
                   <div class="address-content">
                     <div class="address-info">
                       <p class="address-line"><strong>{{ billingAddress.addressLine1}}</strong></p>
-                      <p class="address-line">{{ billingAddress.city }}, {{ billingAddress.county }} {{
-                        billingAddress.postcode }}</p>
+                      <p class="address-line">{{ billingAddress.city }} {{ billingAddress.postcode }}</p>
                       <p class="address-line">{{ billingAddress.country }}</p>
                     </div>
                   </div>
@@ -130,12 +128,12 @@
                         <div class="d-flex justify-content-between mb-2">
                           <p class="payment-type"><strong>{{ order.payment.paymentMethod }}</strong></p>
                           <span class="badge badge-compact" [ngClass]="{
-                              'bg-success text-dark': order.payment.paymentStatus === 'Completed',
-                              'bg-warning text-dark': order.payment.paymentStatus === 'Pending',
-                              'bg-danger text-dark': order.payment.paymentStatus === 'Failed',
-                              'bg-info text-dark': order.payment.paymentStatus === 'Refunded'
+                              'bg-success text-dark': order.payment.status === 'Completed',
+                              'bg-warning text-dark': order.payment.status === 'Pending',
+                              'bg-danger text-dark': order.payment.status === 'Failed',
+                              'bg-info text-dark': order.payment.status === 'Refunded'
                             }">
-                            Payment status: {{ order.payment.paymentStatus }}
+                            Payment status: {{ order.payment.status }}
                           </span>
                         </div>
                         <p class="payment-details text-capitalize">Card brand: {{ order.payment.cardBrand || '' }}</p>
@@ -146,13 +144,12 @@
                             Receipt
                           </a>
                         </p>
-                        <p class="payment-details">Transaction ID: {{ order.payment.transactionId || 'Unknown' }}</p>
                       </div>
                       }
                       @if (order.payment.paymentMethod === 'paypal') {
                       <div>
                         <p class="payment-type"><strong>PayPal</strong></p>
-                        <p class="payment-details">{{ order.payment.billingEmail }}</p>
+                        <p class="payment-details">Billing Email</p>
                       </div>
                       }
                     </div>

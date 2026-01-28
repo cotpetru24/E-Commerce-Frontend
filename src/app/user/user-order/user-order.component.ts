@@ -10,7 +10,7 @@ import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-
 import { finalize, switchMap } from 'rxjs';
 import { CountryMapService } from '../../services/country-map.service';
 import { ShippingInfo } from 'app/checkout/checkout.types';
-import { AddressDto, OrderDto, OrderItemDto } from '@dtos';
+import { AddressDto, OrderDto, OrderItemDto, PaymentDto } from '@dtos';
 import { Utils } from 'app/shared/utils';
 import { StorageService } from 'app/services/storage.service';
 
@@ -229,7 +229,7 @@ export class UserOrderComponent implements OnInit {
   }
 
 canCancelOrder(status: string): boolean {
-  return status === 'Pending' || status === 'Processing';
+  return status === 'Processing';
 }
 
   getItemTotal(item: OrderItemDto): number {
@@ -288,6 +288,7 @@ private createEmptyOrder(): OrderDto {
     shippingAddress: {} as AddressDto,
     billingAddress: {} as AddressDto,
     orderItems: [],
+    payment:{} as PaymentDto
   };
 }
 }

@@ -64,7 +64,7 @@
                 </div>
               </div>
               <div class="mb-3">
-                <label for="paypalEmail" class="form-label">PayPal Email *</label>
+                <!-- <label for="paypalEmail" class="form-label">PayPal Email *</label>
                 <input type="email" class="form-control" id="paypalEmail" name="paypalEmail"
                   [(ngModel)]="paymentData.billingEmail" required email placeholder="Enter your PayPal email"
                   [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.billingEmail}">
@@ -72,7 +72,7 @@
                 <div class="invalid-feedback">
                   Please enter a valid PayPal email address.
                 </div>
-                }
+                } -->
               </div>
             </div>
             }
@@ -109,17 +109,6 @@
                     @if (!billingAddress.city || billingAddress.city.trim() === '') {
                     <div class="invalid-feedback">
                       City is required.
-                    </div>
-                    }
-                  </div>
-                  <div class="col-md-6 mb-3">
-                    <label for="state" class="form-label">State/County *</label>
-                    <input type="text" class="form-control" id="state" name="state" [(ngModel)]="billingAddress.county"
-                      required placeholder="State/County"
-                      [ngClass]="{'is-invalid': !billingAddress.county || billingAddress.county.trim() === ''}">
-                    @if (!billingAddress.county || billingAddress.county.trim() === '') {
-                    <div class="invalid-feedback">
-                      State/County is required.
                     </div>
                     }
                   </div>
@@ -198,7 +187,7 @@
                 @if (!isLoading) {
                 <i class="bi bi-lock me-2"></i>
                 }
-                {{ isLoading ? 'Processing Payment...' : 'Complete Order' }}
+                {{ isLoading ? 'Processing Payment...' : 'Place Order' }}
               </button>
             </div>
           </form>

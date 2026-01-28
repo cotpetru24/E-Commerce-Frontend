@@ -3,7 +3,7 @@ export interface DashboardStatsDto {
   totalOrders: number;
   totalProducts: number;
   totalRevenue: number;
-  pendingOrders: number;
+  returnedOrders: number;
   processingOrders: number;
   shippedOrders: number;
   deliveredOrders: number;
