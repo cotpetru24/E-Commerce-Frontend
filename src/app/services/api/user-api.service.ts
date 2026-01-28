@@ -39,9 +39,4 @@ export class UserApiService extends BaseApiService {
     const url = this.buildUrl(`${this.userEndpoint}/change-password`);
     return this.put<ChangePasswordResponseDto>(url, request);
   }
-
-  getUserStats(): Observable<UserStatsDto> {
-    const url = this.buildUrl(`${this.userEndpoint}/stats`);
-    return this.get<UserStatsDto>(url);
-  }
 }

@@ -74,13 +74,6 @@ export class UserAccountComponent implements OnInit {
         this.isLoading = false;
       },
     });
-
-    this.userApiService.getUserStats().subscribe({
-      next: (stats) => {
-        this.userStats = stats;
-      },
-      error: () => {},
-    });
   }
 
   startEditing() {
