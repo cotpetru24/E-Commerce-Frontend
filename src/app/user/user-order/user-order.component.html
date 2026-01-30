@@ -1,13 +1,4 @@
 <div class="checkout-container pb-5">
-  <!-- @if(isNewOrder)
-  {
-  <div class="alert alert-success text-center" role="alert">
-    <h2 class="text-center my-4">Thank you for your order!</h2>
-    <p class="text-center mb-4">Your order has been placed successfully. You can view your order details below.</p>
-  </div>
-  } -->
-
-  <!-- Page Header -->
   <div class="page-header mb-5">
     <div class="container">
       <div class="header-content">
@@ -132,12 +123,6 @@
                           Receipt
                         </a>
                       </p>
-                    </div>
-                    }
-                    @if (order?.payment?.paymentMethod === 'paypal') {
-                    <div>
-                      <p class="payment-type"><strong>PayPal</strong></p>
-                      <!-- <p class="payment-details">{{ order?.payment?.billingEmail }}</p> -->
                     </div>
                     }
                   </div>

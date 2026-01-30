@@ -2,22 +2,22 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserOrderComponent } from './user-order.component';
 
-// describe('UserOrderComponent', () => {
-//   let component: UserOrderComponent;
-//   let fixture: ComponentFixture<UserOrderComponent>;
+describe('UserOrderComponent', () => {
+  let component: UserOrderComponent;
+  let fixture: ComponentFixture<UserOrderComponent>;
 
-//   beforeEach(async () => {
-//     await TestBed.configureTestingModule({
-//       imports: [UserOrderComponent]
-//     })
-//     .compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [UserOrderComponent]
+    })
+    .compileComponents();
 
-//     fixture = TestBed.createComponent(UserOrderComponent);
-//     component = fixture.componentInstance;
-//     fixture.detectChanges();
-//   });
+    fixture = TestBed.createComponent(UserOrderComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-//   it('should create', () => {
-//     expect(component).toBeTruthy();
-//   });
-// });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
