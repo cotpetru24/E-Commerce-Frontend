@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -9,7 +9,6 @@ import { OrderApiService } from '../../services/api/order-api.service';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
 import { finalize, firstValueFrom, Subscription } from 'rxjs';
-import { AddressData } from '../checkout.types';
 import type { PaymentIntent, StripeError } from '@stripe/stripe-js';
 import {
   loadStripe,
@@ -18,11 +17,9 @@ import {
   StripePaymentElement,
 } from '@stripe/stripe-js';
 import {
-  PaymentDto,
   OrderSummary,
   PlaceOrderRequestDto,
   OrderItemRequestDto,
-  PlaceOrderResponseDto,
   CreateAddressRequestDto,
 } from '@dtos';
 
@@ -33,30 +30,17 @@ import {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
 })
-export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PaymentComponent implements OnInit, OnDestroy {
   private stripe: Stripe | null = null;
   private elements: StripeElements | null = null;
   private paymentElement: StripePaymentElement | null = null;
-  private orderResponse: PlaceOrderResponseDto | null = null;
+  stripeError: string | null = null;
 
-  paymentData: PaymentDto = {
-    orderId: 0,
-    amount: 0,
-    currency: '',
-    cardBrand: '',
-    cardLast4: '',
-    status: '',
-    paymentMethod: '',
-    receiptUrl:''
-  };
-
-  billingAddressData: AddressData = {
-    addressLine1: '',
-    city: '',
-    postcode: '',
-    country: '',
-    instructions: '',
-  };
+  isLoading: boolean = false;
+  isStripeInitialized: boolean = false;
+  acceptTerms: boolean = false;
+  billingAddressSameAsShipping: boolean = true;
+  formSubmitted: boolean = false;
 
   orderSummary: OrderSummary = {
     subtotal: 0,
@@ -72,12 +56,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     country: '',
   };
 
-  isLoading: boolean = false;
-  isStripeInitialized: boolean = false;
-  stripeError: string | null = null;
-  acceptTerms: boolean = false;
-  billigngAddressSameAsShipping: boolean = true;
-
   private subscriptions = new Subscription();
 
   constructor(
@@ -90,17 +68,14 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadOrderSummary();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    this.loadOrderSummary();
+
+    this.initializeStripe();
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    setTimeout(() => {
-      this.initializeStripe();
-    }, 0);
-  }
-
-  public async initializeStripe(): Promise<void> {
+  async initializeStripe(): Promise<void> {
     try {
       this.stripeError = null;
       const publishableKey = environment.stripePublishableKey;
@@ -134,12 +109,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.elements = this.stripe.elements({ clientSecret });
-      // this.paymentElement = this.elements.create('payment');
-
-      //       this.elements = this.stripe.elements({
-      //   clientSecret,
-      //   appearance,
-      // });
       this.paymentElement = this.elements.create('payment', {
         wallets: {
           applePay: 'never',
@@ -162,72 +131,87 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.paymentElement) {
+      this.paymentElement.destroy();
+      this.paymentElement = null;
+    }
+    if (this.elements) {
+      this.elements = null;
+    }
+    if (this.stripe) {
+      this.stripe = null;
+    }
+  }
+
   loadOrderSummary(): void {
     this.orderSummary = {
       subtotal: this.cartService.getSubtotal(),
       discount: this.cartService.getDiscount(),
-      shipping: 0,
+      shipping: this.cartService.getShippingCost(),
       total: this.cartService.getTotal(),
     };
   }
 
   async onSubmit(): Promise<void> {
-    // if (!this.validateForm()) return;
+    this.formSubmitted = true;
+
+    if (!this.validateBillingAddress()) return;
+    if (!this.validateForm()) return;
+    if (!this.stripe || !this.elements) return;
+
     this.isLoading = true;
 
-    if (this.paymentData.paymentMethod === 'card') {
-      if (!this.stripe || !this.elements) {
-        this.isLoading = false;
-        return;
-      }
-
-      let paymentIntent: PaymentIntent | undefined;
-      let error: StripeError | undefined;
-
-      try {
-        ({ error, paymentIntent } = await this.stripe.confirmPayment({
-          elements: this.elements,
-          confirmParams: {},
-          redirect: 'if_required',
-        }));
-      } catch (e) {
-        this.toastService.error('Payment failed.');
-        this.isLoading = false;
-        return;
-      }
-
-      if (error) {
-        this.toastService.error('Payment failed: ' + error.message);
-        this.isLoading = false;
-        return;
-      } else if (paymentIntent?.status === 'succeeded') {
-        const orderRequest = this.createOrderRequest(paymentIntent.id);
-        this.subscriptions.add(
-          this.orderApiService
-            .placeOrder(orderRequest)
-            .pipe(finalize(() => (this.isLoading = false)))
-            .subscribe({
-              next: (res) => {
-                this.orderResponse = res;
-                this.cartService.clearCart();
-                this.router.navigate(['/user/order', res.orderId], {
-                  queryParams: { isNewOrder: true },
-                });
-              },
-              error: () => {
-                this.toastService.error('Failed to place order.');
-              },
-            }),
-        );
-      } else {
-        this.toastService.error('Payment not completed.');
-        this.isLoading = false;
-        return;
-      }
-    } else {
+    const { error: submitError } = await this.elements.submit();
+    if (submitError) {
       this.isLoading = false;
-      this.toastService.info('PayPal payments coming soon. Please pay by card.'); 
-          return;
+      this.toastService.error(
+        submitError.message ?? 'Please complete payment details.',
+      );
+      return;
+    }
+
+    let paymentIntent: PaymentIntent | undefined;
+    let error: StripeError | undefined;
+
+    try {
+      ({ error, paymentIntent } = await this.stripe.confirmPayment({
+        elements: this.elements,
+        confirmParams: {},
+        redirect: 'if_required',
+      }));
+    } catch (e) {
+      this.toastService.error('Payment failed.');
+      this.isLoading = false;
+      return;
+    }
+
+    if (error) {
+      this.toastService.error('Payment failed: ' + error.message);
+      this.isLoading = false;
+      return;
+    } else if (paymentIntent?.status === 'succeeded') {
+      const orderRequest = this.createOrderRequest(paymentIntent.id);
+      this.subscriptions.add(
+        this.orderApiService
+          .placeOrder(orderRequest)
+          .pipe(finalize(() => (this.isLoading = false)))
+          .subscribe({
+            next: (response) => {
+              this.cartService.clearCart();
+              this.router.navigate(['/user/order', response.orderId], {
+                queryParams: { isNewOrder: true },
+              });
+            },
+            error: () => {
+              this.toastService.error('Failed to place order.');
+            },
+          }),
+      );
+    } else {
+      this.toastService.error('Payment not completed.');
+      this.isLoading = false;
+      return;
     }
   }
 
@@ -248,40 +232,45 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     const request: PlaceOrderRequestDto = {
       orderItems,
       shippingAddressId,
-      billingAddressSameAsShipping: this.billigngAddressSameAsShipping,
-      billingAddressId: this.billigngAddressSameAsShipping
-        ? shippingAddressId
-        : null,
 
-      billingAddressRequest: this.billigngAddressSameAsShipping
-        ? null
-        : {
-            addressLine1: this.billingAddressData.addressLine1!,
-            city: this.billingAddressData.city!,
-            postcode: this.billingAddressData.postcode!,
-            country: this.billingAddressData.country!,
-          },
       shippingCost: this.orderSummary.shipping,
       discount: this.orderSummary.discount,
       notes: deliveryInstructions,
       paymentIntentId: paymentIntentId,
+
+      billingAddressSameAsShipping: this.billingAddressSameAsShipping,
+
+      billingAddressId: this.billingAddressSameAsShipping
+        ? shippingAddressId
+        : null,
+
+      billingAddressRequest: this.billingAddressSameAsShipping
+        ? null
+        : {
+            addressLine1: this.billingAddress.addressLine1!,
+            city: this.billingAddress.city!,
+            postcode: this.billingAddress.postcode!,
+            country: this.billingAddress.country!,
+          },
     };
+
     return request;
   }
 
-  validateForm(): boolean {
-    if (this.paymentData.paymentMethod === 'card') {
-      if (
-        !this.paymentData.cardLast4 ||
-        !this.paymentData.amount ||
-        !this.paymentData.paymentMethod 
-      ) {
-        return false;
-      }
-    } else if (this.paymentData.paymentMethod === 'paypal') {
-
+  onBillingAddressChange(): void {
+    if (this.billingAddressSameAsShipping) {
+      ((this.billingAddress.addressLine1 = ''),
+        (this.billingAddress.city = ''),
+        (this.billingAddress.postcode = ''),
+        (this.billingAddress.country = ''));
     }
+  }
 
+  goBack(): void {
+    this.router.navigate(['/checkout/shipping-address']);
+  }
+
+  validateForm(): boolean {
     if (!this.acceptTerms) {
       return false;
     }
@@ -289,56 +278,21 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     return true;
   }
 
-  onBillingAddressChange(): void {
-    // if (this.billingAddressData.saveAddress) {
-      // Clear billing address fields when same as shipping is selected
-      // this.paymentData.billingName = '';
-      // this.paymentData.billingLastName = '';
-      // this.paymentData.billingAddress = '';
-    // } else {
-      // Pre-fill with shipping address data (mock)
-      // this.paymentData.billingFirstName = 'John';
-      // this.paymentData.billingLastName = 'Doe';
-      // this.paymentData.billingAddress = '123 Main Street, London, England';
-    // }
-  }
-
-  onPaymentMethodChange(): void {
-    if (this.paymentData.paymentMethod === 'card') {
-      if (this.paymentElement) {
-        this.paymentElement.destroy();
-        this.paymentElement = null;
-      }
-      if (this.elements) {
-        this.elements = null;
-      }
-
-      setTimeout(() => {
-        this.initializeStripe();
-      }, 100);
+  validateBillingAddress(): boolean {
+    if (
+      !this.billingAddressSameAsShipping &&
+      (!this.billingAddress.addressLine1 ||
+        this.billingAddress.addressLine1.trim() === '' ||
+        !this.billingAddress.city ||
+        this.billingAddress.city.trim() === '' ||
+        !this.billingAddress.postcode ||
+        this.billingAddress.postcode.trim() === '' ||
+        !this.billingAddress.country ||
+        this.billingAddress.country.trim() === '')
+    ) {
+      return false;
     }
-  }
 
-  ngOnDestroy(): void {
-    if (this.paymentElement) {
-      this.paymentElement.destroy();
-      this.paymentElement = null;
-    }
-    if (this.elements) {
-      this.elements = null;
-    }
-    if (this.stripe) {
-      this.stripe = null;
-    }
-  }
-
-  goBack(): void {
-    this.router.navigate(['/checkout/address-form']);
-  }
-
-  formatCardNumber(event: any): void {
-    let value = event.target.value.replace(/\D/g, '');
-    value = value.replace(/(\d{4})/g, '$1 ').trim();
-    this.paymentData.cardLast4 = value;
+    return true;
   }
 }

@@ -13,7 +13,7 @@
         <div class="form-card">
           <div class="form-header">
             <div class="step-indicator">
-              <span class="step-label"><i class="bi bi-credit-card me-2"></i>Payment Method</span>
+              <span class="step-label"><i class="bi bi-credit-card me-2"></i>Payment Details</span>
             </div>
             <div class="step-status">
               <i class="bi bi-shield-check text-success"></i>
@@ -22,79 +22,36 @@
           </div>
           <form (ngSubmit)="onSubmit()" #paymentForm="ngForm" class="checkout-form">
             <div class="form-section">
-              <div class="payment-methods">
-                <div class="payment-option" [class.selected]="paymentData.paymentMethod === 'card'">
-                  <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="card"
-                    [(ngModel)]="paymentData.paymentMethod" (ngModelChange)="onPaymentMethodChange()" required>
-                  <label class="form-check-label" for="card">
-                    <i class="bi bi-credit-card"></i>
-                    <span>Credit/Debit Card</span>
-                  </label>
-                </div>
-                <div class="payment-option" [class.selected]="paymentData.paymentMethod === 'paypal'">
-                  <input class="form-check-input" type="radio" name="paymentMethod" id="paypal" value="paypal"
-                    [(ngModel)]="paymentData.paymentMethod" (ngModelChange)="onPaymentMethodChange()" required>
-                  <label class="form-check-label" for="paypal">
-                    <i class="bi bi-paypal"></i>
-                    <span>PayPal</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-            @if (paymentData.paymentMethod === 'card') {
-            <div class="form-section">
-              <h3 class="section-title">
-                <i class="bi bi-shield-lock me-2"></i>Payment Details
-              </h3>
               <div class="stripe-container">
                 <div id="payment-element" class="stripe-element">
-                  <div class="stripe-loading">Loading payment form...</div>
+                  <div class="spinner-outer-container d-flex justify-content-center align-items-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <span>Loading...</span>
+                  </div>
                 </div>
-                <div id="payment-errors" class="stripe-error" role="alert"></div>
               </div>
+              <div id="payment-errors" class="stripe-error" role="alert"></div>
             </div>
-            }
-            @if (paymentData.paymentMethod === 'paypal') {
-            <div class="form-section">
-              <div class="paypal-notice">
-                <i class="bi bi-info-circle"></i>
-                <div>
-                  <h4>PayPal Checkout</h4>
-                  <p>You will be redirected to PayPal to complete your payment securely.</p>
-                </div>
-              </div>
-              <div class="mb-3">
-                <!-- <label for="paypalEmail" class="form-label">PayPal Email *</label>
-                <input type="email" class="form-control" id="paypalEmail" name="paypalEmail"
-                  [(ngModel)]="paymentData.billingEmail" required email placeholder="Enter your PayPal email"
-                  [ngClass]="{'is-invalid': paymentForm.submitted && !paymentData.billingEmail}">
-                @if (paymentForm.submitted && !paymentData.billingEmail) {
-                <div class="invalid-feedback">
-                  Please enter a valid PayPal email address.
-                </div>
-                } -->
-              </div>
-            </div>
-            }
             <div class="form-section">
               <h3 class="section-title">
                 <i class="bi bi-geo-alt me-2"></i>Billing Address
               </h3>
               <div class="form-check mb-3">
                 <input type="checkbox" class="form-check-input" id="sameAsShipping"
-                  [(ngModel)]="billigngAddressSameAsShipping" name="sameAsShipping" (change)="onBillingAddressChange()">
+                  [(ngModel)]="billingAddressSameAsShipping" name="sameAsShipping" (change)="onBillingAddressChange()">
                 <label class="form-check-label" for="sameAsShipping">
                   Same as shipping address
                 </label>
               </div>
-              @if (!billigngAddressSameAsShipping) {
+              @if (!billingAddressSameAsShipping) {
               <div class="billing-address">
                 <div class="mb-3">
                   <label for="addressLine1" class="form-label">Address Line 1 *</label>
                   <input type="text" class="form-control" id="addressLine1" name="addressLine1"
                     [(ngModel)]="billingAddress.addressLine1" required placeholder="Enter your street address"
-                    [ngClass]="{'is-invalid': !billingAddress.addressLine1 || billingAddress.addressLine1.trim() === ''}">
-                  @if (!billingAddress.addressLine1 || billingAddress.addressLine1.trim() === '') {
+                    [ngClass]="{'is-invalid': !billingAddress.addressLine1}">
+                  @if (formSubmitted && !billingAddressSameAsShipping && (!billingAddress.addressLine1 ||
+                  billingAddress.addressLine1.trim() === '')) {
                   <div class="invalid-feedback">
                     Street address is required.
                   </div>
@@ -104,9 +61,9 @@
                   <div class="col-md-6 mb-3">
                     <label for="city" class="form-label">City *</label>
                     <input type="text" class="form-control" id="city" name="city" [(ngModel)]="billingAddress.city"
-                      required placeholder="Enter your city"
-                      [ngClass]="{'is-invalid': !billingAddress.city || billingAddress.city.trim() === ''}">
-                    @if (!billingAddress.city || billingAddress.city.trim() === '') {
+                      required placeholder="Enter your city" [ngClass]="{'is-invalid': !billingAddress.city }">
+                    @if (formSubmitted && !billingAddressSameAsShipping && (this.billingAddress.city.trim() === '' ||
+                    !this.billingAddress.city)) {
                     <div class="invalid-feedback">
                       City is required.
                     </div>
@@ -118,8 +75,9 @@
                     <label for="postcode" class="form-label">Postcode/ZIP *</label>
                     <input type="text" class="form-control" id="postcode" name="postcode"
                       [(ngModel)]="billingAddress.postcode" required placeholder="Postcode"
-                      [ngClass]="{'is-invalid': !billingAddress.postcode || billingAddress.postcode.trim() === ''}">
-                    @if (!billingAddress.postcode || billingAddress.postcode.trim() === '') {
+                      [ngClass]="{'is-invalid': !billingAddress.postcode}">
+                    @if (formSubmitted && !billingAddressSameAsShipping && (this.billingAddress.postcode.trim() === ''
+                    || !this.billingAddress.postcode)) {
                     <div class="invalid-feedback">
                       Postcode is required.
                     </div>
@@ -128,8 +86,7 @@
                   <div class="col-md-6 mb-3">
                     <label for="country" class="form-label">Country *</label>
                     <select class="form-select" id="country" name="country" [(ngModel)]="billingAddress.country"
-                      required
-                      [ngClass]="{'is-invalid': !billingAddress.country || billingAddress.country.trim() === ''}">
+                      required [ngClass]="{'is-invalid': !billingAddress.country}">
                       <option value="">Select your country</option>
                       <option value="US">United States</option>
                       <option value="CA">Canada</option>
@@ -151,7 +108,8 @@
                       <option value="IE">Ireland</option>
                       <option value="NZ">New Zealand</option>
                     </select>
-                    @if (!billingAddress.country || billingAddress.country.trim() === '') {
+                    @if (formSubmitted && !billingAddressSameAsShipping && (this.billingAddress.country.trim() === '' ||
+                    !this.billingAddress.country)) {
                     <div class="invalid-feedback">
                       Country is required.
                     </div>
@@ -205,8 +163,7 @@
               <span>Subtotal</span>
               <span>£{{ (orderSummary.subtotal || 0) | number:'1.2-2' }}</span>
             </div>
-            @if (orderSummary && orderSummary.discount>0)
-            {
+            @if (orderSummary && orderSummary.discount>0) {
             <div class="summary-item">
               <span>Discount:</span>
               <span>£{{ (orderSummary.discount || 0) | number:'1.2-2' }}</span>
@@ -244,10 +201,6 @@
           <div class="payment-icon">
             <i class="bi bi-credit-card"></i>
             <span>American Express</span>
-          </div>
-          <div class="payment-icon">
-            <i class="bi bi-paypal"></i>
-            <span>PayPal</span>
           </div>
           <div class="payment-icon">
             <i class="bi bi-calendar-check"></i>

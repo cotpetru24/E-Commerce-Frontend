@@ -175,6 +175,6 @@ export class ShippingAddressComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/cart']);
+    this.router.navigate(['/cart/']);
   }
 }
