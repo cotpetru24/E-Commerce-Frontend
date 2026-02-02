@@ -4,14 +4,14 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddProductComponent } from './add-product.component';
-import { AdminApiService } from '../../services/api/admin-api.service';
+import { AdminProductApiService } from '../../services/api/';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
 
 describe('AddProduct', () => {
   let component: AddProductComponent;
   let fixture: ComponentFixture<AddProductComponent>;
-  let adminApiService: jasmine.SpyObj<AdminApiService>;
+  let adminApiService: jasmine.SpyObj<AdminProductApiService>;
 
   beforeEach(async () => {
     adminApiService = jasmine.createSpyObj('AdminApiService', [
@@ -31,7 +31,7 @@ describe('AddProduct', () => {
           provide: NgbModal,
           useValue: jasmine.createSpyObj('NgbModal', ['open']),
         },
-        { provide: AdminApiService, useValue: adminApiService },
+        { provide: AdminProductApiService, useValue: adminApiService },
         {
           provide: ToastService,
           useValue: jasmine.createSpyObj('ToastService', [
