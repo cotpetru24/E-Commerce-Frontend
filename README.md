@@ -40,7 +40,7 @@ rather than feature bloat or visual experimentation.
 ## Admin Features
 
 ### User Management
-- View users
+- View and edit users
 - Role-based access (admin vs customer)
 - Admin-only routes and guards
 
@@ -111,12 +111,16 @@ src/
       product-management/
       order-management/
       content-management/
-    customer/
+    user/
     shared/
     services/
     models/
+e2e/
+docs/
+.github/
+  workflows/
 
-Admin and customer concerns are intentionally separated.
+Admin and user/customer concerns are intentionally separated.
 
 ---
 
@@ -140,6 +144,7 @@ Refer to the backend repository for API and database setup.
 
 - Angular TestBed
 - HttpClientTestingModule
+- Playwright smoke test (homepage loads)
 - Focused component and service tests
 
 Tests target **business-critical paths**, not snapshot or boilerplate coverage.
