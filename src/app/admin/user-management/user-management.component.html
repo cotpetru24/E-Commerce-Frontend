@@ -176,15 +176,15 @@
                   </td>
                   <td>
                     //to fix the enums
-                    <!-- <span [class]="getRoleClass(user.roles)">
+                    <span [class]="getRoleClass(user.roles)">
                       @if (user.roles.length > 0) {
-                      {{ user.roles.join(', ') }}
+                      {{ UserRoleMeta[user.role[0]].label }}
                       }
-                    </span> -->
+                    </span>
                   </td>
                   <td>
                     //to fix the enums
-                    <!-- <span [class]="getStatusClass(user.isBlocked)">{{ getStatusText(user.isBlocked) }}</span> -->
+                    <span [class]="UserStatusMeta[user.status].label">{{ UserStatusMeta[user.status].label }}</span>
                   </td>
                   <td>
                     <div>
@@ -199,10 +199,10 @@
                         <i class="bi bi-eye"></i>
                       </button>
                       //to fix the enums
-                      <!-- <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)"
-                        [title]="user.isBlocked ? 'Unblock' : 'Block'">
-                        <i class="bi" [class]="user.isBlocked ? 'bi-unlock' : 'bi-lock'"></i>
-                      </button> -->
+                      <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)"
+                        [title]="user.status === userStatuses.Blocked ? 'Unblock' : 'Block'">
+                        <i class="bi" [class]="user.status === userStatuses.Blocked ? 'bi-unlock' : 'bi-lock'"></i>
+                      </button>
                       <button class="btn btn-outline-danger" (click)="deleteUser(user)" title="Delete User">
                         <i class="bi bi-trash"></i>
                       </button>

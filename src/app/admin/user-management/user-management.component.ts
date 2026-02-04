@@ -19,6 +19,7 @@ import {
   AdminUsersSortByEnum,
   SortDirectionEnum,
   UserRoleEnum,
+  UserRoleMeta,
   UserStatusEnum,
   UserStatusMeta,
 } from '@dtos/enums';
@@ -32,6 +33,7 @@ import {
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
   UserRole = UserRoleEnum;
+  UserRoleMeta = UserRoleMeta;
   UserStatusEnum = UserStatusEnum;
   UserStatusMeta = UserStatusMeta;
   Math = Math;
