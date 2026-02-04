@@ -1,10 +1,12 @@
+import { PaymentStatusEnum } from "./enums";
+
 export interface PaymentDto {
   orderId: number;
   amount: number;
   currency: string;
   cardBrand: string | null;
   cardLast4: string | null;
-  status: string;
+  status: PaymentStatusEnum;
   paymentMethod: string;
   receiptUrl: string;
 }
@@ -20,12 +22,4 @@ export interface CreatePaymentIntentRequestDto {
 
 export interface CreatePaymentIntentResponseDto {
   clientSecret: string;
-}
-
-export enum PaymentStatusEnum {
-  Pending = 1,
-  Authorised = 3,
-  Failed = 4,
-  Refunded = 6,
-  Paid = 12,
 }

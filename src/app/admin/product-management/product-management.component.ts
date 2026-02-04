@@ -14,13 +14,17 @@ import {
   AdminProductDto,
   GetProductsAdminRequestDto,
   GetProductsAdminResponseDto,
-  ProductsSortBy,
-  ProductsSortDirection,
-  ProductStatus,
-  ProductStockStatus,
-  Audience,
   ProductImageDto,
 } from '@dtos';
+import {
+  AdminProductsSortByEnum,
+  AdminProductStockStatusEnum,
+  AdminProductStockStatusMeta,
+  AudienceEnum,
+  AudienceMeta,
+  ProductStatusEmun,
+  SortDirectionEnum,
+} from '@dtos/enums';
 
 @Component({
   selector: 'app-product-management',
@@ -32,34 +36,37 @@ import {
 export class ProductManagementComponent implements OnInit, OnDestroy {
   isLoading = false;
   Math = Math;
+  AudienceEnum = AudienceEnum;
+  AudienceMeta = AudienceMeta;
+  AdminProductStockStatusMeta = AdminProductStockStatusMeta;
   response?: GetProductsAdminResponseDto;
   searchTerm = '';
-  selectedCategory: Audience | null = null;
+  selectedCategory: AudienceEnum | null = null;
   selectedBrand: string | null = null;
   isActive: boolean | null = null;
-  selectedStock: ProductStockStatus | null = null;
+  selectedStock: AdminProductStockStatusEnum | null = null;
   sortBy = 'date-desc';
-  sortField: ProductsSortBy = ProductsSortBy.DateCreated;
+  sortField: AdminProductsSortByEnum = AdminProductsSortByEnum.DateCreated;
   currentPage = 1;
   itemsPerPage = 10;
 
-  audienceOptions: Audience[] = [
-    Audience.Men,
-    Audience.Women,
-    Audience.Children,
-    Audience.Unisex,
+  audienceOptions: AudienceEnum[] = [
+    AudienceEnum.Men,
+    AudienceEnum.Women,
+    AudienceEnum.Children,
+    AudienceEnum.Unisex,
   ];
 
-  productStatus: ProductStatus[] = [
-    ProductStatus.Active,
-    ProductStatus.Inactive,
+  productStatus: ProductStatusEmun[] = [
+    ProductStatusEmun.Active,
+    ProductStatusEmun.Inactive,
   ];
 
-  productStockStatus: ProductStockStatus[] = [
-    ProductStockStatus.LowStock,
-    ProductStockStatus.HighStock,
-    ProductStockStatus.InStock,
-    ProductStockStatus.OutOfStock,
+  productStockStatus: AdminProductStockStatusEnum[] = [
+    AdminProductStockStatusEnum.LowStock,
+    AdminProductStockStatusEnum.HighStock,
+    AdminProductStockStatusEnum.InStock,
+    AdminProductStockStatusEnum.OutOfStock,
   ];
 
   private subscriptions = new Subscription();
@@ -87,14 +94,14 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
 
     switch (sortByField) {
       case 'name':
-        this.sortField = ProductsSortBy.Name;
+        this.sortField = AdminProductsSortByEnum.Name;
         break;
       case 'stock':
-        this.sortField = ProductsSortBy.Stock;
+        this.sortField = AdminProductsSortByEnum.Stock;
         break;
       case 'date':
       default:
-        this.sortField = ProductsSortBy.DateCreated;
+        this.sortField = AdminProductsSortByEnum.DateCreated;
         break;
     }
 
@@ -108,8 +115,8 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       productStockStatus: this.selectedStock,
       sortDirection:
         sortDir === 'asc'
-          ? ProductsSortDirection.Ascending
-          : ProductsSortDirection.Descending,
+          ? SortDirectionEnum.Ascending
+          : SortDirectionEnum.Descending,
       sortBy: this.sortField,
     };
 
@@ -166,43 +173,17 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     return pages;
   }
 
-  getCategoryClass(category: string): string {
-    switch (category.toLowerCase()) {
-      case Audience.Men:
-        return 'bg-men';
-      case Audience.Women:
-        return 'bg-women';
-      case Audience.Children:
-        return 'bg-children';
-      case Audience.Unisex:
-        return 'bg-success';
-      default:
-        return 'bg-success';
+  getStockStatus(stock: number): AdminProductStockStatusEnum {
+    if (stock <= 0) {
+      return AdminProductStockStatusEnum.OutOfStock;
     }
-  }
-
-  getStockBadgeClass(stock: number): string {
-    if (stock <= 0) return 'bg-danger';
-    if (stock < 10) return 'bg-warning';
-    if (stock > 50) return 'bg-info';
-
-    return 'bg-success';
-  }
-
-  getStockQuantityClass(stock: number): string {
-    if (stock <= 0) return 'text-danger fw-bold';
-    if (stock < 10) return 'text-warning fw-bold';
-    if (stock > 50) return 'text-info fw-bold';
-
-    return 'text-success';
-  }
-
-  getStockText(stock: number): string {
-    if (stock <= 0) return 'Out of Stock';
-    if (stock < 10) return 'Low Stock';
-    if (stock > 50) return 'High Stock';
-
-    return 'In Stock';
+    if (stock < 10) {
+      return AdminProductStockStatusEnum.LowStock;
+    }
+    if (stock > 50) {
+      return AdminProductStockStatusEnum.HighStock;
+    }
+    return AdminProductStockStatusEnum.InStock;
   }
 
   editProduct(product: AdminProductDto): void {

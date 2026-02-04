@@ -10,15 +10,18 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdminUserApiService } from 'app/services/api';
 import { Utils } from 'app/shared/utils';
 import {
-  UsersSortBy,
-  UsersSortDirection,
   AdminUserDto,
   AdminUpdateUserProfileRequestDto,
   AdminUsersStatsDto,
   GetAllUsersRequestDto,
-  UserRole,
-  UserStatus,
 } from '@dtos';
+import {
+  AdminUsersSortByEnum,
+  SortDirectionEnum,
+  UserRoleEnum,
+  UserStatusEnum,
+  UserStatusMeta,
+} from '@dtos/enums';
 
 @Component({
   selector: 'app-user-management',
@@ -28,8 +31,9 @@ import {
   styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
-  UserRole = UserRole;
-  UserStatus = UserStatus;
+  UserRole = UserRoleEnum;
+  UserStatusEnum = UserStatusEnum;
+  UserStatusMeta = UserStatusMeta;
   Math = Math;
   currentPage = 1;
   itemsPerPage = 10;
@@ -38,9 +42,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   searchTerm = '';
   sortBy = 'date-desc';
   isLoading = false;
-  selectedUserStatus: UserStatus | null = null;
-  selectedRole: UserRole | null = null;
-  sortDirection: UsersSortDirection | null = UsersSortDirection.Descending;
+  selectedUserStatus: UserStatusEnum | null = null;
+  selectedRole: UserRoleEnum | null = null;
+  sortDirection: SortDirectionEnum | null = SortDirectionEnum.Descending;
   users: AdminUserDto[] = [];
   filteredUsers: AdminUserDto[] = [];
   paginatedUsers: AdminUserDto[] = [];
@@ -50,6 +54,11 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     totalBlockedUsersCount: 0,
     totalNewUsersCountThisMonth: 0,
   };
+
+  userStatuses: UserStatusEnum[] = [
+    UserStatusEnum.Active,
+    UserStatusEnum.Blocked,
+  ];
 
   private subscriptions = new Subscription();
 
@@ -81,11 +90,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       userStatus: this.selectedUserStatus,
       userRole: this.selectedRole,
       sortBy:
-        sortByField === 'name' ? UsersSortBy.Name : UsersSortBy.DateCreated,
+        sortByField === 'name'
+          ? AdminUsersSortByEnum.Name
+          : AdminUsersSortByEnum.DateCreated,
       sortDirection:
         sortDir === 'asc'
-          ? UsersSortDirection.Ascending
-          : UsersSortDirection.Descending,
+          ? SortDirectionEnum.Ascending
+          : SortDirectionEnum.Descending,
     };
 
     this.subscriptions.add(
@@ -141,40 +152,42 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     return pages;
   }
 
-  getRoleClass(roles: UserRole[] | string[]): string {
-    let userRole = '';
-    for (let role of roles) {
-      switch (role) {
-        case UserRole.Administrator:
-        case 'Administrator':
-          userRole = 'badge bg-danger';
-          break;
-        case UserRole.Customer:
-        case 'Customer':
-          userRole = 'badge bg-info';
-          break;
-        default:
-          userRole = 'badge bg-info';
-          break;
-      }
-    }
-    return userRole;
-  }
+  //to fix filters
+  // getRoleClass(roles: UserRoleEnum[] | string[]): string {
+  //   let userRole = '';
+  //   for (let role of roles) {
+  //     switch (role) {
+  //       case UserRoleEnum.Administrator:
+  //       case 'Administrator':
+  //         userRole = 'badge bg-danger';
+  //         break;
+  //       case UserRoleEnum.Customer:
+  //       case 'Customer':
+  //         userRole = 'badge bg-info';
+  //         break;
+  //       default:
+  //         userRole = 'badge bg-info';
+  //         break;
+  //     }
+  //   }
+  //   return userRole;
+  // }
 
-  getStatusClass(isBlocked: boolean): string {
-    return isBlocked ? 'badge bg-danger' : 'badge bg-success';
-  }
+  // getStatusClass(isBlocked: boolean): string {
+  //   return isBlocked ? 'badge bg-danger' : 'badge bg-success';
+  // }
 
-  getStatusText(isBlocked: boolean): string {
-    return isBlocked ? 'Blocked' : 'Active';
-  }
+  // getStatusText(isBlocked: boolean): string {
+  //   return isBlocked ? 'Blocked' : 'Active';
+  // }
 
   viewUser(user: AdminUserDto): void {
     this.router.navigate(['/admin/users', user.id]);
   }
 
   toggleUserStatus(user: AdminUserDto): void {
-    const action = user.isBlocked ? 'unblock' : 'block';
+    const action =
+      user.status === this.UserStatusEnum.Blocked ? 'unblock' : 'block';
 
     const modalRef = this.modalService.open(ModalDialogComponent);
     modalRef.componentInstance.title = `${
@@ -188,7 +201,14 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const updateUserRequest: AdminUpdateUserProfileRequestDto = {
-          isBlocked: !user.isBlocked,
+          status:
+            user.status === UserStatusEnum.Blocked
+              ? UserStatusEnum.Blocked
+              : UserStatusEnum.Active,
+          email: null,
+          firstName: null,
+          lastName: null,
+          roles: null,
         };
 
         this.subscriptions.add(
@@ -196,7 +216,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
             .toggleUserStatus(user.id.toString(), updateUserRequest)
             .subscribe({
               next: () => {
-                const status = user.isBlocked ? 'unblocked' : 'blocked';
+                const status =
+                  user.status === UserStatusEnum.Blocked
+                    ? 'unblocked'
+                    : 'blocked';
                 this.toastService.success(`User ${status} successfully`);
 
                 this.loadUsers();
@@ -243,7 +266,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.selectedUserStatus = null;
     this.selectedRole = null;
     this.sortBy = 'date-desc';
-    this.sortDirection = UsersSortDirection.Descending;
+    this.sortDirection = SortDirectionEnum.Descending;
     this.currentPage = 1;
     this.itemsPerPage = 10;
     this.loadUsers();

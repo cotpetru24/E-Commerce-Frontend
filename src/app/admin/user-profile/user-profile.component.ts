@@ -8,7 +8,16 @@ import { Utils } from '../../shared/utils';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdminUserApiService } from 'app/services/api';
-import { AdminOrderDto, AdminUserDto, UserRole } from '@dtos';
+import { AdminOrderDto, AdminUserDto } from '@dtos';
+import {
+  OrdersSortByEnum,
+  OrderStatusEnum,
+  OrderStatusMeta,
+  UserRoleEnum,
+  UserRoleMeta,
+  UserStatusEnum,
+  UserStatusMeta,
+} from '@dtos/enums';
 
 @Component({
   selector: 'app-user-profile',
@@ -23,18 +32,28 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   isChangingPassword = false;
   showPassword = false;
   ordersLoading = false;
-  UserRole = UserRole;
+  UserRoleEnum = UserRoleEnum;
+  UserRoleMeta = UserRoleMeta;
+  UserStatusMeta = UserStatusMeta;
+  UserStatusEnum = UserStatusEnum;
+  OrderStatusEnum = OrderStatusEnum;
+  OrderStatusMeta = OrderStatusMeta;
   user: AdminUserDto | null = null;
   userId: string | null = null;
   userOrders: AdminOrderDto[] = [];
   filteredOrders: AdminOrderDto[] = [];
-  currentFilter = 'all';
+  currentFilter: OrderStatusEnum | null = null;
+
+  userRoles: UserRoleEnum[] = [
+    UserRoleEnum.Administrator,
+    UserRoleEnum.Customer,
+  ];
 
   editForm = {
     email: '',
     firstName: '',
     lastName: '',
-    roles: UserRole.Customer,
+    roles: UserRoleEnum.Customer,
   };
 
   passwordForm = {
@@ -105,6 +124,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         .getUserOrders(this.userId, {
           pageNumber: 1,
           pageSize: 100,
+          fromDate: null,
+          statusFilter: null,
+          toDate: null,
         })
         .subscribe({
           next: (response) => {
@@ -213,26 +235,14 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     );
   }
 
-  filterOrders(filter: string): void {
-    this.currentFilter = filter;
-    if (filter === 'all') {
+  filterOrders(statusFilter: OrderStatusEnum | null): void {
+    this.currentFilter = statusFilter;
+    if (statusFilter === null) {
       this.filteredOrders = [...this.userOrders];
     } else {
-      this.filteredOrders = this.userOrders.filter((order) => {
-        const status = order.orderStatusName?.toLowerCase();
-        switch (filter) {
-          case 'delivered':
-            return status === 'delivered';
-          case 'shipped':
-            return status === 'shipped';
-          case 'processing':
-            return status === 'processing';
-          case 'cancelled':
-            return status === 'cancelled';
-          default:
-            return true;
-        }
-      });
+      this.filteredOrders = this.userOrders.filter(
+        (order) => order.status === statusFilter,
+      );
     }
   }
 
@@ -243,7 +253,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   toggleUserStatus(user: AdminUserDto): void {
-    const action = user.isBlocked ? 'unblock' : 'block';
+    const action = user.status === this.UserStatusEnum.Blocked ? 'unblock' : 'block';
 
     const modalRef = this.modalService.open(ModalDialogComponent);
     modalRef.componentInstance.title = `${
@@ -259,11 +269,21 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.subscriptions.add(
           this.adminUserApiService
             .toggleUserStatus(user.id.toString(), {
-              isBlocked: !user.isBlocked,
+              status:
+                user.status === this.UserStatusEnum.Blocked
+                  ? this.UserStatusEnum.Blocked
+                  : this.UserStatusEnum.Active,
+              email: null,
+              firstName: null,
+              lastName: null,
+              roles: null,
             })
             .subscribe({
               next: () => {
-                const status = user.isBlocked ? 'unblocked' : 'blocked';
+                const status =
+                  user.status === this.UserStatusEnum.Blocked
+                    ? 'unblocked'
+                    : 'blocked';
                 this.toastService.success(`User ${status} successfully`);
 
                 this.loadUserData();
@@ -278,106 +298,31 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  getStatusBadgeClass(status?: string): string {
-    if (!status) {
-      return 'badge bg-secondary';
-    }
-    switch (status) {
-      case 'Pending':
-      case 'pending':
-        return 'badge bg-warning';
-      case 'Processing':
-      case 'processing':
-        return 'badge bg-info';
-      case 'Shipped':
-      case 'shipped':
-        return 'badge bg-primary';
-      case 'Delivered':
-      case 'delivered':
-        return 'badge bg-success';
-      case 'Cancelled':
-      case 'cancelled':
-        return 'badge bg-danger';
-      default:
-        return 'badge bg-secondary';
-    }
-  }
-
-  getStatusClass(): string {
-    return this.user?.isBlocked === true
-      ? 'badge bg-danger'
-      : 'badge bg-success';
-  }
-
-  getStatusText(): string {
-    return this.user?.isBlocked === true ? 'Blocked' : 'Active';
-  }
-
-  getIsBlocked(): boolean {
-    return this.user?.isBlocked || false;
-  }
-
-  getRoleClass(): string {
-    let userRole = '';
-    for (let role of this.user?.roles || []) {
-      switch (role) {
-        case UserRole.Administrator:
-          userRole = 'badge bg-danger';
-          break;
-        case UserRole.Customer:
-          userRole = 'badge bg-info';
-          break;
-        default:
-          userRole = 'badge bg-info';
-          break;
-      }
-    }
-    return userRole;
-  }
-
-  getRoleText(): string {
-    let roleText = '';
-    for (let role of this.user?.roles || []) {
-      switch (role) {
-        case UserRole.Administrator:
-          roleText = 'Administrator';
-          break;
-        case UserRole.Customer:
-          roleText = 'Customer';
-          break;
-        default:
-          roleText = 'Customer';
-          break;
-      }
-    }
-    return roleText;
-  }
-
   goBack(): void {
     this.router.navigate(['/admin/users']);
   }
 
   getProcessingCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'processing',
+      (order) => order.status === OrderStatusEnum.Processing,
     ).length;
   }
 
   getShippedCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'shipped',
+      (order) => order.status === OrderStatusEnum.Shipped,
     ).length;
   }
 
   getDeliveredCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'delivered',
+      (order) => order.status === OrderStatusEnum.Delivered,
     ).length;
   }
 
   getCancelledCount(): number {
     return this.userOrders.filter(
-      (order) => order.orderStatusName?.toLowerCase() === 'cancelled',
+      (order) => order.status === OrderStatusEnum.Cancelled,
     ).length;
   }
 }

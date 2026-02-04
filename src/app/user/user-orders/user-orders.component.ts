@@ -52,6 +52,10 @@ export class UserOrdersComponent implements OnInit {
     const request: GetUserOrdersRequestDto = {
       pageNumber: 1,
       pageSize: this.pageSize,
+      fromDate: null,
+      statusFilter:null,
+      toDate:null
+
     };
 
     this.orderApiService
@@ -74,7 +78,7 @@ export class UserOrdersComponent implements OnInit {
     });
   }
 
-  getStatusBadgeClass(status: string | undefined): string {
+  getStatusBadgeClass(status: string | null): string {
     if (!status) return 'bg-secondary';
 
     switch (status.toLowerCase()) {

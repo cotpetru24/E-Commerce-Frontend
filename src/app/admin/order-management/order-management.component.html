@@ -94,11 +94,11 @@
               <label for="statusFilter" class="form-label">Status</label>
               <select class="form-select" id="statusFilter" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
                 <option [ngValue]="null">All Statuses</option>
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
+                @for (status of orderStatusOptions; track status) {
+                <option [ngValue]="status">
+                  {{ OrderStatusMeta[status].label }}
+                </option>
+                }
               </select>
             </div>
             <div class="col-md-3 mb-3">
@@ -176,11 +176,11 @@
                     <strong class="text-primary">£{{ order?.total ?? 0 | number:'1.2-2' }}</strong>
                   </td>
                   <td>
-                    <span [class]="getStatusClass(order.orderStatusName)">{{ order.orderStatusName | titlecase }}</span>
+                    <span [class]="OrderStatusMeta[order.status].class">{{ OrderStatusMeta[order.status].label }}</span>
                   </td>
                   <td>
-                    <span [class]="getPaymentClass(order.payment.status)">{{
-                      order?.payment?.status | titlecase }}</span>
+                    <span [class]="PaymentStatusMeta[order.payment.status].class">{{
+                      PaymentStatusMeta[order.payment.status].label}}</span>
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm" role="group">
@@ -190,12 +190,10 @@
                       <button class="btn btn-outline-primary" (click)="updateOrderStatus(order)" title="Update Status">
                         <i class="bi bi-pencil"></i>
                       </button>
-                      @if (order.orderStatusName === 'Processing' || order.orderStatusName === 'processing') {
+                      @if (OrderStatusMeta[order.status].isProcessing) {
                       <button class="btn btn-outline-success" (click)="markShipped(order)" title="Mark Shipped">
                         <i class="bi bi-truck"></i>
                       </button>
-                      }
-                      @if (order.orderStatusCode === OrderStatus.Processing && order.orderStatusName === 'processing') {
                       <button class="btn btn-outline-warning" (click)="cancelOrder(order)" title="Cancel Order">
                         <i class="bi bi-x-circle"></i>
                       </button>

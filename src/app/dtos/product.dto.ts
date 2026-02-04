@@ -1,45 +1,52 @@
+import {
+  AdminProductsSortByEnum,
+  AdminProductStockStatusEnum,
+  AudienceEnum,
+  ProductSortByOption,
+  SortDirectionEnum,
+} from './enums';
+
 export interface ProductDto {
   id: number;
   name: string;
   description: string;
   price: number;
-  originalPrice?: number | undefined;
+  originalPrice: number | null;
   totalStock: number;
-  audience: Audience;
+  audience: AudienceEnum;
   brandName: string;
-  rating?: number | undefined;
-  reviewCount?: number | undefined;
-  productSizes?: ProductSizeDto[] | undefined;
+  rating: number | null;
+  reviewCount: number | null;
+  productSizes: ProductSizeDto[] | null;
   productFeatures: ProductFeatureDto[];
   productImages: ProductImageDto[];
-  isNew?: boolean | undefined;
-  discountPercentage?: number;
-  selected?: boolean;
+  isNew: boolean | null;
+  discountPercentage?: number | null;
+  selected: boolean | null;
   isActive: boolean;
 }
 
 export interface AdminProductDto {
   id: number;
   name: string;
-  description?: string;
+  description: string | null;
   price: number;
-  originalPrice?: number | undefined;
+  originalPrice: number | null;
   totalStock: number;
-  brandId?: number;
-  brandName?: string;
-  audienceId?: number;
-  audience?: string;
-  rating?: number | undefined;
-  reviewCount?: number | undefined;
+  brandId: number | null;
+  brandName: string | null;
+  audience: AudienceEnum | null;
+  rating: number | null;
+  reviewCount: number | null;
   productSizes: ProductSizeDto[];
   productFeatures: ProductFeatureDto[];
   productImages: ProductImageDto[];
-  isNew?: boolean | undefined;
-  discountPercentage?: number;
-  selected?: boolean;
+  isNew: boolean | null;
+  discountPercentage: number | null;
+  selected: boolean | null;
   isActive: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }
 
 export interface ProductFeatureDto {
@@ -49,10 +56,10 @@ export interface ProductFeatureDto {
 }
 
 export interface ProductSizeDto {
-  id: number;
+  id: number | null;
   size: number;
   stock: number;
-  sku?: string;
+  sku: string | null;
   barcode: string;
 }
 
@@ -96,15 +103,15 @@ export interface GetProductsAdminResponseDto {
 }
 
 export interface GetProductsAdminRequestDto {
-  pageNumber?: number;
-  pageSize?: number;
-  searchTerm?: string | null;
-  isActive?: boolean | null;
-  productCategory?: Audience | null;
-  productBrand?: string | null;
-  productStockStatus?: ProductStockStatus | null;
-  sortDirection: ProductsSortDirection | null;
-  sortBy?: ProductsSortBy | null;
+  pageNumber: number | null;
+  pageSize: number | null;
+  searchTerm: string | null;
+  isActive: boolean | null;
+  productCategory: AudienceEnum | null;
+  productBrand: string | null;
+  productStockStatus: AdminProductStockStatusEnum | null;
+  sortDirection: SortDirectionEnum | null;
+  sortBy: AdminProductsSortByEnum | null;
 }
 
 export interface ProductAudienceDto {
@@ -113,52 +120,13 @@ export interface ProductAudienceDto {
 }
 
 export interface ProductFilterDto {
-  Audience?: Audience | null;
-  Brand?: string | null;
-  MinPrice?: number | null;
-  MaxPrice?: number | null;
-  SearchTerm?: string | null;
-  Page?: number | null;
-  PageSize?: number | null;
-  SortBy?: SortByOption | null;
-  Size?: number | null;
-}
-
-export enum Audience {
-  Men = 'men',
-  Women = 'women',
-  Children = 'children',
-  Unisex = 'unisex',
-}
-
-export enum ProductsSortBy {
-  DateCreated = 'createdAt',
-  Name = 'name',
-  Stock = 'stock',
-}
-
-export enum ProductsSortDirection {
-  Ascending = 'asc',
-  Descending = 'desc',
-}
-
-export enum ProductStatus {
-  Active = 'active',
-  Inactive = 'inactive',
-}
-
-export enum ProductStockStatus {
-  LowStock = 'low stock',
-  HighStock = 'high stock',
-  InStock = 'in stock',
-  OutOfStock = 'out of stock',
-}
-
-export enum SortByOption {
-  NameAsc = 'NameAsc',
-  NameDesc = 'NameDesc',
-  PriceAsc = 'PriceAsc',
-  PriceDesc = 'PriceDesc',
-  BrandAsc = 'BrandAsc',
-  BrandDesc = 'BrandDesc',
+  Audience: AudienceEnum | null;
+  Brand: string | null;
+  MinPrice: number | null;
+  MaxPrice: number | null;
+  SearchTerm: string | null;
+  Page: number | null;
+  PageSize: number | null;
+  SortBy: ProductSortByOption | null;
+  Size: number | null;
 }

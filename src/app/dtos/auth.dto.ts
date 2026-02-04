@@ -1,3 +1,5 @@
+import { UserRoleEnum } from "./enums";
+
 export interface LoginRequestDto {
   email: string;
   password: string;
@@ -8,17 +10,12 @@ export interface RegisterRequestDto {
   password: string;
   firstName: string;
   lastName: string;
-  phone?: string;
+  phone: string | null;
 }
 
 export interface UserInfoDto {
   Id: string;
   FirstName: string;
   Email: string;
-  role: UserRole;
-}
-
-export enum UserRole {
-  Administrator = 1,
-  Customer = 2,
+  role: UserRoleEnum;
 }

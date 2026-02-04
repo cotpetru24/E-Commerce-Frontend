@@ -1,10 +1,11 @@
 import { AddressDto, PaymentDto, CreateAddressRequestDto } from '.';
+import { OrdersSortByEnum, OrderStatusEnum, SortDirectionEnum } from './enums';
 
 export interface OrderDto {
   id: number;
-  userId?: string;
-  orderStatusId?: number;
-  orderStatusName?: string;
+  userId: string | null;
+  orderStatusId: number | null;
+  orderStatusName: string | null;
   subtotal: number;
   shippingCost: number;
   discount: number;
@@ -12,9 +13,9 @@ export interface OrderDto {
   shippingAddress: AddressDto;
   billingAddress: AddressDto;
   payment: PaymentDto;
-  notes?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  notes: string | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
   orderItems: OrderItemDto[];
 }
 
@@ -23,32 +24,31 @@ export interface AdminOrderDto {
   userId: string;
   userEmail: string;
   userName: string;
-  orderStatusName?: string;
-  orderStatusCode: OrderStatusEnum;
+  status: OrderStatusEnum;
   subtotal: number;
   shippingCost: number;
   discount: number;
   total: number;
-  notes?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  shippingAddress?: AddressDto;
-  billingAddress?: AddressDto;
+  notes: string | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  shippingAddress: AddressDto | null;
+  billingAddress: AddressDto | null;
   orderItems: OrderItemDto[];
   payment: PaymentDto;
 }
 
 export interface OrderItemDto {
   id: number;
-  orderId?: number;
-  productId?: number;
+  orderId: number | null;
+  productId: number | null;
   productName: string;
   productPrice: number;
   quantity: number;
-  size?: string;
-  createdAt?: Date;
-  mainImage?: string;
-  brandName?: string;
+  size: string | null;
+  createdAt: Date | null;
+  mainImage: string | null;
+  brandName: string | null;
   barcode: string;
 }
 
@@ -62,9 +62,9 @@ export interface OrderSummary {
 export interface GetUserOrdersRequestDto {
   pageNumber: number;
   pageSize: number;
-  statusFilter?: string;
-  fromDate?: Date;
-  toDate?: Date;
+  statusFilter: OrderStatusEnum | null;
+  fromDate: Date | null;
+  toDate: Date | null;
 }
 
 export interface GetUserOrdersResponseDto {
@@ -76,14 +76,14 @@ export interface GetUserOrdersResponseDto {
 }
 
 export interface GetAllOrdersRequestDto {
-  orderStatus?: OrderStatusEnum | null;
-  pageNumber?: number | null;
-  pageSize?: number | null;
-  fromDate?: Date | null;
-  toDate?: Date | null;
-  sortBy?: SortBy | null;
-  sortDirection?: SortDirection | null;
-  searchTerm?: string | null;
+  orderStatus: OrderStatusEnum | null;
+  pageNumber: number | null;
+  pageSize: number | null;
+  fromDate: Date | null;
+  toDate: Date | null;
+  sortBy: OrdersSortByEnum | null;
+  sortDirection: SortDirectionEnum | null;
+  searchTerm: string | null;
 }
 
 export interface GetAllOrdersResponseDto {
@@ -122,26 +122,7 @@ export interface PlaceOrderResponseDto {
 
 export interface UpdateOrderStatusRequestDto {
   orderStatusId: OrderStatusEnum;
-  notes?: string;
-}
-
-export enum OrderStatusEnum {
-  Processing = 2,
-  Shipped = 3,
-  Delivered = 4,
-  Cancelled = 5,
-  PaymentFailed = 6,
-  Returned = 7,
-}
-
-export enum SortBy {
-  DateCreated,
-  Total,
-}
-
-export enum SortDirection {
-  Ascending,
-  Descending,
+  notes: string | null;
 }
 
 export interface AdminOrdersStatsDto {

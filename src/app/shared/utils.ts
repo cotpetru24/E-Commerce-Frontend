@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserRole } from '@dtos/auth.dto';
+import { UserRoleEnum } from '@dtos/enums';
 
 @Injectable({
   providedIn: 'root',
@@ -59,13 +59,13 @@ export class Utils {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  normaliseUserRoles(roles: (UserRole | string)[]): UserRole[] {
+  normaliseUserRoles(roles: (UserRoleEnum | string)[]): UserRoleEnum[] {
     return roles.map((r) =>
-      typeof r === 'string' ? UserRole[r as keyof typeof UserRole] : r,
+      typeof r === 'string' ? UserRoleEnum[r as keyof typeof UserRoleEnum] : r,
     );
   }
 
-  serializeUserRoles(roles: UserRole[]): string[] {
-    return roles.map((r) => UserRole[r]);
+  serializeUserRoles(roles: UserRoleEnum[]): string[] {
+    return roles.map((r) => UserRoleEnum[r]);
   }
 }

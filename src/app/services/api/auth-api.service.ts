@@ -8,9 +8,9 @@ import {
   LoginRequestDto,
   RegisterRequestDto,
   UserInfoDto,
-  UserRole,
 } from '@dtos';
 import { jwtDecode } from 'jwt-decode';
+import { UserRoleEnum } from '@dtos/enums';
 
 @Injectable({
   providedIn: 'root',
@@ -72,10 +72,10 @@ export class AuthApiService extends BaseApiService {
 
   isAdmin(): boolean {
     const currentUser = this.getCurrentUser();
-    return currentUser?.role === UserRole.Administrator;
+    return currentUser?.role === UserRoleEnum.Administrator;
   }
 
-  getUserRole(): UserRole | null {
+  getUserRole(): UserRoleEnum | null {
     return this.getCurrentUser()?.role ?? null;
   }
 
@@ -107,16 +107,16 @@ export class AuthApiService extends BaseApiService {
     }
   }
 
-  private validateRole(role: UserRole | string): UserRole {
+  private validateRole(role: UserRoleEnum | string): UserRoleEnum {
     switch (role) {
-      case UserRole.Customer:
+      case UserRoleEnum.Customer:
       case 'Customer':
-        return UserRole.Customer;
-      case UserRole.Administrator:
+        return UserRoleEnum.Customer;
+      case UserRoleEnum.Administrator:
       case 'Administrator':
-        return UserRole.Administrator;
+        return UserRoleEnum.Administrator;
       default:
-        return UserRole.Customer;
+        return UserRoleEnum.Customer;
     }
   }
 

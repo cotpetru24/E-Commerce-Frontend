@@ -107,10 +107,10 @@
                       <div class="d-flex justify-content-between mb-2">
                         <p class="payment-type"><strong>{{ order.payment.paymentMethod }}</strong></p>
                         <span class="badge badge-compact" [ngClass]="{
-                              'bg-success text-dark': order.payment.status === 'Paid',
-                              'bg-warning text-dark': order.payment.status === 'Pending',
-                              'bg-danger text-dark': order.payment.status === 'Failed',
-                              'bg-info text-dark': order.payment.status === 'Refunded'
+                              'bg-success text-dark': order.payment.status === paymentStatusEnum.Paid,
+                              'bg-warning text-dark': order.payment.status === paymentStatusEnum.Pending,
+                              'bg-danger text-dark': order.payment.status === paymentStatusEnum.Failed,
+                              'bg-info text-dark': order.payment.status === paymentStatusEnum.Refunded
                             }">
                           Payment status: {{ order.payment.status }}
                         </span>

@@ -106,7 +106,7 @@
                                 <option value="null">All Categories</option>
                                 @for (a of audienceOptions; track a) {
                                 <option [ngValue]="a">
-                                    {{ a | titlecase }}
+                                    {{ AudienceMeta[a].label }}
                                 </option>
                                 }
                             </select>
@@ -139,7 +139,7 @@
                                 <option value="null">All Stock</option>
                                 @for (ss of productStockStatus; track ss) {
                                 <option [ngValue]="ss">
-                                    {{ ss | titlecase }}
+                                    {{ AdminProductStockStatusMeta[ss].label}}
                                 </option>
                                 }
                             </select>
@@ -203,19 +203,21 @@
                                         <span class="badge brand-badge">{{ product.brandName }}</span>
                                     </td>
                                     <td>
-                                        <span class="badge"
-                                            [ngClass]="getCategoryClass(product?.audience??'not working')">
-                                            {{ product.audience }}
+                                        @if(product.audience !== null){
+                                        <span class="badge" [ngClass]="AudienceMeta[product.audience].class">
+                                            {{AudienceMeta[product.audience].label}}
                                         </span>
+                                        }
                                     </td>
                                     <td>
                                         <strong>£{{ product.price | number:'1.2-2' }}</strong>
                                     </td>
                                     <td>
                                         <span class="badge stock-badge"
-                                            [ngClass]="getStockBadgeClass(product.totalStock)">
-                                            {{ getStockText(product?.totalStock ?? 0) }}
+                                            [ngClass]="AdminProductStockStatusMeta[getStockStatus(product.totalStock)].class  ">
+                                            {{AdminProductStockStatusMeta[getStockStatus(product.totalStock)].label}}
                                         </span>
+
                                         <small class="text-muted">
                                             ({{ product.totalStock }})
                                         </small>

@@ -107,7 +107,7 @@
                       <i class="bi bi-gender-ambiguous me-2"></i>Gender
                     </label>
                     <select class="form-select" id="audienceOptions" name="audienceOptions"
-                      [(ngModel)]="productData.audienceId">
+                      [(ngModel)]="productData.audience">
                       <option value="" disabled>Select Gender</option>
                       @for (a of productAudience; track a.audienceId) {
                       <option [value]="a.audienceId">

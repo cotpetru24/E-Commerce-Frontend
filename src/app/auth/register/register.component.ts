@@ -21,6 +21,7 @@ export class RegisterComponent {
     confirmPassword: '',
     acceptTerms: false,
     subscribeNewsletter: false,
+    phone: null as string | null,
   };
 
   isLoading = false;
@@ -33,7 +34,7 @@ export class RegisterComponent {
   constructor(
     private router: Router,
     private toastService: ToastService,
-    private authApiService: AuthApiService
+    private authApiService: AuthApiService,
   ) {}
 
   onSubmit() {

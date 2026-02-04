@@ -1,16 +1,16 @@
-import { UserRole } from '.';
+import { AdminUsersSortByEnum, SortDirectionEnum, UserRoleEnum, UserStatusEnum } from "./enums";
 
 export interface UserDto {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
-  roles: UserRole[];
+  roles: UserRoleEnum[];
   isBlocked: boolean;
   emailVerified: boolean;
   createdAt: Date;
-  lastLoginAt?: Date;
-  orderCount?: number;
+  lastLoginAt: Date | null;
+  orderCount: number | null;
 }
 
 export interface AdminUserDto {
@@ -18,12 +18,12 @@ export interface AdminUserDto {
   firstName: string;
   lastName: string;
   email: string;
-  roles: UserRole[];
-  isBlocked: boolean;
-  emailConfirmed?: boolean;
+  roles: UserRoleEnum[];
+  status: UserStatusEnum;
+  emailConfirmed: boolean | null;
   createdAt: Date;
-  lastLoginAt?: Date;
-  orderCount?: number;
+  lastLoginAt: Date | null;
+  orderCount: number | null;
 }
 
 export interface UserProfileDto {
@@ -44,11 +44,11 @@ export interface UpdateUserProfileRequestDto {
 }
 
 export interface AdminUpdateUserProfileRequestDto {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  isBlocked?: boolean;
-  roles?: string[];
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  status: UserStatusEnum | null;
+  roles: string[] | null;
 }
 
 export interface UpdateUserProfileResponseDto {
@@ -86,11 +86,11 @@ export interface AdminUsersStatsDto {
 export interface GetAllUsersRequestDto {
   pageNumber: number;
   pageSize: number;
-  searchTerm?: string | null;
-  sortDirection: UsersSortDirection | null;
-  sortBy?: UsersSortBy | null;
-  userStatus?: UserStatus | null;
-  userRole?: UserRole | null;
+  searchTerm: string | null;
+  sortDirection: SortDirectionEnum | null;
+  sortBy: AdminUsersSortByEnum | null;
+  userStatus: UserStatusEnum | null;
+  userRole: UserRoleEnum | null;
 }
 
 export interface GetAllUsersResponseDto {
@@ -100,19 +100,4 @@ export interface GetAllUsersResponseDto {
   pageNumber: number;
   pageSize: number;
   totalPages: number;
-}
-
-export enum UsersSortBy {
-  DateCreated = 1,
-  Name = 2,
-}
-
-export enum UsersSortDirection {
-  Ascending = 1,
-  Descending = 2,
-}
-
-export enum UserStatus {
-  Active = 1,
-  Blocked = 2,
 }

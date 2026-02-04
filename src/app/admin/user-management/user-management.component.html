@@ -95,8 +95,9 @@
               <select class="form-select" id="statusFilter" [(ngModel)]="selectedUserStatus"
                 (change)="onFilterChange()">
                 <option [ngValue]="null">All Statuses</option>
-                <option [ngValue]="UserStatus.Active">Active</option>
-                <option [ngValue]="UserStatus.Blocked">Blocked</option>
+                @for (status of userStatuses; track status){
+                <option [ngValue]="status">{{UserStatusMeta[status].label}}</option>
+                }
               </select>
             </div>
             <div class="col-md-3 mb-3">
@@ -174,14 +175,16 @@
                     </div>
                   </td>
                   <td>
-                    <span [class]="getRoleClass(user.roles)">
+                    //to fix the enums
+                    <!-- <span [class]="getRoleClass(user.roles)">
                       @if (user.roles.length > 0) {
                       {{ user.roles.join(', ') }}
                       }
-                    </span>
+                    </span> -->
                   </td>
                   <td>
-                    <span [class]="getStatusClass(user.isBlocked)">{{ getStatusText(user.isBlocked) }}</span>
+                    //to fix the enums
+                    <!-- <span [class]="getStatusClass(user.isBlocked)">{{ getStatusText(user.isBlocked) }}</span> -->
                   </td>
                   <td>
                     <div>
@@ -195,10 +198,11 @@
                       <button class="btn btn-outline-info" (click)="viewUser(user)" title="View Details">
                         <i class="bi bi-eye"></i>
                       </button>
-                      <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)"
+                      //to fix the enums
+                      <!-- <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)"
                         [title]="user.isBlocked ? 'Unblock' : 'Block'">
                         <i class="bi" [class]="user.isBlocked ? 'bi-unlock' : 'bi-lock'"></i>
-                      </button>
+                      </button> -->
                       <button class="btn btn-outline-danger" (click)="deleteUser(user)" title="Delete User">
                         <i class="bi bi-trash"></i>
                       </button>

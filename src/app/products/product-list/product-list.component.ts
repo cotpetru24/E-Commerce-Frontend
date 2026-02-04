@@ -7,13 +7,8 @@ import { ToastService } from '../../services/toast.service';
 import { ProductApiService } from '../../services/api';
 import { finalize } from 'rxjs';
 import { Utils } from 'app/shared/utils';
-import {
-  ProductFilterDto,
-  SortByOption,
-  ProductDto,
-  Audience,
-  ProductImageDto,
-} from '@dtos';
+import { ProductFilterDto, ProductDto, ProductImageDto } from '@dtos';
+import { AudienceEnum, AudienceMeta, ProductSortByOption } from '@dtos/enums';
 
 @Component({
   selector: 'app-product-list',
@@ -26,22 +21,23 @@ export class ProductListComponent implements OnInit {
   products: ProductDto[] = [];
   availableBrands: string[] = [];
   isLoading: boolean = false;
+  AudienceMeta = AudienceMeta;
   viewMode: 'grid' | 'list' = 'grid';
 
-  audienceOptions: Audience[] = [
-    Audience.Men,
-    Audience.Women,
-    Audience.Children,
-    Audience.Unisex,
+  audienceOptions: AudienceEnum[] = [
+    AudienceEnum.Men,
+    AudienceEnum.Women,
+    AudienceEnum.Children,
+    AudienceEnum.Unisex,
   ];
 
-  sortByOptions: { value: SortByOption; label: string }[] = [
-    { value: SortByOption.NameAsc, label: 'Name A-Z' },
-    { value: SortByOption.NameDesc, label: 'Name Z-A' },
-    { value: SortByOption.PriceAsc, label: 'Price Low to High' },
-    { value: SortByOption.PriceDesc, label: 'Price High to Low' },
-    { value: SortByOption.BrandAsc, label: 'Brand A-Z' },
-    { value: SortByOption.BrandDesc, label: 'Brand Z-A' },
+  sortByOptions: { value: ProductSortByOption; label: string }[] = [
+    { value: ProductSortByOption.NameAsc, label: 'Name A-Z' },
+    { value: ProductSortByOption.NameDesc, label: 'Name Z-A' },
+    { value: ProductSortByOption.PriceAsc, label: 'Price Low to High' },
+    { value: ProductSortByOption.PriceDesc, label: 'Price High to Low' },
+    { value: ProductSortByOption.BrandAsc, label: 'Brand A-Z' },
+    { value: ProductSortByOption.BrandDesc, label: 'Brand Z-A' },
   ];
 
   productFilterDto: ProductFilterDto = {
@@ -49,6 +45,11 @@ export class ProductListComponent implements OnInit {
     Size: null,
     Audience: null,
     SortBy: null,
+    MaxPrice: null,
+    MinPrice: null,
+    Page: null,
+    PageSize: null,
+    SearchTerm: null,
   };
 
   constructor(
@@ -93,10 +94,7 @@ export class ProductListComponent implements OnInit {
 
   getPageTitle(): string {
     if (this.productFilterDto.Audience) {
-      return `${
-        this.productFilterDto.Audience.charAt(0).toUpperCase() +
-        this.productFilterDto.Audience.slice(1)
-      }'s Shoes`;
+      return `${AudienceMeta[this.productFilterDto.Audience].label}'s Shoes`;
     }
     return 'All Products';
   }
@@ -114,7 +112,17 @@ export class ProductListComponent implements OnInit {
   }
 
   clearFilters() {
-    this.productFilterDto = {};
+    this.productFilterDto = {
+      Brand: null,
+      Size: null,
+      Audience: null,
+      SortBy: null,
+      MaxPrice: null,
+      MinPrice: null,
+      Page: null,
+      PageSize: null,
+      SearchTerm: null,
+    };
     this.getProducts();
   }
 
@@ -130,6 +138,7 @@ export class ProductListComponent implements OnInit {
   }
 
   navigateToProductDetails(productId: number) {
+    this.utils.scrollToTop();
     this.router.navigate(['/products/details', productId]);
   }
 

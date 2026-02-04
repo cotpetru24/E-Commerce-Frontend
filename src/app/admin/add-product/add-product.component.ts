@@ -71,7 +71,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
     if (
       !this.productData.name ||
       !this.productData.price ||
-      !this.productData.audienceId ||
+      !this.productData.audience ||
       !this.productData.brandId ||
       !this.productData.description
     ) {
@@ -121,10 +121,11 @@ export class AddProductComponent implements OnInit, OnDestroy {
         this.productData!.productSizes = [];
       }
       this.productData?.productSizes?.push({
-        id: 0,
+        id: null,
         size: this.newSize.size,
         stock: this.newSize.stock || 0,
         barcode: this.newSize.barcode,
+        sku: null,
       });
       this.newSize = {
         id: 0,
@@ -247,7 +248,6 @@ export class AddProductComponent implements OnInit, OnDestroy {
       name: '',
       description: '',
       price: 0,
-      audienceId: 0,
       brandName: '',
       brandId: 0,
       productSizes: [] as ProductSizeDto[],
@@ -258,6 +258,12 @@ export class AddProductComponent implements OnInit, OnDestroy {
       selected: false,
       isActive: true,
       totalStock: 0,
+      audience: null,
+      createdAt: null,
+      originalPrice: null,
+      rating: null,
+      reviewCount: null,
+      updatedAt: null,
     };
   }
 }

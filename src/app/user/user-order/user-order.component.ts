@@ -13,6 +13,7 @@ import { ShippingInfo } from 'app/checkout/checkout.types';
 import { AddressDto, OrderDto, OrderItemDto, PaymentDto } from '@dtos';
 import { Utils } from 'app/shared/utils';
 import { StorageService } from 'app/services/storage.service';
+import { PaymentStatusEnum } from '@dtos/enums';
 
 @Component({
   selector: 'app-user-order',
@@ -33,6 +34,7 @@ export class UserOrderComponent implements OnInit {
   isLoading: boolean = false;
   canCancel: boolean = true;
   isNewOrder: boolean = false;
+  paymentStatusEnum = PaymentStatusEnum;
 
   constructor(
     private router: Router,
@@ -208,6 +210,12 @@ export class UserOrderComponent implements OnInit {
       billingAddress: {} as AddressDto,
       orderItems: [],
       payment: {} as PaymentDto,
+      createdAt: null,
+      orderStatusId: null,
+      orderStatusName: null,
+      updatedAt: null,
+      notes: null,
+      userId: null,
     };
   }
 }

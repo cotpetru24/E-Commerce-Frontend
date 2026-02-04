@@ -13,11 +13,15 @@ import {
   AdminOrderDto,
   AdminOrdersStatsDto,
   GetAllOrdersRequestDto,
-  OrderStatusEnum,
-  SortBy,
-  SortDirection,
   UpdateOrderStatusRequestDto,
 } from '@dtos';
+import {
+  OrdersSortByEnum,
+  OrderStatusEnum,
+  OrderStatusMeta,
+  PaymentStatusMeta,
+  SortDirectionEnum,
+} from '@dtos/enums';
 
 @Component({
   selector: 'app-order-management',
@@ -28,7 +32,9 @@ import {
 })
 export class OrderManagementComponent implements OnInit, OnDestroy {
   Math = Math;
-  OrderStatus = OrderStatusEnum;
+  PaymentStatusMeta = PaymentStatusMeta;
+  OrderStatusMeta = OrderStatusMeta;
+  OrderStatusEnum = OrderStatusEnum;
   orders: AdminOrderDto[] = [];
   isLoading = false;
   initialInit: boolean = true;
@@ -40,6 +46,13 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   selectedStatus: OrderStatusEnum | null = null;
   selectedDateRange = '';
   sortBy = 'date-desc';
+
+  orderStatusOptions: OrderStatusEnum[] = [
+  OrderStatusEnum.Processing,
+  OrderStatusEnum.Shipped,
+  OrderStatusEnum.Delivered,
+  OrderStatusEnum.Cancelled,
+];
 
   adminOrdersStats: AdminOrdersStatsDto = {
     totalOrdersCount: 0,
@@ -112,9 +125,14 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
       pageNumber: this.currentPage,
       pageSize: this.itemsPerPage,
       searchTerm: this.searchTerm,
-      sortBy: sortByField === 'total' ? SortBy.Total : SortBy.DateCreated,
+      sortBy:
+        sortByField === 'total'
+          ? OrdersSortByEnum.Total
+          : OrdersSortByEnum.Date,
       sortDirection:
-        sortDir === 'asc' ? SortDirection.Ascending : SortDirection.Descending,
+        sortDir === 'asc'
+          ? SortDirectionEnum.Ascending
+          : SortDirectionEnum.Descending,
     };
 
     this.subscriptions.add(
@@ -172,51 +190,13 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     return pages;
   }
 
-  getStatusClass(status?: string): string {
-    if (!status) {
-      return 'badge bg-secondary';
-    }
-    switch (status) {
-      case 'Pending':
-      case 'pending':
-        return 'badge bg-warning';
-      case 'Processing':
-      case 'processing':
-        return 'badge bg-info';
-      case 'Shipped':
-      case 'shipped':
-        return 'badge bg-primary';
-      case 'Delivered':
-      case 'delivered':
-        return 'badge bg-success';
-      case 'Cancelled':
-      case 'cancelled':
-        return 'badge bg-danger';
-      default:
-        return 'badge bg-secondary';
-    }
-  }
-
-  getPaymentClass(status: string): string {
-    switch (status) {
-      case 'Completed':
-        return 'badge bg-success';
-      case 'Refunded':
-        return 'badge bg-warning';
-      case 'Failed':
-        return 'badge bg-danger';
-      default:
-        return 'badge bg-secondary';
-    }
-  }
-
   viewOrder(order: AdminOrderDto): void {
     this.router.navigate(['/admin/orders', order.id]);
   }
 
   updateOrderStatus(order: AdminOrderDto): void {
     const allowedNextStatuses =
-      this.ORDER_STATUS_UPDATE_CONSTRAINTS[order.orderStatusCode] ?? [];
+      this.OrderStatusUpdateConstraints[order.status] ?? [];
 
     if (allowedNextStatuses.length === 0) {
       this.toastService.warning('This order status cannot be changed.');
@@ -323,7 +303,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           next: (response) => {
             const target = this.orders.find((o) => o.id === order.id);
             if (target) {
-              target.orderStatusName = 'Cancelled';
+              target.status = OrderStatusEnum.Cancelled;
 
               this.orders = [...this.orders];
             }
@@ -364,12 +344,16 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     this.loadOrders();
   }
 
-  ORDER_STATUS_UPDATE_CONSTRAINTS: Partial<Record<OrderStatusEnum, OrderStatusEnum[]>> =
-    {
-      [OrderStatusEnum.Processing]: [OrderStatusEnum.Shipped, OrderStatusEnum.Cancelled],
-      [OrderStatusEnum.Shipped]: [OrderStatusEnum.Delivered],
-      [OrderStatusEnum.Delivered]: [OrderStatusEnum.Returned],
-      [OrderStatusEnum.Cancelled]: [],
-      [OrderStatusEnum.Returned]: [],
-    };
+  OrderStatusUpdateConstraints: Partial<
+    Record<OrderStatusEnum, OrderStatusEnum[]>
+  > = {
+    [OrderStatusEnum.Processing]: [
+      OrderStatusEnum.Shipped,
+      OrderStatusEnum.Cancelled,
+    ],
+    [OrderStatusEnum.Shipped]: [OrderStatusEnum.Delivered],
+    [OrderStatusEnum.Delivered]: [OrderStatusEnum.Returned],
+    [OrderStatusEnum.Cancelled]: [],
+    [OrderStatusEnum.Returned]: [],
+  };
 }

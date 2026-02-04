@@ -14,12 +14,11 @@ import { CountryMapService } from '../../services/country-map.service';
 import { Utils } from '../../shared/utils';
 import {
   AdminOrderDto,
-  OrderDto,
   OrderItemDto,
-  OrderStatusEnum,
   AddressDto,
   UpdateOrderStatusRequestDto,
 } from '@dtos';
+import { OrderStatusEnum, PaymentStatusEnum } from '@dtos/enums';
 
 @Component({
   selector: 'app-view-order',
@@ -32,13 +31,14 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   canUpdateStatus: boolean = true;
   orderId: number | null = null;
-  orderStatus: string = 'Processing';
+  orderStatus: OrderStatusEnum | null = null;
   cameFromDashboard: boolean = false;
   cameFromUserProfile: boolean = false;
   order: AdminOrderDto | null = null;
   orderItems: OrderItemDto[] = [];
   shippingAddress: AddressDto | null = null;
   billingAddress: AddressDto | null = null;
+  paymentStatus = PaymentStatusEnum;
 
   shippingInfo: ShippingInfo = {
     method: 'Standard Shipping',
@@ -91,7 +91,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
           next: (order) => {
             this.order = order;
             this.orderItems = order.orderItems;
-            this.orderStatus = order.orderStatusName!;
+            this.orderStatus = order.status!;
             this.canUpdateStatus = true;
             this.shippingAddress = order.shippingAddress ?? null;
             if (this.shippingAddress) {
@@ -184,7 +184,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
               next: () => {
-                this.orderStatus = OrderStatusEnum[selectedStatus];
+                this.orderStatus = selectedStatus;
                 this.canUpdateStatus = true;
                 this.toastService.success('Order status updated successfully!');
               },
@@ -225,7 +225,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
               next: () => {
-                this.orderStatus = 'Cancelled';
+                this.orderStatus = OrderStatusEnum.Cancelled;
                 this.canUpdateStatus = false;
                 this.toastService.success('Order cancelled successfully!');
               },

@@ -130,21 +130,22 @@
             <div class="col-6">
               <label class="form-label fw-bold">Status</label>
               <div>
-                <span [class]="getStatusClass()">{{ getStatusText() }}</span>
+                <span [class]="UserStatusMeta[user.status].class">{{ UserStatusMeta[user.status].label }}</span>
               </div>
             </div>
             <div class="col-6">
               <label class="form-label fw-bold">Role</label>
               @if (!isEditing) {
               <div>
-                <span [class]="getRoleClass()">{{ getRoleText()}} </span>
+                <span [class]="UserRoleMeta[user.roles[0]].class">{{ UserRoleMeta[user.roles[0]].label}} </span>
               </div>
               }
               @if (isEditing) {
               <div>
-                <select class="form-select" id="role" [(ngModel)]="editForm.roles">
-                  <option [ngValue]="UserRole.Administrator">Administrator</option>
-                  <option [ngValue]="UserRole.Customer">Customer</option>
+                <select class="form-select" id="role" aria-label="Role" [(ngModel)]="editForm.roles">
+                  @for (role of userRoles; track role){
+                  <option [ngValue]="role">{{UserRoleMeta[role].label}}</option>
+                  }
                 </select>
               </div>
               }
@@ -177,8 +178,10 @@
           @if (!isEditing && !isChangingPassword) {
           <div class="d-grid gap-2 mt-3">
             <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)">
-              <i class="bi" [class]="getIsBlocked() ? 'bi-unlock' : 'bi-lock'"></i>
-              {{ getIsBlocked() ? 'Unblock' : 'Block' }} User
+
+              //to fix the enums
+              <!-- <i class="bi" [class]="user.status === UserStatusEmun.Blocked ? 'bi-unlock' : 'bi-lock'"></i>
+              {{ user.status === UserStatusEmun.Blocked ? 'Unblock' : 'Block' }} User -->
             </button>
             <button class="btn btn-outline-secondary" (click)="goBack()">
               <i class="bi bi-arrow-left me-1"></i>Back to Users
@@ -203,28 +206,28 @@
         <div class="card-body p-0">
           <div class="p-3 border-bottom">
             <div class="btn-group" role="group">
-              <button type="button" class="btn"
-                [class]="currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary'" (click)="filterOrders('all')">
+              <button type="button" class="btn" [class]="currentFilter === null ? 'btn-primary' : 'btn-outline-primary'"
+                (click)="filterOrders(null)">
                 All ({{ userOrders.length }})
               </button>
               <button type="button" class="btn"
-                [class]="currentFilter === 'processing' ? 'btn-info' : 'btn-outline-info'"
-                (click)="filterOrders('processing')">
+                [class]="currentFilter === OrderStatusEnum.Processing ? 'btn-info' : 'btn-outline-info'"
+                (click)="filterOrders(OrderStatusEnum.Processing)">
                 Processing ({{ getProcessingCount() }})
               </button>
               <button type="button" class="btn"
-                [class]="currentFilter === 'shipped' ? 'btn-primary' : 'btn-outline-primary'"
-                (click)="filterOrders('shipped')">
+                [class]="currentFilter === OrderStatusEnum.Shipped ? 'btn-primary' : 'btn-outline-primary'"
+                (click)="filterOrders(OrderStatusEnum.Shipped)">
                 Shipped ({{ getShippedCount() }})
               </button>
               <button type="button" class="btn"
-                [class]="currentFilter === 'delivered' ? 'btn-success' : 'btn-outline-success'"
-                (click)="filterOrders('delivered')">
+                [class]="currentFilter === OrderStatusEnum.Delivered ? 'btn-success' : 'btn-outline-success'"
+                (click)="filterOrders(OrderStatusEnum.Delivered)">
                 Delivered ({{ getDeliveredCount() }})
               </button>
               <button type="button" class="btn"
-                [class]="currentFilter === 'cancelled' ? 'btn-danger' : 'btn-outline-danger'"
-                (click)="filterOrders('cancelled')">
+                [class]="currentFilter === OrderStatusEnum.Cancelled ? 'btn-danger' : 'btn-outline-danger'"
+                (click)="filterOrders(OrderStatusEnum.Cancelled)">
                 Cancelled ({{ getCancelledCount() }})
               </button>
             </div>
@@ -264,8 +267,8 @@
                     </div>
                   </td>
                   <td>
-                    <span [class]="getStatusBadgeClass(order.orderStatusName)">
-                      {{ order.orderStatusName | titlecase }}
+                    <span [class]=" OrderStatusMeta[order.status].class">
+                      {{ OrderStatusMeta[order.status].label }}
                     </span>
                   </td>
                   <td>
@@ -288,10 +291,10 @@
             <div class="text-center p-4">
               <i class="bi bi-bag display-1 text-muted"></i>
               <h4 class="mt-3">No orders found</h4>
-              @if (currentFilter === 'all') {
+              @if (currentFilter === null) {
               <p class="text-muted">This user has no orders yet</p>
               }
-              @if (currentFilter !== 'all') {
+              @if (currentFilter !== null) {
               <p class="text-muted">No orders with this status</p>
               }
             </div>
