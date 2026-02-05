@@ -12,6 +12,7 @@ import {
   GetUserOrdersRequestDto,
   GetUserOrdersResponseDto,
 } from '@dtos';
+import { OrderStatusEnum, OrderStatusMeta } from '@dtos/enums';
 
 @Component({
   selector: 'app-user-orders',
@@ -28,6 +29,8 @@ export class UserOrdersComponent implements OnInit {
   totalCount = 0;
   selectedOrder: OrderDto | null = null;
   orders: OrderDto[] = [];
+  OrderStatusEmun = OrderStatusEnum;
+  OrderStatusMeta = OrderStatusMeta;
 
   constructor(
     private router: Router,
@@ -78,24 +81,4 @@ export class UserOrdersComponent implements OnInit {
     });
   }
 
-  getStatusBadgeClass(status: string | null): string {
-    if (!status) return 'bg-secondary';
-
-    switch (status.toLowerCase()) {
-      case 'delivered':
-        return 'bg-success';
-      case 'shipped':
-        return 'bg-info';
-      case 'processing':
-        return 'bg-warning';
-      case 'pending':
-        return 'bg-warning';
-      case 'cancelled':
-        return 'bg-danger';
-      case 'refunded':
-        return 'bg-secondary';
-      default:
-        return 'bg-secondary';
-    }
-  }
 }

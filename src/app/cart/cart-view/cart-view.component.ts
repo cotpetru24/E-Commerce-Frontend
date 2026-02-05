@@ -8,6 +8,7 @@ import { AuthApiService } from '../../services/api/auth-api.service';
 import { Utils } from '../../shared/utils';
 import { ProductImageDto } from '@dtos';
 import { CartItem } from '../cart.types';
+import { AudienceEnum, AudienceMeta } from '@dtos/enums';
 
 @Component({
   selector: 'app-cart-view',
@@ -18,6 +19,8 @@ import { CartItem } from '../cart.types';
 })
 export class CartViewComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
+  AudienceEnum = AudienceEnum;
+  AudienceMeta = AudienceMeta;
   private cartSubscription: Subscription;
 
   constructor(

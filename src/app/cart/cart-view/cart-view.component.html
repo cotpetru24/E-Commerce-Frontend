@@ -44,8 +44,7 @@
                   <div class="item-info">
                     <h4 class="item-name">{{ item.product.name }}</h4>
                     <p class="item-brand">{{ item.product.brandName }}</p>
-                    //to fix the enums
-                    <!-- <p class="item-category">{{ item.product.audience | titlecase }}</p> -->
+                    <p class="item-category">{{ AudienceMeta[item.product.audience].label }}</p>
                     @if (item.size) {
                     <span class="item-size">Size: {{ item.size }}</span>
                     }

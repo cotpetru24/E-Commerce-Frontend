@@ -49,6 +49,13 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     UserRoleEnum.Customer,
   ];
 
+  ordersStatusCounts = {
+    processingCount: 0,
+    shippedCount: 0,
+    deliveredCount: 0,
+    cancelledCount: 0,
+  };
+
   editForm = {
     email: '',
     firstName: '',
@@ -132,6 +139,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           next: (response) => {
             this.userOrders = response.orders;
             this.filterOrders(this.currentFilter);
+            this.getOrdersStatusCounts();
             this.ordersLoading = false;
           },
           error: () => {
@@ -253,7 +261,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   toggleUserStatus(user: AdminUserDto): void {
-    const action = user.status === this.UserStatusEnum.Blocked ? 'unblock' : 'block';
+    const action =
+      user.status === this.UserStatusEnum.Blocked ? 'unblock' : 'block';
 
     const modalRef = this.modalService.open(ModalDialogComponent);
     modalRef.componentInstance.title = `${
@@ -271,8 +280,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
             .toggleUserStatus(user.id.toString(), {
               status:
                 user.status === this.UserStatusEnum.Blocked
-                  ? this.UserStatusEnum.Blocked
-                  : this.UserStatusEnum.Active,
+                  ? this.UserStatusEnum.Active
+                  : this.UserStatusEnum.Blocked,
               email: null,
               firstName: null,
               lastName: null,
@@ -302,27 +311,29 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/users']);
   }
 
-  getProcessingCount(): number {
-    return this.userOrders.filter(
-      (order) => order.status === OrderStatusEnum.Processing,
-    ).length;
-  }
+  getOrdersStatusCounts(): void {
+    this.ordersStatusCounts = {
+      processingCount: 0,
+      shippedCount: 0,
+      deliveredCount: 0,
+      cancelledCount: 0,
+    };
 
-  getShippedCount(): number {
-    return this.userOrders.filter(
-      (order) => order.status === OrderStatusEnum.Shipped,
-    ).length;
-  }
-
-  getDeliveredCount(): number {
-    return this.userOrders.filter(
-      (order) => order.status === OrderStatusEnum.Delivered,
-    ).length;
-  }
-
-  getCancelledCount(): number {
-    return this.userOrders.filter(
-      (order) => order.status === OrderStatusEnum.Cancelled,
-    ).length;
+    for (const order of this.userOrders) {
+      switch (order.status) {
+        case OrderStatusEnum.Processing:
+          this.ordersStatusCounts.processingCount++;
+          break;
+        case OrderStatusEnum.Shipped:
+          this.ordersStatusCounts.shippedCount++;
+          break;
+        case OrderStatusEnum.Delivered:
+          this.ordersStatusCounts.deliveredCount++;
+          break;
+        case OrderStatusEnum.Cancelled:
+          this.ordersStatusCounts.cancelledCount++;
+          break;
+      }
+    }
   }
 }

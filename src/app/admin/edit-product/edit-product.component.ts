@@ -12,11 +12,11 @@ import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import {
   BrandDto,
-  ProductAudienceDto,
   AdminProductDto,
   ProductFeatureDto,
   ProductSizeDto,
 } from '@dtos';
+import { AudienceEnum, AudienceMeta } from '@dtos/enums';
 
 @Component({
   selector: 'app-edit-product',
@@ -29,10 +29,11 @@ export class EditProductComponent implements OnInit, OnDestroy {
   productData: AdminProductDto | null = null;
   productId!: number;
   brands: BrandDto[] = [];
-  productAudience: ProductAudienceDto[] = [];
   discountText = '';
   priceText = '';
   isLoading = false;
+  AudienceEnum=AudienceEnum;
+  AudienceMeta = AudienceMeta;
 
   newSpec: ProductFeatureDto = {
     id: 0,
@@ -47,6 +48,13 @@ export class EditProductComponent implements OnInit, OnDestroy {
     barcode: '',
     sku: '',
   };
+
+  productAudience: AudienceEnum[] = [
+    AudienceEnum.Men,
+    AudienceEnum.Women,
+    AudienceEnum.Children,
+    AudienceEnum.Unisex,
+  ];
 
   private subscriptions = new Subscription();
 
@@ -272,7 +280,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
   }
 
   private initializeData(): void {
-    this.getProductAudience();
     this.getProductBrands();
     this.loadProductData();
   }
@@ -285,19 +292,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.toastService.error('Failed to load product brands.');
-        },
-      }),
-    );
-  }
-
-  private getProductAudience(): void {
-    this.subscriptions.add(
-      this.adminProductApiService.getProductAudience().subscribe({
-        next: (response) => {
-          this.productAudience = response;
-        },
-        error: () => {
-          this.toastService.error('Failed to load product audience options.');
         },
       }),
     );

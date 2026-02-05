@@ -6,6 +6,7 @@ import { ToastService } from '../../services/toast.service';
 import { ProductApiService } from '../../services/api';
 import { Utils } from '../../shared/utils';
 import { ProductDto, ProductSizeDto, ProductImageDto } from '@dtos';
+import { AudienceEnum, AudienceMeta } from '@dtos/enums';
 
 @Component({
   selector: 'product-details',
@@ -20,6 +21,8 @@ export class ProductDetailsComponent implements OnInit {
   cameFromAdminDashboard: boolean = false;
   relatedProducts: ProductDto[] = [];
   additionalProductImages: ProductImageDto[] = [];
+  AudienceEnum = AudienceEnum;
+  AudienceMeta = AudienceMeta;
   selectedImage: string = '';
   rating: number = 4.5;
   reviewCount: number = 128;

@@ -5,7 +5,6 @@ import { BaseApiService } from './base-api.service';
 import {
   AdminProductDto,
   BrandDto,
-  ProductAudienceDto,
   GetProductsAdminRequestDto,
   GetProductsAdminResponseDto,
 } from '@dtos';
@@ -52,11 +51,6 @@ export class AdminProductApiService extends BaseApiService {
   getProductBrands(): Observable<BrandDto[]> {
     const url = this.buildUrl(`${this.adminProductEndPoint}/brands`);
     return this.get<BrandDto[]>(url);
-  }
-
-  getProductAudience(): Observable<ProductAudienceDto[]> {
-    const url = this.buildUrl(`${this.adminProductEndPoint}/audience`);
-    return this.get<ProductAudienceDto[]>(url);
   }
 
   createProduct(product: AdminProductDto): Observable<AdminProductDto> {

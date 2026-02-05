@@ -114,11 +114,6 @@ export interface GetProductsAdminRequestDto {
   sortBy: AdminProductsSortByEnum | null;
 }
 
-export interface ProductAudienceDto {
-  audienceId: number;
-  audienceName: string;
-}
-
 export interface ProductFilterDto {
   Audience: AudienceEnum | null;
   Brand: string | null;

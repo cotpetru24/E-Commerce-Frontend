@@ -13,7 +13,12 @@ import { ShippingInfo } from 'app/checkout/checkout.types';
 import { AddressDto, OrderDto, OrderItemDto, PaymentDto } from '@dtos';
 import { Utils } from 'app/shared/utils';
 import { StorageService } from 'app/services/storage.service';
-import { PaymentStatusEnum } from '@dtos/enums';
+import {
+  OrderStatusEnum,
+  OrderStatusMeta,
+  PaymentStatusEnum,
+  PaymentStatusMeta,
+} from '@dtos/enums';
 
 @Component({
   selector: 'app-user-order',
@@ -35,6 +40,8 @@ export class UserOrderComponent implements OnInit {
   canCancel: boolean = true;
   isNewOrder: boolean = false;
   paymentStatusEnum = PaymentStatusEnum;
+  OrderStatusMeta = OrderStatusMeta;
+  PaymentStatusMeta = PaymentStatusMeta;
 
   constructor(
     private router: Router,
@@ -72,7 +79,9 @@ export class UserOrderComponent implements OnInit {
       .subscribe({
         next: (order) => {
           this.order = order;
-          this.canCancel = this.canCancelOrder(order.orderStatusName ?? '');
+          order.status
+            ? (this.canCancel = this.canCancelOrder(order.status))
+            : null;
 
           this.order.shippingAddress.country =
             this.order.shippingAddress.country = this.countryMap.getName(
@@ -112,12 +121,10 @@ export class UserOrderComponent implements OnInit {
           .pipe(finalize(() => (this.isLoading = false)))
           .subscribe({
             next: (response: OrderDto) => {
-              this.order.orderStatusName = response.orderStatusName!;
-              this.canCancel = this.canCancelOrder(this.order.orderStatusName);
-              this.order &&
-                (this.order.orderStatusId = response.orderStatusId!);
-              this.order &&
-                (this.order.orderStatusName = response.orderStatusName!);
+              this.order.status = response.status!;
+              this.canCancel = this.canCancelOrder(this.order.status);
+              this.order && (this.order.status = response.status);
+              this.order && (this.order.status = response.status!);
               this.toastService.success('Order cancelled successfully!');
             },
             error: (err) => {
@@ -142,8 +149,8 @@ export class UserOrderComponent implements OnInit {
       );
     }
   }
-  canCancelOrder(status: string): boolean {
-    return status === 'Processing';
+  canCancelOrder(status: OrderStatusEnum): boolean {
+    return OrderStatusMeta[status].canCancel;
   }
 
   getItemTotal(item: OrderItemDto): number {
@@ -211,8 +218,7 @@ export class UserOrderComponent implements OnInit {
       orderItems: [],
       payment: {} as PaymentDto,
       createdAt: null,
-      orderStatusId: null,
-      orderStatusName: null,
+      status: null,
       updatedAt: null,
       notes: null,
       userId: null,

@@ -4,8 +4,7 @@ import { OrdersSortByEnum, OrderStatusEnum, SortDirectionEnum } from './enums';
 export interface OrderDto {
   id: number;
   userId: string | null;
-  orderStatusId: number | null;
-  orderStatusName: string | null;
+  status: OrderStatusEnum | null;
   subtotal: number;
   shippingCost: number;
   discount: number;

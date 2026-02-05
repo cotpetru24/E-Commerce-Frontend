@@ -108,10 +108,10 @@
                     </label>
                     <select class="form-select" id="audienceOptions" name="audienceOptions"
                       [(ngModel)]="productData.audience">
-                      <option value="" disabled>Select Gender</option>
-                      @for (a of productAudience; track a.audienceId) {
-                      <option [value]="a.audienceId">
-                        {{ a.audienceName| titlecase }}
+                      <option [ngValue]="null" disabled>Select Gender</option>
+                      @for (a of productAudience; track a) {
+                      <option [ngValue]="a">
+                        {{AudienceMeta[a].label }}
                       </option>
                       }
                     </select>

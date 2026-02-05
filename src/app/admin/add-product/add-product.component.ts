@@ -12,11 +12,11 @@ import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import {
   BrandDto,
-  ProductAudienceDto,
   AdminProductDto,
   ProductFeatureDto,
   ProductSizeDto,
 } from '@dtos';
+import { AudienceEnum, AudienceMeta } from '@dtos/enums';
 
 @Component({
   selector: 'app-add-product',
@@ -31,7 +31,14 @@ export class AddProductComponent implements OnInit, OnDestroy {
   discountText = '';
   priceText = '';
   brands: BrandDto[] = [];
-  productAudience: ProductAudienceDto[] = [];
+  AudienceMeta = AudienceMeta;
+
+  audienceOptions: AudienceEnum[] = [
+    AudienceEnum.Men,
+    AudienceEnum.Women,
+    AudienceEnum.Children,
+    AudienceEnum.Unisex,
+  ];
 
   newSpec: ProductFeatureDto = {
     id: 0,
@@ -60,7 +67,6 @@ export class AddProductComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getProductBrands();
-    this.getProductAudience();
   }
 
   ngOnDestroy(): void {
@@ -223,20 +229,6 @@ export class AddProductComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response) => {
             this.brands = response;
-          },
-        }),
-    );
-  }
-
-  private getProductAudience() {
-    this.isLoading = true;
-    this.subscriptions.add(
-      this.adminProductApiService
-        .getProductAudience()
-        .pipe(finalize(() => (this.isLoading = false)))
-        .subscribe({
-          next: (response) => {
-            this.productAudience = response;
           },
         }),
     );

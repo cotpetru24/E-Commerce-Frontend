@@ -95,7 +95,7 @@
               <select class="form-select" id="statusFilter" [(ngModel)]="selectedUserStatus"
                 (change)="onFilterChange()">
                 <option [ngValue]="null">All Statuses</option>
-                @for (status of userStatuses; track status){
+                @for (status of userStatusesEnum; track status){
                 <option [ngValue]="status">{{UserStatusMeta[status].label}}</option>
                 }
               </select>
@@ -175,16 +175,14 @@
                     </div>
                   </td>
                   <td>
-                    //to fix the enums
-                    <span [class]="getRoleClass(user.roles)">
-                      @if (user.roles.length > 0) {
-                      {{ UserRoleMeta[user.role[0]].label }}
-                      }
+                    @if (user.roles.length > 0) {
+                    <span [class]="UserRoleMeta[user.roles[0]].class">
+                      {{ UserRoleMeta[user.roles[0]].label }}
                     </span>
+                    }
                   </td>
                   <td>
-                    //to fix the enums
-                    <span [class]="UserStatusMeta[user.status].label">{{ UserStatusMeta[user.status].label }}</span>
+                    <span [class]="UserStatusMeta[user.status].class">{{ UserStatusMeta[user.status].label }}</span>
                   </td>
                   <td>
                     <div>
@@ -198,10 +196,9 @@
                       <button class="btn btn-outline-info" (click)="viewUser(user)" title="View Details">
                         <i class="bi bi-eye"></i>
                       </button>
-                      //to fix the enums
                       <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)"
-                        [title]="user.status === userStatuses.Blocked ? 'Unblock' : 'Block'">
-                        <i class="bi" [class]="user.status === userStatuses.Blocked ? 'bi-unlock' : 'bi-lock'"></i>
+                        [title]="user.status === UserStatusEnum.Blocked ? 'Unblock' : 'Block'">
+                        <i class="bi" [class]="user.status === UserStatusEnum.Blocked ? 'bi-unlock' : 'bi-lock'"></i>
                       </button>
                       <button class="btn btn-outline-danger" (click)="deleteUser(user)" title="Delete User">
                         <i class="bi bi-trash"></i>

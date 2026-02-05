@@ -50,6 +50,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   users: AdminUserDto[] = [];
   filteredUsers: AdminUserDto[] = [];
   paginatedUsers: AdminUserDto[] = [];
+
   adminUsersStats: AdminUsersStatsDto = {
     totalUsersCount: 0,
     totalActiveUsersCount: 0,
@@ -57,7 +58,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     totalNewUsersCountThisMonth: 0,
   };
 
-  userStatuses: UserStatusEnum[] = [
+  userStatusesEnum: UserStatusEnum[] = [
     UserStatusEnum.Active,
     UserStatusEnum.Blocked,
   ];
@@ -153,35 +154,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
     return pages;
   }
-
-  //to fix filters
-  // getRoleClass(roles: UserRoleEnum[] | string[]): string {
-  //   let userRole = '';
-  //   for (let role of roles) {
-  //     switch (role) {
-  //       case UserRoleEnum.Administrator:
-  //       case 'Administrator':
-  //         userRole = 'badge bg-danger';
-  //         break;
-  //       case UserRoleEnum.Customer:
-  //       case 'Customer':
-  //         userRole = 'badge bg-info';
-  //         break;
-  //       default:
-  //         userRole = 'badge bg-info';
-  //         break;
-  //     }
-  //   }
-  //   return userRole;
-  // }
-
-  // getStatusClass(isBlocked: boolean): string {
-  //   return isBlocked ? 'badge bg-danger' : 'badge bg-success';
-  // }
-
-  // getStatusText(isBlocked: boolean): string {
-  //   return isBlocked ? 'Blocked' : 'Active';
-  // }
 
   viewUser(user: AdminUserDto): void {
     this.router.navigate(['/admin/users', user.id]);

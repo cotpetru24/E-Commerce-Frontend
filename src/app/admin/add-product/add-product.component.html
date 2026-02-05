@@ -97,18 +97,16 @@
                     <label for="audienceOptions" class="form-label">
                       <i class="bi bi-gender-ambiguous me-2"></i>Gender
                     </label>
-
-                    //to fix the enums
-                    <!-- <select class="form-select" id="audienceOptions" name="audienceOptions"
-                      [(ngModel)]="productData.audienceId"
-                      [ngClass]="{'is-invalid': addProductForm.submitted && !productData.audienceId}">
-                      <option [ngValue]="0" disabled>Select Gender</option>
-                      @for (a of productAudience; track a.audienceId) {
-                      <option [ngValue]="a.audienceId">
-                        {{ a.audienceName | titlecase }}
+                    <select class="form-select" id="audienceOptions" name="audienceOptions"
+                      [(ngModel)]="productData.audience"
+                      [ngClass]="{'is-invalid': addProductForm.submitted && !productData.audience}">
+                      <option [ngValue]="null" disabled>Select Gender</option>
+                      @for (audience of audienceOptions; track audience) {
+                      <option [ngValue]="audience">
+                        {{ AudienceMeta[audience].label}}
                       </option>
                       }
-                    </select> -->
+                    </select>
                     @if (addProductForm.submitted && !productData.audience) {
                     <div class="invalid-feedback">
                       Gender is required.

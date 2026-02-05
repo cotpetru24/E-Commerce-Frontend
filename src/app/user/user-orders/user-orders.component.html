@@ -46,9 +46,11 @@
                     </div>
                   </div>
                   <div class="order-status">
-                    <span class="badge" [ngClass]="getStatusBadgeClass(order.orderStatusName)">
-                      {{ order.orderStatusName || 'Unknown' }}
+                    @if (order.status) {
+                    <span class="badge" [ngClass]="OrderStatusMeta[order.status].class">
+                      {{ OrderStatusMeta[order.status].label }}
                     </span>
+                    }
                   </div>
                 </div>
                 <div class="order-details">

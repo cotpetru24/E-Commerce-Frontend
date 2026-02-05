@@ -178,10 +178,8 @@
           @if (!isEditing && !isChangingPassword) {
           <div class="d-grid gap-2 mt-3">
             <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)">
-
-              //to fix the enums
-              <!-- <i class="bi" [class]="user.status === UserStatusEmun.Blocked ? 'bi-unlock' : 'bi-lock'"></i>
-              {{ user.status === UserStatusEmun.Blocked ? 'Unblock' : 'Block' }} User -->
+              <i class="bi" [class]="user.status === UserStatusEnum.Blocked ? 'bi-unlock' : 'bi-lock'"></i>
+              {{ user.status === UserStatusEnum.Blocked ? 'Unblock' : 'Block' }} User
             </button>
             <button class="btn btn-outline-secondary" (click)="goBack()">
               <i class="bi bi-arrow-left me-1"></i>Back to Users
@@ -213,22 +211,22 @@
               <button type="button" class="btn"
                 [class]="currentFilter === OrderStatusEnum.Processing ? 'btn-info' : 'btn-outline-info'"
                 (click)="filterOrders(OrderStatusEnum.Processing)">
-                Processing ({{ getProcessingCount() }})
+                Processing ({{ ordersStatusCounts.processingCount }})
               </button>
               <button type="button" class="btn"
                 [class]="currentFilter === OrderStatusEnum.Shipped ? 'btn-primary' : 'btn-outline-primary'"
                 (click)="filterOrders(OrderStatusEnum.Shipped)">
-                Shipped ({{ getShippedCount() }})
+                Shipped ({{ ordersStatusCounts.shippedCount }})
               </button>
               <button type="button" class="btn"
                 [class]="currentFilter === OrderStatusEnum.Delivered ? 'btn-success' : 'btn-outline-success'"
                 (click)="filterOrders(OrderStatusEnum.Delivered)">
-                Delivered ({{ getDeliveredCount() }})
+                Delivered ({{ ordersStatusCounts.deliveredCount }})
               </button>
               <button type="button" class="btn"
                 [class]="currentFilter === OrderStatusEnum.Cancelled ? 'btn-danger' : 'btn-outline-danger'"
                 (click)="filterOrders(OrderStatusEnum.Cancelled)">
-                Cancelled ({{ getCancelledCount() }})
+                Cancelled ({{ ordersStatusCounts.cancelledCount }})
               </button>
             </div>
           </div>

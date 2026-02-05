@@ -18,7 +18,13 @@ import {
   AddressDto,
   UpdateOrderStatusRequestDto,
 } from '@dtos';
-import { OrderStatusEnum, PaymentStatusEnum } from '@dtos/enums';
+import {
+  OrdersSortByEnum,
+  OrderStatusEnum,
+  OrderStatusMeta,
+  PaymentStatusEnum,
+  PaymentStatusMeta,
+} from '@dtos/enums';
 
 @Component({
   selector: 'app-view-order',
@@ -31,14 +37,16 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   canUpdateStatus: boolean = true;
   orderId: number | null = null;
-  orderStatus: OrderStatusEnum | null = null;
   cameFromDashboard: boolean = false;
   cameFromUserProfile: boolean = false;
   order: AdminOrderDto | null = null;
   orderItems: OrderItemDto[] = [];
   shippingAddress: AddressDto | null = null;
   billingAddress: AddressDto | null = null;
-  paymentStatus = PaymentStatusEnum;
+  PaymentStatusEnum = PaymentStatusEnum;
+  PaymentStatusMeta = PaymentStatusMeta;
+  OrderStatusMeta = OrderStatusMeta;
+  OrderStatusEnum = OrderStatusEnum;
 
   shippingInfo: ShippingInfo = {
     method: 'Standard Shipping',
@@ -54,7 +62,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private countryMap: CountryMapService,
-    private utils: Utils
+    private utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +71,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
       this.route.queryParams.subscribe((params) => {
         this.cameFromDashboard = params['from'] === 'dashboard';
         this.cameFromUserProfile = params['from'] === 'user-profile';
-      })
+      }),
     );
 
     this.utils.scrollToTop();
@@ -91,19 +99,18 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
           next: (order) => {
             this.order = order;
             this.orderItems = order.orderItems;
-            this.orderStatus = order.status!;
             this.canUpdateStatus = true;
             this.shippingAddress = order.shippingAddress ?? null;
             if (this.shippingAddress) {
               this.shippingAddress.country = this.countryMap.getName(
-                this.shippingAddress.country
+                this.shippingAddress.country,
               );
             }
 
             this.billingAddress = order.billingAddress ?? null;
             if (this.billingAddress) {
               this.billingAddress.country = this.countryMap.getName(
-                this.billingAddress.country
+                this.billingAddress.country,
               );
             } else if (this.shippingAddress) {
               this.billingAddress = {
@@ -119,7 +126,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             this.toastService.error('Failed to load order details');
             this.router.navigate(['/admin/orders']);
           },
-        })
+        }),
     );
   }
 
@@ -135,7 +142,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
     return (
       this.order?.orderItems?.reduce(
         (total, item) => total + this.getItemTotal(item),
-        0
+        0,
       ) ?? 0
     );
   }
@@ -184,20 +191,21 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
               next: () => {
-                this.orderStatus = selectedStatus;
+                if (!this.order) return;
+                this.order.status = selectedStatus;
                 this.canUpdateStatus = true;
                 this.toastService.success('Order status updated successfully!');
               },
               error: (err) => {
                 if (err.status === 404) {
                   this.toastService.warning(
-                    'Order not found or cannot be updated.'
+                    'Order not found or cannot be updated.',
                   );
                 } else {
                   this.toastService.error('Failed to update order status.');
                 }
               },
-            })
+            }),
         );
       }
     });
@@ -225,20 +233,21 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
             .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
               next: () => {
-                this.orderStatus = OrderStatusEnum.Cancelled;
+                if (!this.order) return;
+                this.order.status = OrderStatusEnum.Cancelled;
                 this.canUpdateStatus = false;
                 this.toastService.success('Order cancelled successfully!');
               },
               error: (err) => {
                 if (err.status === 404) {
                   this.toastService.warning(
-                    'Order not found or cannot be cancelled.'
+                    'Order not found or cannot be cancelled.',
                   );
                 } else {
                   this.toastService.error('Failed to cancel order.');
                 }
               },
-            })
+            }),
         );
       }
     });

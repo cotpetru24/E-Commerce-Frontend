@@ -31,16 +31,15 @@
                 [(ngModel)]="productFilterDto.Audience" (change)="getProducts()" [attr.aria-label]="'Select ' + gender"
                 title="Select gender">
             </div>
-
-            //to fix the enums
-
-            <!-- <input type="text" class="form-control" [value]="gender | titlecase" aria-label="Gender label" readonly> -->
+            <input type="text" class="form-control" [value]="AudienceMeta[gender].label" aria-label="Gender label"
+              readonly>
           </div>
           }
         </div>
         <div class="filter-section">
           <h4>Brand</h4>
-          <select aria-label="Brand" id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand" (change)="getProducts()">
+          <select aria-label="Brand" id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand"
+            (change)="getProducts()">
             <option [ngValue]="null">All Brands</option>
             @for (brand of availableBrands; track brand) {
             <option [ngValue]="brand">{{ brand }}</option>
@@ -49,7 +48,8 @@
         </div>
         <div class="filter-section">
           <h4>Size</h4>
-          <select id="selectedSize" aria-label="Select Size" class="form-select" [(ngModel)]="productFilterDto.Size" (change)="getProducts()">
+          <select id="selectedSize" aria-label="Select Size" class="form-select" [(ngModel)]="productFilterDto.Size"
+            (change)="getProducts()">
             <option [ngValue]="null">All Sizes</option>
             <option [ngValue]="1">UK 1 (Child)</option>
             <option [ngValue]="1.5">UK 1.5 (Child)</option>
@@ -95,7 +95,8 @@
         </div>
         <div class="filter-section mb-0">
           <h4>Sort By</h4>
-          <select id="sortSelect" aria-label="Sort by select" class="form-select" [(ngModel)]="productFilterDto.SortBy" (change)="getProducts()">
+          <select id="sortSelect" aria-label="Sort by select" class="form-select" [(ngModel)]="productFilterDto.SortBy"
+            (change)="getProducts()">
             <option [ngValue]="null">Select sorting option</option>
             @for (option of sortByOptions; track option) {
             <option [ngValue]="option.value">
@@ -142,9 +143,9 @@
               <img [src]="'/assets/products/image-coming-soon.png'" [alt]="product.name" title="Product image" />
               }
               <div class="product-badges">
-                //to fix the enums
-                <!-- <span class="audience-badge" [class]="product.audience.toLowerCase()">{{ product.audience
-                  }}</span> -->
+                <span class="audience-badge" [class]="AudienceMeta[product.audience].label.toLowerCase()">{{
+                  AudienceMeta[product.audience].label
+                  }}</span>
               </div>
             </div>
             <div class="card-body">
