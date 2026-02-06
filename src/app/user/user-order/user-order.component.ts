@@ -37,7 +37,6 @@ export class UserOrderComponent implements OnInit {
 
   acceptTerms: boolean = false;
   isLoading: boolean = false;
-  canCancel: boolean = true;
   isNewOrder: boolean = false;
   paymentStatusEnum = PaymentStatusEnum;
   OrderStatusMeta = OrderStatusMeta;
@@ -79,9 +78,6 @@ export class UserOrderComponent implements OnInit {
       .subscribe({
         next: (order) => {
           this.order = order;
-          order.status
-            ? (this.canCancel = this.canCancelOrder(order.status))
-            : null;
 
           this.order.shippingAddress.country =
             this.order.shippingAddress.country = this.countryMap.getName(
@@ -122,7 +118,6 @@ export class UserOrderComponent implements OnInit {
           .subscribe({
             next: (response: OrderDto) => {
               this.order.status = response.status!;
-              this.canCancel = this.canCancelOrder(this.order.status);
               this.order && (this.order.status = response.status);
               this.order && (this.order.status = response.status!);
               this.toastService.success('Order cancelled successfully!');

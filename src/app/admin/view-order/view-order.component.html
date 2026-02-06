@@ -90,6 +90,9 @@
                       <p class="address-line"><strong>{{ shippingAddress.addressLine1 }}</strong></p>
                       <p class="address-line">{{ shippingAddress.city }}, {{ shippingAddress.postcode }}</p>
                       <p class="address-line">{{ shippingAddress.country }}</p>
+                      @if(order.notes){
+                      <p class="address-line mt-3"><strong>Delivery instructions: </strong>{{ order.notes }}</p>
+                      }
                     </div>
                   </div>
                 </div>
@@ -128,7 +131,7 @@
                               'bg-danger text-dark': order.payment.status === PaymentStatusEnum.Failed,
                               'bg-info text-dark': order.payment.status === PaymentStatusEnum.Refunded
                             }">
-                            Payment status: {{ order.payment.status }}
+                            Status: {{ PaymentStatusMeta[order.payment.status].label }}
                           </span>
                         </div>
                         <p class="payment-details text-capitalize">Card brand: {{ order.payment.cardBrand || '' }}</p>
@@ -201,14 +204,15 @@
             </div>
           </div>
           <div class="order-actions">
-            @if (order.userId) {
+            @if (order.userId && !cameFromUserProfile) {
             <button class="btn btn-primary btn-lg w-100" (click)="goToUserProfile()">
               <i class="bi bi-person me-2"></i>
               View Customer Profile
             </button>
             }
-            <button class="btn btn-warning btn-lg w-100 mt-2" (click)="updateOrderStatus()"
-              [disabled]="isLoading || !canUpdateStatus">
+            @if(!OrderStatusMeta[order.status].isFinal){
+
+            <button class="btn btn-warning btn-lg w-100 mt-2" (click)="updateOrderStatus()">
               @if (isLoading) {
               <span class="spinner-border spinner-border-sm me-2" role="status"></span>
               }
@@ -217,8 +221,9 @@
               }
               {{ isLoading ? 'Updating...' : 'Update Status' }}
             </button>
-            <button class="btn btn-danger btn-lg w-100 mt-2" (click)="cancelOrder()"
-              [disabled]="isLoading || !canUpdateStatus">
+            }
+            @if(OrderStatusMeta[order.status].canCancel){
+            <button class="btn btn-danger btn-lg w-100 mt-2" (click)="cancelOrder()">
               @if (isLoading) {
               <span class="spinner-border spinner-border-sm me-2" role="status"></span>
               }
@@ -227,6 +232,7 @@
               }
               {{ isLoading ? 'Cancelling...' : 'Cancel Order' }}
             </button>
+            }
             <button class="btn btn-outline-secondary btn-lg w-100 mt-2" (click)="goBack()">
               @if (cameFromUserProfile) {
               <i class="bi bi-arrow-left me-2"></i>Back to User Profile

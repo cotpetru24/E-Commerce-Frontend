@@ -184,8 +184,7 @@
             </div>
             <div class="summary-item">
               <span>Shipping</span>
-              <span>{{ (orderSummary.shipping || 0) === 0 ? 'Free' : '£' + ((orderSummary.shipping || 0) |
-                number:'1.2-2') }}</span>
+              <span>{{ orderSummary.shipping === 0 ? 'Free' : '£' + orderSummary.shipping}}</span>
             </div>
             @if (orderSummary && orderSummary.discount>0)
             {

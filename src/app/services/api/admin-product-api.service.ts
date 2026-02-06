@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import {
+  AdminCreateProductRequestDto,
   AdminProductDto,
   BrandDto,
   GetProductsAdminRequestDto,
@@ -35,8 +36,8 @@ export class AdminProductApiService extends BaseApiService {
       }),
       ...(request?.sortBy && { sortBy: request.sortBy }),
       ...(request?.sortDirection && { sortDirection: request.sortDirection }),
-      ...(request?.productCategory && {
-        productCategory: request.productCategory,
+      ...(request?.audienceId && {
+        audienceId: request.audienceId,
       }),
     });
 
@@ -53,7 +54,7 @@ export class AdminProductApiService extends BaseApiService {
     return this.get<BrandDto[]>(url);
   }
 
-  createProduct(product: AdminProductDto): Observable<AdminProductDto> {
+  createProduct(product: AdminCreateProductRequestDto): Observable<AdminProductDto> {
     const url = this.buildUrl(this.adminProductEndPoint);
     return this.post<AdminProductDto>(url, product);
   }

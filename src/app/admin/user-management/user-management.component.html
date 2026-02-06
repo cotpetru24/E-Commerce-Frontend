@@ -92,12 +92,10 @@
             </div>
             <div class="col-md-2 mb-3">
               <label for="statusFilter" class="form-label">Status</label>
-              <select class="form-select" id="statusFilter" [(ngModel)]="selectedUserStatus"
-                (change)="onFilterChange()">
+              <select class="form-select" id="statusFilter" [(ngModel)]="isBlocked" (change)="onFilterChange()">
                 <option [ngValue]="null">All Statuses</option>
-                @for (status of userStatusesEnum; track status){
-                <option [ngValue]="status">{{UserStatusMeta[status].label}}</option>
-                }
+                <option [ngValue]="false">Active</option>
+                <option [ngValue]="true">Blocked</option>
               </select>
             </div>
             <div class="col-md-3 mb-3">
@@ -182,7 +180,7 @@
                     }
                   </td>
                   <td>
-                    <span [class]="UserStatusMeta[user.status].class">{{ UserStatusMeta[user.status].label }}</span>
+                    <span [ngClass]="getStatusClass(user.isBlocked)">{{ getStatusLabel(user.isBlocked) }}</span>
                   </td>
                   <td>
                     <div>
@@ -197,8 +195,8 @@
                         <i class="bi bi-eye"></i>
                       </button>
                       <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)"
-                        [title]="user.status === UserStatusEnum.Blocked ? 'Unblock' : 'Block'">
-                        <i class="bi" [class]="user.status === UserStatusEnum.Blocked ? 'bi-unlock' : 'bi-lock'"></i>
+                        [title]="user.isBlocked === true ? 'Unblock' : 'Block'">
+                        <i class="bi" [class]="user.isBlocked === true ? 'bi-unlock' : 'bi-lock'"></i>
                       </button>
                       <button class="btn btn-outline-danger" (click)="deleteUser(user)" title="Delete User">
                         <i class="bi bi-trash"></i>
@@ -210,7 +208,7 @@
               </tbody>
             </table>
           </div>
-          @if(isLoading){
+          @if(isLoading || isTogglingBlock){
           <div class="text-center p-4">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Loading...</span>

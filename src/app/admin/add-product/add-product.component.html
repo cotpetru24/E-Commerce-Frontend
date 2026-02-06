@@ -98,8 +98,8 @@
                       <i class="bi bi-gender-ambiguous me-2"></i>Gender
                     </label>
                     <select class="form-select" id="audienceOptions" name="audienceOptions"
-                      [(ngModel)]="productData.audience"
-                      [ngClass]="{'is-invalid': addProductForm.submitted && !productData.audience}">
+                      [(ngModel)]="productData.audienceId"
+                      [ngClass]="{'is-invalid': addProductForm.submitted && !productData.audienceId}">
                       <option [ngValue]="null" disabled>Select Gender</option>
                       @for (audience of audienceOptions; track audience) {
                       <option [ngValue]="audience">
@@ -107,7 +107,7 @@
                       </option>
                       }
                     </select>
-                    @if (addProductForm.submitted && !productData.audience) {
+                    @if (addProductForm.submitted && !productData.audienceId) {
                     <div class="invalid-feedback">
                       Gender is required.
                     </div>
@@ -159,7 +159,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        @for (feature of productData?.productFeatures; track $index) {
+                        @for (feature of productData.productFeatures; track $index) {
                         <tr>
                           <td>
                             <input type="number" class="form-control form-control-sm border-0"
@@ -211,7 +211,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        @for (size of productData?.productSizes; track $index) {
+                        @for (size of productData.productSizes; track $index) {
                         <tr>
                           <td>
                             <input type="number" class="form-control form-control-sm border-0" [(ngModel)]="size.size"

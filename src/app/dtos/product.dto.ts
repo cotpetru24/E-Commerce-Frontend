@@ -49,6 +49,32 @@ export interface AdminProductDto {
   updatedAt: Date | null;
 }
 
+export interface AdminCreateProductRequestDto {
+  name: string;
+  description: string | null;
+  price: number;
+  originalPrice: number | null;
+  brandId: number;
+  audienceId: AudienceEnum | null;
+  isNew: boolean;
+  isActive: boolean;
+  discountPercentage: number;
+  productFeatures: AdminCreateProductFeatureDto[];
+  productSizes: AdminCreateProductSizeDto[];
+  productImages: ProductImageDto[];
+}
+
+export interface AdminCreateProductSizeDto {
+  size: number;
+  stock: number;
+  barcode: string;
+}
+
+export interface AdminCreateProductFeatureDto {
+  featureText: string;
+  sortOrder: number;
+}
+
 export interface ProductFeatureDto {
   id: number;
   featureText: string;
@@ -107,7 +133,7 @@ export interface GetProductsAdminRequestDto {
   pageSize: number | null;
   searchTerm: string | null;
   isActive: boolean | null;
-  productCategory: AudienceEnum | null;
+  audienceId: AudienceEnum | null;
   productBrand: string | null;
   productStockStatus: AdminProductStockStatusEnum | null;
   sortDirection: SortDirectionEnum | null;

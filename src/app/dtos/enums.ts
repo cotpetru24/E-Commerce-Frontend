@@ -81,6 +81,19 @@ export const OrderStatusMeta: Record<
   },
 };
 
+export const OrderStatusUpdateConstraints: Partial<
+  Record<OrderStatusEnum, OrderStatusEnum[]>
+> = {
+  [OrderStatusEnum.Processing]: [
+    OrderStatusEnum.Shipped,
+    OrderStatusEnum.Cancelled,
+  ],
+  [OrderStatusEnum.Shipped]: [OrderStatusEnum.Delivered],
+  [OrderStatusEnum.Delivered]: [OrderStatusEnum.Returned],
+  [OrderStatusEnum.Cancelled]: [],
+  [OrderStatusEnum.Returned]: [],
+};
+
 //Order sort by
 export enum OrdersSortByEnum {
   Date = 1,
@@ -147,20 +160,6 @@ export const UserRoleMeta: Record<
     class: 'badge bg-danger',
   },
   [UserRoleEnum.Customer]: { label: 'Customer', class: 'badge bg-info' },
-};
-
-// User status
-export enum UserStatusEnum {
-  Active = 1,
-  Blocked = 2,
-}
-
-export const UserStatusMeta: Record<
-  UserStatusEnum,
-  { label: string; class: string }
-> = {
-  [UserStatusEnum.Active]: { label: 'Active', class: 'badge bg-success' },
-  [UserStatusEnum.Blocked]: { label: 'Blocked', class: 'badge bg-danger' },
 };
 
 // Admin users sort by

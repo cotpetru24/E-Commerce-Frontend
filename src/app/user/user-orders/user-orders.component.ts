@@ -56,9 +56,8 @@ export class UserOrdersComponent implements OnInit {
       pageNumber: 1,
       pageSize: this.pageSize,
       fromDate: null,
-      statusFilter:null,
-      toDate:null
-
+      statusFilter: null,
+      toDate: null,
     };
 
     this.orderApiService
@@ -80,5 +79,4 @@ export class UserOrdersComponent implements OnInit {
       queryParams: { isNewOrder: false },
     });
   }
-
 }

@@ -110,7 +110,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       pageSize: this.itemsPerPage,
       searchTerm: this.searchTerm,
       isActive: this.isActive,
-      productCategory: this.selectedCategory,
+      audienceId: this.selectedCategory,
       productBrand: this.selectedBrand,
       productStockStatus: this.selectedStock,
       sortDirection:

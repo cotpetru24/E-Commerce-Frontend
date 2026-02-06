@@ -103,7 +103,7 @@
                             <label for="categoryFilter" class="form-label">Category</label>
                             <select class="form-select" id="categoryFilter" [(ngModel)]="selectedCategory"
                                 (change)="onFilterChange()">
-                                <option value="null">All Categories</option>
+                                <option [ngValue]="null">All Categories</option>
                                 @for (a of audienceOptions; track a) {
                                 <option [ngValue]="a">
                                     {{ AudienceMeta[a].label }}
@@ -136,7 +136,7 @@
                             <label for="statusFilter" class="form-label">Stock</label>
                             <select class="form-select" id="statusFilter" [(ngModel)]="selectedStock"
                                 (change)="onFilterChange()">
-                                <option value="null">All Stock</option>
+                                <option [ngValue]="null">All Stock</option>
                                 @for (ss of productStockStatus; track ss) {
                                 <option [ngValue]="ss">
                                     {{ AdminProductStockStatusMeta[ss].label}}

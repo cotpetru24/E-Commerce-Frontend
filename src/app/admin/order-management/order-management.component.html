@@ -40,8 +40,8 @@
             <div class="card-body">
               <div class="d-flex justify-content-between">
                 <div>
-                  <h4 class="mb-0">{{ adminOrdersStats.totalPendingOrdersCount }}</h4>
-                  <small>Returned</small>
+                  <h4 class="mb-0">{{ adminOrdersStats.totalShippedOrdersCount }}</h4>
+                  <small>Shipped</small>
                 </div>
                 <i class="bi bi-clock display-6"></i>
               </div>
@@ -187,9 +187,11 @@
                       <button class="btn btn-outline-info" (click)="viewOrder(order)" title="View Details">
                         <i class="bi bi-eye"></i>
                       </button>
+                      @if (!OrderStatusMeta[order.status].isFinal) {
                       <button class="btn btn-outline-primary" (click)="updateOrderStatus(order)" title="Update Status">
                         <i class="bi bi-pencil"></i>
                       </button>
+                      }
                       @if (OrderStatusMeta[order.status].isProcessing) {
                       <button class="btn btn-outline-success" (click)="markShipped(order)" title="Mark Shipped">
                         <i class="bi bi-truck"></i>

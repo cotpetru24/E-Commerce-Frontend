@@ -24,12 +24,20 @@
         </div>
         <div class="filter-section">
           <h4>Category</h4>
-          @for ( gender of audienceOptions; track gender) {
           <div class="input-group mb-2">
             <div class="input-group-text">
-              <input class="form-check-input mt-0" type="radio" name="gender" [value]="gender"
-                [(ngModel)]="productFilterDto.Audience" (change)="getProducts()" [attr.aria-label]="'Select ' + gender"
-                title="Select gender">
+              <input class="form-check-input mt-0" type="radio" name="gender"
+                [checked]="productFilterDto.Audience === null" (change)="onAudienceChange(null)"
+                [attr.aria-label]="'Select all'" title="Select gender">
+            </div>
+            <input type="text" class="form-control" value="All categories" aria-label="Gender label" readonly>
+          </div>
+          @for ( gender of audienceOptions; track $index) {
+          <div class="input-group mb-2">
+            <div class="input-group-text">
+              <input class="form-check-input mt-0" type="radio" name="gender"
+                [checked]="productFilterDto.Audience === gender" (change)="onAudienceChange(gender)"
+                [attr.aria-label]="'Select ' + gender" title="Select gender">
             </div>
             <input type="text" class="form-control" [value]="AudienceMeta[gender].label" aria-label="Gender label"
               readonly>
@@ -41,7 +49,7 @@
           <select aria-label="Brand" id="selectedBrand" class="form-select" [(ngModel)]="productFilterDto.Brand"
             (change)="getProducts()">
             <option [ngValue]="null">All Brands</option>
-            @for (brand of availableBrands; track brand) {
+            @for (brand of availableBrands; track $index) {
             <option [ngValue]="brand">{{ brand }}</option>
             }
           </select>
@@ -98,9 +106,9 @@
           <select id="sortSelect" aria-label="Sort by select" class="form-select" [(ngModel)]="productFilterDto.SortBy"
             (change)="getProducts()">
             <option [ngValue]="null">Select sorting option</option>
-            @for (option of sortByOptions; track option) {
-            <option [ngValue]="option.value">
-              {{ option.label }}
+            @for (option of sortByOptions; track $index) {
+            <option [ngValue]="option">
+              {{ ProductSortByOptionMeta[option].label }}
             </option>
             }
           </select>
@@ -132,7 +140,7 @@
           </div>
         </div>
         <div class="products-container" [class.list-view]="viewMode === 'list'">
-          @for ( product of products; track product) {
+          @for ( product of products; track product.id) {
           <div class="product-card" [class.list-card]="viewMode === 'list'"
             (click)="navigateToProductDetails(product.id)">
             <div class="product-image">
@@ -143,7 +151,7 @@
               <img [src]="'/assets/products/image-coming-soon.png'" [alt]="product.name" title="Product image" />
               }
               <div class="product-badges">
-                <span class="audience-badge" [class]="AudienceMeta[product.audience].label.toLowerCase()">{{
+                <span class="audience-badge" [class]="AudienceMeta[product.audience].class">{{
                   AudienceMeta[product.audience].label
                   }}</span>
               </div>
@@ -163,8 +171,7 @@
               </div>
             </div>
             <div class="card-footer d-flex justify-content-end">
-              <button class="btn btn-primary m-2" [routerLink]="['/products/details', product.id]"
-                (click)="$event.stopPropagation()">
+              <button class="btn btn-primary m-2" (click)="navigateToProductDetails(product.id)">
                 View Details
               </button>
             </div>

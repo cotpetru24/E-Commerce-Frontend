@@ -35,7 +35,8 @@ export class AdminUserApiService extends BaseApiService {
         }),
       ...(request?.sortBy !== undefined &&
         request?.sortBy !== null && { sortBy: request.sortBy }),
-      ...(request?.userStatus && { userStatus: request.userStatus }),
+      ...(request?.isBlocked !== null &&
+        request?.isBlocked !== undefined && { isBlocked: request.isBlocked }),
       ...(request?.userRole && { userRole: request.userRole }),
     });
 

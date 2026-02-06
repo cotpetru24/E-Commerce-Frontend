@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -20,22 +20,18 @@ import {
   SortDirectionEnum,
   UserRoleEnum,
   UserRoleMeta,
-  UserStatusEnum,
-  UserStatusMeta,
 } from '@dtos/enums';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModalDialogComponent],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
   UserRole = UserRoleEnum;
   UserRoleMeta = UserRoleMeta;
-  UserStatusEnum = UserStatusEnum;
-  UserStatusMeta = UserStatusMeta;
   Math = Math;
   currentPage = 1;
   itemsPerPage = 10;
@@ -44,7 +40,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   searchTerm = '';
   sortBy = 'date-desc';
   isLoading = false;
-  selectedUserStatus: UserStatusEnum | null = null;
+  isTogglingBlock = false;
+  isBlocked: boolean | null = null;
   selectedRole: UserRoleEnum | null = null;
   sortDirection: SortDirectionEnum | null = SortDirectionEnum.Descending;
   users: AdminUserDto[] = [];
@@ -57,11 +54,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     totalBlockedUsersCount: 0,
     totalNewUsersCountThisMonth: 0,
   };
-
-  userStatusesEnum: UserStatusEnum[] = [
-    UserStatusEnum.Active,
-    UserStatusEnum.Blocked,
-  ];
 
   private subscriptions = new Subscription();
 
@@ -90,7 +82,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       pageNumber: this.currentPage,
       pageSize: this.itemsPerPage,
       searchTerm: this.searchTerm,
-      userStatus: this.selectedUserStatus,
+      isBlocked: this.isBlocked,
       userRole: this.selectedRole,
       sortBy:
         sortByField === 'name'
@@ -103,20 +95,21 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     };
 
     this.subscriptions.add(
-      this.adminUserApiService.getUsers(getAllUsersRequest).subscribe({
-        next: (response) => {
-          this.users = response.users;
-          this.adminUsersStats = response.adminUsersStats;
-          this.totalPages = response.totalPages;
-          this.totalQueryCount = response.totalQueryCount;
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Error loading users:', error);
-          this.isLoading = false;
-          this.toastService.error('Failed to load users');
-        },
-      }),
+      this.adminUserApiService
+        .getUsers(getAllUsersRequest)
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
+          next: (response) => {
+            this.users = response.users;
+            this.adminUsersStats = response.adminUsersStats;
+            this.totalPages = response.totalPages;
+            this.totalQueryCount = response.totalQueryCount;
+          },
+          error: (error) => {
+            console.error('Error loading users:', error);
+            this.toastService.error('Failed to load users');
+          },
+        }),
     );
   }
 
@@ -160,8 +153,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   toggleUserStatus(user: AdminUserDto): void {
-    const action =
-      user.status === this.UserStatusEnum.Blocked ? 'unblock' : 'block';
+    const action = user.isBlocked === true ? 'unblock' : 'block';
 
     const modalRef = this.modalService.open(ModalDialogComponent);
     modalRef.componentInstance.title = `${
@@ -172,13 +164,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
     modalRef.result.then((result: boolean) => {
       if (result === true) {
-        this.isLoading = true;
+        this.isTogglingBlock = true;
 
         const updateUserRequest: AdminUpdateUserProfileRequestDto = {
-          status:
-            user.status === UserStatusEnum.Blocked
-              ? UserStatusEnum.Blocked
-              : UserStatusEnum.Active,
+          isBlocked: !user.isBlocked,
           email: null,
           firstName: null,
           lastName: null,
@@ -188,16 +177,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         this.subscriptions.add(
           this.adminUserApiService
             .toggleUserStatus(user.id.toString(), updateUserRequest)
+            .pipe(finalize(() => (this.isTogglingBlock = false)))
             .subscribe({
               next: () => {
-                const status =
-                  user.status === UserStatusEnum.Blocked
-                    ? 'unblocked'
-                    : 'blocked';
+                const status = user.isBlocked ? 'unblocked' : 'blocked';
                 this.toastService.success(`User ${status} successfully`);
 
                 this.loadUsers();
-                this.isLoading = false;
               },
               error: (err) => {
                 this.toastService.error('Failed to update user status');
@@ -237,12 +223,20 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   resetFilters(): void {
     this.searchTerm = '';
-    this.selectedUserStatus = null;
+    this.isBlocked = null;
     this.selectedRole = null;
     this.sortBy = 'date-desc';
     this.sortDirection = SortDirectionEnum.Descending;
     this.currentPage = 1;
     this.itemsPerPage = 10;
     this.loadUsers();
+  }
+
+  getStatusClass(isBlocked: boolean): string {
+    return isBlocked ? 'badge bg-danger' : 'badge bg-success';
+  }
+
+  getStatusLabel(isBlocked: boolean): string {
+    return isBlocked ? 'Blocked' : 'Active';
   }
 }

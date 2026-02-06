@@ -22,6 +22,7 @@ import {
   OrdersSortByEnum,
   OrderStatusEnum,
   OrderStatusMeta,
+  OrderStatusUpdateConstraints,
   PaymentStatusEnum,
   PaymentStatusMeta,
 } from '@dtos/enums';
@@ -29,13 +30,12 @@ import {
 @Component({
   selector: 'app-view-order',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ModalDialogComponent],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './view-order.component.html',
   styleUrl: './view-order.component.scss',
 })
 export class ViewOrderComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
-  canUpdateStatus: boolean = true;
   orderId: number | null = null;
   cameFromDashboard: boolean = false;
   cameFromUserProfile: boolean = false;
@@ -47,6 +47,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
   PaymentStatusMeta = PaymentStatusMeta;
   OrderStatusMeta = OrderStatusMeta;
   OrderStatusEnum = OrderStatusEnum;
+  OrderStatusUpdateConstraints = OrderStatusUpdateConstraints;
 
   shippingInfo: ShippingInfo = {
     method: 'Standard Shipping',
@@ -99,7 +100,6 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
           next: (order) => {
             this.order = order;
             this.orderItems = order.orderItems;
-            this.canUpdateStatus = true;
             this.shippingAddress = order.shippingAddress ?? null;
             if (this.shippingAddress) {
               this.shippingAddress.country = this.countryMap.getName(
@@ -161,6 +161,18 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
   }
 
   updateOrderStatus(): void {
+    let allowedNextStatuses: OrderStatusEnum[] = [];
+
+    if (this.order) {
+      allowedNextStatuses =
+        OrderStatusUpdateConstraints[this.order.status] ?? [];
+    }
+
+    if (allowedNextStatuses.length === 0) {
+      this.toastService.warning('This order cannot be amended.');
+      return;
+    }
+
     const modalRef = this.modalService.open(ModalDialogComponent, {
       size: 'md',
       backdrop: 'static',
@@ -169,19 +181,18 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.title = 'Update Order Status';
     modalRef.componentInstance.message = 'Select the new order status';
     modalRef.componentInstance.modalType = 'updateOrderStatus';
-    modalRef.componentInstance.options = [
-      { label: 'Processing', value: OrderStatusEnum.Processing },
-      { label: 'Shipped', value: OrderStatusEnum.Shipped },
-      { label: 'Delivered', value: OrderStatusEnum.Delivered },
-      { label: 'Returned', value: OrderStatusEnum.Returned },
-    ];
+    modalRef.componentInstance.options = allowedNextStatuses.map((status) => ({
+      label: OrderStatusEnum[status],
+      value: status,
+    }));
+
     modalRef.result.then((result: OrderStatusEnum[]) => {
       if (result && result.length > 0) {
         const selectedStatus = result[0];
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          orderStatusId: selectedStatus,
+          statusId: selectedStatus,
           notes: 'testing the notes',
         };
 
@@ -193,7 +204,6 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
               next: () => {
                 if (!this.order) return;
                 this.order.status = selectedStatus;
-                this.canUpdateStatus = true;
                 this.toastService.success('Order status updated successfully!');
               },
               error: (err) => {
@@ -223,7 +233,7 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          orderStatusId: OrderStatusEnum.Cancelled,
+          statusId: OrderStatusEnum.Cancelled,
           notes: 'Order cancelled by admin',
         };
 
@@ -235,7 +245,6 @@ export class ViewOrderComponent implements OnInit, OnDestroy {
               next: () => {
                 if (!this.order) return;
                 this.order.status = OrderStatusEnum.Cancelled;
-                this.canUpdateStatus = false;
                 this.toastService.success('Order cancelled successfully!');
               },
               error: (err) => {

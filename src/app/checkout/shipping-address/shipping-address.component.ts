@@ -85,7 +85,7 @@ export class ShippingAddressComponent implements OnInit {
     this.orderSummary = {
       subtotal: this.cartService.getSubtotal(),
       discount: this.cartService.getDiscount(),
-      shipping: 0,
+      shipping: this.cartService.getShippingCost(),
       total: this.cartService.getTotal(),
     };
   }

@@ -50,7 +50,7 @@
             <div class="avatar mb-3">
               <i class="bi bi-person-circle display-1 text-muted"></i>
             </div>
-            <h4>{{ user.firstName || 'N/A' }} {{ user.lastName || 'N/A' }}</h4>
+            <h4>{{ user.firstName }} {{ user.lastName }}</h4>
             <p class="text-muted mb-0">ID: {{ user.id }}</p>
           </div>
           <div class="row mb-3">
@@ -130,7 +130,7 @@
             <div class="col-6">
               <label class="form-label fw-bold">Status</label>
               <div>
-                <span [class]="UserStatusMeta[user.status].class">{{ UserStatusMeta[user.status].label }}</span>
+                <span [ngClass]="getStatusClass(user.isBlocked)">{{ getStatusLabel(user.isBlocked) }}</span>
               </div>
             </div>
             <div class="col-6">
@@ -178,8 +178,8 @@
           @if (!isEditing && !isChangingPassword) {
           <div class="d-grid gap-2 mt-3">
             <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)">
-              <i class="bi" [class]="user.status === UserStatusEnum.Blocked ? 'bi-unlock' : 'bi-lock'"></i>
-              {{ user.status === UserStatusEnum.Blocked ? 'Unblock' : 'Block' }} User
+              <i class="bi" [class]="user.isBlocked === true ? 'bi-unlock' : 'bi-lock'"></i>
+              {{ user.isBlocked === true ? 'Unblock' : 'Block' }} User
             </button>
             <button class="btn btn-outline-secondary" (click)="goBack()">
               <i class="bi bi-arrow-left me-1"></i>Back to Users
@@ -270,7 +270,7 @@
                     </span>
                   </td>
                   <td>
-                    <strong>${{ order.total | number:'1.2-2' }}</strong>
+                    <strong>£{{ order.total | number:'1.2-2' }}</strong>
                   </td>
                   <td>
                     <span class="badge bg-secondary">{{ order.orderItems.length }} items</span>

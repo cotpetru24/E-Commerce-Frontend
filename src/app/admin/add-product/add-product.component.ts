@@ -15,6 +15,7 @@ import {
   AdminProductDto,
   ProductFeatureDto,
   ProductSizeDto,
+  AdminCreateProductRequestDto,
 } from '@dtos';
 import { AudienceEnum, AudienceMeta } from '@dtos/enums';
 
@@ -26,7 +27,7 @@ import { AudienceEnum, AudienceMeta } from '@dtos/enums';
   styleUrls: ['./add-product.component.scss'],
 })
 export class AddProductComponent implements OnInit, OnDestroy {
-  productData: AdminProductDto = this.createEmptyProduct();
+  productData: AdminCreateProductRequestDto = this.createEmptyProduct();
   isLoading = false;
   discountText = '';
   priceText = '';
@@ -77,7 +78,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
     if (
       !this.productData.name ||
       !this.productData.price ||
-      !this.productData.audience ||
+      !this.productData.audienceId ||
       !this.productData.brandId ||
       !this.productData.description
     ) {
@@ -108,7 +109,6 @@ export class AddProductComponent implements OnInit, OnDestroy {
   addSpecification() {
     if (this.newSpec.sortOrder && this.newSpec.featureText) {
       this.productData?.productFeatures?.push({
-        id: 0,
         featureText: this.newSpec.featureText,
         sortOrder: this.newSpec.sortOrder,
       });
@@ -127,11 +127,9 @@ export class AddProductComponent implements OnInit, OnDestroy {
         this.productData!.productSizes = [];
       }
       this.productData?.productSizes?.push({
-        id: null,
         size: this.newSize.size,
         stock: this.newSize.stock || 0,
         barcode: this.newSize.barcode,
-        sku: null,
       });
       this.newSize = {
         id: 0,
@@ -234,28 +232,20 @@ export class AddProductComponent implements OnInit, OnDestroy {
     );
   }
 
-  private createEmptyProduct(): AdminProductDto {
+  private createEmptyProduct(): AdminCreateProductRequestDto {
     return {
-      id: 0,
       name: '',
       description: '',
       price: 0,
-      brandName: '',
       brandId: 0,
       productSizes: [] as ProductSizeDto[],
       productFeatures: [],
       productImages: [],
-      isNew: false,
+      isNew: true,
       discountPercentage: 0,
-      selected: false,
       isActive: true,
-      totalStock: 0,
-      audience: null,
-      createdAt: null,
+      audienceId: null,
       originalPrice: null,
-      rating: null,
-      reviewCount: null,
-      updatedAt: null,
     };
   }
 }

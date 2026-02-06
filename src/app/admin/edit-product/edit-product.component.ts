@@ -17,6 +17,7 @@ import {
   ProductSizeDto,
 } from '@dtos';
 import { AudienceEnum, AudienceMeta } from '@dtos/enums';
+import { Utils } from 'app/shared/utils';
 
 @Component({
   selector: 'app-edit-product',
@@ -32,7 +33,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
   discountText = '';
   priceText = '';
   isLoading = false;
-  AudienceEnum=AudienceEnum;
+  AudienceEnum = AudienceEnum;
   AudienceMeta = AudienceMeta;
 
   newSpec: ProductFeatureDto = {
@@ -64,6 +65,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private adminProductApiService: AdminProductApiService,
     private modalService: NgbModal,
+    public utils: Utils,
   ) {}
 
   ngOnInit(): void {
@@ -104,6 +106,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
           next: () => {
             this.toastService.success('Product updated successfully.');
             this.isLoading = false;
+            this.utils.scrollToTop();
             this.loadProductData();
           },
           error: () => {

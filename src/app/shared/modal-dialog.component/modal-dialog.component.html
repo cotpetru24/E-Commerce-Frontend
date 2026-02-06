@@ -23,8 +23,8 @@
     @if (modalType === 'saveAs') {
     <div>
         <input type="text" class="form-control" [(ngModel)]="saveAs" placeholder="Profile Name..."
-            [ngClass]="{ 'is-invalid': !saveAs?.trim() }" />
-        @if (!saveAs?.trim()) {
+            [ngClass]="{ 'is-invalid': !saveAs.trim() }" />
+        @if (!saveAs.trim()) {
         <div class="invalid-feedback">
             Profile name is required.
         </div>

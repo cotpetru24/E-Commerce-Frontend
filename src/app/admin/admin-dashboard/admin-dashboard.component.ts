@@ -73,6 +73,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   viewActivity(activity: any): void {
+    this.utils.scrollToTop();
     switch (activity.source.toLowerCase()) {
       case 'user':
         if (activity.userGuid) {

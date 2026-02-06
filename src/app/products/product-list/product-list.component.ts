@@ -8,7 +8,12 @@ import { ProductApiService } from '../../services/api';
 import { finalize } from 'rxjs';
 import { Utils } from 'app/shared/utils';
 import { ProductFilterDto, ProductDto, ProductImageDto } from '@dtos';
-import { AudienceEnum, AudienceMeta, ProductSortByOption } from '@dtos/enums';
+import {
+  AudienceEnum,
+  AudienceMeta,
+  ProductSortByOption,
+  ProductSortByOptionMeta,
+} from '@dtos/enums';
 
 @Component({
   selector: 'app-product-list',
@@ -22,6 +27,8 @@ export class ProductListComponent implements OnInit {
   availableBrands: string[] = [];
   isLoading: boolean = false;
   AudienceMeta = AudienceMeta;
+  ProductSortByOption = ProductSortByOption;
+  ProductSortByOptionMeta = ProductSortByOptionMeta;
   viewMode: 'grid' | 'list' = 'grid';
 
   audienceOptions: AudienceEnum[] = [
@@ -31,13 +38,13 @@ export class ProductListComponent implements OnInit {
     AudienceEnum.Unisex,
   ];
 
-  sortByOptions: { value: ProductSortByOption; label: string }[] = [
-    { value: ProductSortByOption.NameAsc, label: 'Name A-Z' },
-    { value: ProductSortByOption.NameDesc, label: 'Name Z-A' },
-    { value: ProductSortByOption.PriceAsc, label: 'Price Low to High' },
-    { value: ProductSortByOption.PriceDesc, label: 'Price High to Low' },
-    { value: ProductSortByOption.BrandAsc, label: 'Brand A-Z' },
-    { value: ProductSortByOption.BrandDesc, label: 'Brand Z-A' },
+  sortByOptions: ProductSortByOption[] = [
+    ProductSortByOption.NameAsc,
+    ProductSortByOption.NameDesc,
+    ProductSortByOption.PriceAsc,
+    ProductSortByOption.PriceDesc,
+    ProductSortByOption.BrandAsc,
+    ProductSortByOption.BrandDesc,
   ];
 
   productFilterDto: ProductFilterDto = {
@@ -63,9 +70,18 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
-      const audience = params['audience'];
-      if (audience) {
-        this.setFilters({ Audience: audience });
+      const audienceParam = params['audience'];
+
+      if (audienceParam) {
+        const audience =
+          AudienceEnum[
+            (audienceParam.charAt(0).toUpperCase() +
+              audienceParam.slice(1)) as keyof typeof AudienceEnum
+          ];
+
+        if (audience) {
+          this.setFilters({ Audience: audience });
+        }
       } else {
         this.getProducts();
       }
@@ -101,7 +117,7 @@ export class ProductListComponent implements OnInit {
 
   getPageSubtitle(): string {
     if (this.productFilterDto.Audience) {
-      return `Discover our collection of ${this.productFilterDto.Audience}'s footwear`;
+      return `Discover our collection of ${AudienceMeta[this.productFilterDto.Audience].label}'s footwear`;
     }
     return 'Browse our complete collection of stylish and comfortable shoes';
   }
@@ -110,6 +126,15 @@ export class ProductListComponent implements OnInit {
     this.productFilterDto = { ...this.productFilterDto, ...value };
     this.getProducts();
   }
+
+  onAudienceChange(audience: AudienceEnum | null) {
+  if (!audience) {
+    this.router.navigate(['/products']);
+    return;
+  }
+
+  this.router.navigate(['/products', AudienceMeta[audience].label.toLowerCase()]);
+}
 
   clearFilters() {
     this.productFilterDto = {

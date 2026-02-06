@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { AdminOrderApiService } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,6 +19,8 @@ import {
   OrdersSortByEnum,
   OrderStatusEnum,
   OrderStatusMeta,
+  OrderStatusUpdateConstraints,
+  PaymentStatusEnum,
   PaymentStatusMeta,
   SortDirectionEnum,
 } from '@dtos/enums';
@@ -26,7 +28,7 @@ import {
 @Component({
   selector: 'app-order-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModalDialogComponent],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './order-management.component.html',
   styleUrls: ['./order-management.component.scss'],
 })
@@ -35,6 +37,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   PaymentStatusMeta = PaymentStatusMeta;
   OrderStatusMeta = OrderStatusMeta;
   OrderStatusEnum = OrderStatusEnum;
+  OrderStatusUpdateConstraints = OrderStatusUpdateConstraints;
   orders: AdminOrderDto[] = [];
   isLoading = false;
   initialInit: boolean = true;
@@ -48,16 +51,16 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   sortBy = 'date-desc';
 
   orderStatusOptions: OrderStatusEnum[] = [
-  OrderStatusEnum.Processing,
-  OrderStatusEnum.Shipped,
-  OrderStatusEnum.Delivered,
-  OrderStatusEnum.Cancelled,
-];
+    OrderStatusEnum.Processing,
+    OrderStatusEnum.Shipped,
+    OrderStatusEnum.Delivered,
+    OrderStatusEnum.Cancelled,
+  ];
 
   adminOrdersStats: AdminOrdersStatsDto = {
     totalOrdersCount: 0,
     totalDeliveredOrdersCount: 0,
-    totalPendingOrdersCount: 0,
+    totalShippedOrdersCount: 0,
     totalProcessingOrdersCount: 0,
   };
 
@@ -196,10 +199,10 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
 
   updateOrderStatus(order: AdminOrderDto): void {
     const allowedNextStatuses =
-      this.OrderStatusUpdateConstraints[order.status] ?? [];
+      OrderStatusUpdateConstraints[order.status] ?? [];
 
     if (allowedNextStatuses.length === 0) {
-      this.toastService.warning('This order status cannot be changed.');
+      this.toastService.warning('This order cannot be amended.');
       return;
     }
     const modalRef = this.modalService.open(ModalDialogComponent, {
@@ -221,27 +224,29 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          orderStatusId: selectedStatus,
+          statusId: selectedStatus,
           notes: 'testing the notes',
         };
-
-        this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
-          next: () => {
-            this.toastService.success('Order status updated successfully!');
-            this.loadOrders();
-            this.isLoading = false;
-          },
-          error: (err) => {
-            if (err.status === 404) {
-              this.toastService.warning(
-                'Order not found or cannot be updated.',
-              );
-            } else {
-              this.toastService.error('Failed to update order status.');
-            }
-            this.isLoading = false;
-          },
-        });
+        this.subscriptions.add(
+          this.adminApiService
+            .updateOrderStatus(order.id, statusData)
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe({
+              next: () => {
+                this.toastService.success('Order status updated successfully!');
+                this.loadOrders();
+              },
+              error: (err) => {
+                if (err.status === 404) {
+                  this.toastService.warning(
+                    'Order not found or cannot be updated.',
+                  );
+                } else {
+                  this.toastService.error('Failed to update order status.');
+                }
+              },
+            }),
+        );
       }
     });
   }
@@ -258,7 +263,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          orderStatusId: OrderStatusEnum.Shipped,
+          statusId: OrderStatusEnum.Shipped,
           notes: 'Order marked as shipped by admin',
         };
 
@@ -295,7 +300,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         const statusData: UpdateOrderStatusRequestDto = {
-          orderStatusId: OrderStatusEnum.Cancelled,
+          statusId: OrderStatusEnum.Cancelled,
           notes: 'Order cancelled by admin',
         };
 
@@ -304,6 +309,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
             const target = this.orders.find((o) => o.id === order.id);
             if (target) {
               target.status = OrderStatusEnum.Cancelled;
+              target.payment.status = PaymentStatusEnum.Refunded;
 
               this.orders = [...this.orders];
             }
@@ -343,17 +349,4 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.loadOrders();
   }
-
-  OrderStatusUpdateConstraints: Partial<
-    Record<OrderStatusEnum, OrderStatusEnum[]>
-  > = {
-    [OrderStatusEnum.Processing]: [
-      OrderStatusEnum.Shipped,
-      OrderStatusEnum.Cancelled,
-    ],
-    [OrderStatusEnum.Shipped]: [OrderStatusEnum.Delivered],
-    [OrderStatusEnum.Delivered]: [OrderStatusEnum.Returned],
-    [OrderStatusEnum.Cancelled]: [],
-    [OrderStatusEnum.Returned]: [],
-  };
 }

@@ -93,7 +93,7 @@
             </div>
             <div class="summary-item">
               <span>Shipping</span>
-              <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() | number:'1.2-2' }}</span>
+              <span>{{ getShippingCost() === 0 ? 'Free' : '£' + getShippingCost() }}</span>
             </div>
             @if (getDiscount() > 0) {
             <div class="summary-item discount">
@@ -107,8 +107,7 @@
             </div>
           </div>
         </div>
-        @if (getSubtotal() < 50) { 
-        <div class="shipping-notice">
+        @if (getSubtotal() < 50) { <div class="shipping-notice">
           <div class="shipping-icon">
             <i class="bi bi-truck"></i>
           </div>

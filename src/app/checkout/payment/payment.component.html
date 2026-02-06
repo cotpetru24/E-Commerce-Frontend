@@ -23,12 +23,13 @@
           <form (ngSubmit)="onSubmit()" #paymentForm="ngForm" class="checkout-form">
             <div class="form-section">
               <div class="stripe-container">
-                <div id="payment-element" class="stripe-element">
-                  <div class="spinner-outer-container d-flex justify-content-center align-items-center">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <span>Loading...</span>
-                  </div>
+                @if(!isStripeInitialized){
+                <div class="spinner-outer-container d-flex justify-content-center align-items-center">
+                  <div class="spinner-border text-primary" role="status"></div>
+                  <span>Loading...</span>
                 </div>
+                }
+                <div id="payment-element" class="stripe-element"></div>
               </div>
               <div id="payment-errors" class="stripe-error" role="alert"></div>
             </div>

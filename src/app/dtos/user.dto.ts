@@ -1,4 +1,4 @@
-import { AdminUsersSortByEnum, SortDirectionEnum, UserRoleEnum, UserStatusEnum } from "./enums";
+import { AdminUsersSortByEnum, SortDirectionEnum, UserRoleEnum } from './enums';
 
 export interface UserDto {
   id: number;
@@ -15,15 +15,13 @@ export interface UserDto {
 
 export interface AdminUserDto {
   id: number;
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
-  roles: UserRoleEnum[];
-  status: UserStatusEnum;
   emailConfirmed: boolean | null;
+  isBlocked: boolean;
   createdAt: Date;
-  lastLoginAt: Date | null;
-  orderCount: number | null;
+  roles: UserRoleEnum[];
 }
 
 export interface UserProfileDto {
@@ -47,7 +45,7 @@ export interface AdminUpdateUserProfileRequestDto {
   email: string | null;
   firstName: string | null;
   lastName: string | null;
-  status: UserStatusEnum | null;
+  isBlocked: boolean | null;
   roles: string[] | null;
 }
 
@@ -89,7 +87,7 @@ export interface GetAllUsersRequestDto {
   searchTerm: string | null;
   sortDirection: SortDirectionEnum | null;
   sortBy: AdminUsersSortByEnum | null;
-  userStatus: UserStatusEnum | null;
+  isBlocked: boolean | null;
   userRole: UserRoleEnum | null;
 }
 

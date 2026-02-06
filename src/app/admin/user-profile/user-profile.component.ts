@@ -2,21 +2,23 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { ToastService } from '../../services/toast.service';
 import { Utils } from '../../shared/utils';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdminUserApiService } from 'app/services/api';
-import { AdminOrderDto, AdminUserDto } from '@dtos';
+import {
+  AdminOrderDto,
+  AdminUpdateUserProfileRequestDto,
+  AdminUserDto,
+} from '@dtos';
 import {
   OrdersSortByEnum,
   OrderStatusEnum,
   OrderStatusMeta,
   UserRoleEnum,
   UserRoleMeta,
-  UserStatusEnum,
-  UserStatusMeta,
 } from '@dtos/enums';
 
 @Component({
@@ -34,8 +36,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   ordersLoading = false;
   UserRoleEnum = UserRoleEnum;
   UserRoleMeta = UserRoleMeta;
-  UserStatusMeta = UserStatusMeta;
-  UserStatusEnum = UserStatusEnum;
   OrderStatusEnum = OrderStatusEnum;
   OrderStatusMeta = OrderStatusMeta;
   user: AdminUserDto | null = null;
@@ -261,8 +261,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   toggleUserStatus(user: AdminUserDto): void {
-    const action =
-      user.status === this.UserStatusEnum.Blocked ? 'unblock' : 'block';
+    const action = user.isBlocked === true ? 'unblock' : 'block';
 
     const modalRef = this.modalService.open(ModalDialogComponent);
     modalRef.componentInstance.title = `${
@@ -275,28 +274,23 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       if (result === true) {
         this.isLoading = true;
 
+        const updateUserRequest: AdminUpdateUserProfileRequestDto = {
+          isBlocked: !user.isBlocked,
+          email: null,
+          firstName: null,
+          lastName: null,
+          roles: null,
+        };
+
         this.subscriptions.add(
           this.adminUserApiService
-            .toggleUserStatus(user.id.toString(), {
-              status:
-                user.status === this.UserStatusEnum.Blocked
-                  ? this.UserStatusEnum.Active
-                  : this.UserStatusEnum.Blocked,
-              email: null,
-              firstName: null,
-              lastName: null,
-              roles: null,
-            })
+            .toggleUserStatus(user.id.toString(), updateUserRequest)
+            .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
               next: () => {
-                const status =
-                  user.status === this.UserStatusEnum.Blocked
-                    ? 'unblocked'
-                    : 'blocked';
+                const status = user.isBlocked ? 'unblocked' : 'blocked';
                 this.toastService.success(`User ${status} successfully`);
-
                 this.loadUserData();
-                this.isLoading = false;
               },
               error: (err) => {
                 this.toastService.error('Failed to update user status');
@@ -335,5 +329,13 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           break;
       }
     }
+  }
+
+  getStatusClass(isBlocked: boolean): string {
+    return isBlocked ? 'badge bg-danger' : 'badge bg-success';
+  }
+
+  getStatusLabel(isBlocked: boolean): string {
+    return isBlocked ? 'Blocked' : 'Active';
   }
 }

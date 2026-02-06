@@ -120,13 +120,13 @@ export interface PlaceOrderResponseDto {
 }
 
 export interface UpdateOrderStatusRequestDto {
-  orderStatusId: OrderStatusEnum;
+  statusId: OrderStatusEnum;
   notes: string | null;
 }
 
 export interface AdminOrdersStatsDto {
   totalOrdersCount: number;
-  totalPendingOrdersCount: number;
+  totalShippedOrdersCount: number;
   totalProcessingOrdersCount: number;
   totalDeliveredOrdersCount: number;
 }
