@@ -16,7 +16,11 @@ import {
   UpdateOrderStatusRequestDto,
 } from '@dtos';
 import {
+  AdminOrdersTimeframeOption,
+  AdminOrdersTimeframeOptionMeta,
   OrdersSortByEnum,
+  OrdersSortByOption,
+  OrdersSortByOptionMeta,
   OrderStatusEnum,
   OrderStatusMeta,
   OrderStatusUpdateConstraints,
@@ -38,6 +42,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   OrderStatusMeta = OrderStatusMeta;
   OrderStatusEnum = OrderStatusEnum;
   OrderStatusUpdateConstraints = OrderStatusUpdateConstraints;
+  OrdersSortByOptionMeta = OrdersSortByOptionMeta;
   orders: AdminOrderDto[] = [];
   isLoading = false;
   initialInit: boolean = true;
@@ -46,10 +51,25 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   totalPages: number = 0;
   totalQueryCount = 0;
   searchTerm: string | null = null;
-  selectedStatus: OrderStatusEnum | null = null;
-  selectedDateRange = '';
-  sortBy = 'date-desc';
 
+  AdminOrdersTimeframeOptionMeta = AdminOrdersTimeframeOptionMeta;
+  ordersTimeframe: AdminOrdersTimeframeOption | null = null;
+  ordersTimeframeOptions: AdminOrdersTimeframeOption[] = [
+    AdminOrdersTimeframeOption.Today,
+    AdminOrdersTimeframeOption.ThisWeek,
+    AdminOrdersTimeframeOption.ThisMonth,
+    AdminOrdersTimeframeOption.ThisQuarter,
+  ];
+
+  sortBy = OrdersSortByOption.DateDesc;
+  sortByOptions: OrdersSortByOption[] = [
+    OrdersSortByOption.DateDesc,
+    OrdersSortByOption.DateAsc,
+    OrdersSortByOption.TotalAsc,
+    OrdersSortByOption.TotalDesc,
+  ];
+
+  selectedStatus: OrderStatusEnum | null = null;
   orderStatusOptions: OrderStatusEnum[] = [
     OrderStatusEnum.Processing,
     OrderStatusEnum.Shipped,
@@ -88,26 +108,27 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
 
   loadOrders(): void {
     this.isLoading = true;
+    this.orders = [];
 
     const now = new Date();
     let fromDate: Date | null = null;
     let toDate: Date | null = null;
 
-    switch (this.selectedDateRange) {
-      case 'today':
+    switch (this.ordersTimeframe) {
+      case AdminOrdersTimeframeOption.Today:
         fromDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         toDate = new Date();
         break;
-      case 'week':
+      case AdminOrdersTimeframeOption.ThisWeek:
         fromDate = new Date(now);
         fromDate.setDate(now.getDate() - now.getDay());
         toDate = new Date();
         break;
-      case 'month':
+      case AdminOrdersTimeframeOption.ThisMonth:
         fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
         toDate = new Date();
         break;
-      case 'quarter':
+      case AdminOrdersTimeframeOption.ThisQuarter:
         fromDate = new Date(
           now.getFullYear(),
           Math.floor(now.getMonth() / 3) * 3,
@@ -119,8 +140,6 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         fromDate = null;
     }
 
-    const [sortByField, sortDir] = this.sortBy.split('-');
-
     const getAllOrdersRequest: GetAllOrdersRequestDto = {
       fromDate: fromDate ? fromDate : null,
       toDate: toDate ? toDate : null,
@@ -128,14 +147,8 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
       pageNumber: this.currentPage,
       pageSize: this.itemsPerPage,
       searchTerm: this.searchTerm,
-      sortBy:
-        sortByField === 'total'
-          ? OrdersSortByEnum.Total
-          : OrdersSortByEnum.Date,
-      sortDirection:
-        sortDir === 'asc'
-          ? SortDirectionEnum.Ascending
-          : SortDirectionEnum.Descending,
+      sortBy: OrdersSortByOptionMeta[this.sortBy].sortBy,
+      sortDirection: OrdersSortByOptionMeta[this.sortBy].sortDirection,
     };
 
     this.subscriptions.add(
@@ -344,8 +357,8 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
   resetFilters(): void {
     this.searchTerm = null;
     this.selectedStatus = null;
-    this.selectedDateRange = '';
-    this.sortBy = 'date-desc';
+    this.ordersTimeframe = null;
+    this.sortBy = OrdersSortByOption.DateDesc;
     this.currentPage = 1;
     this.loadOrders();
   }

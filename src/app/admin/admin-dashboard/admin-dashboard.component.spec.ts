@@ -3,23 +3,22 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { AdminDashboardComponent } from './admin-dashboard.component';
-import {
-  AdminApiService,
-  AdminStats,
-} from '../../services/api/admin-api.service';
+import { AdminDashboardApiService } from 'app/services/api';
 import { ToastService } from '../../services/toast.service';
-import { UtilsService } from '../../services/utils.service';
+import { Utils } from 'app/shared/utils';
+import { DashboardStatsDto } from '@dtos/dashboard.dto';
 
 describe('AdminDashboardComponent', () => {
   let component: AdminDashboardComponent;
+  let utils = Utils
   let fixture: ComponentFixture<AdminDashboardComponent>;
-  let adminApiService: jasmine.SpyObj<AdminApiService>;
+  let adminDashboardApiService: jasmine.SpyObj<AdminDashboardApiService>;
   let toastService: jasmine.SpyObj<ToastService>;
   let utilsService: jasmine.SpyObj<
     UtilsService & { getActivityIcon: jasmine.Spy }
   >;
 
-  const mockAdminStats: AdminStats = {
+  const mockAdminStats: DashboardStatsDto = {
     totalOrders: 100,
     newOrdersToday: 5,
     totalRevenue: 15000,
@@ -29,7 +28,13 @@ describe('AdminDashboardComponent', () => {
     totalProducts: 200,
     lowStockProducts: 10,
     outOfStockProducts: 3,
-    pendingOrders: 8,
+    cancelledOrders: 65,
+    deliveredOrders: 555,
+    newUsersThisMonth: 65,
+    processingOrders: 897,
+    returnedOrders: 456,
+    shippedOrders: 987,
+    thisMonthRevenue: 897,
     recentActivity: [
       {
         id: 1,
@@ -47,7 +52,7 @@ describe('AdminDashboardComponent', () => {
   };
 
   beforeEach(async () => {
-    adminApiService = jasmine.createSpyObj('AdminApiService', [
+    adminDashboardApiService = jasmine.createSpyObj('AdminApiService', [
       'getDashboardStats',
     ]);
     toastService = jasmine.createSpyObj('ToastService', [
@@ -61,9 +66,11 @@ describe('AdminDashboardComponent', () => {
       'getActivityIcon',
     ]);
 
-    adminApiService.getDashboardStats.and.returnValue(of(mockAdminStats));
+    adminDashboardApiService.getDashboardStats.and.returnValue(
+      of(mockAdminStats),
+    );
     utilsService.formatCurrency.and.callFake(
-      (amount: number) => `£${amount.toFixed(2)}`
+      (amount: number) => `£${amount.toFixed(2)}`,
     );
     utilsService.formatTimeAgo.and.returnValue('just now');
     utilsService.getActivityIcon.and.returnValue('bi-info-circle');
@@ -73,7 +80,10 @@ describe('AdminDashboardComponent', () => {
       providers: [
         provideHttpClient(),
         provideRouter([]),
-        { provide: AdminApiService, useValue: adminApiService },
+        {
+          provide: AdminDashboardApiService,
+          useValue: adminDashboardApiService,
+        },
         { provide: ToastService, useValue: toastService },
         { provide: UtilsService, useValue: utilsService },
       ],
@@ -105,13 +115,13 @@ describe('AdminDashboardComponent', () => {
 
   it('loadDashboardData_ShouldShowError_WhenApiCallFails', () => {
     adminApiService.getDashboardStats.and.returnValue(
-      throwError(() => new Error('API Error'))
+      throwError(() => new Error('API Error')),
     );
 
     component.loadDashboardData();
 
     expect(toastService.error).toHaveBeenCalledWith(
-      'Failed to load dashboard statistics'
+      'Failed to load dashboard statistics',
     );
   });
 });

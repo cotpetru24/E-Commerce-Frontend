@@ -125,6 +125,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   loadUserOrders(): void {
     if (!this.userId) return;
 
+    this.userOrders = [];
+    this.filteredOrders = [];
+
     this.ordersLoading = true;
     this.subscriptions.add(
       this.adminUserApiService

@@ -17,6 +17,8 @@ import {
   ProductImageDto,
 } from '@dtos';
 import {
+  AdminProductSortByOption,
+  AdminProductSortByOptionMeta,
   AdminProductsSortByEnum,
   AdminProductStockStatusEnum,
   AdminProductStockStatusMeta,
@@ -39,14 +41,14 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   AudienceEnum = AudienceEnum;
   AudienceMeta = AudienceMeta;
   AdminProductStockStatusMeta = AdminProductStockStatusMeta;
-  response?: GetProductsAdminResponseDto;
+  AdminProductSortByOptionMeta = AdminProductSortByOptionMeta;
+  response: GetProductsAdminResponseDto | null = null;
   searchTerm = '';
   selectedCategory: AudienceEnum | null = null;
   selectedBrand: string | null = null;
   isActive: boolean | null = null;
   selectedStock: AdminProductStockStatusEnum | null = null;
-  sortBy = 'date-desc';
-  sortField: AdminProductsSortByEnum = AdminProductsSortByEnum.DateCreated;
+  sortBy = AdminProductSortByOption.DateDesc;
   currentPage = 1;
   itemsPerPage = 10;
 
@@ -67,6 +69,15 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     AdminProductStockStatusEnum.HighStock,
     AdminProductStockStatusEnum.InStock,
     AdminProductStockStatusEnum.OutOfStock,
+  ];
+
+  sortByOptions: AdminProductSortByOption[] = [
+    AdminProductSortByOption.DateDesc,
+    AdminProductSortByOption.DateAsc,
+    AdminProductSortByOption.NameAsc,
+    AdminProductSortByOption.NameDesc,
+    AdminProductSortByOption.StockAsc,
+    AdminProductSortByOption.StockDesc,
   ];
 
   private subscriptions = new Subscription();
@@ -90,19 +101,8 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   loadProducts(): void {
     this.isLoading = true;
 
-    const [sortByField, sortDir] = this.sortBy.split('-');
-
-    switch (sortByField) {
-      case 'name':
-        this.sortField = AdminProductsSortByEnum.Name;
-        break;
-      case 'stock':
-        this.sortField = AdminProductsSortByEnum.Stock;
-        break;
-      case 'date':
-      default:
-        this.sortField = AdminProductsSortByEnum.DateCreated;
-        break;
+    if (this.response !== null) {
+      this.response.products = [];
     }
 
     const getProductsAdminRequest: GetProductsAdminRequestDto = {
@@ -113,11 +113,8 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       audienceId: this.selectedCategory,
       productBrand: this.selectedBrand,
       productStockStatus: this.selectedStock,
-      sortDirection:
-        sortDir === 'asc'
-          ? SortDirectionEnum.Ascending
-          : SortDirectionEnum.Descending,
-      sortBy: this.sortField,
+      sortBy: AdminProductSortByOptionMeta[this.sortBy].sortBy,
+      sortDirection: AdminProductSortByOptionMeta[this.sortBy].sortDirection,
     };
 
     this.subscriptions.add(
@@ -202,7 +199,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     this.selectedBrand = null;
     this.isActive = null;
     this.selectedStock = null;
-    this.sortBy = 'date-desc';
+    this.sortBy = AdminProductSortByOption.DateDesc;
 
     this.loadProducts();
   }
@@ -250,7 +247,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
         }
       },
       () => {
-        // Dismissed modal
+        // dismissed
       },
     );
   }

@@ -1,3 +1,14 @@
+//Sort direction
+export enum SortDirectionEnum {
+  Ascending = 1,
+  Descending = 2,
+}
+
+export const SortDirectionMeta: Record<SortDirectionEnum, { label: string }> = {
+  [SortDirectionEnum.Ascending]: { label: 'Ascending' },
+  [SortDirectionEnum.Descending]: { label: 'Descending' },
+};
+
 //Order status
 export enum OrderStatusEnum {
   Processing = 2,
@@ -100,20 +111,64 @@ export enum OrdersSortByEnum {
   Total = 2,
 }
 
+export enum OrdersSortByOption {
+  DateDesc = 1,
+  DateAsc = 2,
+  TotalAsc = 3,
+  TotalDesc = 4,
+}
+
 export const OrdersSortByMeta: Record<OrdersSortByEnum, { label: string }> = {
   [OrdersSortByEnum.Date]: { label: 'Date' },
   [OrdersSortByEnum.Total]: { label: 'Total amount' },
 };
 
-//Sort direction
-export enum SortDirectionEnum {
-  Ascending = 1,
-  Descending = 2,
+export const OrdersSortByOptionMeta: Record<
+  OrdersSortByOption,
+  {
+    label: string;
+    sortBy: OrdersSortByEnum;
+    sortDirection: SortDirectionEnum;
+  }
+> = {
+  [OrdersSortByOption.DateDesc]: {
+    label: 'Date (Newest)',
+    sortBy: OrdersSortByEnum.Date,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+  [OrdersSortByOption.DateAsc]: {
+    label: 'Date (Oldest)',
+    sortBy: OrdersSortByEnum.Date,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [OrdersSortByOption.TotalAsc]: {
+    label: 'Total (Low to High)',
+    sortBy: OrdersSortByEnum.Total,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [OrdersSortByOption.TotalDesc]: {
+    label: 'Total (High to Low)',
+    sortBy: OrdersSortByEnum.Total,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+};
+
+//Admin orders timeframe
+export enum AdminOrdersTimeframeOption {
+  Today = 1,
+  ThisWeek = 2,
+  ThisMonth = 3,
+  ThisQuarter = 4,
 }
 
-export const SortDirectionMeta: Record<SortDirectionEnum, { label: string }> = {
-  [SortDirectionEnum.Ascending]: { label: 'Ascending' },
-  [SortDirectionEnum.Descending]: { label: 'Descending' },
+export const AdminOrdersTimeframeOptionMeta: Record<
+  AdminOrdersTimeframeOption,
+  { label: string }
+> = {
+  [AdminOrdersTimeframeOption.Today]: { label: 'Today' },
+  [AdminOrdersTimeframeOption.ThisWeek]: { label: 'This Week' },
+  [AdminOrdersTimeframeOption.ThisMonth]: { label: 'This Month' },
+  [AdminOrdersTimeframeOption.ThisQuarter]: { label: 'This Quarter' },
 };
 
 //Payment status
@@ -168,12 +223,41 @@ export enum AdminUsersSortByEnum {
   Name = 2,
 }
 
-export const AdminUsersSortByMeta: Record<
-  AdminUsersSortByEnum,
-  { label: string }
+export enum AdminUsersSortByOption {
+  DateDesc = 1,
+  DateAsc = 2,
+  NameAsc = 3,
+  NameDesc = 4,
+}
+
+export const AdminUsersSortByOptionsMeta: Record<
+  AdminUsersSortByOption,
+  {
+    label: string;
+    sortBy: AdminUsersSortByEnum;
+    sortDirection: SortDirectionEnum;
+  }
 > = {
-  [AdminUsersSortByEnum.DateCreated]: { label: 'Date created' },
-  [AdminUsersSortByEnum.Name]: { label: 'Name' },
+  [AdminUsersSortByOption.DateDesc]: {
+    label: 'Date Created (Newest)',
+    sortBy: AdminUsersSortByEnum.DateCreated,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+  [AdminUsersSortByOption.DateAsc]: {
+    label: 'Date Created (Oldest)',
+    sortBy: AdminUsersSortByEnum.DateCreated,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [AdminUsersSortByOption.NameAsc]: {
+    label: 'Name (A-Z)',
+    sortBy: AdminUsersSortByEnum.Name,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [AdminUsersSortByOption.NameDesc]: {
+    label: 'Name (Z-A)',
+    sortBy: AdminUsersSortByEnum.Name,
+    sortDirection: SortDirectionEnum.Descending,
+  },
 };
 
 //Product status
@@ -194,22 +278,6 @@ export const ProductStatusMeta: Record<
     label: 'Inactive',
     class: 'badge bg-secondary',
   },
-};
-
-// Admin product sort by
-export enum AdminProductsSortByEnum {
-  DateCreated = 1,
-  Name = 2,
-  Stock = 3,
-}
-
-export const AdminProductsSortByMeta: Record<
-  AdminProductsSortByEnum,
-  { label: string }
-> = {
-  [AdminProductsSortByEnum.DateCreated]: { label: 'Date created' },
-  [AdminProductsSortByEnum.Name]: { label: 'Name' },
-  [AdminProductsSortByEnum.Stock]: { label: 'Stock' },
 };
 
 // Audience
@@ -261,6 +329,11 @@ export const AdminProductStockStatusMeta: Record<
 };
 
 // Product sort by
+export enum ProductSortByEnum {
+  Name = 1,
+  Price = 2,
+  Brand = 3,
+}
 export enum ProductSortByOption {
   NameAsc = 1,
   NameDesc = 2,
@@ -272,12 +345,102 @@ export enum ProductSortByOption {
 
 export const ProductSortByOptionMeta: Record<
   ProductSortByOption,
+  { label: string; sortBy: ProductSortByEnum; sortDirection: SortDirectionEnum }
+> = {
+  [ProductSortByOption.NameAsc]: {
+    label: 'Name (A-Z)',
+    sortBy: ProductSortByEnum.Name,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [ProductSortByOption.NameDesc]: {
+    label: 'Name (Z-A)',
+    sortBy: ProductSortByEnum.Name,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+  [ProductSortByOption.PriceAsc]: {
+    label: 'Price (Low → High)',
+    sortBy: ProductSortByEnum.Price,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+  [ProductSortByOption.PriceDesc]: {
+    label: 'Price (High → Low)',
+    sortBy: ProductSortByEnum.Price,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+  [ProductSortByOption.BrandAsc]: {
+    label: 'Brand (A-Z)',
+    sortBy: ProductSortByEnum.Brand,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [ProductSortByOption.BrandDesc]: {
+    label: 'Brand (Z-A)',
+    sortBy: ProductSortByEnum.Brand,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+};
+
+// Admin product sort by
+export enum AdminProductsSortByEnum {
+  DateCreated = 1,
+  Name = 2,
+  Stock = 3,
+}
+
+export const AdminProductsSortByMeta: Record<
+  AdminProductsSortByEnum,
   { label: string }
 > = {
-  [ProductSortByOption.NameAsc]: { label: 'Name (A-Z)' },
-  [ProductSortByOption.NameDesc]: { label: 'Name (Z-A)' },
-  [ProductSortByOption.PriceAsc]: { label: 'Price (Low → High)' },
-  [ProductSortByOption.PriceDesc]: { label: 'Price (High → Low)' },
-  [ProductSortByOption.BrandAsc]: { label: 'Brand (A-Z)' },
-  [ProductSortByOption.BrandDesc]: { label: 'Brand (Z-A)' },
+  [AdminProductsSortByEnum.DateCreated]: { label: 'Date created' },
+  [AdminProductsSortByEnum.Name]: { label: 'Name' },
+  [AdminProductsSortByEnum.Stock]: { label: 'Stock' },
+};
+
+// Admin product sort by
+export enum AdminProductSortByOption {
+  DateDesc = 1,
+  DateAsc = 2,
+  NameAsc = 3,
+  NameDesc = 4,
+  StockAsc = 5,
+  StockDesc = 6,
+}
+
+export const AdminProductSortByOptionMeta: Record<
+  AdminProductSortByOption,
+  {
+    label: string;
+    sortBy: AdminProductsSortByEnum;
+    sortDirection: SortDirectionEnum;
+  }
+> = {
+  [AdminProductSortByOption.DateDesc]: {
+    label: 'Date Created (Newest)',
+    sortBy: AdminProductsSortByEnum.DateCreated,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+  [AdminProductSortByOption.DateAsc]: {
+    label: 'Date Created (Oldest)',
+    sortBy: AdminProductsSortByEnum.DateCreated,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [AdminProductSortByOption.NameAsc]: {
+    label: 'Name (A-Z)',
+    sortBy: AdminProductsSortByEnum.Name,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [AdminProductSortByOption.NameDesc]: {
+    label: 'Name (Z-A)',
+    sortBy: AdminProductsSortByEnum.Name,
+    sortDirection: SortDirectionEnum.Descending,
+  },
+  [AdminProductSortByOption.StockAsc]: {
+    label: 'Stock (Low → High)',
+    sortBy: AdminProductsSortByEnum.Stock,
+    sortDirection: SortDirectionEnum.Ascending,
+  },
+  [AdminProductSortByOption.StockDesc]: {
+    label: 'Stock (High → Low)',
+    sortBy: AdminProductsSortByEnum.Stock,
+    sortDirection: SortDirectionEnum.Descending,
+  },
 };

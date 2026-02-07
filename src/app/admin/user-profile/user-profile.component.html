@@ -1,3 +1,9 @@
+@if (isLoading) {
+<div class="text-center loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
+  <span class="spinner-border spinner-border me-2 text-black" role="status"></span>
+  <span>Loading...</span>
+</div>
+}@else{
 <div class="container-fluid mt-4">
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
@@ -16,14 +22,6 @@
       </li>
     </ol>
   </nav>
-  @if (isLoading) {
-  <div class="text-center p-4">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <p class="mt-2">Loading user data...</p>
-  </div>
-  }
   @if (!isLoading && user) {
   <div class="row">
     <div class="col-lg-4 mb-4">
@@ -130,14 +128,14 @@
             <div class="col-6">
               <label class="form-label fw-bold">Status</label>
               <div>
-                <span [ngClass]="getStatusClass(user.isBlocked)">{{ getStatusLabel(user.isBlocked) }}</span>
+                <span class="status-badge" [ngClass]="getStatusClass(user.isBlocked)">{{ getStatusLabel(user.isBlocked) }}</span>
               </div>
             </div>
             <div class="col-6">
               <label class="form-label fw-bold">Role</label>
               @if (!isEditing) {
               <div>
-                <span [class]="UserRoleMeta[user.roles[0]].class">{{ UserRoleMeta[user.roles[0]].label}} </span>
+                <span class="status-badge" [class]="UserRoleMeta[user.roles[0]].class">{{ UserRoleMeta[user.roles[0]].label}} </span>
               </div>
               }
               @if (isEditing) {
@@ -231,11 +229,10 @@
             </div>
           </div>
           @if (ordersLoading) {
-          <div class="text-center p-4">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-2">Loading orders...</p>
+          <div
+            class="text-center loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
+            <span class="spinner-border spinner-border me-2 text-black" role="status"></span>
+            <span>Loading...</span>
           </div>
           }
           @if (!ordersLoading) {
@@ -315,3 +312,4 @@
   </div>
   }
 </div>
+}

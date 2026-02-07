@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { LoginComponent } from './login.component';
 import { ToastService } from '../../services/toast.service';
-import { AuthApiService } from '../../services/auth-api.service';
+import { AuthApiService } from 'app/services/api';
 
 describe('Login', () => {
   let component: LoginComponent;

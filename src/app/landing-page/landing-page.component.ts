@@ -8,6 +8,7 @@ import { ProductApiService } from '../services/api';
 import { finalize } from 'rxjs';
 import { CmsApiService } from '../services/api/cms-api.service';
 import { CmsLandingPageDto, ProductDto } from '@dtos';
+import { Utils } from 'app/shared/utils';
 
 @Component({
   selector: 'app-landing-page',
@@ -55,6 +56,7 @@ export class LandingPageComponent implements OnInit {
     private productApi: ProductApiService,
     private cmsService: CmsApiService,
     private router: Router,
+    private utils:Utils,
   ) {}
 
   ngOnInit() {
@@ -109,6 +111,7 @@ export class LandingPageComponent implements OnInit {
   }
 
   viewProduct(product: ProductDto) {
+    this.utils.scrollToTop();
     this.router.navigate(['/products/details', product.id]);
   }
 

@@ -23,6 +23,10 @@
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+.state-container {
+  height: 25vh;
+}
+
 .form-control:focus,
 .form-select:focus {
   border-color: #0d6efd;

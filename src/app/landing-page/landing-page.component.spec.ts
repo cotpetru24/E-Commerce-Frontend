@@ -20,7 +20,7 @@ describe('LandingPageComponent', () => {
     productApiService.getFeaturedProducts.and.returnValue(of({ products: [], brands: [] }));
 
     cmsApiService = jasmine.createSpyObj('CmsApiService', ['getCmsLandingPageAsync']);
-    cmsApiService.getCmsLandingPageAsync.and.returnValue(of({} as CmsLandingPageDto));
+    cmsApiService.getCmsLandingPage.and.returnValue(of({} as CmsLandingPageDto));
 
     await TestBed.configureTestingModule({
       imports: [LandingPageComponent],

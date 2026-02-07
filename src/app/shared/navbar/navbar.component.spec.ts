@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import { NavbarComponent } from './navbar.component';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
-import { AuthApiService } from '../../services/auth-api.service';
 import { CmsStateService } from '../../services/cmsStateService';
+import { AuthApiService } from 'app/services/api';
 
 describe('Navbar', () => {
   let component: NavbarComponent;

@@ -33,13 +33,15 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link position-relative" routerLink="/cart/view" routerLinkActive="active">
-            <i class="bi bi-cart3"></i> Cart
-            @if (cartItemCount > 0) {
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {{ cartItemCount }}
+          <a class="nav-link d-flex align-items-center" routerLink="/cart/view" routerLinkActive="active">
+            <span class="position-relative">
+              <i class="bi bi-cart3"></i> Cart
+              @if (cartItemCount > 0) {
+              <span class="badge rounded-pill bg-danger cart-badge">
+                {{ cartItemCount }}
+              </span>
+              }
             </span>
-            }
           </a>
         </li>
         @if (!isLoggedIn()) {
@@ -57,7 +59,7 @@
         </li>
         <li class="nav-item dropdown" (mouseenter)="showAccountDropdown=true" (mouseleave)="showAccountDropdown=false">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class=" bi bi-person-circle"></i>Account
+            <i class=" bi bi-person-circle"></i> Account
           </a>
           <ul class="dropdown-menu" [class.show]="showAccountDropdown">
             <li><a class="dropdown-item" routerLink="/user" (click)="showAccountDropdown=false">My account</a></li>

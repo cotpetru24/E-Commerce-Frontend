@@ -17,6 +17,8 @@ import {
 } from '@dtos';
 import {
   AdminUsersSortByEnum,
+  AdminUsersSortByOption,
+  AdminUsersSortByOptionsMeta,
   SortDirectionEnum,
   UserRoleEnum,
   UserRoleMeta,
@@ -38,7 +40,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   totalPages = 1;
   totalQueryCount = 0;
   searchTerm = '';
-  sortBy = 'date-desc';
+  sortBy = AdminUsersSortByOption.DateDesc;
   isLoading = false;
   isTogglingBlock = false;
   isBlocked: boolean | null = null;
@@ -48,12 +50,21 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   filteredUsers: AdminUserDto[] = [];
   paginatedUsers: AdminUserDto[] = [];
 
+  AdminUsersSortByOptionsMeta = AdminUsersSortByOptionsMeta;
+
   adminUsersStats: AdminUsersStatsDto = {
     totalUsersCount: 0,
     totalActiveUsersCount: 0,
     totalBlockedUsersCount: 0,
     totalNewUsersCountThisMonth: 0,
   };
+
+  sortByOptions: AdminUsersSortByOption[] = [
+    AdminUsersSortByOption.DateDesc,
+    AdminUsersSortByOption.DateAsc,
+    AdminUsersSortByOption.NameAsc,
+    AdminUsersSortByOption.NameDesc,
+  ];
 
   private subscriptions = new Subscription();
 
@@ -75,8 +86,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   loadUsers(): void {
     this.isLoading = true;
-
-    const [sortByField, sortDir] = this.sortBy.split('-');
+    this.users = [];
 
     const getAllUsersRequest: GetAllUsersRequestDto = {
       pageNumber: this.currentPage,
@@ -84,14 +94,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       searchTerm: this.searchTerm,
       isBlocked: this.isBlocked,
       userRole: this.selectedRole,
-      sortBy:
-        sortByField === 'name'
-          ? AdminUsersSortByEnum.Name
-          : AdminUsersSortByEnum.DateCreated,
-      sortDirection:
-        sortDir === 'asc'
-          ? SortDirectionEnum.Ascending
-          : SortDirectionEnum.Descending,
+      sortBy: AdminUsersSortByOptionsMeta[this.sortBy].sortBy,
+      sortDirection:AdminUsersSortByOptionsMeta[this.sortBy].sortDirection,
     };
 
     this.subscriptions.add(
@@ -127,6 +131,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.utils.scrollToTop();
       this.updatePagination();
     }
   }
@@ -225,8 +230,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.searchTerm = '';
     this.isBlocked = null;
     this.selectedRole = null;
-    this.sortBy = 'date-desc';
-    this.sortDirection = SortDirectionEnum.Descending;
+    this.sortBy = AdminUsersSortByOption.DateDesc;
     this.currentPage = 1;
     this.itemsPerPage = 10;
     this.loadUsers();

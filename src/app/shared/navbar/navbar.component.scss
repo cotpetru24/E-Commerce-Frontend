@@ -29,8 +29,9 @@
 
 .nav-link {
   color: var(--navbar-link-color) !important;
-  min-width: 90px;
+  min-width: unset !important;
   transition: color 0.3s ease;
+  padding: 12px !important;
 }
 
 .nav-link:hover {

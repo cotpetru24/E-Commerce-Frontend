@@ -29,6 +29,7 @@ import { AudienceEnum, AudienceMeta } from '@dtos/enums';
 export class AddProductComponent implements OnInit, OnDestroy {
   productData: AdminCreateProductRequestDto = this.createEmptyProduct();
   isLoading = false;
+  isInitialLoading = true;
   discountText = '';
   priceText = '';
   brands: BrandDto[] = [];
@@ -223,7 +224,7 @@ export class AddProductComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.adminProductApiService
         .getProductBrands()
-        .pipe(finalize(() => (this.isLoading = false)))
+        .pipe(finalize(() => (this.isInitialLoading = false)))
         .subscribe({
           next: (response) => {
             this.brands = response;

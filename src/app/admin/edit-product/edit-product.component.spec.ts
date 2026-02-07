@@ -6,23 +6,20 @@ import { of } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EditProductComponent } from './edit-product.component';
 import { ToastService } from '../../services/toast.service';
-import { AdminApiService } from '../../services/api/admin-api.service';
-
+import { AdminProductApiService } from 'app/services/api';
 describe('EditProduct', () => {
   let component: EditProductComponent;
   let fixture: ComponentFixture<EditProductComponent>;
-  let adminApiService: jasmine.SpyObj<AdminApiService>;
+  let adminProductApiService: jasmine.SpyObj<AdminProductApiService>;
 
   beforeEach(async () => {
-    adminApiService = jasmine.createSpyObj('AdminApiService', [
+    adminProductApiService = jasmine.createSpyObj('AdminApiService', [
       'getProductById',
       'updateProduct',
       'getProductBrands',
-      'getProductAudience',
     ]);
-    adminApiService.getProductBrands.and.returnValue(of([]));
-    adminApiService.getProductAudience.and.returnValue(of([]));
-    adminApiService.getProductById.and.returnValue(
+    adminProductApiService.getProductBrands.and.returnValue(of([]));
+    adminProductApiService.getProductById.and.returnValue(
       of({
         id: 1,
         name: 'Test Product',
@@ -70,7 +67,7 @@ describe('EditProduct', () => {
             'info',
           ]),
         },
-        { provide: AdminApiService, useValue: adminApiService },
+        { provide: AdminProductApiService, useValue: adminProductApiService },
       ],
     }).compileComponents();
 

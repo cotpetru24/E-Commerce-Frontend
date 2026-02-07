@@ -1,6 +1,6 @@
 @if (isCmsLoading) {
 <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
-  <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
+  <span class="spinner-border spinner-border me-2 text-black" role="status"></span>
   <span>Loading...</span>
 </div>
 } @else {
@@ -67,7 +67,7 @@
       </div>
       <div class="categories-grid">
         @for (category of landingDto?.categories; track $index) {
-        <div class="category-card" [routerLink]="['/products', 'men']">
+        <div class="category-card" [routerLink]="['/products']">
           <div class="category-image">
             <img [src]="'data:image/png;base64,' + category.imageBase64 " alt="Premium Running Shoe">
             <div class="category-overlay">
@@ -111,11 +111,11 @@
           </div>
           <div class="product-info">
             <h4>{{product.name}}</h4>
-            <p class="product-category">{{product.audience}} • {{product.brandName}}</p>
+            <p class="product-category">{{product.brandName}}</p>
             <div class="product-price">
-              <span class="current-price">${{product.price}}</span>
+              <span class="current-price">£{{product.price}}</span>
               @if (product.originalPrice) {
-              <span class="original-price">${{product.originalPrice}}</span>
+              <span class="original-price">£{{product.originalPrice}}</span>
               }
             </div>
             <div class="product-rating">
@@ -252,7 +252,7 @@
           <div class="input-group">
             <input type="email" name="newsletterEmail" id="newsletterEmail" class="form-control"
               placeholder="your@email.com" [(ngModel)]="newsletterEmail" aria-describedby="helpId" />
-            <button type="button" class="btn btn-primary">
+            <button type="button" class="btn btn-primary" (click)="subscribeNewsletter()">
               Subscribe
               <i class="bi bi-send"></i>
             </button>

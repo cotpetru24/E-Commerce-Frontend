@@ -10,7 +10,7 @@
       <aside class="filters-sidebar mb-5">
         <div class="filters-header">
           <h3>Filters</h3>
-          <button class="btn btn-primary btn-sm" (click)="clearFilters()">Clear All</button>
+          <button class="btn btn-primary btn-sm" (click)="onAudienceChange(null)">Clear All</button>
         </div>
         <div class="filter-section">
           <h4>Search</h4>
@@ -21,6 +21,17 @@
               <i class="bi bi-search"></i>
             </button>
           </div>
+        </div>
+        <div class="filter-section">
+          <h4>Sort By</h4>
+          <select id="sortSelect" aria-label="Sort by select" class="form-select" [(ngModel)]="sortBy"
+            (change)="getProducts()">
+            @for (option of sortByOptions; track $index) {
+            <option [ngValue]="option">
+              {{ ProductSortByOptionMeta[option].label }}
+            </option>
+            }
+          </select>
         </div>
         <div class="filter-section">
           <h4>Category</h4>
@@ -84,16 +95,16 @@
             <option [ngValue]="12">UK 12</option>
           </select>
         </div>
-        <div class="filter-section mb-3">
+        <div class="filter-section mb-0">
           <h4 class="mb-3">Price Range</h4>
           <div class="price-range">
-            <div class="mb-3">
+            <div class="mb-0">
               <label for="minPrice" class="form-label">Min Price</label>
               <input type="number" name="minPrice" id="minPrice" class="form-control" placeholder="0"
                 aria-describedby="minPriceHelp" [(ngModel)]="productFilterDto.MinPrice" (input)="getProducts()" />
               <div id="minPriceHelp" class="visually-hidden">Enter minimum price</div>
             </div>
-            <div class="mb-3">
+            <div class="mb-0">
               <label for="maxPrice" class="form-label">Max Price</label>
               <input type="number" name="maxPrice" id="maxPrice" class="form-control" placeholder="1000"
                 aria-describedby="maxPriceHelper" [(ngModel)]="productFilterDto.MaxPrice" (input)="getProducts()" />
@@ -101,22 +112,10 @@
             </div>
           </div>
         </div>
-        <div class="filter-section mb-0">
-          <h4>Sort By</h4>
-          <select id="sortSelect" aria-label="Sort by select" class="form-select" [(ngModel)]="productFilterDto.SortBy"
-            (change)="getProducts()">
-            <option [ngValue]="null">Select sorting option</option>
-            @for (option of sortByOptions; track $index) {
-            <option [ngValue]="option">
-              {{ ProductSortByOptionMeta[option].label }}
-            </option>
-            }
-          </select>
-        </div>
       </aside>
       @if (isLoading) {
       <div class="loading-state d-flex justify-content-center align-items-center flex-row flex-grow-1 m-5">
-        <span class="spinner-border spinner-border-lg me-2 text-primary" role="status"></span>
+        <span class="spinner-border spinner-border-lg me-2 text-black" role="status"></span>
         <span>Loading...</span>
       </div>
       }
@@ -183,7 +182,7 @@
           <i class="bi bi-search"></i>
           <h3>No products found</h3>
           <p>Try adjusting your filters or search terms</p>
-          <button class="btn btn-primary" (click)="clearFilters()">
+          <button class="btn btn-primary" (click)="onAudienceChange(null)">
             Clear Filters
           </button>
         </div>

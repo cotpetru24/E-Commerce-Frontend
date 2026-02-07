@@ -2,6 +2,7 @@ import {
   AdminProductsSortByEnum,
   AdminProductStockStatusEnum,
   AudienceEnum,
+  ProductSortByEnum,
   ProductSortByOption,
   SortDirectionEnum,
 } from './enums';
@@ -148,6 +149,7 @@ export interface ProductFilterDto {
   SearchTerm: string | null;
   Page: number | null;
   PageSize: number | null;
-  SortBy: ProductSortByOption | null;
+  SortBy: ProductSortByEnum | null;
+  SortDirection: SortDirectionEnum | null;
   Size: number | null;
 }

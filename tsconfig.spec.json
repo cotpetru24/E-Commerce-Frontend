@@ -4,7 +4,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "types": ["jasmine"]
+    "types": ["jasmine"],
+    "baseUrl": "src",
+    "paths": {
+      "@dtos/*": ["app/dtos/*"],
+      "@dtos": ["app/dtos"]
+    }
   },
   "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
 }

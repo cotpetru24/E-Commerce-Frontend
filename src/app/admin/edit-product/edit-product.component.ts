@@ -33,6 +33,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
   discountText = '';
   priceText = '';
   isLoading = false;
+  isInitialLoading = true;
   AudienceEnum = AudienceEnum;
   AudienceMeta = AudienceMeta;
 
@@ -266,14 +267,13 @@ export class EditProductComponent implements OnInit, OnDestroy {
         this.subscriptions.add(
           this.adminProductApiService
             .deleteProduct(this.productData!.id)
+            .pipe(finalize(() => (this.isLoading = false)))
             .subscribe({
               next: () => {
                 this.toastService.success('Product deleted successfully');
-                this.isLoading = false;
                 this.router.navigate(['/admin/products']);
               },
               error: () => {
-                this.isLoading = false;
                 this.toastService.error('Failed to delete product');
               },
             }),
@@ -305,14 +305,18 @@ export class EditProductComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.adminProductApiService
         .getProductById(this.productId)
-        .pipe(finalize(() => (this.isLoading = false)))
+        .pipe(
+          finalize(() => {
+            this.isLoading = false;
+            this.isInitialLoading = false;
+          }),
+        )
         .subscribe({
           next: (response) => {
             this.productData = response;
             this.priceText = this.productData.price?.toFixed(2) ?? '';
             this.discountText =
               this.productData.discountPercentage?.toFixed(2) ?? '';
-
             if (!this.productData.productSizes) {
               this.productData.productSizes = [];
             }

@@ -29,6 +29,8 @@ export class ProductListComponent implements OnInit {
   AudienceMeta = AudienceMeta;
   ProductSortByOption = ProductSortByOption;
   ProductSortByOptionMeta = ProductSortByOptionMeta;
+  sortBy = ProductSortByOption.NameAsc;
+
   viewMode: 'grid' | 'list' = 'grid';
 
   audienceOptions: AudienceEnum[] = [
@@ -52,6 +54,7 @@ export class ProductListComponent implements OnInit {
     Size: null,
     Audience: null,
     SortBy: null,
+    SortDirection: null,
     MaxPrice: null,
     MinPrice: null,
     Page: null,
@@ -70,6 +73,7 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
+      this.utils.scrollToTop();
       const audienceParam = params['audience'];
 
       if (audienceParam) {
@@ -90,6 +94,11 @@ export class ProductListComponent implements OnInit {
 
   getProducts() {
     this.isLoading = true;
+
+    this.productFilterDto.SortBy = ProductSortByOptionMeta[this.sortBy].sortBy;
+    this.productFilterDto.SortDirection =
+      ProductSortByOptionMeta[this.sortBy].sortDirection;
+
     this.productApi
       .getProducts(this.productFilterDto)
       .pipe(finalize(() => (this.isLoading = false)))
@@ -128,27 +137,15 @@ export class ProductListComponent implements OnInit {
   }
 
   onAudienceChange(audience: AudienceEnum | null) {
-  if (!audience) {
-    this.router.navigate(['/products']);
-    return;
-  }
+    if (!audience) {
+      this.router.navigate(['/products']);
+      return;
+    }
 
-  this.router.navigate(['/products', AudienceMeta[audience].label.toLowerCase()]);
-}
-
-  clearFilters() {
-    this.productFilterDto = {
-      Brand: null,
-      Size: null,
-      Audience: null,
-      SortBy: null,
-      MaxPrice: null,
-      MinPrice: null,
-      Page: null,
-      PageSize: null,
-      SearchTerm: null,
-    };
-    this.getProducts();
+    this.router.navigate([
+      '/products',
+      AudienceMeta[audience].label.toLowerCase(),
+    ]);
   }
 
   onSearchTermClear(event: Event): void {
