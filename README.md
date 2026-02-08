@@ -78,7 +78,7 @@ rather than feature bloat or visual experimentation.
 
 - **Strict TypeScript configuration**
   - DTO mismatches are surfaced at compile time
-  - No silent `any` or unsafe casts
+  - Minimal use of any in core flows; DTOs used for primary contracts
 
 - **Explicit frontend contracts**
   - Frontend DTOs mirror backend responses
