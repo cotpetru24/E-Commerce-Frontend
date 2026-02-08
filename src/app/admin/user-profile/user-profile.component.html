@@ -113,7 +113,7 @@
             <div class="input-group mb-2">
               <input [type]="showPassword ? 'text' : 'password'" class="form-control"
                 [(ngModel)]="passwordForm.newPassword" placeholder="Enter new password" />
-              <button class="btn btn-outline-secondary" type="button" (click)="togglePassword()">
+              <button class="btn btn-outline-secondary" aria-label="Toggle show hide password" type="button" (click)="togglePassword()">
                 <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
               </button>
             </div>

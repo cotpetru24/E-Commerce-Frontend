@@ -26,39 +26,20 @@
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.table-content {
-  min-height: 50vh;
-}
-
-.state-container {
-  height: 100%;
-}
-
-.card-footer {
-  min-height: 56px;
-}
-
 .badge {
   font-size: 0.75rem;
   padding: 0.375rem 0.75rem;
 }
 
-.btn-group.btn-group-sm .btn,
 .btn-group-sm .btn {
-  padding: 0.25rem 0.5rem !important;
-  font-size: 0.875rem !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
 }
 
 .pagination {
   margin-bottom: 0;
 }
 
-.status-badge {
-  min-width: 100px;
-}
 .pagination .page-link {
   border: none;
   color: #0d6efd;
@@ -164,12 +145,8 @@
 .input-group-text {
   background-color: #f8f9fa;
   border-color: #ced4da;
-  cursor: pointer;
 }
 
-.search-button{
-    cursor: pointer;
-}
 .table-hover tbody tr:hover {
   background-color: rgba(13, 110, 253, 0.05);
 }
@@ -177,14 +154,6 @@
 .btn:hover {
   transform: translateY(-1px);
   transition: transform 0.2s ease-in-out;
-}
-
-.btn-group {
-  gap: 0.25rem;
-}
-
-.btn-group .btn {
-  border-radius: 0.375rem;
 }
 
 .bi-check-circle {
