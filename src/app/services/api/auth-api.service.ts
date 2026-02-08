@@ -4,13 +4,13 @@ import { StorageService } from '../storage.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
+import { UserRoleEnum } from '@dtos/enums';
 import {
   LoginRequestDto,
   RegisterRequestDto,
   UserInfoDto,
-} from '@dtos';
-import { jwtDecode } from 'jwt-decode';
-import { UserRoleEnum } from '@dtos/enums';
+} from '@dtos/auth.dto';
 
 @Injectable({
   providedIn: 'root',

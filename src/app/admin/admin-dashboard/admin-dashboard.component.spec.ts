@@ -3,20 +3,17 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { AdminDashboardComponent } from './admin-dashboard.component';
-import { AdminDashboardApiService } from 'app/services/api';
+import { AdminDashboardApiService } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
-import { Utils } from 'app/shared/utils';
+import { Utils } from '../../shared/utils';
 import { DashboardStatsDto } from '@dtos/dashboard.dto';
 
 describe('AdminDashboardComponent', () => {
   let component: AdminDashboardComponent;
-  let utils = Utils
   let fixture: ComponentFixture<AdminDashboardComponent>;
   let adminDashboardApiService: jasmine.SpyObj<AdminDashboardApiService>;
   let toastService: jasmine.SpyObj<ToastService>;
-  let utilsService: jasmine.SpyObj<
-    UtilsService & { getActivityIcon: jasmine.Spy }
-  >;
+  let utils: jasmine.SpyObj<Pick<Utils, 'formatCurrency' | 'formatTimeAgo' | 'scrollToTop'>>;
 
   const mockAdminStats: DashboardStatsDto = {
     totalOrders: 100,
@@ -52,7 +49,7 @@ describe('AdminDashboardComponent', () => {
   };
 
   beforeEach(async () => {
-    adminDashboardApiService = jasmine.createSpyObj('AdminApiService', [
+    adminDashboardApiService = jasmine.createSpyObj('AdminDashboardApiService', [
       'getDashboardStats',
     ]);
     toastService = jasmine.createSpyObj('ToastService', [
@@ -60,20 +57,20 @@ describe('AdminDashboardComponent', () => {
       'success',
       'info',
     ]);
-    utilsService = jasmine.createSpyObj('UtilsService', [
+    utils = jasmine.createSpyObj('Utils', [
       'formatCurrency',
       'formatTimeAgo',
-      'getActivityIcon',
+      'scrollToTop',
     ]);
 
     adminDashboardApiService.getDashboardStats.and.returnValue(
       of(mockAdminStats),
     );
-    utilsService.formatCurrency.and.callFake(
+    utils.formatCurrency.and.callFake(
       (amount: number) => `£${amount.toFixed(2)}`,
     );
-    utilsService.formatTimeAgo.and.returnValue('just now');
-    utilsService.getActivityIcon.and.returnValue('bi-info-circle');
+    utils.formatTimeAgo.and.returnValue('just now');
+    utils.scrollToTop.and.stub();
 
     await TestBed.configureTestingModule({
       imports: [AdminDashboardComponent],
@@ -85,17 +82,13 @@ describe('AdminDashboardComponent', () => {
           useValue: adminDashboardApiService,
         },
         { provide: ToastService, useValue: toastService },
-        { provide: UtilsService, useValue: utilsService },
+        { provide: Utils, useValue: utils },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminDashboardComponent);
     component = fixture.componentInstance;
-
-    (component as any).formatCurrency = (amount: number) =>
-      `£${amount.toFixed(2)}`;
     spyOn(component, 'getActivityIcon').and.returnValue('bi-info-circle');
-    spyOn(component, 'formatTimeAgo').and.returnValue('just now');
 
     fixture.detectChanges();
   });
@@ -105,7 +98,7 @@ describe('AdminDashboardComponent', () => {
   });
 
   it('loadDashboardData_ShouldCallGetDashboardStats_WhenComponentInitializes', () => {
-    expect(adminApiService.getDashboardStats).toHaveBeenCalled();
+    expect(adminDashboardApiService.getDashboardStats).toHaveBeenCalled();
   });
 
   it('loadDashboardData_ShouldSetDashboardStats_WhenApiCallSucceeds', () => {
@@ -114,7 +107,7 @@ describe('AdminDashboardComponent', () => {
   });
 
   it('loadDashboardData_ShouldShowError_WhenApiCallFails', () => {
-    adminApiService.getDashboardStats.and.returnValue(
+    adminDashboardApiService.getDashboardStats.and.returnValue(
       throwError(() => new Error('API Error')),
     );
 

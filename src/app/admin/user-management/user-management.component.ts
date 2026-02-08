@@ -7,14 +7,6 @@ import { finalize, Subscription } from 'rxjs';
 import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AdminUserApiService } from 'app/services/api';
-import { Utils } from 'app/shared/utils';
-import {
-  AdminUserDto,
-  AdminUpdateUserProfileRequestDto,
-  AdminUsersStatsDto,
-  GetAllUsersRequestDto,
-} from '@dtos';
 import {
   AdminUsersSortByEnum,
   AdminUsersSortByOption,
@@ -23,6 +15,9 @@ import {
   UserRoleEnum,
   UserRoleMeta,
 } from '@dtos/enums';
+import { AdminUpdateUserProfileRequestDto, AdminUserDto, AdminUsersStatsDto, GetAllUsersRequestDto } from '@dtos/user.dto';
+import { AdminUserApiService } from '../../services/api';
+import { Utils } from '../../shared/utils';
 
 @Component({
   selector: 'app-user-management',

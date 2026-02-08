@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductManagementComponent } from './product-management.component';
 import { ToastService } from '../../services/toast.service';
-import { AdminProductApiService } from 'app/services/api';
+import { AdminProductApiService } from '../../services/api';
 
 describe('ProductManagement', () => {
   let component: ProductManagementComponent;

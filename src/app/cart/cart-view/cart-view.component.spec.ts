@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { CartViewComponent } from './cart-view.component';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
-import { AuthApiService } from 'app/services/api';
+import { AuthApiService } from '../../services/api';
 
 describe('CartView', () => {
   let component: CartViewComponent;

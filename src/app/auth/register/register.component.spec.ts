@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { RegisterComponent } from './register.component';
 import { ToastService } from '../../services/toast.service';
-import { AuthApiService } from 'app/services/api';
+import { AuthApiService } from '../../services/api';
 
 describe('Register', () => {
   let component: RegisterComponent;

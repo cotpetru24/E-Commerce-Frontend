@@ -7,8 +7,9 @@ import { ToastService } from '../services/toast.service';
 import { ProductApiService } from '../services/api';
 import { finalize } from 'rxjs';
 import { CmsApiService } from '../services/api/cms-api.service';
-import { CmsLandingPageDto, ProductDto } from '@dtos';
-import { Utils } from 'app/shared/utils';
+import { ProductDto } from '@dtos/product.dto';
+import { CmsLandingPageDto } from '@dtos/cms.dto';
+import { Utils } from '../shared/utils';
 
 @Component({
   selector: 'app-landing-page',

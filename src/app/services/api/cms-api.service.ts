@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import {
   CmsLandingPageDto,
   CmsNavAndFooterDto,
   CmsProfileDto,
   CmsStoredProfileDto,
-} from '@dtos';
-import { Observable } from 'rxjs';
+} from '@dtos/cms.dto';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class CmsApiService extends BaseApiService {
   protected readonly cmsEndpoint = '/api/Cms';
 

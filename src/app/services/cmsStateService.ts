@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { CmsNavAndFooterDto } from '@dtos/cms.dto';
 import { BehaviorSubject } from 'rxjs';
-import { CmsNavAndFooterDto } from '@dtos';
 
 @Injectable({ providedIn: 'root' })
 export class CmsStateService {

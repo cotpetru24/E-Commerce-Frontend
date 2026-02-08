@@ -9,13 +9,6 @@ import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Utils } from '../../shared/utils';
-import { AdminProductApiService } from 'app/services/api';
-import {
-  AdminProductDto,
-  GetProductsAdminRequestDto,
-  GetProductsAdminResponseDto,
-  ProductImageDto,
-} from '@dtos';
 import {
   AdminProductSortByOption,
   AdminProductSortByOptionMeta,
@@ -27,6 +20,8 @@ import {
   ProductStatusEmun,
   SortDirectionEnum,
 } from '@dtos/enums';
+import { AdminProductDto, GetProductsAdminRequestDto, GetProductsAdminResponseDto, ProductImageDto } from '@dtos/product.dto';
+import { AdminProductApiService } from '../../services/api';
 
 @Component({
   selector: 'app-product-management',

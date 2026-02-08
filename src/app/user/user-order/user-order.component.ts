@@ -9,16 +9,16 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { finalize } from 'rxjs';
 import { CountryMapService } from '../../services/country-map.service';
-import { ShippingInfo } from 'app/checkout/checkout.types';
-import { AddressDto, OrderDto, OrderItemDto, PaymentDto } from '@dtos';
-import { Utils } from 'app/shared/utils';
-import { StorageService } from 'app/services/storage.service';
 import {
   OrderStatusEnum,
   OrderStatusMeta,
   PaymentStatusEnum,
   PaymentStatusMeta,
 } from '@dtos/enums';
+import { AddressDto, OrderDto, OrderItemDto, PaymentDto } from '@dtos/index';
+import { ShippingInfo } from '../../checkout/checkout.types';
+import { Utils } from '../../shared/utils';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-user-order',

@@ -212,7 +212,7 @@
                       <button class="btn btn-outline-info" (click)="viewUser(user)" title="View Details">
                         <i class="bi bi-eye"></i>
                       </button>
-                      <button class="btn btn-outline-warning" aria-label="Toggle block unblock" (click)="toggleUserStatus(user)"
+                      <button class="btn btn-outline-warning" (click)="toggleUserStatus(user)"
                         [title]="user.isBlocked === true ? 'Unblock' : 'Block'">
                         <i class="bi" [class]="user.isBlocked === true ? 'bi-unlock' : 'bi-lock'"></i>
                       </button>

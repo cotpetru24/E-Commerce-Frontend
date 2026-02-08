@@ -16,12 +16,8 @@ import {
   StripeElements,
   StripePaymentElement,
 } from '@stripe/stripe-js';
-import {
-  OrderSummary,
-  PlaceOrderRequestDto,
-  OrderItemRequestDto,
-  CreateAddressRequestDto,
-} from '@dtos';
+import { OrderItemRequestDto, OrderSummary, PlaceOrderRequestDto } from '@dtos/order.dto';
+import { CreateAddressRequestDto } from '@dtos/address.dto';
 
 @Component({
   selector: 'payment',

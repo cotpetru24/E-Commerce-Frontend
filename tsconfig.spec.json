@@ -3,13 +3,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
+    "composite": true,
+    "rootDir": "src",
     "types": ["jasmine"],
-    "baseUrl": "src",
     "paths": {
-      "@dtos/*": ["app/dtos/*"],
-      "@dtos": ["app/dtos"]
+      "@dtos/*": ["./src/app/dtos/*"]
     }
   },
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+"include": ["src/**/*.spec.ts", "src/**/*.ts"]
 }

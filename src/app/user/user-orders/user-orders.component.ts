@@ -7,12 +7,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { StorageService } from '../../services/storage.service';
 import { finalize } from 'rxjs';
-import {
-  OrderDto,
-  GetUserOrdersRequestDto,
-  GetUserOrdersResponseDto,
-} from '@dtos';
 import { OrderStatusEnum, OrderStatusMeta } from '@dtos/enums';
+import { GetUserOrdersRequestDto, GetUserOrdersResponseDto, OrderDto } from '@dtos/order.dto';
 
 @Component({
   selector: 'app-user-orders',

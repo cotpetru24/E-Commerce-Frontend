@@ -3,16 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import {
+  AdminOrderDto,
   GetAllOrdersRequestDto,
   GetAllOrdersResponseDto,
-  AdminOrderDto,
   UpdateOrderStatusRequestDto,
-} from '@dtos';
+} from '@dtos/index';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class AdminOrderApiService extends BaseApiService {
   private readonly adminOrderEndPoint = '/api/admin/orders';
 
@@ -21,7 +20,7 @@ export class AdminOrderApiService extends BaseApiService {
   }
 
   getOrders(
-    request: GetAllOrdersRequestDto
+    request: GetAllOrdersRequestDto,
   ): Observable<GetAllOrdersResponseDto> {
     const url = this.buildUrl(this.adminOrderEndPoint);
     const params = this.createParams({
@@ -49,7 +48,7 @@ export class AdminOrderApiService extends BaseApiService {
 
   updateOrderStatus(
     orderId: number,
-    statusData: UpdateOrderStatusRequestDto
+    statusData: UpdateOrderStatusRequestDto,
   ): Observable<{ message: string }> {
     const url = this.buildUrl(`${this.adminOrderEndPoint}/${orderId}/status`);
     return this.put<{ message: string }>(url, statusData);

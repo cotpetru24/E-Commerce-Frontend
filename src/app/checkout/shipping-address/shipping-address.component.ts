@@ -7,7 +7,8 @@ import { AddressApiService } from '../../services/api/address-api.service';
 import { ToastService } from '../../services/toast.service';
 import { StorageService } from '../../services/storage.service';
 import { AddressData } from '../checkout.types';
-import { OrderSummary, CreateAddressRequestDto, AddressDto } from '@dtos';
+import { AddressDto, CreateAddressRequestDto } from '@dtos/address.dto';
+import { OrderSummary } from '@dtos/order.dto';
 
 @Component({
   selector: 'shipping-address',

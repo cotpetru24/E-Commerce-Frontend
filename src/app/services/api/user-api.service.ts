@@ -2,14 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-import {
-  UserProfileDto,
-  UpdateUserProfileRequestDto,
-  ChangePasswordRequestDto,
-  UserStatsDto,
-  UpdateUserProfileResponseDto,
-  ChangePasswordResponseDto,
-} from '@dtos';
+import { ChangePasswordRequestDto, ChangePasswordResponseDto, UpdateUserProfileRequestDto, UpdateUserProfileResponseDto, UserProfileDto } from '@dtos/user.dto';
 
 @Injectable({
   providedIn: 'root',

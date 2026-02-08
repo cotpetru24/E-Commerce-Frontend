@@ -10,12 +10,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { Utils } from '../../shared/utils';
 import {
-  AdminOrderDto,
-  AdminOrdersStatsDto,
-  GetAllOrdersRequestDto,
-  UpdateOrderStatusRequestDto,
-} from '@dtos';
-import {
   AdminOrdersTimeframeOption,
   AdminOrdersTimeframeOptionMeta,
   OrdersSortByEnum,
@@ -28,6 +22,12 @@ import {
   PaymentStatusMeta,
   SortDirectionEnum,
 } from '@dtos/enums';
+import {
+  AdminOrderDto,
+  AdminOrdersStatsDto,
+  GetAllOrdersRequestDto,
+  UpdateOrderStatusRequestDto,
+} from '@dtos/order.dto';
 
 @Component({
   selector: 'app-order-management',

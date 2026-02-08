@@ -5,12 +5,7 @@ import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { UserApiService } from '../../services/api/user-api.service';
 import { StorageService } from '../../services/storage.service';
-import {
-  UserProfileDto,
-  UpdateUserProfileRequestDto,
-  ChangePasswordRequestDto,
-  UserStatsDto,
-} from '@dtos';
+import { ChangePasswordRequestDto, UpdateUserProfileRequestDto, UserProfileDto, UserStatsDto } from '@dtos/user.dto';
 
 @Component({
   selector: 'app-user-account',

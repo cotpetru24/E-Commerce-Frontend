@@ -7,7 +7,7 @@ import {
   CreateAddressRequestDto,
   CreateAddressResponseDto,
   DeleteAddressResponseDto,
-} from '@dtos';
+} from '@dtos/address.dto';
 
 @Injectable({
   providedIn: 'root',

@@ -5,9 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { AdminDashboardApiService } from '../../services/api';
-import { DashboardStatsDto } from '@dtos';
 import { ToastService } from '../../services/toast.service';
 import { Utils } from '../../shared/utils';
+import { DashboardStatsDto } from '@dtos/dashboard.dto';
 
 @Component({
   selector: 'app-admin-dashboard',

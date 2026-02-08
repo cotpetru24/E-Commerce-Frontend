@@ -6,14 +6,18 @@ import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { ProductApiService } from '../../services/api';
 import { finalize } from 'rxjs';
-import { Utils } from 'app/shared/utils';
-import { ProductFilterDto, ProductDto, ProductImageDto } from '@dtos';
 import {
   AudienceEnum,
   AudienceMeta,
   ProductSortByOption,
   ProductSortByOptionMeta,
 } from '@dtos/enums';
+import {
+  ProductDto,
+  ProductFilterDto,
+  ProductImageDto,
+} from '@dtos/product.dto';
+import { Utils } from '../../shared/utils';
 
 @Component({
   selector: 'app-product-list',

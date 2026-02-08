@@ -8,8 +8,12 @@ import { finalize } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { CmsStateService } from '../../services/cmsStateService';
-import { CmsProfileDto, CmsStoredProfileDto, CmsNavAndFooterDto } from '@dtos';
-import { StorageService } from 'app/services/storage.service';
+import {
+  CmsNavAndFooterDto,
+  CmsProfileDto,
+  CmsStoredProfileDto,
+} from '@dtos/cms.dto';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-content-management',

@@ -11,16 +11,14 @@ import { StorageService } from '../../services/storage.service';
 describe('AddProduct', () => {
   let component: AddProductComponent;
   let fixture: ComponentFixture<AddProductComponent>;
-  let adminApiService: jasmine.SpyObj<AdminProductApiService>;
+  let adminProductApiService: jasmine.SpyObj<AdminProductApiService>;
 
   beforeEach(async () => {
-    adminApiService = jasmine.createSpyObj('AdminApiService', [
+    adminProductApiService = jasmine.createSpyObj('AdminProductApiService', [
       'createProduct',
       'getProductBrands',
-      'getProductAudience',
     ]);
-    adminApiService.getProductBrands.and.returnValue(of([]));
-    adminApiService.getProductAudience.and.returnValue(of([]));
+    adminProductApiService.getProductBrands.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [AddProductComponent],
@@ -31,7 +29,7 @@ describe('AddProduct', () => {
           provide: NgbModal,
           useValue: jasmine.createSpyObj('NgbModal', ['open']),
         },
-        { provide: AdminProductApiService, useValue: adminApiService },
+        { provide: AdminProductApiService, useValue: adminProductApiService },
         {
           provide: ToastService,
           useValue: jasmine.createSpyObj('ToastService', [

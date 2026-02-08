@@ -2,16 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-import {
-  AdminUpdateUserProfileRequestDto,
-  AdminUserDto,
-  GetAllUsersRequestDto,
-  GetAllUsersResponseDto,
-  GetUserOrdersRequestDto,
-  AdminChangePasswordResponseDto,
-  UpdateUserProfileRequestDto,
-  GetAllOrdersResponseDto,
-} from '@dtos';
+import { AdminChangePasswordResponseDto, AdminUpdateUserProfileRequestDto, AdminUserDto, GetAllUsersRequestDto, GetAllUsersResponseDto, UpdateUserProfileRequestDto } from '@dtos/user.dto';
+import { GetAllOrdersResponseDto, GetUserOrdersRequestDto } from '@dtos/order.dto';
 
 @Injectable({
   providedIn: 'root',

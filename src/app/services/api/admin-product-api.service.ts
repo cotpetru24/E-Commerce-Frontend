@@ -2,13 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-import {
-  AdminCreateProductRequestDto,
-  AdminProductDto,
-  BrandDto,
-  GetProductsAdminRequestDto,
-  GetProductsAdminResponseDto,
-} from '@dtos';
+import { AdminCreateProductRequestDto, AdminProductDto, BrandDto, GetProductsAdminRequestDto, GetProductsAdminResponseDto } from '@dtos/product.dto';
 
 @Injectable({
   providedIn: 'root',

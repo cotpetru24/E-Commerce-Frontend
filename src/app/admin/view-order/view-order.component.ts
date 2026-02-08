@@ -6,18 +6,12 @@ import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { ShippingInfo } from '../../checkout/checkout.types';
 import { ToastService } from '../../services/toast.service';
-import { AdminOrderApiService } from 'app/services/api';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { CountryMapService } from '../../services/country-map.service';
 import { Utils } from '../../shared/utils';
-import {
-  AdminOrderDto,
-  OrderItemDto,
-  AddressDto,
-  UpdateOrderStatusRequestDto,
-} from '@dtos';
+
 import {
   OrdersSortByEnum,
   OrderStatusEnum,
@@ -26,6 +20,8 @@ import {
   PaymentStatusEnum,
   PaymentStatusMeta,
 } from '@dtos/enums';
+import { AddressDto, AdminOrderDto, OrderItemDto, UpdateOrderStatusRequestDto } from '@dtos/index';
+import { AdminOrderApiService } from '../../services/api';
 
 @Component({
   selector: 'app-view-order',

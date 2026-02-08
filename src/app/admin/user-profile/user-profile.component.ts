@@ -7,12 +7,6 @@ import { ToastService } from '../../services/toast.service';
 import { Utils } from '../../shared/utils';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AdminUserApiService } from 'app/services/api';
-import {
-  AdminOrderDto,
-  AdminUpdateUserProfileRequestDto,
-  AdminUserDto,
-} from '@dtos';
 import {
   OrdersSortByEnum,
   OrderStatusEnum,
@@ -20,6 +14,9 @@ import {
   UserRoleEnum,
   UserRoleMeta,
 } from '@dtos/enums';
+import { AdminUpdateUserProfileRequestDto, AdminUserDto } from '@dtos/user.dto';
+import { AdminOrderDto } from '@dtos/order.dto';
+import { AdminUserApiService } from '../../services/api';
 
 @Component({
   selector: 'app-user-profile',

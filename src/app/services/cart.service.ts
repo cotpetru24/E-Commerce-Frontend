@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ProductDto } from '@dtos';
 import { CartItem } from '..//cart/cart.types';
 import { StorageService } from './storage.service';
+import { ProductDto } from '@dtos/product.dto';
 
 @Injectable({
   providedIn: 'root',

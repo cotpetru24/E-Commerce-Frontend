@@ -10,14 +10,8 @@ import { StorageService } from '../../services/storage.service';
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import {
-  BrandDto,
-  AdminProductDto,
-  ProductFeatureDto,
-  ProductSizeDto,
-  AdminCreateProductRequestDto,
-} from '@dtos';
 import { AudienceEnum, AudienceMeta } from '@dtos/enums';
+import { AdminCreateProductRequestDto, BrandDto, ProductFeatureDto, ProductSizeDto } from '@dtos/product.dto';
 
 @Component({
   selector: 'app-add-product',

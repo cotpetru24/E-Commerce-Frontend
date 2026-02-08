@@ -10,14 +10,9 @@ import { AdminProductApiService } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
-import {
-  BrandDto,
-  AdminProductDto,
-  ProductFeatureDto,
-  ProductSizeDto,
-} from '@dtos';
 import { AudienceEnum, AudienceMeta } from '@dtos/enums';
-import { Utils } from 'app/shared/utils';
+import { AdminProductDto, BrandDto, ProductFeatureDto, ProductSizeDto } from '@dtos/product.dto';
+import { Utils } from '../../shared/utils';
 
 @Component({
   selector: 'app-edit-product',

@@ -6,9 +6,9 @@ import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthApiService } from '../../services/api/auth-api.service';
 import { Utils } from '../../shared/utils';
-import { ProductImageDto } from '@dtos';
 import { CartItem } from '../cart.types';
 import { AudienceEnum, AudienceMeta } from '@dtos/enums';
+import { ProductImageDto } from '@dtos/product.dto';
 
 @Component({
   selector: 'app-cart-view',

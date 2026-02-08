@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-import { DashboardStatsDto } from '@dtos';
+import { DashboardStatsDto } from '@dtos/dashboard.dto';
 
 @Injectable({
   providedIn: 'root',

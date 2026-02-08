@@ -3,13 +3,13 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./out-tsc/app",
+    "rootDir": "src",
     "types": ["node"],
     "typeRoots": ["node_modules/@types", "src/types"],
-    "baseUrl": "src",
     "paths": {
-      "@dtos/*": ["app/dtos/*"],
-      "@dtos": ["app/dtos"]
+      "@dtos/*": ["./src/app/dtos/*"]
     }
   },
   "include": ["src/**/*.ts"],

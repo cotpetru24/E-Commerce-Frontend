@@ -19,11 +19,13 @@ describe('AddressForm', () => {
       'getSubtotal',
       'getDiscount',
       'getTotal',
+      'getShippingCost',
     ]);
     cartService.getCartItems.and.returnValue([]);
     cartService.getSubtotal.and.returnValue(0);
     cartService.getDiscount.and.returnValue(0);
     cartService.getTotal.and.returnValue(0);
+    cartService.getShippingCost.and.returnValue(0);
 
     const addressApiService = jasmine.createSpyObj(
       'AddressApiService',

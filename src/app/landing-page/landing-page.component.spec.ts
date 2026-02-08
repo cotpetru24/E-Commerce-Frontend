@@ -7,7 +7,7 @@ import { CartService } from '../services/cart.service';
 import { ToastService } from '../services/toast.service';
 import { ProductApiService } from '../services/api';
 import { CmsApiService } from '../services/api/cms-api.service';
-import { CmsLandingPageDto } from '../models/cms.dto';
+import { CmsLandingPageDto } from '../dtos/cms.dto';
 
 describe('LandingPageComponent', () => {
   let component: LandingPageComponent;
@@ -19,7 +19,7 @@ describe('LandingPageComponent', () => {
     productApiService = jasmine.createSpyObj('ProductApiService', ['getFeaturedProducts']);
     productApiService.getFeaturedProducts.and.returnValue(of({ products: [], brands: [] }));
 
-    cmsApiService = jasmine.createSpyObj('CmsApiService', ['getCmsLandingPageAsync']);
+    cmsApiService = jasmine.createSpyObj('CmsApiService', ['getCmsLandingPage']);
     cmsApiService.getCmsLandingPage.and.returnValue(of({} as CmsLandingPageDto));
 
     await TestBed.configureTestingModule({

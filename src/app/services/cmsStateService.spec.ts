@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CmsStateService } from './cmsStateService';
-import { CmsNavAndFooterDto } from '../models/cms.dto';
+import { CmsNavAndFooterDto } from '../dtos/cms.dto';
 
 describe('CmsStateService', () => {
   let service: CmsStateService;
