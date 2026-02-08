@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.domainhere.com'
+  apiUrl: 'https://shoestore-backend-duc2.onrender.com',
 };
