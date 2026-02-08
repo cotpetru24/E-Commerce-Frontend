@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -60,7 +60,7 @@ export class ContentManagementComponent implements OnInit {
             this.toastService.error('CMS profile data is invalid');
           }
         },
-        error: (error: any) => {
+        error: () => {
           this.toastService.error('Failed to load CMS profiles');
         },
       });
@@ -88,7 +88,7 @@ export class ContentManagementComponent implements OnInit {
             this.toastService.error('CMS profile data is invalid');
           }
         },
-        error: (error: any) => {
+        error: () => {
           this.toastService.error('Failed to load CMS profile');
         },
       });
@@ -112,7 +112,7 @@ export class ContentManagementComponent implements OnInit {
             this.toastService.error('CMS profile data is invalid');
           }
         },
-        error: (error: any) => {
+        error: () => {
           this.toastService.error('Failed to create CMS profile');
         },
       });
@@ -139,8 +139,8 @@ export class ContentManagementComponent implements OnInit {
                 this.cmsStateService.setPageTitle(cms.websiteName);
                 this.cmsStateService.setFavicon(cms.favicon);
               },
-              error: (error: any) => {
-                console.error('Failed to load CMS nav and footer', error);
+              error: () => {
+                console.error('Failed to load CMS nav and footer');
               },
             });
             this.toastService.success('CMS profile activated successfully');
@@ -150,7 +150,7 @@ export class ContentManagementComponent implements OnInit {
             this.toastService.error('CMS profile data is invalid');
           }
         },
-        error: (error: any) => {
+        error: () => {
           this.toastService.error('Failed to activate CMS profile');
         },
       });
@@ -196,7 +196,7 @@ export class ContentManagementComponent implements OnInit {
             this.toastService.error('CMS profile data is invalid');
           }
         },
-        error: (error: any) => {
+        error: () => {
           this.toastService.error('Failed to update CMS profile');
         },
       });
@@ -253,7 +253,7 @@ export class ContentManagementComponent implements OnInit {
                 this.toastService.error('CMS profile data is invalid');
               }
             },
-            error: (error: any) => {
+            error: () => {
               this.toastService.error('Failed to save CMS profile');
               this.cancelEditing();
             },
@@ -299,7 +299,7 @@ export class ContentManagementComponent implements OnInit {
           .deleteCmsProfile(profile.id)
           .pipe(finalize(() => (this.isLoading = false)))
           .subscribe({
-            next: (response: boolean) => {
+            next: () => {
               this.toastService.success('Profile deleted successfully');
               if (this.selectedProfileId === profile.id) {
                 this.selectedProfileId = null;

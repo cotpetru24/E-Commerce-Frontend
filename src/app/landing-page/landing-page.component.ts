@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CartService } from '../services/cart.service';
 import { ToastService } from '../services/toast.service';
 import { ProductApiService } from '../services/api';
 import { finalize } from 'rxjs';
@@ -52,7 +51,6 @@ export class LandingPageComponent implements OnInit {
   ];
 
   constructor(
-    private cartService: CartService,
     private toastService: ToastService,
     private productApi: ProductApiService,
     private cmsService: CmsApiService,

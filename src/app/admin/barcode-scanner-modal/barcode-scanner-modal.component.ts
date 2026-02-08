@@ -31,7 +31,6 @@ export class BarcodeScannerModalComponent
   isCameraActive = false;
   private codeReader: BrowserMultiFormatReader | null = null;
   private stream: MediaStream | null = null;
-  private isScanning = false;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -149,7 +148,6 @@ export class BarcodeScannerModalComponent
     }
 
     this.isCameraActive = false;
-    this.isScanning = false;
   }
 
   cancel() {

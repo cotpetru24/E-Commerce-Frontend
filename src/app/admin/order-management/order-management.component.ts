@@ -12,7 +12,6 @@ import { Utils } from '../../shared/utils';
 import {
   AdminOrdersTimeframeOption,
   AdminOrdersTimeframeOptionMeta,
-  OrdersSortByEnum,
   OrdersSortByOption,
   OrdersSortByOptionMeta,
   OrderStatusEnum,
@@ -20,7 +19,6 @@ import {
   OrderStatusUpdateConstraints,
   PaymentStatusEnum,
   PaymentStatusMeta,
-  SortDirectionEnum,
 } from '@dtos/enums';
 import {
   AdminOrderDto,
@@ -318,7 +316,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
         };
 
         this.adminApiService.updateOrderStatus(order.id, statusData).subscribe({
-          next: (response) => {
+          next: () => {
             const target = this.orders.find((o) => o.id === order.id);
             if (target) {
               target.status = OrderStatusEnum.Cancelled;

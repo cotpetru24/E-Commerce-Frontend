@@ -8,7 +8,6 @@ import { ToastService } from '../../services/toast.service';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
-  AdminUsersSortByEnum,
   AdminUsersSortByOption,
   AdminUsersSortByOptionsMeta,
   SortDirectionEnum,
@@ -185,7 +184,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
                 this.loadUsers();
               },
-              error: (err) => {
+              error: () => {
                 this.toastService.error('Failed to update user status');
               },
             }),

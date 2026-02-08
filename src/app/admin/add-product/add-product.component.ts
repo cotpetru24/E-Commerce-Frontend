@@ -2,11 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AdminProductApiService } from '../../services/api/admin-product-api.service';
 import { ToastService } from '../../services/toast.service';
-import { StorageService } from '../../services/storage.service';
 import { BarcodeScannerModalComponent } from '../barcode-scanner-modal/barcode-scanner-modal.component';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -54,11 +53,9 @@ export class AddProductComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
     private toastService: ToastService,
     private adminProductApiService: AdminProductApiService,
     private modalService: NgbModal,
-    private storageService: StorageService,
   ) {}
 
   ngOnInit(): void {

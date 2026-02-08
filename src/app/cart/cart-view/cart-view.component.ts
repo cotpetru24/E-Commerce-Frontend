@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthApiService } from '../../services/api/auth-api.service';
-import { Utils } from '../../shared/utils';
 import { CartItem } from '../cart.types';
 import { AudienceEnum, AudienceMeta } from '@dtos/enums';
 import { ProductImageDto } from '@dtos/product.dto';
@@ -28,7 +27,6 @@ export class CartViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private toastService: ToastService,
     private authApiService: AuthApiService,
-    private utils: Utils,
   ) {
     this.cartSubscription = this.cartService.cartItems$.subscribe((items) => {
       this.cartItems = items;
@@ -43,7 +41,7 @@ export class CartViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackByItem(index: number, item: CartItem): string {
+  trackByItem(item: CartItem): string {
     return item.product.id.toString() + (item.size || '');
   }
 

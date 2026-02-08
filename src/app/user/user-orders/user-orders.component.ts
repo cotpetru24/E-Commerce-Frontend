@@ -3,8 +3,6 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../services/toast.service';
 import { OrderApiService } from '../../services/api/order-api.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { StorageService } from '../../services/storage.service';
 import { finalize } from 'rxjs';
 import { OrderStatusEnum, OrderStatusMeta } from '@dtos/enums';
@@ -32,7 +30,6 @@ export class UserOrdersComponent implements OnInit {
     private router: Router,
     private toastService: ToastService,
     private orderApiService: OrderApiService,
-    private modalService: NgbModal,
     private storageService: StorageService,
   ) {}
 

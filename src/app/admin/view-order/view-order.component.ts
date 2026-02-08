@@ -13,7 +13,6 @@ import { CountryMapService } from '../../services/country-map.service';
 import { Utils } from '../../shared/utils';
 
 import {
-  OrdersSortByEnum,
   OrderStatusEnum,
   OrderStatusMeta,
   OrderStatusUpdateConstraints,

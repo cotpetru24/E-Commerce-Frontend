@@ -12,13 +12,11 @@ import { Utils } from '../../shared/utils';
 import {
   AdminProductSortByOption,
   AdminProductSortByOptionMeta,
-  AdminProductsSortByEnum,
   AdminProductStockStatusEnum,
   AdminProductStockStatusMeta,
   AudienceEnum,
   AudienceMeta,
   ProductStatusEmun,
-  SortDirectionEnum,
 } from '@dtos/enums';
 import { AdminProductDto, GetProductsAdminRequestDto, GetProductsAdminResponseDto, ProductImageDto } from '@dtos/product.dto';
 import { AdminProductApiService } from '../../services/api';

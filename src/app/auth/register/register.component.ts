@@ -63,7 +63,7 @@ export class RegisterComponent {
     this.isLoading = true;
 
     this.authApiService.register(this.registerData).subscribe({
-      next: (user) => {
+      next: () => {
         this.toastService.success('Registered successful!');
         if (this.authApiService.isAdmin()) {
           this.router.navigate(['/admin']);

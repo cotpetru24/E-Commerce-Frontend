@@ -45,7 +45,7 @@ export class LoginComponent {
         password: this.loginData.password,
       })
       .subscribe({
-        next: (user) => {
+        next: () => {
           if (this.authApiService.isAdmin()) {
             this.router.navigate(['/admin']);
           } else {

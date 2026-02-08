@@ -8,7 +8,6 @@ import { Utils } from '../../shared/utils';
 import { ModalDialogComponent } from '../../shared/modal-dialog.component/modal-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
-  OrdersSortByEnum,
   OrderStatusEnum,
   OrderStatusMeta,
   UserRoleEnum,
@@ -292,7 +291,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
                 this.toastService.success(`User ${status} successfully`);
                 this.loadUserData();
               },
-              error: (err) => {
+              error: () => {
                 this.toastService.error('Failed to update user status');
               },
             }),

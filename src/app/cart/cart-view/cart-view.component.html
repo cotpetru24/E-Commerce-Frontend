@@ -33,10 +33,10 @@
             </div>
           </div>
           <div class="cart-items">
-            @for (item of cartItems; track trackByItem($index, item)) {
+            @for (item of cartItems; track trackByItem(item)) {
             <div class="cart-item">
               <div class="item-image">
-                <img [src]="'/assets/' + getPrimaryImage(item.product.productImages)" [alt]="item.product.name"
+                <img [src]="'/assets/' + getPrimaryImage(item.product.productImages)" title="Product image" [alt]="item.product.name"
                   (click)="navigateToProductDetails(item.product.id)" class="details-section">
               </div>
               <div class="item-details">
@@ -55,12 +55,12 @@
                 </div>
                 <div class="item-quantity">
                   <div class="quantity-controls">
-                    <button class="btn btn-outline-secondary btn-sm" type="button" (click)="decreaseQuantity(item)"
+                    <button class="btn btn-outline-secondary btn-sm" type="button" aria-label="Decrease quantity" (click)="decreaseQuantity(item)"
                       [disabled]="item.quantity <= 1">
                       <i class="bi bi-dash"></i>
                     </button>
                     <span class="quantity">{{ item.quantity }}</span>
-                    <button class="btn btn-outline-secondary btn-sm" type="button" (click)="increaseQuantity(item)">
+                    <button class="btn btn-outline-secondary btn-sm" type="button" aria-label="Increase quantity" (click)="increaseQuantity(item)">
                       <i class="bi bi-plus"></i>
                     </button>
                   </div>

@@ -38,6 +38,9 @@ export class FooterComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.showBackToTop = window.scrollY > 300;

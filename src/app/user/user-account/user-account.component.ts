@@ -97,7 +97,7 @@ export class UserAccountComponent implements OnInit {
     };
 
     this.userApiService.updateUserProfile(request).subscribe({
-      next: (response) => {
+      next: () => {
         this.toastService.success('Profile updated successfully');
         this.isEditing = true;
         this.loadUserData();
@@ -140,7 +140,7 @@ export class UserAccountComponent implements OnInit {
     };
 
     this.userApiService.changePassword(request).subscribe({
-      next: (response) => {
+      next: () => {
         this.toastService.success('Password changed successfully');
         this.isChangingPassword = false;
         this.isEditing = true;

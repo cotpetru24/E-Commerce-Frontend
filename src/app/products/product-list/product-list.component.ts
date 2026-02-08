@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { ProductApiService } from '../../services/api';
 import { finalize } from 'rxjs';
@@ -69,7 +68,6 @@ export class ProductListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private cartService: CartService,
     private toastService: ToastService,
     private productApi: ProductApiService,
     private utils: Utils,

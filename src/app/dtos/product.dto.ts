@@ -3,7 +3,6 @@ import {
   AdminProductStockStatusEnum,
   AudienceEnum,
   ProductSortByEnum,
-  ProductSortByOption,
   SortDirectionEnum,
 } from './enums';
 

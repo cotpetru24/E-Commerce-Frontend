@@ -4,7 +4,6 @@ import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 import { ProductApiService } from '../../services/api';
-import { Utils } from '../../shared/utils';
 import { AudienceEnum, AudienceMeta } from '@dtos/enums';
 import { ProductDto, ProductImageDto, ProductSizeDto } from '@dtos/product.dto';
 
@@ -37,7 +36,6 @@ export class ProductDetailsComponent implements OnInit {
     private toastService: ToastService,
     private productApi: ProductApiService,
     private router: Router,
-    private utils: Utils,
   ) {}
 
   ngOnInit() {
